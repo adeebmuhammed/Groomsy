@@ -1,0 +1,63 @@
+<app-admin-header></app-admin-header>
+
+<div class="admin-layout">
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <div class="admin-main-content">
+    <div class="user-list-page">
+      <h1 class="user-list-title">User Management</h1>
+
+      <div class="table-responsive">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+  <tr *ngFor="let user of paginatedUsers; let i = index">
+    <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+    <td>{{ user.name }}</td>
+    <td>{{ user.email }}</td>
+    <td>
+      <span class="status-badge" [ngClass]="user.status">{{ user.status }}</span>
+    </td>
+    <td>{{ user.createdAt | date: 'short' }}</td>
+    <td>
+      <button class="status-toggle-button" (click)="toggleStatus(user)">
+        {{ user.status === 'active' ? 'Block' : 'Unblock' }}
+      </button>
+    </td>
+  </tr>
+</tbody>
+
+        </table>
+        <div class="pagination-controls">
+  <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">
+    Previous
+  </button>
+
+  <span *ngFor="let page of [].constructor(totalPages); let i = index">
+    <button
+      [class.active]="i + 1 === currentPage"
+      (click)="changePage(i + 1)">
+      {{ i + 1 }}
+    </button>
+  </span>
+
+  <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">
+    Next
+  </button>
+</div>
+
+      </div>
+    </div>
+
+    <app-admin-footer></app-admin-footer>
+  </div>
+</div>

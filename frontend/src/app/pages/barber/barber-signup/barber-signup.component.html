@@ -1,0 +1,114 @@
+<app-barber-header></app-barber-header>
+
+<form [formGroup]="barberSignupForm" (ngSubmit)="onSubmit()" class="main-content">
+  <div class="admin-sign-in">Barber Sign Up</div>
+
+  <div class="form-container">
+
+    <!-- Name -->
+    <div class="field-group">
+      <div class="email-field">
+        <input type="text" formControlName="name" placeholder="Name" class="email" />
+      </div>
+      @if (barberSignupForm.get('name')?.touched || barberSignupForm.get('name')?.dirty) {
+        @if (barberSignupForm.get('name')?.errors?.['required']) {
+          <div class="error">Name is required.</div>
+        }
+      }
+    </div>
+
+    <!-- Email -->
+    <div class="field-group">
+      <div class="email-field">
+        <input type="email" formControlName="email" placeholder="Email" class="email" />
+      </div>
+      @if (barberSignupForm.get('email')?.touched || barberSignupForm.get('email')?.dirty) {
+        @if (barberSignupForm.get('email')?.errors?.['required']) {
+          <div class="error">Email is required.</div>
+        }
+        @if (barberSignupForm.get('email')?.errors?.['email']) {
+          <div class="error">Enter a valid email address.</div>
+        }
+      }
+    </div>
+
+    <!-- Phone -->
+    <div class="field-group">
+      <div class="email-field">
+        <input type="text" formControlName="phone" placeholder="Phone" class="email" />
+      </div>
+      @if (barberSignupForm.get('phone')?.touched || barberSignupForm.get('phone')?.dirty) {
+        @if (barberSignupForm.get('phone')?.errors?.['required']) {
+          <div class="error">Phone number is required.</div>
+        }
+        @if (barberSignupForm.get('phone')?.errors?.['pattern']) {
+          <div class="error">Enter a valid 10-digit phone number.</div>
+        }
+      }
+    </div>
+
+    <!-- District -->
+    <div class="field-group">
+      <div class="dropdown-field">
+        <select formControlName="district" class="dropdown">
+          <option value="" disabled selected>Select District</option>
+          <option *ngFor="let dist of districts" [value]="dist">{{ dist }}</option>
+        </select>
+      </div>
+      @if (barberSignupForm.get('district')?.touched || barberSignupForm.get('district')?.dirty) {
+        @if (barberSignupForm.get('district')?.errors?.['required']) {
+          <div class="error">District is required.</div>
+        }
+      }
+    </div>
+
+    <!-- Password -->
+    <div class="field-group">
+      <div class="password-field">
+        <input type="password" formControlName="password" placeholder="Password" class="password" />
+      </div>
+      @if (barberSignupForm.get('password')?.touched || barberSignupForm.get('password')?.dirty) {
+        @if (barberSignupForm.get('password')?.errors?.['required']) {
+          <div class="error">Password is required.</div>
+        }
+        @if (barberSignupForm.get('password')?.errors?.['minlength']) {
+          <div class="error">Minimum 8 characters required.</div>
+        }
+        @if (barberSignupForm.get('password')?.errors?.['pattern']) {
+          <div class="error">Must include uppercase, lowercase, number & special character.</div>
+        }
+      }
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="field-group">
+      <div class="password-field">
+        <input type="password" formControlName="confirmPassword" placeholder="Confirm Password" class="password" />
+      </div>
+      @if (barberSignupForm.get('confirmPassword')?.touched || barberSignupForm.get('confirmPassword')?.dirty) {
+        @if (barberSignupForm.get('confirmPassword')?.errors?.['required']) {
+          <div class="error">Confirm password is required.</div>
+        }
+        @if (barberSignupForm.errors?.['mismatch']) {
+          <div class="error">Passwords do not match.</div>
+        }
+      }
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-button">
+      <button type="submit" class="sign-in-text" [disabled]="barberSignupForm.invalid">
+        Sign Up
+      </button>
+      @if (errorMessage) {
+        <div class="error">{{ errorMessage }}</div>
+      }
+    </div>
+  </div>
+
+  <div class="login-link">
+    Already have an account? <a routerLink="/barber/signin">Log In</a>
+  </div>
+</form>
+
+<app-barber-footer></app-barber-footer>

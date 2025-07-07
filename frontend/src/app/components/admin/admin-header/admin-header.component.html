@@ -1,0 +1,21 @@
+<header class="admin-header">
+  <div class="header-left">
+    <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Admin Logo" class="logo-image" />
+  </div>
+
+  <div class="header-center">
+    <div class="admin-header-brand">Admin Panel</div>
+  </div>
+
+  <div class="header-right">
+    <ng-container *ngIf="isLoggedIn && adminName">
+      <div class="header-profile">
+        <span class="profile-text">Welcome, {{ adminName }}</span>
+      </div>
+    </ng-container>
+
+    <button class="admin-header-button" (click)="handleAdminAuth()">
+      {{ isLoggedIn ? 'Logout' : 'Login' }}
+    </button>
+  </div>
+</header>

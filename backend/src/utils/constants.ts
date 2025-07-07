@@ -43,5 +43,6 @@ export const MESSAGES = {
     INVALID_TOKEN: "Invalid or expired token",
     ALREADY_VERIFIED: "User is already verified",
     BLOCKED: "You have been blocked by the admin",
+    INVALID_EMAIL: "Invalid Email Format"
   },
 };

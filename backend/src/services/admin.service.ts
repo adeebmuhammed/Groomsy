@@ -5,15 +5,20 @@ import { IAdminService } from "./interfaces/IAdminService";
 import { IAdminRepository } from "../repositories/interfaces/IAdminRepository";
 import { MESSAGES,STATUS_CODES } from "../utils/constants";
 import { isValidEmail } from "../utils/validators";
+import { BarberDto, ListResponseDto, UserDto } from "../dto/admin.dto";
+import { IUserRepository } from "../repositories/interfaces/IUserRepository";
+import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
 
 export class AdminService implements IAdminService{
 
     constructor(
-        private adminRepo:IAdminRepository
+        private adminRepo:IAdminRepository,
+        private userRepo:IUserRepository,
+        private barberRepo:IBarberRepository
     ){}
 
 
-    async loginAdmin(email: string, password: string): Promise<{ admin: IAdmin; token: string; message: string; status: number; }> {
+    loginAdmin = async (email: string, password: string): Promise<{ admin: IAdmin; token: string; message: string; status: number; }> => {
         if (!isValidEmail(email)) {
             throw new Error("invalid email format");
         }
@@ -49,5 +54,51 @@ export class AdminService implements IAdminService{
             message: MESSAGES.SUCCESS.LOGIN,
             status: STATUS_CODES.OK,
         };
+    }
+
+    listUsers = async (search = ""): Promise<{ response: ListResponseDto<UserDto>; status: number; }> => {
+        const users = await this.userRepo.findBySearchTerm(search)
+
+        const userDtos: UserDto[] = users.map((user: any) => ({
+            id: user._id?.toString(),
+            name: user.name,
+            email: user.email,
+            status: user.status,
+            createdAt: user.createdAt,
+        }));
+        
+        const response: ListResponseDto<UserDto> = {
+            data: userDtos,
+            message: "Users fetched successfully"
+        };
+
+        return {
+            response,
+            status: STATUS_CODES.OK
+        }
+    }
+
+    listBarbers = async (search = ""): Promise<{ response: ListResponseDto<BarberDto>; status: number; }> =>{
+        const barbers = await this.barberRepo.find({})
+
+        const barberDtos: BarberDto[] = barbers.map((barber: any) => ({
+            id: barber._id?.toString(),
+            name: barber.name,
+            email: barber.email,
+            phone: barber.phone,
+            district: barber.district,
+            status: barber.status,
+            createdAt: barber.createdAt,
+        }));
+
+        const response:ListResponseDto<BarberDto> = {
+            data: barberDtos,
+            message: "Barbers fetched successfully"
+        }
+
+        return {
+            response,
+            status: STATUS_CODES.OK
+        }
     }
 }

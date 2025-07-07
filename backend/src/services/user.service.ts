@@ -59,61 +59,82 @@ export class UserService implements IUserService{
         }
     }
 
-    verifyOTP = async (email: string, otp: string): Promise<{ response: MessageResponseDto & { user: { name: string } }, status: number }> => {
+    verifyOTP = async (
+        email: string,
+        otp: string,
+        purpose: 'signup' | 'forgot'
+    ): Promise<{ response: MessageResponseDto & { user: { name: string, email: string } }, status: number }> => {
+        
         if (!isValidOTP(otp)) {
-            throw new Error("OTP must be a 6-digit number")
+            throw new Error("OTP must be a 6-digit number");
         }
-
+        
         const user = await this.userRepo.findByEmail(email);
         if (!user) {
             throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
         }
-
+        
         if (user.otp !== otp) {
             throw new Error(MESSAGES.ERROR.OTP_INVALID);
         }
 
-        user.isVerified = true;
-        user.otp = undefined;
-
+        if (purpose === 'signup') {
+            user.isVerified = true;
+        }
+        
+        user.otp = null; // Always clear OTP after use
+        
         await this.userRepo.update(user._id.toString(), user);
-
+        
         return {
             response: {
                 message: MESSAGES.SUCCESS.OTP_VERIFIED,
-                user: { name: user.name }
+                user: {
+                    name: user.name,
+                    email: user.email,
+                },
             },
             status: STATUS_CODES.OK,
         };
-    }
+    };
 
-    resendOTP = async (email: string): Promise<{ response: MessageResponseDto & { user: { name: string; }; }; status: number; }> => {
 
-            const user = await this.userRepo.findByEmail(email)
-            if (!user) {
-                throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
-            }
+    resendOTP = async (
+  email: string,
+  purpose: 'signup' | 'forgot'
+): Promise<{
+  response: MessageResponseDto & { user: { name: string; email: string } };
+  status: number;
+}> => {
+  const user = await this.userRepo.findByEmail(email);
+  if (!user) {
+    throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
+  }
 
-            if (user?.isVerified) {
-                throw new Error(MESSAGES.ERROR.ALREADY_VERIFIED)
-            }
+  // For signup only, prevent resending OTP if already verified
+  if (purpose === 'signup' && user.isVerified) {
+    throw new Error(MESSAGES.ERROR.ALREADY_VERIFIED);
+  }
 
-            const newOTP = OTPService.generateOTP()
-            await OTPService.sendOTP(email,newOTP)
-            console.log(newOTP);
-            
-            
-            user.otp = newOTP
-            await this.userRepo.update(user._id.toString(),user)
+  const newOTP = OTPService.generateOTP();
+  await OTPService.sendOTP(email, newOTP);
+  console.log("Generated OTP:", newOTP);
 
-            return {
-            response: {
-                message: MESSAGES.SUCCESS.OTP_RESENT,
-                user: { name: user.name }
-            },
-            status: STATUS_CODES.OK,
-        };
-    }
+  user.otp = newOTP;
+  await this.userRepo.update(user._id.toString(), user);
+
+  return {
+    response: {
+      message: MESSAGES.SUCCESS.OTP_RESENT,
+      user: {
+        name: user.name,
+        email: user.email,
+      },
+    },
+    status: STATUS_CODES.OK,
+  };
+};
+
 
     async processGoogleAuth(profile: any): Promise<{ response: UserLoginResponseDto; status: number; }> {
         const email = profile.email
@@ -160,6 +181,114 @@ export class UserService implements IUserService{
         return {
             response,
             status:STATUS_CODES.OK
+        }
+    }
+
+    async loginUser(email: string, password: string): Promise<{ response: UserLoginResponseDto; status: number; }> {
+        
+        if (!isValidEmail(email)) {
+            throw new Error("Invalid email format");
+        }
+
+        if (!password) {
+            throw new Error("password is required")
+        }
+
+        const user = await this.userRepo.findByEmail(email)
+
+        if (!user) {
+            throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
+        }
+
+        if (!user.isVerified) {
+            throw new Error(MESSAGES.ERROR.OTP_INVALID)
+        }
+
+        if (user.status === "blocked") {
+            throw new Error(MESSAGES.ERROR.BLOCKED)
+        }
+
+        if (!user.password) {
+            throw new Error(MESSAGES.ERROR.INVALID_CREDENTIALS)
+        }
+
+        const isPasswordValid = await bcrypt.compare(password,user.password)
+        if (!isPasswordValid) {
+            throw new Error(MESSAGES.ERROR.INVALID_CREDENTIALS)
+        }
+
+        const jwtSecret = process.env.JWT_SECRET
+        if (!jwtSecret) {
+            throw new Error(MESSAGES.ERROR.JWT_SECRET_MISSING)
+        }
+
+        const token = jwt.sign({userId:user._id,type:"user"}, jwtSecret ,{
+            expiresIn : '1h'
+        })
+
+        const response : UserLoginResponseDto = {
+            id: user._id.toString(),
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            status: user.status,
+            token: token,
+            message: MESSAGES.SUCCESS.LOGIN
+        }
+
+        return {
+            response,
+            status : STATUS_CODES.OK
+        }
+    }
+
+    async forgotPassword(email: string): Promise<{ response: MessageResponseDto; status: number; }> {
+        if (!isValidEmail(email)) {
+            throw new Error('Invalid email format')
+        }
+
+        const user = await this.userRepo.findByEmail(email)
+        if (!user) {
+            throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
+        }
+
+        const otp = OTPService.generateOTP()
+        user.otp = otp
+        await this.userRepo.update(user.id.toString(),user)
+        await OTPService.sendOTP(email,otp)
+        console.log(otp);
+        
+        return {
+            response:{message:MESSAGES.SUCCESS.OTP_SENT},
+            status:STATUS_CODES.OK
+        }
+    }
+
+    async resetPassword(email: string, password: string, confirmPassword: string): Promise<{ response: MessageResponseDto; status: number; }> {
+        if (!isValidEmail(email)) {
+            throw new Error("Invalid email Format")
+        }
+
+        if (!isValidPassword(password)) {
+            throw new Error("Password must be at least 8 characters long and include uppercase, lowercase, number, and special character")
+        }
+
+        if (password !== confirmPassword) {
+            throw new Error(MESSAGES.ERROR.PASSWORD_MISMATCH)
+        }
+
+        const user = await this.userRepo.findByEmail(email)
+        if (!user) {
+            throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
+        }
+
+        const hashedPassword = await bcrypt.hash(password,10)
+        user.password = hashedPassword
+        await this.userRepo.update(user._id.toString(),user)
+
+        return {
+            response: {message: MESSAGES.SUCCESS.PASSWORD_RESET},
+            status: STATUS_CODES.OK
         }
     }
 }

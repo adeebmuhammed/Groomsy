@@ -1,0 +1,51 @@
+<app-admin-header></app-admin-header>
+
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="main-content">
+  <div class="admin-sign-in">Admin Sign In</div>
+
+  <div class="form-container">
+    <!-- Email Field -->
+    <div class="field-group">
+      <div class="email-field">
+        <input type="email" formControlName="email" placeholder="Email" class="email" />
+      </div>
+      @if (loginForm.get('email')?.touched || loginForm.get('email')?.dirty) {
+        @if (loginForm.get('email')?.errors?.['required']) {
+          <div class="error">Email is required.</div>
+        }
+        @if (loginForm.get('email')?.errors?.['email']) {
+          <div class="error">Please enter a valid email address.</div>
+        }
+      }
+    </div>
+
+    <!-- Password Field -->
+    <div class="field-group">
+      <div class="password-field">
+        <input type="password" formControlName="password" placeholder="Password" class="password" />
+      </div>
+      @if (loginForm.get('password')?.touched || loginForm.get('password')?.dirty) {
+        @if (loginForm.get('password')?.errors?.['required']) {
+          <div class="error">Password is required.</div>
+        }
+        @if (loginForm.get('password')?.errors?.['minlength']) {
+          <div class="error">Password must be at least 8 characters long.</div>
+        }
+        @if (loginForm.get('password')?.errors?.['pattern']) {
+          <div class="error">
+            Password must include uppercase, lowercase, number, and special character.
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Submit Button -->
+    <div class="submit-button">
+      <button type="submit" class="sign-in-text" [disabled]="loginForm.invalid">
+        Sign In
+      </button>
+    </div>
+  </div>
+</form>
+
+<app-admin-footer></app-admin-footer>

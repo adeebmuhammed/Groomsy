@@ -16,7 +16,10 @@ userRoutes
 .post('/signup',userController.register)
 .post('/verify-otp',userController.verifyOTP)
 .post('/resend-otp',userController.resendOTP)
-.post("/logout", userController.logout);
+.post("/login",userController.login)
+.post("/forgot-password",userController.forgotPassword)
+.post("/reset-password",userController.resetPassword)
+.post("/logout", userController.logout)
 
 userRoutes
 .get(

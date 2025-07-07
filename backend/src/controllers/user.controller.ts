@@ -24,39 +24,41 @@ export class UserController implements IUserController{
     }
 
     verifyOTP = async (req: Request, res: Response): Promise<void> => {
-        try {
-            const { email, otp } = req.body;
-            const { response, status } = await this.userService.verifyOTP(email, otp);
+    try {
+        const { email, otp, purpose } = req.body; // get purpose from frontend
+        const { response, status } = await this.userService.verifyOTP(email, otp, purpose);
 
-            res.status(status).json(response);
-        } catch (error) {
-            console.error("OTP verification error:", error);
-            res.status(STATUS_CODES.BAD_REQUEST).json({
-                error: error instanceof Error ? error.message : "OTP verification failed",
-            });
-        }
+        res.status(status).json(response);
+    } catch (error) {
+        console.error("OTP verification error:", error);
+        res.status(STATUS_CODES.BAD_REQUEST).json({
+            error: error instanceof Error ? error.message : "OTP verification failed",
+        });
     }
+};
+
 
     resendOTP = async (req: Request, res: Response): Promise<void> => {
-        try {
-            const { email } = req.body
+    try {
+        const { email, purpose } = req.body;
 
-            if (!email) {
-                res.status(STATUS_CODES.BAD_REQUEST).json({
-                    error: "Email is required",
-                });
-                return;
-            }
-
-            const { response,status } = await this.userService.resendOTP(email)
-            res.status(status).json(response)
-        } catch (error) {
-            console.error("OTP resend error:", error);
+        if (!email || !purpose) {
             res.status(STATUS_CODES.BAD_REQUEST).json({
-                error: error instanceof Error ? error.message : "Failed to resend OTP",
+                error: "Email and purpose are required",
             });
+            return;
         }
+
+        const { response, status } = await this.userService.resendOTP(email, purpose);
+        res.status(status).json(response);
+    } catch (error) {
+        console.error("OTP resend error:", error);
+        res.status(STATUS_CODES.BAD_REQUEST).json({
+            error: error instanceof Error ? error.message : "Failed to resend OTP",
+        });
     }
+};
+
 
     googleCallback = async (req: Request, res: Response): Promise<void> => {
         try {
@@ -71,10 +73,10 @@ export class UserController implements IUserController{
                 path: "/",
             });
 
-            res.redirect(`${process.env.FRONTEND_URL}/user/home?token=${response.token}&name=${encodeURIComponent(response.name)}`);
+            res.redirect(`${process.env.FRONTEND_URL}/user/auth-callback?token=${response.token}&name=${encodeURIComponent(response.name)}&email=${encodeURIComponent(response.email)}`);
         } catch (error) {
             console.error("Google auth error:", error);
-            res.redirect(`${process.env.FRONTEND_URL}/user/login?error=google_auth_failed`);
+            res.redirect(`${process.env.FRONTEND_URL}/user/signup?error=google_auth_failed`);
         }
     }
 
@@ -89,5 +91,62 @@ export class UserController implements IUserController{
         res.status(STATUS_CODES.OK).json({
             message: "Logged out successfully",
         });
+    }
+
+    login = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const { email, password } = req.body
+            const { response,status } = await this.userService.loginUser(email,password)
+
+            res.cookie("auth-token", response.token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                maxAge: 3600000,
+                path: "/",
+            });
+
+            res.status(status).json({
+                message : response.message,
+                user : {
+                    id: response.id,
+                    name: response.name,
+                    email: response.email,
+                    phone: response.phone,
+                    status: response.status,
+                }
+            })
+        } catch (error) {
+            console.error(error);
+            res.status(STATUS_CODES.UNAUTHORIZED).json({
+                error: error instanceof Error ? error.message : "Login Failed",
+            });
+        }
+    }
+
+    forgotPassword = async(req: Request, res: Response): Promise<void> =>{
+        try {
+            const {email} = req.body
+            const { response,status } = await this.userService.forgotPassword(email)
+            res.status(status).json(response)
+        } catch (error) {
+            console.error("Forgot password error:", error);
+            res.status(STATUS_CODES.BAD_REQUEST).json({
+                error:
+                error instanceof Error ? error.message : "Failed to process forgot password request",
+            });
+        }
+    }
+
+    resetPassword = async (req: Request, res: Response): Promise<void> =>{
+        try {
+            const { email,password,confirmPassword } = req.body
+            const { response,status } = await this.userService.resetPassword( email, password, confirmPassword)
+
+            res.status(status).json(response)
+        } catch (error) {
+            console.error(error);
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({error: error instanceof Error ? error.message : "Failed to reset password"})
+        }
     }
 }

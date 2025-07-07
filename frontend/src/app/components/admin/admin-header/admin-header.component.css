@@ -1,0 +1,94 @@
+.admin-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  background-color: #1f2937; /* Dark navy */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.header-left,
+.header-center,
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-center {
+  flex: 1;
+  justify-content: center;
+}
+
+.logo-image {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  filter: grayscale(100%);
+}
+
+.admin-header-brand {
+  color: #f3f4f6;
+  font-size: 20px;
+  font-weight: 600;
+  margin-left: 10px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.header-profile {
+  margin-right: 12px;
+}
+
+.profile-text {
+  font-size: 15px;
+  color: #d1d5db;
+  font-weight: 400;
+}
+
+.admin-header-button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.admin-header-button:hover {
+  background-color: #2563eb;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .admin-header {
+    height: 56px;
+    padding: 0 12px;
+  }
+
+  .admin-header-brand {
+    font-size: 18px;
+  }
+
+  .profile-text {
+    font-size: 13px;
+  }
+
+  .admin-header-button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .logo-image {
+    width: 36px;
+    height: 36px;
+  }
+}

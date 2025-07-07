@@ -1,0 +1,142 @@
+.footer-container {
+  background: #000;
+  color: #9ca3af;
+  padding: 40px 20px;
+  font-family: Inter, sans-serif;
+}
+
+.footer-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-brand {
+  display: flex;
+  gap: 16px;
+  flex: 1 1 300px;
+}
+
+.footer-brand img.logo {
+  width: 50px;
+  border-radius: 8px;
+}
+
+.brand-name {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.brand-desc {
+  font-size: 14px;
+  margin-top: 8px;
+  color: #9ca3af;
+}
+
+.socials img {
+  width: 20px;
+  margin-right: 10px;
+  filter: brightness(0) invert(1);
+}
+
+.footer-links {
+  display: flex;
+  flex: 2 1 400px;
+  gap: 40px;
+}
+
+.footer-links h4,
+.newsletter h4 {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  display: block;
+  color: #9ca3af;
+  text-decoration: none;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.footer-links a:hover {
+  color: #fff;
+}
+
+.newsletter {
+  flex: 1 1 250px;
+}
+
+.newsletter p {
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.newsletter input {
+  padding: 10px;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #374151;
+  background: #111827;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.newsletter button {
+  padding: 10px 20px;
+  border: none;
+  background: #9333ea;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.newsletter button:hover {
+  background: #7e22ce;
+}
+
+.footer-bottom {
+  border-top: 1px solid #1f2937;
+  margin-top: 40px;
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 13px;
+  max-width: 1200px;
+  margin: 40px auto 0;
+}
+
+.bottom-links a {
+  margin-left: 20px;
+  color: #9ca3af;
+  text-decoration: none;
+}
+
+.bottom-links a:hover {
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .footer-top {
+    flex-direction: column;
+  }
+
+  .footer-links {
+    flex-direction: column;
+  }
+
+  .bottom-links a {
+    display: block;
+    margin: 8px 0 0 0;
+  }
+}
+.logo {
+  height: fit-content;
+}

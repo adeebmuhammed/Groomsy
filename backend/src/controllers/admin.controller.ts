@@ -15,8 +15,8 @@ export class AdminController implements IAdminController{
             const result  = await this.adminService.loginAdmin(email,password)
             res.cookie("auth-token", result.token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        secure: false,
+        sameSite: "lax",
         maxAge: 3600000,
         path: "/",
       });
@@ -50,4 +50,28 @@ export class AdminController implements IAdminController{
       message: "Logged out successfully",
     });
   };
+
+  listUsers = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const search = (req.query.search) as string || "";
+      const { response, status } = await this.adminService.listUsers(search)
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error(error)
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({error: error instanceof Error ? error.message : "Fetching Users Failed"})
+    }
+  }
+
+  listBarbers = async (req: Request, res: Response): Promise<void> =>{
+    try {
+      const search = (req.query.search) as string || ""
+      const { response,status } = await this.adminService.listBarbers(search)
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error(error)
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({error: error instanceof Error ? error.message : "Fetching Barbers Failed"})
+    }
+  }
 }

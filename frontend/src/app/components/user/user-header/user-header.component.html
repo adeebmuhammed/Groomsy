@@ -1,0 +1,21 @@
+<header class="app-header">
+  <div class="header-left">
+    <img src="logo.png" alt="Logo" class="logo-image" />
+  </div>
+
+  <div class="header-center">
+    <div class="header-brand">Groomsy</div>
+  </div>
+
+  <div class="header-right">
+    <ng-container *ngIf="isLoggedIn && userName">
+      <div class="header-profile">
+        <span class="profile-text">Hello, {{ userName }}</span>
+      </div>
+    </ng-container>
+
+    <button class="header-button" (click)="handleAuth()">
+      {{ isLoggedIn ? 'Sign Out' : 'Sign In' }}
+    </button>
+  </div>
+</header>

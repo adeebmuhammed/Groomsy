@@ -1,0 +1,46 @@
+.admin-sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #0f172a; /* same dark navy */
+  color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.sidebar-title {
+  font-family: Inter, sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 40px;
+  color: #3b82f6; /* admin blue */
+  text-align: center;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sidebar-nav a {
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  color: #f1f5f9;
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.sidebar-nav a:hover {
+  background-color: #1e293b; /* slightly lighter dark */
+}
+
+.active-link {
+  background-color: #1e40af; /* darker blue for active */
+}

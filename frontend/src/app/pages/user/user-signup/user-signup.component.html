@@ -1,0 +1,110 @@
+<app-user-header></app-user-header>
+
+<form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="main-content">
+  <div class="admin-sign-in">User Sign Up</div>
+
+  <div class="form-container">
+
+    <!-- Name Field -->
+    <div class="field-group">
+      <div class="email-field">
+        <input type="text" formControlName="name" placeholder="Name" class="email" />
+      </div>
+      @if (signupForm.get('name')?.touched || signupForm.get('name')?.dirty) {
+        @if (signupForm.get('name')?.errors?.['required']) {
+          <div class="error">Name is required.</div>
+        }
+      }
+    </div>
+
+    <!-- Email Field -->
+    <div class="field-group">
+      <div class="email-field">
+        <input type="email" formControlName="email" placeholder="Email" class="email" />
+      </div>
+      @if (signupForm.get('email')?.touched || signupForm.get('email')?.dirty) {
+        @if (signupForm.get('email')?.errors?.['required']) {
+          <div class="error">Email is required.</div>
+        }
+        @if (signupForm.get('email')?.errors?.['email']) {
+          <div class="error">Enter a valid email address.</div>
+        }
+      }
+    </div>
+
+    <!-- Phone Field -->
+    <div class="field-group">
+      <div class="email-field">
+        <input type="text" formControlName="phone" placeholder="Phone" class="email" />
+      </div>
+      @if (signupForm.get('phone')?.touched || signupForm.get('phone')?.dirty) {
+        @if (signupForm.get('phone')?.errors?.['required']) {
+          <div class="error">Phone number is required.</div>
+        }
+        @if (signupForm.get('phone')?.errors?.['pattern']) {
+          <div class="error">Enter a valid 10-digit phone number.</div>
+        }
+      }
+    </div>
+
+    <!-- Password Field -->
+    <div class="field-group">
+      <div class="password-field">
+        <input type="password" formControlName="password" placeholder="Password" class="password" />
+      </div>
+      @if (signupForm.get('password')?.touched || signupForm.get('password')?.dirty) {
+        @if (signupForm.get('password')?.errors?.['required']) {
+          <div class="error">Password is required.</div>
+        }
+        @if (signupForm.get('password')?.errors?.['minlength']) {
+          <div class="error">Minimum 8 characters required.</div>
+        }
+        @if (signupForm.get('password')?.errors?.['pattern']) {
+          <div class="error">
+            Must include uppercase, lowercase, number & special character.
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Confirm Password Field -->
+    <div class="field-group">
+      <div class="password-field">
+        <input type="password" formControlName="confirmPassword" placeholder="Confirm Password" class="password" />
+      </div>
+      @if (signupForm.get('confirmPassword')?.touched || signupForm.get('confirmPassword')?.dirty) {
+        @if (signupForm.get('confirmPassword')?.errors?.['required']) {
+          <div class="error">Confirm password is required.</div>
+        }
+        @if (signupForm.errors?.['mismatch']) {
+          <div class="error">Passwords do not match.</div>
+        }
+      }
+    </div>
+
+    <!-- Submit Button -->
+    <div class="submit-button">
+      <button type="submit" class="sign-in-text" [disabled]="signupForm.invalid">
+        Sign Up
+      </button>
+      @if (errorMessage) {
+  <div class="error">{{ errorMessage }}</div>
+}
+    </div>
+  </div>
+
+<!-- Google Sign Up Button -->
+<div class="google-signup">
+  <button type="button" class="google-btn" (click)="signUpWithGoogle()">
+    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="google-icon" />
+    Sign up with Google
+  </button>
+</div>
+
+<div class="login-link">
+  Already have an account? <a routerLink="/user/signin">Log In</a>
+</div>
+
+</form>
+
+<app-user-footer></app-user-footer>

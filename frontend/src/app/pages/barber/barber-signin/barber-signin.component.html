@@ -1,0 +1,59 @@
+<app-barber-header></app-barber-header>
+
+<form [formGroup]="barberLoginForm" (ngSubmit)="onSubmit()" class="main-content">
+  <div class="admin-sign-in">Barber Log In</div>
+
+  <div class="form-container">
+    <!-- Email Field -->
+    <div class="field-group">
+      <div class="email-field">
+        <input type="email" formControlName="email" placeholder="Email" class="email" />
+      </div>
+      @if (barberLoginForm.get('email')?.touched || barberLoginForm.get('email')?.dirty) {
+        @if (barberLoginForm.get('email')?.errors?.['required']) {
+          <div class="error">Email is required.</div>
+        }
+        @if (barberLoginForm.get('email')?.errors?.['email']) {
+          <div class="error">Enter a valid email address.</div>
+        }
+      }
+    </div>
+
+    <!-- Password Field -->
+    <div class="field-group">
+      <div class="password-field">
+        <input type="password" formControlName="password" placeholder="Password" class="password" />
+      </div>
+      @if (barberLoginForm.get('password')?.touched || barberLoginForm.get('password')?.dirty) {
+        @if (barberLoginForm.get('password')?.errors?.['required']) {
+          <div class="error">Password is required.</div>
+        }
+        @if (barberLoginForm.get('password')?.errors?.['minlength']) {
+          <div class="error">Minimum 8 characters required.</div>
+        }
+      }
+    </div>
+
+    <!-- Forgot Password Link -->
+    <div class="forgot-password">
+      <a routerLink="/barber/forgot-password">Forgot Password?</a>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="submit-button">
+      <button type="submit" class="sign-in-text" [disabled]="barberLoginForm.invalid">
+        Log In
+      </button>
+      @if (errorMessage) {
+        <div class="error">{{ errorMessage }}</div>
+      }
+    </div>
+  </div>
+
+  <!-- Signup Link -->
+  <div class="login-link">
+    Don’t have an account? <a routerLink="/barber/signup">Sign Up</a>
+  </div>
+</form>
+
+<app-barber-footer></app-barber-footer>

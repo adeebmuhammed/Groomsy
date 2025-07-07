@@ -8,7 +8,7 @@ export interface IUser extends Document {
   phone?: string;
   status: "active" | "blocked";
   googleId?: string;
-  otp?:string;
+  otp?:string | null;
   createdAt: Date;
   updatedAt: Date;
   isVerified: boolean;

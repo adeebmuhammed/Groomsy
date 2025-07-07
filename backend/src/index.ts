@@ -3,12 +3,15 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
 import routes from './routes/routes'
+import cookieParser from 'cookie-parser'
 
 const app = express();
 const PORT = 5000;
 
 dotenv.config();
 connectDB()
+
+app.use(cookieParser())
 
 app.use(cors({
   origin: process.env.FRONTEND_URL,
