@@ -7,59 +7,16 @@
     <div class="barber-list-page">
       <h1 class="barber-list-title">Barber Management</h1>
 
-      <div class="table-responsive">
-        <table class="barber-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>District</th>
-              <th>Status</th>
-              <th>Created</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let barber of paginatedBarbers; let i = index">
-  <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-  <td>{{ barber.name }}</td>
-  <td>{{ barber.email }}</td>
-  <td>{{ barber.phone }}</td>
-  <td>{{ barber.district }}</td>
-  <td>
-    <span class="status-badge" [ngClass]="barber.status">
-      {{ barber.status }}
-    </span>
-  </td>
-  <td>{{ barber.createdAt | date: 'short' }}</td>
-  <td>
-    <button class="status-toggle-button" (click)="toggleStatus(barber)">
-      {{ barber.status === 'active' ? 'Block' : 'Unblock' }}
-    </button>
-  </td>
-</tr>
+      <app-admin-table
+        [data]="barbers"
+        [columns]="columns"
+        [currentPage]="currentPage"
+        [itemsPerPage]="itemsPerPage"
+        (onPageChange)="changePage($event)"
+        (onToggleStatus)="toggleStatus($event)">
+      </app-admin-table>
 
-          </tbody>
-        </table>
-        <div class="pagination-controls">
-  <button [disabled]="currentPage === 1" (click)="previousPage()">Previous</button>
-
-  <ng-container *ngFor="let page of [].constructor(totalPages); let idx = index">
-    <button 
-      [class.active]="currentPage === idx + 1"
-      (click)="goToPage(idx + 1)">
-      {{ idx + 1 }}
-    </button>
-  </ng-container>
-
-  <button [disabled]="currentPage === totalPages" (click)="nextPage()">Next</button>
-</div>
-
-      </div>
+      <app-admin-footer></app-admin-footer>
     </div>
-
-    <app-admin-footer></app-admin-footer>
   </div>
 </div>

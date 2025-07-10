@@ -1,0 +1,57 @@
+<div class="admin-table-wrapper">
+
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="onSearchChange()"
+      placeholder="Search..."
+      class="search-input"
+    />
+  </div>
+
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th *ngFor="let col of columns">{{ col.label }}</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of paginatedData; let i = index">
+          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+
+          <td *ngFor="let col of columns">
+            <span *ngIf="col.isDate">{{ item[col.key] | date: 'short' }}</span>
+            <span *ngIf="col.isStatus" [ngClass]="item[col.key]" class="status-badge">
+              {{ item[col.key] }}
+            </span>
+            <span *ngIf="!col.isDate && !col.isStatus">{{ item[col.key] }}</span>
+          </td>
+
+          <td>
+            <button class="status-toggle-button" (click)="toggleStatus(item)">
+              {{ item.status === 'active' ? 'Block' : 'Unblock' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination-controls">
+      <button [disabled]="currentPage === 1" (click)="previousPage()">Previous</button>
+
+      <ng-container *ngFor="let p of [].constructor(totalPages); let idx = index">
+        <button
+          [class.active]="currentPage === idx + 1"
+          (click)="goToPage(idx + 1)">
+          {{ idx + 1 }}
+        </button>
+      </ng-container>
+
+      <button [disabled]="currentPage === totalPages" (click)="nextPage()">Next</button>
+    </div>
+  </div>
+</div>

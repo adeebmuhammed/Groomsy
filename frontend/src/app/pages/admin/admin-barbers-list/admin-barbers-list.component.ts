@@ -4,6 +4,7 @@ import { AdminFooterComponent } from '../../../components/admin/admin-footer/adm
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../services/admin/admin.service';
+import { AdminTableComponent } from '../../../components/admin/admin-table/admin-table.component';
 
 interface IBarber {
   _id: string;
@@ -18,61 +19,39 @@ interface IBarber {
 
 @Component({
   selector: 'app-admin-barbers-list',
-  imports: [ AdminHeaderComponent,AdminFooterComponent,AdminSidebarComponent,CommonModule],
+  imports: [ AdminHeaderComponent,AdminFooterComponent,AdminSidebarComponent,CommonModule,AdminTableComponent ],
   templateUrl: './admin-barbers-list.component.html',
   styleUrl: './admin-barbers-list.component.css'
 })
 
 export class AdminBarbersListComponent {
   barbers: IBarber[] = [];
-  paginatedBarbers: IBarber[] = [];
-
   currentPage = 1;
   itemsPerPage = 5;
-  totalPages = 0;
+
+  columns = [
+    { key: 'name', label: 'Name' },
+    { key: 'email', label: 'Email' },
+    { key: 'phone', label: 'Phone' },
+    { key: 'district', label: 'District' },
+    { key: 'status', label: 'Status', isStatus: true },
+    { key: 'createdAt', label: 'Created', isDate: true }
+  ];
 
   constructor(private adminService: AdminService) {}
 
   ngOnInit(): void {
-    this.fetchBarbers();
-  }
-
-  fetchBarbers(): void {
-    this.adminService.listBarbers().subscribe({
-      next: (res) => {
-        this.barbers = res?.data || [];
-        this.totalPages = Math.ceil(this.barbers.length / this.itemsPerPage);
-        this.setPaginatedBarbers();
-      },
-      error: (err) => {
-        console.error('Failed to fetch barbers:', err);
-      }
+    this.adminService.listBarbers().subscribe((res) => {
+      this.barbers = res?.data || [];
     });
   }
 
-  setPaginatedBarbers(): void {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    const end = start + this.itemsPerPage;
-    this.paginatedBarbers = this.barbers.slice(start, end);
-  }
-
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.setPaginatedBarbers();
-    }
-  }
-
-  nextPage(): void {
-    this.goToPage(this.currentPage + 1);
-  }
-
-  previousPage(): void {
-    this.goToPage(this.currentPage - 1);
+  changePage(page: number): void {
+    this.currentPage = page;
   }
 
   toggleStatus(barber: IBarber): void {
     barber.status = barber.status === 'active' ? 'blocked' : 'active';
-    // Optionally make an API call to update status
+    // Optionally call API
   }
 }

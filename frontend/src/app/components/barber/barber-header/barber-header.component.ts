@@ -46,6 +46,8 @@ export class BarberHeaderComponent {
 
     logoutObservable.subscribe({
       next: (res) => {
+        this.authService.updateLoginState('barber', false, null, null);
+
         Swal.fire({
           icon: 'success',
           title: 'Logged Out',
