@@ -14,8 +14,8 @@ import Swal from 'sweetalert2';
 })
 export class UserForgotPasswordComponent implements OnInit {
   forgotPasswordForm: FormGroup;
-  successMessage: string = '';
-  errorMessage: string = '';
+  successMessage = '';
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,

@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 })
 export class UserSignupComponent {
   signupForm: FormGroup;
-  errorMessage: string = '';
+  errorMessage = '';
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.signupForm = this.fb.group({

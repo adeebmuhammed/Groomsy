@@ -15,8 +15,8 @@ import Swal from 'sweetalert2';
 })
 export class BarberForgotPasswordComponent{
   forgotPasswordForm: FormGroup;
-  successMessage: string = '';
-  errorMessage: string = '';
+  successMessage = '';
+  errorMessage = '';
   
     constructor(
       private fb: FormBuilder,

@@ -17,4 +17,9 @@ export class AdminService {
   listBarbers():Observable<any>{
     return this.http.get(`${environment.apiBaseUrl}/admin/barbers`,{ withCredentials: true })
   }
+
+  updateUserStatus(userId: string, status: string) {
+    return this.http.patch<{ message: string }>(`${environment.apiBaseUrl}/admin/update-user-status/${userId}`,{ status },{ withCredentials: true });
+  }
+
 }

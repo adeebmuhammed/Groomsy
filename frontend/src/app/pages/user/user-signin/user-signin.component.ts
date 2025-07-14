@@ -15,7 +15,7 @@ import { RouterModule } from '@angular/router';
 })
 export class UserSigninComponent implements OnInit{
   loginForm: FormGroup;
-  errorMessage: string = '';
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,

@@ -18,7 +18,10 @@ const adminController = new AdminController(adminService)
 adminRoutes.post('/login',adminController.login)
 adminRoutes.post('/logout',adminController.logout)
 
-adminRoutes.get('/users', adminAuth, adminController.listUsers)
+adminRoutes
+.get('/users', adminAuth, adminController.listUsers)
+.patch('/update-user-status/:id', adminAuth, adminController.updateUserStatus)
+
 adminRoutes.get('/barbers', adminAuth, adminController.listBarbers)
 
 export default adminRoutes;

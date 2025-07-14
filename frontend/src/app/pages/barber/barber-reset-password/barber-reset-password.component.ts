@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
 import { FormBuilder,FormGroup,ReactiveFormsModule,Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './barber-reset-password.component.html',
   styleUrl: './barber-reset-password.component.css'
 })
-export class BarberResetPasswordComponent {
+export class BarberResetPasswordComponent implements OnInit {
   resetPasswordForm: FormGroup;
     successMessage = '';
     errorMessage = '';

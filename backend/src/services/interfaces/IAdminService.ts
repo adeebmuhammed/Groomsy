@@ -8,4 +8,6 @@ export interface IAdminService {
     ):Promise<{ admin: IAdmin; token: string; message: string; status: number }>;
     listUsers(search: string): Promise<{ response: ListResponseDto<UserDto>, status: number;}>;
     listBarbers(search: string): Promise<{ response: ListResponseDto<BarberDto>, status: number;}>;
+    blockUser(userId: string): Promise<{ response: UserDto, message: string, status: number;}>;
+    unBlockUser(userId: string): Promise<{ response: UserDto, message: string, status: number;}>;
 }

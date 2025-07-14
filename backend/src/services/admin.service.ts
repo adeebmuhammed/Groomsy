@@ -101,4 +101,58 @@ export class AdminService implements IAdminService{
             status: STATUS_CODES.OK
         }
     }
+
+    blockUser = async (userId: string): Promise<{ response: UserDto; message: string; status: number; }> =>{
+        const user = await this.userRepo.findById(userId)
+        if (!user) {
+            throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
+        }
+        if (user.status === "blocked") throw new Error("User already blocked");
+
+        const updatedUser = await this.userRepo.update(userId,{
+            status: "blocked"
+        })
+        if (!updatedUser) throw new Error("Could not block user");
+
+        const response: UserDto = {
+            id: updatedUser._id.toString(),
+            name: updatedUser.name,
+            email: updatedUser.email,
+            status: updatedUser.status,
+            createdAt: updatedUser.createdAt
+        }
+
+        return{
+            message: MESSAGES.SUCCESS.USER_BLOCKED,
+            status: STATUS_CODES.OK,
+            response
+        }
+    }
+
+    unBlockUser = async (userId: string): Promise<{ response: UserDto; message: string; status: number; }> =>{
+        const user = await this.userRepo.findById(userId)
+        if (!user) {
+            throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
+        }
+        if (user.status === "active") throw new Error("User already active");
+
+        const updatedUser = await this.userRepo.update(userId,{
+            status: "active"
+        })
+        if (!updatedUser) throw new Error("Could not unblock user");
+
+        const response: UserDto = {
+            id: updatedUser._id.toString(),
+            name: updatedUser.name,
+            email: updatedUser.email,
+            status: updatedUser.status,
+            createdAt: updatedUser.createdAt
+        }
+
+        return{
+            message: MESSAGES.SUCCESS.USER_UNBLOCKED,
+            status: STATUS_CODES.OK,
+            response
+        }
+    }
 }

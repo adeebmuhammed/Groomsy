@@ -16,7 +16,7 @@ import Swal from 'sweetalert2';
 })
 export class BarberSigninComponent {
   barberLoginForm: FormGroup;
-  errorMessage: string = '';
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,

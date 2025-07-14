@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup,FormBuilder,Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router,ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
@@ -14,12 +14,12 @@ import Swal from 'sweetalert2';
   styleUrl: './barber-otp.component.css'
 })
 
-export class BarberOtpComponent {
+export class BarberOtpComponent implements OnInit {
   otpForm: FormGroup;
   email: string | null = '';
   purpose: 'signup' | 'forgot' = 'signup'; // default
-  countdown: number = 60;
-  isResendDisabled: boolean = true;
+  countdown = 60;
+  isResendDisabled = true;
   interval: any;
 
   constructor(

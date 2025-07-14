@@ -25,6 +25,10 @@ export const MESSAGES = {
     OTP_RESENT: "OTP resent successfully",
     PASSWORD_RESET: "Password reset successful",
     PASSWORD_UPDATED: "Password changed successfully.",
+    BARBER_BLOCKED: "Barber blocked successfully",
+    BARBER_UNBLOCKED: "Barber unblocked successfully",
+    USER_BLOCKED: "User blocked successfully",
+    USER_UNBLOCKED: "User unblocked successfully",
   },
   ERROR: {
     INVALID_CREDENTIALS: "Invalid credentials",

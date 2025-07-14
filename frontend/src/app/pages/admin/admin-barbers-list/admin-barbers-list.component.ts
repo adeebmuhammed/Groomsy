@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AdminHeaderComponent } from '../../../components/admin/admin-header/admin-header.component';
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
@@ -24,7 +24,7 @@ interface IBarber {
   styleUrl: './admin-barbers-list.component.css'
 })
 
-export class AdminBarbersListComponent {
+export class AdminBarbersListComponent implements OnInit {
   barbers: IBarber[] = [];
   currentPage = 1;
   itemsPerPage = 5;

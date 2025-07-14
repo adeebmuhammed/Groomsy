@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder,FormGroup,Validators,AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
@@ -13,9 +13,9 @@ import Swal from 'sweetalert2';
   templateUrl: './barber-signup.component.html',
   styleUrl: './barber-signup.component.css'
 })
-export class BarberSignupComponent {
+export class BarberSignupComponent implements OnInit {
   barberSignupForm!: FormGroup;
-  errorMessage: string = '';
+  errorMessage = '';
   districts: string[] = [
     'Thiruvananthapuram', 'Kollam', 'Pathanamthitta', 'Alappuzha', 'Kottayam',
     'Idukki', 'Ernakulam', 'Thrissur', 'Palakkad', 'Malappuram',

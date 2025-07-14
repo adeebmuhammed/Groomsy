@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute,Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 
@@ -8,7 +8,7 @@ import { AuthService } from '../../../services/auth/auth.service';
   templateUrl: './auth-callback.component.html',
   styleUrl: './auth-callback.component.css'
 })
-export class AuthCallbackComponent {
+export class AuthCallbackComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,

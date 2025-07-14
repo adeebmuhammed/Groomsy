@@ -12,8 +12,8 @@ import { FormsModule } from '@angular/forms';
 export class AdminTableComponent implements OnChanges {
   @Input() data: any[] = [];
   @Input() columns: { key: string; label: string; isDate?: boolean; isStatus?: boolean }[] = [];
-  @Input() currentPage: number = 1;
-  @Input() itemsPerPage: number = 5;
+  @Input() currentPage = 1;
+  @Input() itemsPerPage = 5;
 
   @Output() onPageChange = new EventEmitter<number>();
   @Output() onToggleStatus = new EventEmitter<any>();
@@ -21,7 +21,7 @@ export class AdminTableComponent implements OnChanges {
   paginatedData: any[] = [];
   filteredData: any[] = [];
   totalPages = 1;
-  searchTerm: string = '';
+  searchTerm = '';
 
   ngOnChanges(): void {
     this.filteredData = [...this.data];

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './barber-header.component.html',
   styleUrl: './barber-header.component.css'
 })
-export class BarberHeaderComponent {
+export class BarberHeaderComponent implements OnInit {
   isLoggedIn = false;
   barberName: string | null = null;
 

@@ -20,8 +20,8 @@ export class UserOtpComponent implements OnInit {
   otpForm: FormGroup;
   email: string | null = '';
   purpose: 'signup' | 'forgot' = 'signup'; // default
-  countdown: number = 60;
-  isResendDisabled: boolean = true;
+  countdown = 60;
+  isResendDisabled = true;
   interval: any;
 
   constructor(

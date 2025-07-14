@@ -5,9 +5,10 @@ import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/a
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../services/admin/admin.service';
 import { AdminTableComponent } from '../../../components/admin/admin-table/admin-table.component';
+import Swal from 'sweetalert2';
 
 interface IUser {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   phone?: string;
@@ -23,7 +24,7 @@ interface IUser {
   templateUrl: './admin-users-list.component.html',
   styleUrl: './admin-users-list.component.css'
 })
-// admin-users-list.component.ts
+
 export class AdminUsersListComponent implements OnInit {
   users: IUser[] = [];
     currentPage = 1;
@@ -41,6 +42,8 @@ export class AdminUsersListComponent implements OnInit {
     ngOnInit(): void {
       this.adminService.listUsers().subscribe((res) => {
         this.users = res?.data || [];
+        console.log((this.users));
+        
       });
     }
   
@@ -48,8 +51,29 @@ export class AdminUsersListComponent implements OnInit {
       this.currentPage = page;
     }
   
-    toggleStatus(user: IUser): void {
-      user.status = user.status === 'active' ? 'blocked' : 'active';
-      // Optionally call API
+    updateUserStatus(user: IUser): void {
+      const status = user.status;
+      
+      this.adminService.updateUserStatus(user.id, status).subscribe({
+        next: (res) => {
+          Swal.fire({
+                      icon: 'success',
+                      title: 'Status Updated',
+                      text: res.message || 'User Status Updation Successful',
+                      timer: 2000,
+                      showConfirmButton: false,
+                    }).then(()=>{
+                      location.reload()
+                    })
+        },
+        error: (err) => {
+          Swal.fire({
+                      icon: 'error',
+                      title: 'User Status Updation Failed',
+                      text: err?.message || 'User Status Updation Failed',
+                    });
+          console.error('Error updating user status:', err);
+        }
+      });
     }
 }
