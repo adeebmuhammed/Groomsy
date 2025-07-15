@@ -10,4 +10,6 @@ export interface IAdminService {
     listBarbers(search: string): Promise<{ response: ListResponseDto<BarberDto>, status: number;}>;
     blockUser(userId: string): Promise<{ response: UserDto, message: string, status: number;}>;
     unBlockUser(userId: string): Promise<{ response: UserDto, message: string, status: number;}>;
+    blockBarber(barberId: string): Promise<{ response: BarberDto, message: string, status: number;}>;
+    unBlockBarber(barberId: string): Promise<{ response: BarberDto, message: string, status: number;}>;
 }

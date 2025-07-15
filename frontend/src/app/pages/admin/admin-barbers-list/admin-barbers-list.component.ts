@@ -5,9 +5,10 @@ import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/a
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../services/admin/admin.service';
 import { AdminTableComponent } from '../../../components/admin/admin-table/admin-table.component';
+import Swal from 'sweetalert2';
 
 interface IBarber {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -50,8 +51,29 @@ export class AdminBarbersListComponent implements OnInit {
     this.currentPage = page;
   }
 
-  toggleStatus(barber: IBarber): void {
-    barber.status = barber.status === 'active' ? 'blocked' : 'active';
-    // Optionally call API
-  }
+  updateUserStatus(barber: IBarber): void {
+        const status = barber.status;
+        
+        this.adminService.updateBarberStatus(barber.id, status).subscribe({
+          next: (res) => {
+            Swal.fire({
+                        icon: 'success',
+                        title: 'Status Updated',
+                        text: res.message || 'Barber Status Updation Successful',
+                        timer: 2000,
+                        showConfirmButton: false,
+                      }).then(()=>{
+                        location.reload()
+                      })
+          },
+          error: (err) => {
+            Swal.fire({
+                        icon: 'error',
+                        title: 'Barber Status Updation Failed',
+                        text: err?.message || 'Barber Status Updation Failed',
+                      });
+            console.error('Error updating barber status:', err);
+          }
+        });
+      }
 }

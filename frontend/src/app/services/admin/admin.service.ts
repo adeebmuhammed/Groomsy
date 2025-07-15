@@ -22,4 +22,7 @@ export class AdminService {
     return this.http.patch<{ message: string }>(`${environment.apiBaseUrl}/admin/update-user-status/${userId}`,{ status },{ withCredentials: true });
   }
 
+  updateBarberStatus(barberId: string, status: string) {
+    return this.http.patch<{ message: string }>(`${environment.apiBaseUrl}/admin/update-barber-status/${barberId}`,{ status },{ withCredentials: true });
+  }
 }

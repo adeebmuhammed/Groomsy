@@ -22,6 +22,8 @@ adminRoutes
 .get('/users', adminAuth, adminController.listUsers)
 .patch('/update-user-status/:id', adminAuth, adminController.updateUserStatus)
 
-adminRoutes.get('/barbers', adminAuth, adminController.listBarbers)
+adminRoutes
+.get('/barbers', adminAuth, adminController.listBarbers)
+.patch('/update-barber-status/:id', adminAuth, adminController.updateBarberStatus)
 
 export default adminRoutes;

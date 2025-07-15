@@ -98,4 +98,28 @@ export class AdminController implements IAdminController{
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({error: error instanceof Error ? error.message : "user status update Failed"})
     }
   }
+
+  updateBarberStatus = async (req: Request, res: Response): Promise<void> =>{
+    try {
+      const { id: barberId } = req.params
+      const { status } = req.body
+
+      let result;
+      if (status === "active") {
+        result = await this.adminService.blockBarber(barberId);
+      } else if (status === "blocked") {
+        result = await this.adminService.unBlockBarber(barberId);
+      } else {
+        throw new Error("Invalid status");
+      }
+
+      res.status(result.status).json({
+        message: result.message,
+        barber: result.response
+      })
+    } catch (error) {
+      console.error(error)
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({error: error instanceof Error ? error.message : "barber status update Failed"})
+    }
+  }
 }

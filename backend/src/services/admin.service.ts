@@ -155,4 +155,60 @@ export class AdminService implements IAdminService{
             response
         }
     }
+
+    blockBarber = async (barberId: string): Promise<{ response: BarberDto; message: string; status: number; }> =>{
+        const barber = await this.barberRepo.findById(barberId)
+        if (!barber) {
+            throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
+        }
+        if (barber.status === "blocked") throw new Error("barber already blocked");
+
+        const updatedBarber = await this.barberRepo.update(barberId,{
+            status: "blocked"
+        })
+        if (!updatedBarber) throw new Error("Could not block barber");
+
+        const response: BarberDto = {
+            id: updatedBarber._id.toString(),
+            name: updatedBarber.name,
+            email: updatedBarber.email,
+            district: updatedBarber.district,
+            status: updatedBarber.status,
+            createdAt: updatedBarber.createdAt
+        }
+
+        return{
+            message: MESSAGES.SUCCESS.USER_BLOCKED,
+            status: STATUS_CODES.OK,
+            response
+        }
+    }
+
+    unBlockBarber = async (barberId: string): Promise<{ response: BarberDto; message: string; status: number; }> =>{
+        const barber = await this.barberRepo.findById(barberId)
+        if (!barber) {
+            throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
+        }
+        if (barber.status === "active") throw new Error("barber already active");
+
+        const updatedBarber = await this.barberRepo.update(barberId,{
+            status: "active"
+        })
+        if (!updatedBarber) throw new Error("Could not unblock barber");
+
+        const response: BarberDto = {
+            id: updatedBarber._id.toString(),
+            name: updatedBarber.name,
+            email: updatedBarber.email,
+            district: updatedBarber.district,
+            status: updatedBarber.status,
+            createdAt: updatedBarber.createdAt
+        }
+
+        return{
+            message: MESSAGES.SUCCESS.USER_UNBLOCKED,
+            status: STATUS_CODES.OK,
+            response
+        }
+    }
 }
