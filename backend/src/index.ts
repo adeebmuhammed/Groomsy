@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db';
 import routes from './routes/routes'
 import cookieParser from 'cookie-parser'
+import { requestLogger } from './middlewares/logger.middleware';
 
 const app = express();
 const PORT = 5000;
@@ -17,7 +18,7 @@ app.use(cors({
   origin: process.env.FRONTEND_URL,
   credentials: true
 }));
-
+app.use(requestLogger)
 app.use(express.json());
 
 app.use('/',routes)
