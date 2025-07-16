@@ -1,0 +1,13 @@
+2025-07-15 10:36:38 [INFO]: POST /admin/login
+2025-07-15 10:36:48 [INFO]: GET /admin/barbers
+2025-07-15 10:36:53 [INFO]: GET /admin/users
+2025-07-15 10:36:59 [INFO]: PATCH /admin/update-user-status/686bca3621c9da1f946b940f
+2025-07-15 10:37:02 [INFO]: GET /admin/users
+2025-07-15 10:37:10 [INFO]: PATCH /admin/update-user-status/686bca3621c9da1f946b940f
+2025-07-15 10:37:12 [INFO]: GET /admin/users
+2025-07-15 10:37:20 [INFO]: POST /admin/logout
+2025-07-16 09:05:28 [INFO]: POST /admin/login
+2025-07-16 09:05:32 [INFO]: GET /admin/users
+2025-07-16 09:06:08 [INFO]: GET /admin/barbers
+2025-07-16 09:06:13 [INFO]: GET /admin/users
+2025-07-16 09:06:15 [INFO]: GET /admin/barbers
