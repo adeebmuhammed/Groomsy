@@ -5,11 +5,11 @@ import { MESSAGES, STATUS_CODES } from "../utils/constants";
 
 export class BarberController implements IBarberController{
 
-    constructor( private barberService: BarberService){}
+    constructor( private _barberService: BarberService){}
 
     signup = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { response,status } = await this.barberService.registerBarber(req.body)
+            const { response,status } = await this._barberService.registerBarber(req.body)
 
             res.status(status).json(response)
         } catch (error) {
@@ -21,7 +21,7 @@ export class BarberController implements IBarberController{
     verifyOTP = async (req: Request, res: Response): Promise<void> => {
         try {
             const { email,otp,purpose } = req.body
-            const { response,status } = await this.barberService.verifyOTP(email,otp,purpose)
+            const { response,status } = await this._barberService.verifyOTP(email,otp,purpose)
 
             res.status(status).json(response)
         } catch (error) {
@@ -33,7 +33,7 @@ export class BarberController implements IBarberController{
         try {
             const { email,purpose } = req.body
 
-            const { response,status } = await this.barberService.resendOTP(email, purpose)
+            const { response,status } = await this._barberService.resendOTP(email, purpose)
             res.status(status).json(response)
         } catch (error) {
             console.error(error)
@@ -44,7 +44,7 @@ export class BarberController implements IBarberController{
     login = async (req: Request, res: Response): Promise<void> => {
         try {
             const { email, password} = req.body
-            const { response, status } = await this.barberService.login(email, password)
+            const { response, status } = await this._barberService.login(email, password)
 
             res.status(status).json(response)
         } catch (error) {
@@ -56,7 +56,7 @@ export class BarberController implements IBarberController{
     forgotPassword = async (req: Request, res: Response): Promise<void> => {
         try {
             const { email } = req.body
-            const { response, status } = await this.barberService.forgotPassword(email)
+            const { response, status } = await this._barberService.forgotPassword(email)
 
             res.status(status).json(response)
         } catch (error) {
@@ -68,7 +68,7 @@ export class BarberController implements IBarberController{
     resetPassword = async (req: Request, res: Response): Promise<void> => {
         try {
             const { email, password, confirmPassword } = req.body
-            const { response, status } = await this.barberService.resetPassword(email, password, confirmPassword)
+            const { response, status } = await this._barberService.resetPassword(email, password, confirmPassword)
 
             res.status(status).json(response)
         } catch (error) {

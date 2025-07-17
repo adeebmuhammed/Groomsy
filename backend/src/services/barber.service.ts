@@ -17,7 +17,7 @@ import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import OTPService from "../utils/OTPService";
 
 export class BarberService implements IBarberService {
-  constructor(private barberRepo: BarberRepository) {}
+  constructor(private _barberRepo: BarberRepository) {}
 
   registerBarber = async(
     barberData: BarberRegisterRequestDto
@@ -41,7 +41,7 @@ export class BarberService implements IBarberService {
       );
     }
 
-    const existingBarber = await this.barberRepo.findByEmail(email);
+    const existingBarber = await this._barberRepo.findByEmail(email);
     if (existingBarber) {
       throw new Error(MESSAGES.ERROR.EMAIL_EXISTS);
     }
@@ -51,7 +51,7 @@ export class BarberService implements IBarberService {
     await OTPService.sendOTP(email, otp);
     console.log(otp);
 
-    await this.barberRepo.create({
+    await this._barberRepo.create({
       ...barberData,
       otp,
       password: hashedPassword,
@@ -76,7 +76,7 @@ export class BarberService implements IBarberService {
       throw new Error(MESSAGES.ERROR.OTP_INVALID);
     }
 
-    const barber = await this.barberRepo.findByEmail(email);
+    const barber = await this._barberRepo.findByEmail(email);
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
     }
@@ -91,7 +91,7 @@ export class BarberService implements IBarberService {
 
     barber.otp = null;
 
-    await this.barberRepo.update(barber._id.toString(), barber);
+    await this._barberRepo.update(barber._id.toString(), barber);
 
     return {
       response: {
@@ -112,7 +112,7 @@ export class BarberService implements IBarberService {
     response: MessageResponseDto & { user: { name: string; email: string } };
     status: number;
   }> => {
-    const barber = await this.barberRepo.findByEmail(email);
+    const barber = await this._barberRepo.findByEmail(email);
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
     }
@@ -126,7 +126,7 @@ export class BarberService implements IBarberService {
     console.log(newOTP);
 
     barber.otp = newOTP;
-    await this.barberRepo.update(barber._id.toString(), barber);
+    await this._barberRepo.update(barber._id.toString(), barber);
 
     return {
       response: {
@@ -149,7 +149,7 @@ export class BarberService implements IBarberService {
       throw new Error("password is required")
     }
 
-    const barber = await this.barberRepo.findByEmail(email)
+    const barber = await this._barberRepo.findByEmail(email)
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
     }
@@ -196,14 +196,14 @@ export class BarberService implements IBarberService {
       throw new Error("invalid email format")
     }
 
-    const barber = await this.barberRepo.findByEmail(email)
+    const barber = await this._barberRepo.findByEmail(email)
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
     }
 
     const otp = OTPService.generateOTP()
     barber.otp = otp
-    await this.barberRepo.update(barber._id.toString(), barber)
+    await this._barberRepo.update(barber._id.toString(), barber)
     await OTPService.sendOTP(email, otp)
     console.log(otp)
 
@@ -226,14 +226,14 @@ export class BarberService implements IBarberService {
       throw new Error(MESSAGES.ERROR.PASSWORD_MISMATCH)
     }
 
-    const barber = await this.barberRepo.findByEmail(email)
+    const barber = await this._barberRepo.findByEmail(email)
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
     barber.password = hashedPassword
-    await this.barberRepo.update(barber._id.toString(),barber)
+    await this._barberRepo.update(barber._id.toString(),barber)
 
     return{
       response : { message : MESSAGES.SUCCESS.PASSWORD_RESET },

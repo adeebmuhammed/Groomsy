@@ -6,13 +6,13 @@ import { STATUS_CODES } from "../utils/constants";
 export class AdminController implements IAdminController{
 
     constructor(
-        private readonly adminService : IAdminService
+        private _adminService : IAdminService
     ){}
 
     login = async (req: Request, res: Response): Promise<void> => {
         try {
             const {email,password} = req.body
-            const result  = await this.adminService.loginAdmin(email,password)
+            const result  = await this._adminService.loginAdmin(email,password)
             res.cookie("auth-token", result.token, {
         httpOnly: true,
         secure: false,
@@ -54,7 +54,7 @@ export class AdminController implements IAdminController{
   listUsers = async (req: Request, res: Response): Promise<void> => {
     try {
       const search = (req.query.search) as string || "";
-      const { response, status } = await this.adminService.listUsers(search)
+      const { response, status } = await this._adminService.listUsers(search)
 
       res.status(status).json(response)
     } catch (error) {
@@ -66,7 +66,7 @@ export class AdminController implements IAdminController{
   listBarbers = async (req: Request, res: Response): Promise<void> =>{
     try {
       const search = (req.query.search) as string || ""
-      const { response,status } = await this.adminService.listBarbers(search)
+      const { response,status } = await this._adminService.listBarbers(search)
 
       res.status(status).json(response)
     } catch (error) {
@@ -82,9 +82,9 @@ export class AdminController implements IAdminController{
 
       let result;
       if (status === "active") {
-        result = await this.adminService.blockUser(userId);
+        result = await this._adminService.blockUser(userId);
       } else if (status === "blocked") {
-        result = await this.adminService.unBlockUser(userId);
+        result = await this._adminService.unBlockUser(userId);
       } else {
         throw new Error("Invalid status");
       }
@@ -106,9 +106,9 @@ export class AdminController implements IAdminController{
 
       let result;
       if (status === "active") {
-        result = await this.adminService.blockBarber(barberId);
+        result = await this._adminService.blockBarber(barberId);
       } else if (status === "blocked") {
-        result = await this.adminService.unBlockBarber(barberId);
+        result = await this._adminService.unBlockBarber(barberId);
       } else {
         throw new Error("Invalid status");
       }

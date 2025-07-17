@@ -5,11 +5,11 @@ import { STATUS_CODES } from "../utils/constants";
 
 export class UserController implements IUserController{
 
-    constructor(private userService:IUserService){}
+    constructor(private _userService:IUserService){}
 
     register = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { response,status } = await this.userService.registerUser(req.body);
+            const { response,status } = await this._userService.registerUser(req.body);
 
             res.status(status).json({
                 response,
@@ -26,7 +26,7 @@ export class UserController implements IUserController{
     verifyOTP = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, otp, purpose } = req.body; // get purpose from frontend
-        const { response, status } = await this.userService.verifyOTP(email, otp, purpose);
+        const { response, status } = await this._userService.verifyOTP(email, otp, purpose);
 
         res.status(status).json(response);
     } catch (error) {
@@ -49,7 +49,7 @@ export class UserController implements IUserController{
             return;
         }
 
-        const { response, status } = await this.userService.resendOTP(email, purpose);
+        const { response, status } = await this._userService.resendOTP(email, purpose);
         res.status(status).json(response);
     } catch (error) {
         console.error("OTP resend error:", error);
@@ -63,7 +63,7 @@ export class UserController implements IUserController{
     googleCallback = async (req: Request, res: Response): Promise<void> => {
         try {
             const user = req.user as any
-            const { response,status } = await this.userService.processGoogleAuth(user)
+            const { response,status } = await this._userService.processGoogleAuth(user)
 
             res.cookie("auth-token", response.token, {
                 httpOnly: true,
@@ -96,7 +96,7 @@ export class UserController implements IUserController{
     login = async (req: Request, res: Response): Promise<void> => {
         try {
             const { email, password } = req.body
-            const { response,status } = await this.userService.loginUser(email,password)
+            const { response,status } = await this._userService.loginUser(email,password)
 
             res.cookie("auth-token", response.token, {
                 httpOnly: true,
@@ -127,7 +127,7 @@ export class UserController implements IUserController{
     forgotPassword = async(req: Request, res: Response): Promise<void> =>{
         try {
             const {email} = req.body
-            const { response,status } = await this.userService.forgotPassword(email)
+            const { response,status } = await this._userService.forgotPassword(email)
             res.status(status).json(response)
         } catch (error) {
             console.error("Forgot password error:", error);
@@ -141,7 +141,7 @@ export class UserController implements IUserController{
     resetPassword = async (req: Request, res: Response): Promise<void> =>{
         try {
             const { email,password,confirmPassword } = req.body
-            const { response,status } = await this.userService.resetPassword( email, password, confirmPassword)
+            const { response,status } = await this._userService.resetPassword( email, password, confirmPassword)
 
             res.status(status).json(response)
         } catch (error) {

@@ -9,7 +9,7 @@ import OTPService from '../utils/OTPService'
 
 export class UserService implements IUserService{
 
-    constructor(private userRepo : IUserRepository){}
+    constructor(private _userRepo : IUserRepository){}
 
 
     registerUser = async (userData: UserRegisterRequestDto): Promise<{ response: MessageResponseDto, status: number }> => {
@@ -36,7 +36,7 @@ export class UserService implements IUserService{
             throw new Error(MESSAGES.ERROR.PASSWORD_MISMATCH);
         }
 
-        const existingUser = await this.userRepo.findByEmail(email)
+        const existingUser = await this._userRepo.findByEmail(email)
         if (existingUser) {
             throw new Error(MESSAGES.ERROR.EMAIL_EXISTS)
         }
@@ -47,7 +47,7 @@ export class UserService implements IUserService{
         await OTPService.sendOTP(email, otp);
         console.log(otp);
 
-        await this.userRepo.create({
+        await this._userRepo.create({
             ...userData,
             password:hashedPassword,
             otp
@@ -69,7 +69,7 @@ export class UserService implements IUserService{
             throw new Error("OTP must be a 6-digit number");
         }
         
-        const user = await this.userRepo.findByEmail(email);
+        const user = await this._userRepo.findByEmail(email);
         if (!user) {
             throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
         }
@@ -82,9 +82,9 @@ export class UserService implements IUserService{
             user.isVerified = true;
         }
         
-        user.otp = null; // Always clear OTP after use
+        user.otp = null;
         
-        await this.userRepo.update(user._id.toString(), user);
+        await this._userRepo.update(user._id.toString(), user);
         
         return {
             response: {
@@ -106,12 +106,11 @@ export class UserService implements IUserService{
   response: MessageResponseDto & { user: { name: string; email: string } };
   status: number;
 }> => {
-  const user = await this.userRepo.findByEmail(email);
+  const user = await this._userRepo.findByEmail(email);
   if (!user) {
     throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
   }
 
-  // For signup only, prevent resending OTP if already verified
   if (purpose === 'signup' && user.isVerified) {
     throw new Error(MESSAGES.ERROR.ALREADY_VERIFIED);
   }
@@ -121,7 +120,7 @@ export class UserService implements IUserService{
   console.log("Generated OTP:", newOTP);
 
   user.otp = newOTP;
-  await this.userRepo.update(user._id.toString(), user);
+  await this._userRepo.update(user._id.toString(), user);
 
   return {
     response: {
@@ -138,15 +137,15 @@ export class UserService implements IUserService{
 
     async processGoogleAuth(profile: any): Promise<{ response: UserLoginResponseDto; status: number; }> {
         const email = profile.email
-        let user = await this.userRepo.findByEmail(email)
+        let user = await this._userRepo.findByEmail(email)
 
         if (user) {
             if (!user.googleId) {
                 user.googleId = profile.id
-                await this.userRepo.update(user._id.toString(),user)
+                await this._userRepo.update(user._id.toString(),user)
             }
         }else{
-            user = await this.userRepo.create({
+            user = await this._userRepo.create({
                 googleId:profile.id,
                 email,
                 name:profile.displayName,
@@ -194,7 +193,7 @@ export class UserService implements IUserService{
             throw new Error("password is required")
         }
 
-        const user = await this.userRepo.findByEmail(email)
+        const user = await this._userRepo.findByEmail(email)
 
         if (!user) {
             throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
@@ -247,14 +246,14 @@ export class UserService implements IUserService{
             throw new Error('Invalid email format')
         }
 
-        const user = await this.userRepo.findByEmail(email)
+        const user = await this._userRepo.findByEmail(email)
         if (!user) {
             throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
         }
 
         const otp = OTPService.generateOTP()
         user.otp = otp
-        await this.userRepo.update(user.id.toString(),user)
+        await this._userRepo.update(user.id.toString(),user)
         await OTPService.sendOTP(email,otp)
         console.log(otp);
         
@@ -277,14 +276,14 @@ export class UserService implements IUserService{
             throw new Error(MESSAGES.ERROR.PASSWORD_MISMATCH)
         }
 
-        const user = await this.userRepo.findByEmail(email)
+        const user = await this._userRepo.findByEmail(email)
         if (!user) {
             throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
         }
 
         const hashedPassword = await bcrypt.hash(password,10)
         user.password = hashedPassword
-        await this.userRepo.update(user._id.toString(),user)
+        await this._userRepo.update(user._id.toString(),user)
 
         return {
             response: {message: MESSAGES.SUCCESS.PASSWORD_RESET},

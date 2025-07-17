@@ -12,9 +12,9 @@ import { IBarberRepository } from "../repositories/interfaces/IBarberRepository"
 export class AdminService implements IAdminService{
 
     constructor(
-        private adminRepo:IAdminRepository,
-        private userRepo:IUserRepository,
-        private barberRepo:IBarberRepository
+        private _adminRepo:IAdminRepository,
+        private _userRepo:IUserRepository,
+        private _barberRepo:IBarberRepository
     ){}
 
 
@@ -28,7 +28,7 @@ export class AdminService implements IAdminService{
         }
         
 
-        const admin = await this.adminRepo.findByEmail(email)
+        const admin = await this._adminRepo.findByEmail(email)
         
         if (!admin) {
             throw new Error(MESSAGES.ERROR.INVALID_CREDENTIALS);
@@ -57,7 +57,7 @@ export class AdminService implements IAdminService{
     }
 
     listUsers = async (search = ""): Promise<{ response: ListResponseDto<UserDto>; status: number; }> => {
-        const users = await this.userRepo.findBySearchTerm(search)
+        const users = await this._userRepo.findBySearchTerm(search)
 
         const userDtos: UserDto[] = users.map((user: any) => ({
             id: user._id?.toString(),
@@ -79,7 +79,7 @@ export class AdminService implements IAdminService{
     }
 
     listBarbers = async (search = ""): Promise<{ response: ListResponseDto<BarberDto>; status: number; }> =>{
-        const barbers = await this.barberRepo.find({})
+        const barbers = await this._barberRepo.find({})
 
         const barberDtos: BarberDto[] = barbers.map((barber: any) => ({
             id: barber._id?.toString(),
@@ -103,13 +103,13 @@ export class AdminService implements IAdminService{
     }
 
     blockUser = async (userId: string): Promise<{ response: UserDto; message: string; status: number; }> =>{
-        const user = await this.userRepo.findById(userId)
+        const user = await this._userRepo.findById(userId)
         if (!user) {
             throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
         }
         if (user.status === "blocked") throw new Error("User already blocked");
 
-        const updatedUser = await this.userRepo.update(userId,{
+        const updatedUser = await this._userRepo.update(userId,{
             status: "blocked"
         })
         if (!updatedUser) throw new Error("Could not block user");
@@ -130,13 +130,13 @@ export class AdminService implements IAdminService{
     }
 
     unBlockUser = async (userId: string): Promise<{ response: UserDto; message: string; status: number; }> =>{
-        const user = await this.userRepo.findById(userId)
+        const user = await this._userRepo.findById(userId)
         if (!user) {
             throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
         }
         if (user.status === "active") throw new Error("User already active");
 
-        const updatedUser = await this.userRepo.update(userId,{
+        const updatedUser = await this._userRepo.update(userId,{
             status: "active"
         })
         if (!updatedUser) throw new Error("Could not unblock user");
@@ -157,13 +157,13 @@ export class AdminService implements IAdminService{
     }
 
     blockBarber = async (barberId: string): Promise<{ response: BarberDto; message: string; status: number; }> =>{
-        const barber = await this.barberRepo.findById(barberId)
+        const barber = await this._barberRepo.findById(barberId)
         if (!barber) {
             throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
         }
         if (barber.status === "blocked") throw new Error("barber already blocked");
 
-        const updatedBarber = await this.barberRepo.update(barberId,{
+        const updatedBarber = await this._barberRepo.update(barberId,{
             status: "blocked"
         })
         if (!updatedBarber) throw new Error("Could not block barber");
@@ -185,13 +185,13 @@ export class AdminService implements IAdminService{
     }
 
     unBlockBarber = async (barberId: string): Promise<{ response: BarberDto; message: string; status: number; }> =>{
-        const barber = await this.barberRepo.findById(barberId)
+        const barber = await this._barberRepo.findById(barberId)
         if (!barber) {
             throw new Error(MESSAGES.ERROR.USER_NOT_FOUND)
         }
         if (barber.status === "active") throw new Error("barber already active");
 
-        const updatedBarber = await this.barberRepo.update(barberId,{
+        const updatedBarber = await this._barberRepo.update(barberId,{
             status: "active"
         })
         if (!updatedBarber) throw new Error("Could not unblock barber");
