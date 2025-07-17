@@ -2,6 +2,7 @@ import { Request,Response } from "express";
 import { IUserController } from "./interfaces/IUserController";
 import { IUserService } from "../services/interfaces/IUserService";
 import { STATUS_CODES } from "../utils/constants";
+import { generateAccessToken,generateRefreshToken } from "../utils/jwt.generator";
 
 export class UserController implements IUserController{
 
@@ -65,15 +66,24 @@ export class UserController implements IUserController{
             const user = req.user as any
             const { response,status } = await this._userService.processGoogleAuth(user)
 
-            res.cookie("auth-token", response.token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict",
-                maxAge: 3600000,
-                path: "/",
-            });
+            const accessToken = generateAccessToken({ userId: response.id, type: "user" });
+                              const refreshToken = generateRefreshToken({ userId: response.id, type: "user" });
+                              
+                              res.cookie("auth-token", accessToken, {
+                                httpOnly: true,
+                                secure: false,
+                                sameSite: "lax",
+                                maxAge: 60 * 60 * 1000, // 1 hour
+                              });
+                              
+                              res.cookie("refresh-token", refreshToken, {
+                                httpOnly: true,
+                                secure: false,
+                                sameSite: "strict",
+                                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                              });
 
-            res.redirect(`${process.env.FRONTEND_URL}/user/auth-callback?token=${response.token}&name=${encodeURIComponent(response.name)}&email=${encodeURIComponent(response.email)}`);
+            res.redirect(`${process.env.FRONTEND_URL}/user/auth-callback?token=${accessToken}&name=${encodeURIComponent(response.name)}&email=${encodeURIComponent(response.email)}`);
         } catch (error) {
             console.error("Google auth error:", error);
             res.redirect(`${process.env.FRONTEND_URL}/user/signup?error=google_auth_failed`);
@@ -81,12 +91,8 @@ export class UserController implements IUserController{
     }
 
     logout = async (req: Request, res: Response): Promise<void> =>{
-        res.clearCookie("auth-token", {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            path: "/",
-        });
+        res.clearCookie("auth-token", { path: "/" });
+        res.clearCookie("refresh-token", { path: "/" });
 
         res.status(STATUS_CODES.OK).json({
             message: "Logged out successfully",
@@ -98,13 +104,22 @@ export class UserController implements IUserController{
             const { email, password } = req.body
             const { response,status } = await this._userService.loginUser(email,password)
 
-            res.cookie("auth-token", response.token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "strict",
-                maxAge: 3600000,
-                path: "/",
-            });
+            const accessToken = generateAccessToken({ userId: response.id, type: "user" });
+            const refreshToken = generateRefreshToken({ userId: response.id, type: "user" });
+                              
+                              res.cookie("auth-token", accessToken, {
+                                httpOnly: true,
+                                secure: false,
+                                sameSite: "lax",
+                                maxAge: 60 * 60 * 1000, // 1 hour
+                              });
+                              
+                              res.cookie("refresh-token", refreshToken, {
+                                httpOnly: true,
+                                secure: false,
+                                sameSite: "strict",
+                                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                              });
 
             res.status(status).json({
                 message : response.message,

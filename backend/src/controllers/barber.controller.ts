@@ -2,6 +2,7 @@ import { Request, response, Response } from "express";
 import { IBarberController } from "./interfaces/IBarberController";
 import { BarberService } from "../services/barber.service";
 import { MESSAGES, STATUS_CODES } from "../utils/constants";
+import { generateAccessToken,generateRefreshToken } from "../utils/jwt.generator";
 
 export class BarberController implements IBarberController{
 
@@ -46,6 +47,23 @@ export class BarberController implements IBarberController{
             const { email, password} = req.body
             const { response, status } = await this._barberService.login(email, password)
 
+            const accessToken = generateAccessToken({ userId: response.id, type: "barber" });
+                  const refreshToken = generateRefreshToken({ userId: response.id, type: "barber" });
+                  
+                  res.cookie("auth-token", accessToken, {
+                    httpOnly: true,
+                    secure: false,
+                    sameSite: "lax",
+                    maxAge: 60 * 60 * 1000, // 1 hour
+                  });
+                  
+                  res.cookie("refresh-token", refreshToken, {
+                    httpOnly: true,
+                    secure: false,
+                    sameSite: "strict",
+                    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                  });
+
             res.status(status).json(response)
         } catch (error) {
             console.error(error)
@@ -75,5 +93,14 @@ export class BarberController implements IBarberController{
             console.error(error)
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({error: error instanceof Error ? error.message : "reset password failed"})
         }
+    }
+
+    logout = async (req: Request, res: Response): Promise<void> =>{
+        res.clearCookie("auth-token", { path: "/" });
+        res.clearCookie("refresh-token", { path: "/" });
+
+        res.status(STATUS_CODES.OK).json({
+            message: "Logged out successfully",
+        });
     }
 }

@@ -16,6 +16,5 @@ export class UserLoginResponseDto {
   email!: string;
   phone?: string;
   status!: string;
-  token!: string;
   message!: string;
 }

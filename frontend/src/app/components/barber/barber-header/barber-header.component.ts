@@ -35,7 +35,7 @@ export class BarberHeaderComponent implements OnInit {
     let logoutObservable: Observable<any> | null = null;
 
     if (role === 'barber') {
-      logoutObservable = this.authService.userLogout();
+      logoutObservable = this.authService.barberLogout();
     } else {
       // Not user or unexpected role — fallback
       localStorage.clear();

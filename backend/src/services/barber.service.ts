@@ -167,13 +167,6 @@ export class BarberService implements IBarberService {
       throw new Error(MESSAGES.ERROR.INVALID_CREDENTIALS)
     }
 
-    const jwtSecret = process.env.JWT_SECRET
-    if (!jwtSecret) {
-      throw new Error(MESSAGES.ERROR.JWT_SECRET_MISSING)
-    }
-
-    const token = jwt.sign({ userId: barber._id, type: "barber" }, jwtSecret, { expiresIn: "1h"})
-
     const response: BarberLoginResponseDto = {
       id: barber._id.toString(),
       name: barber.name,
@@ -181,7 +174,6 @@ export class BarberService implements IBarberService {
       phone: barber.phone,
       status: barber.status,
       district: barber.district,
-      token: token,
       message: MESSAGES.SUCCESS.LOGIN
     }
 

@@ -17,6 +17,5 @@ export class BarberLoginResponseDto {
   phone?: string;
   district!: string;
   status!: string;
-  token!: string;
   message!: string;
 }

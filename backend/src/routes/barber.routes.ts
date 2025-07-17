@@ -3,7 +3,6 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import { BarberController } from "../controllers/barber.controller";
 import { BarberService } from "../services/barber.service";
 import { BarberRepository } from "../repositories/barber.repository";
-import passport from  '../config/passport'
 
 const barberRoutes = Router()
 const barberAuth = authMiddleware(["barber"])
@@ -19,5 +18,6 @@ barberRoutes
 .post('/login',barberController.login)
 .post('/forgot-password',barberController.forgotPassword)
 .post('/reset-password',barberController.resetPassword)
+.post('/logout',barberController.logout)
 
 export default barberRoutes;

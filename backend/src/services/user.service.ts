@@ -173,7 +173,6 @@ export class UserService implements IUserService{
             email: user.email,
             phone: user.phone,
             status: user.status,
-            token: token,
             message: MESSAGES.SUCCESS.LOGIN
         }
 
@@ -231,7 +230,6 @@ export class UserService implements IUserService{
             email: user.email,
             phone: user.phone,
             status: user.status,
-            token: token,
             message: MESSAGES.SUCCESS.LOGIN
         }
 

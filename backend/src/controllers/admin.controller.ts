@@ -2,6 +2,7 @@ import { Request,Response } from "express";
 import { IAdminController } from "./interfaces/IAdminController";
 import { IAdminService } from "../services/interfaces/IAdminService";
 import { STATUS_CODES } from "../utils/constants";
+import { generateAccessToken,generateRefreshToken } from "../utils/jwt.generator";
 
 export class AdminController implements IAdminController{
 
@@ -13,16 +14,27 @@ export class AdminController implements IAdminController{
         try {
             const {email,password} = req.body
             const result  = await this._adminService.loginAdmin(email,password)
-            res.cookie("auth-token", result.token, {
+
+      const accessToken = generateAccessToken({ userId: result.admin._id, type: "admin" });
+      const refreshToken = generateRefreshToken({ userId: result.admin._id, type: "admin" });
+      
+      res.cookie("auth-token", accessToken, {
         httpOnly: true,
         secure: false,
         sameSite: "lax",
-        maxAge: 3600000,
-        path: "/",
+        maxAge: 60 * 60 * 1000, // 1 hour
       });
+      
+      res.cookie("refresh-token", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
       res.status(result.status).json({
         message: result.message,
-        token: result.token,
+        token: accessToken,
         user: {
           id: result.admin._id,
           name: result.admin.name,
@@ -39,17 +51,13 @@ export class AdminController implements IAdminController{
     }
 
     logout = async (req: Request, res: Response): Promise<void> => {
-    res.clearCookie("auth-token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-    });
-
-    res.status(STATUS_CODES.OK).json({
-      message: "Logged out successfully",
-    });
-  };
+      res.clearCookie("auth-token", { path: "/" });
+      res.clearCookie("refresh-token", { path: "/" });
+      
+      res.status(STATUS_CODES.OK).json({
+        message: "Logged out successfully",
+      });
+    };
 
   listUsers = async (req: Request, res: Response): Promise<void> => {
     try {

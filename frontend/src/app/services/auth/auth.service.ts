@@ -235,4 +235,18 @@ export class AuthService {
   barberResetPassword(data: {email: string|null, password: string, confirmPassword: string}):Observable<any>{
     return this.http.post(`${this.API_URL}/barber/reset-password`,data)
   }
+
+  barberLogout():Observable<any>{
+    return new Observable(observer => {
+      this.http.post(`${this.API_URL}/barber/logout`, {}, { withCredentials: true }).subscribe({
+        next: res => {
+          localStorage.clear();
+          this.updateLoginState('barber', false, null, null);
+          observer.next(res);
+          observer.complete();
+        },
+        error: err => observer.error(err)
+      });
+    });
+  }
 }
