@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Response,Request } from "express";
 import { generateAccessToken } from "../utils/jwt.generator";
+import { STATUS_CODES } from "../utils/constants";
 
 export const refreshTokenController = async (req: Request, res: Response): Promise<void> => {
   const refreshToken = req.cookies["refresh-token"];
@@ -20,13 +21,13 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
 
     res.cookie("auth-token", newAccessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       sameSite: "lax",
       maxAge: 60 * 60 * 1000, // 1 hour
     });
 
-    res.status(200).json({ message: "Access token refreshed" });
+    res.status(STATUS_CODES.OK).json({ message: "Access token refreshed" });
   } catch (error) {
-    res.status(403).json({ message: "Invalid refresh token" });
+    res.status(STATUS_CODES.FORBIDDEN).json({ message: "Invalid refresh token" });
   }
 };

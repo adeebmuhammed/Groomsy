@@ -1,4 +1,3 @@
-import { IUser } from "../../models/user.model";
 import { UserRegisterRequestDto,MessageResponseDto,UserLoginResponseDto } from "../../dto/user.dto";
 
 export interface IUserService{

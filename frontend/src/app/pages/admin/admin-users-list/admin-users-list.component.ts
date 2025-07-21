@@ -6,17 +6,7 @@ import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../services/admin/admin.service';
 import { AdminTableComponent } from '../../../components/admin/admin-table/admin-table.component';
 import Swal from 'sweetalert2';
-
-interface IUser {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  status: 'active' | 'blocked';
-  isVerified: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { IUser } from '../../../interfaces/user.interface';
 
 @Component({
   selector: 'app-admin-users-list',

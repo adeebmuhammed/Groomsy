@@ -6,17 +6,7 @@ import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../services/admin/admin.service';
 import { AdminTableComponent } from '../../../components/admin/admin-table/admin-table.component';
 import Swal from 'sweetalert2';
-
-interface IBarber {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  district: string;
-  status: 'active' | 'blocked';
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { IBarber } from '../../../interfaces/barber.interface';
 
 @Component({
   selector: 'app-admin-barbers-list',

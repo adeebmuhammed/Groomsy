@@ -154,19 +154,6 @@ export class UserService implements IUserService{
             })
         }
 
-        const jwtSecret = process.env.JWT_SECRET
-        if (!jwtSecret) {
-            throw new Error(MESSAGES.ERROR.JWT_SECRET_MISSING)
-        }
-
-        const token = jwt.sign({
-            userId:user._id,
-            type: "user",
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-        },jwtSecret, { expiresIn : '1h'})
-
         const response : UserLoginResponseDto = {
             id: user._id.toString(),
             name: user.name,
@@ -214,15 +201,6 @@ export class UserService implements IUserService{
         if (!isPasswordValid) {
             throw new Error(MESSAGES.ERROR.INVALID_CREDENTIALS)
         }
-
-        const jwtSecret = process.env.JWT_SECRET
-        if (!jwtSecret) {
-            throw new Error(MESSAGES.ERROR.JWT_SECRET_MISSING)
-        }
-
-        const token = jwt.sign({userId:user._id,type:"user"}, jwtSecret ,{
-            expiresIn : '1h'
-        })
 
         const response : UserLoginResponseDto = {
             id: user._id.toString(),

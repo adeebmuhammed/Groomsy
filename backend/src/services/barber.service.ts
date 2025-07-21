@@ -6,7 +6,6 @@ import {
 import { IBarberService } from "./interfaces/IBarberService";
 import { BarberRepository } from "../repositories/barber.repository";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import {
   isValidEmail,
   isValidPassword,
