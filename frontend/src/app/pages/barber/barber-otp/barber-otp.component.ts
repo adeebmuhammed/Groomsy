@@ -26,7 +26,7 @@ export class BarberOtpComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute // Inject ActivatedRoute
+    private route: ActivatedRoute
   ) {
     this.otpForm = this.fb.group({
       otp: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
@@ -80,7 +80,7 @@ export class BarberOtpComponent implements OnInit {
         Swal.fire({
           icon: 'error',
           title: 'Verification Failed',
-          text: err.error?.message || 'Invalid or expired OTP.',
+          text: 'Invalid or expired OTP.',
         });
       }
     });
@@ -110,7 +110,7 @@ export class BarberOtpComponent implements OnInit {
           Swal.fire({
             icon: 'error',
             title: 'Resend Failed',
-            text: err.error?.message || 'Unable to resend OTP. Please try again later.',
+            text: 'Unable to resend OTP. Please try again later.',
           });
         }
       });

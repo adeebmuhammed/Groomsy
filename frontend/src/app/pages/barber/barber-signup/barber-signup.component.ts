@@ -71,7 +71,7 @@ export class BarberSignupComponent implements OnInit {
         },
         error:(err)=>{
           console.error('Signup Error:', err);
-        this.errorMessage = err?.message || 'Signup failed. Please try again.';
+        this.errorMessage = 'Signup failed. Please try again.';
 
         // Optional: Show error with SweetAlert too
         Swal.fire({

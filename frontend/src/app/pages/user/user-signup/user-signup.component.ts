@@ -60,7 +60,7 @@ export class UserSignupComponent {
       },
       error: (err) => {
         console.error('Signup Error:', err);
-        this.errorMessage = err?.error?.message || 'Signup failed. Please try again.';
+        this.errorMessage = 'Signup failed. Please try again.';
 
         // Optional: Show error with SweetAlert too
         Swal.fire({
@@ -75,7 +75,7 @@ export class UserSignupComponent {
 
 
   signUpWithGoogle() {
-  window.location.href = 'http://localhost:5000/user/auth/google'; // Update with actual backend URL
+  window.location.href = 'http://localhost:5000/user/auth/google';
 }
 
 }

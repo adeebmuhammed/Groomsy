@@ -29,7 +29,7 @@ const BarberSchema : Schema = new Schema ({
     status: {
       type: String,
       enum: ["pending", "blocked", "active", "rejected"],
-      default: "pending",
+      default: "active",
     },
     isVerified: { type: Boolean, default: false },
     otp: { type: String, default: null },

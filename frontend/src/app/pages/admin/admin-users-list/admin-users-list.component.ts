@@ -59,8 +59,8 @@ export class AdminUsersListComponent implements OnInit {
         error: (err) => {
           Swal.fire({
                       icon: 'error',
-                      title: 'User Status Updation Failed',
-                      text: err?.message || 'User Status Updation Failed',
+                      title: 'Status Updation Failed',
+                      text: 'User Status Updation Failed',
                     });
           console.error('Error updating user status:', err);
         }

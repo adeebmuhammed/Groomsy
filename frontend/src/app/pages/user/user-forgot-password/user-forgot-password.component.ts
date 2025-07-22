@@ -48,7 +48,7 @@ export class UserForgotPasswordComponent implements OnInit {
           Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: err.error?.message || 'Something went wrong.',
+            text: 'Something went wrong.',
           });
         }
       });

@@ -59,8 +59,8 @@ export class AdminBarbersListComponent implements OnInit {
           error: (err) => {
             Swal.fire({
                         icon: 'error',
-                        title: 'Barber Status Updation Failed',
-                        text: err?.message || 'Barber Status Updation Failed',
+                        title: 'Status Updation Failed',
+                        text: 'Barber Status Updation Failed',
                       });
             console.error('Error updating barber status:', err);
           }

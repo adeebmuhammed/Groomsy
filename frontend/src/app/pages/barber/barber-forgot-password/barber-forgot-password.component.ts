@@ -47,7 +47,7 @@ export class BarberForgotPasswordComponent{
             Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: err?.message || 'Something went wrong.',
+              text: 'Something went wrong.',
             });
           }
         });

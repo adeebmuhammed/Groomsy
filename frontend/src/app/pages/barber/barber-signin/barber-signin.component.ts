@@ -53,7 +53,7 @@ export class BarberSigninComponent {
         });
       },
       error: (err) => {
-        this.errorMessage = err?.message || 'Login failed';
+        this.errorMessage = 'Login failed';
 
         Swal.fire({
           icon: 'error',

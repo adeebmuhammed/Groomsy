@@ -70,7 +70,6 @@ export class AuthService {
   return new Observable(observer => {
     this.http.post(`${this.API_URL}/admin/login`, credentials,{ withCredentials: true }).subscribe({
       next: (res: any) => {
-        localStorage.setItem('token', res.token);
         localStorage.setItem('role', 'admin');
 
         this.updateLoginState('admin', true, res.user.name, res.user.email);
@@ -114,7 +113,6 @@ export class AuthService {
       next: (res: any) => {
         if (data.purpose === 'signup') {
           const name = localStorage.getItem('userSignupName') || '';
-          localStorage.setItem('token', res.token); // Only if token is returned
           localStorage.setItem('role', 'user');
           this.updateLoginState('user', true, name, data.email);
         }
@@ -135,8 +133,6 @@ export class AuthService {
   return new Observable(observer => {
     this.http.post(`${this.API_URL}/user/login`, data).subscribe({
       next: (res: any) => {
-        // If your backend returns `res.token` and `res.user`, update like this:
-        localStorage.setItem('token', res.token);
         localStorage.setItem('role', 'user');
 
         const name = res.user?.name || '';
@@ -193,7 +189,6 @@ export class AuthService {
       next: (res: any) => {
         if (data.purpose === 'signup') {
           const name = localStorage.getItem('barberSignupName') || '';
-          localStorage.setItem('token', res.token); // Only if token is returned
           localStorage.setItem('role', 'barber');
           this.updateLoginState('barber', true, name, data.email);
         }
@@ -214,7 +209,6 @@ export class AuthService {
     return new Observable(observer => {
       this.http.post(`${this.API_URL}/barber/login`, credentials).subscribe({
         next: (res: any) => {
-          localStorage.setItem('token', res.token);
           localStorage.setItem('role', 'barber');
           
           this.updateLoginState('barber', true, res.name, res.email);

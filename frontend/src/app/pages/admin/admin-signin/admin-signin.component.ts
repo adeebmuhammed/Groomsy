@@ -42,7 +42,7 @@ export class AdminSigninComponent {
           Swal.fire({
             icon: 'error',
             title: 'Login Failed',
-            text: err?.message || 'Invalid credentials',
+            text: 'Invalid credentials',
           });
         },
       });

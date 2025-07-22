@@ -60,7 +60,7 @@ export class BarberResetPasswordComponent implements OnInit {
             Swal.fire({
               icon: 'error',
               title: 'Reset Password Failed',
-              text: err?.message || 'Reset Password Failed',
+              text: 'Reset Password Failed',
             });
           }
         })

@@ -82,7 +82,7 @@ export class UserOtpComponent implements OnInit {
         Swal.fire({
           icon: 'error',
           title: 'Verification Failed',
-          text: err?.message || 'Invalid or expired OTP.',
+          text: 'Invalid or expired OTP.',
         });
       }
     });
