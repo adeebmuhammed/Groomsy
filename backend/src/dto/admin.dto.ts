@@ -1,6 +1,19 @@
+export class AdminLoginResponseDto {
+  id!: string;
+  name!: string;
+  email!: string;
+  message!: string;
+}
+
 export class ListResponseDto<T> {
   data!: T[];
   message?: string;
+  pagination!: {
+      currentPage: number,
+      totalPages: number,
+      totalItems: number,
+      itemsPerPage: number
+  }
 }
 
 export class UserDto {

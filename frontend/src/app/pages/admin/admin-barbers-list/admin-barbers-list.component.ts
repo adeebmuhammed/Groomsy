@@ -19,6 +19,8 @@ export class AdminBarbersListComponent implements OnInit {
   barbers: IBarber[] = [];
   currentPage = 1;
   itemsPerPage = 5;
+  totalPages = 1;
+  searchTerm = '';
 
   columns = [
     { key: 'name', label: 'Name' },
@@ -32,16 +34,29 @@ export class AdminBarbersListComponent implements OnInit {
   constructor(private adminService: AdminService) {}
 
   ngOnInit(): void {
-    this.adminService.listBarbers().subscribe((res) => {
-      this.barbers = res?.data || [];
-    });
+    this.fetchBarbers()
+  }
+
+  fetchBarbers(): void {
+    this.adminService.listBarbers(this.searchTerm, this.currentPage, this.itemsPerPage)
+      .subscribe((res) => {
+        this.barbers = res?.data || [];
+        this.totalPages = res?.pagination?.totalPages || 1;
+      });
   }
 
   changePage(page: number): void {
     this.currentPage = page;
+    this.fetchBarbers();
   }
 
-  updateUserStatus(barber: IBarber): void {
+  searchChanged(term: string): void {
+    this.searchTerm = term;
+    this.currentPage = 1;
+    this.fetchBarbers();
+  }
+
+  updateBarberStatus(barber: IBarber): void {
         const status = barber.status;
         
         this.adminService.updateBarberStatus(barber.id, status).subscribe({

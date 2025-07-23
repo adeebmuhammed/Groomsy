@@ -1,13 +1,13 @@
-import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt'
 import { IAdmin } from "../models/admin.model";
 import { IAdminService } from "./interfaces/IAdminService";
 import { IAdminRepository } from "../repositories/interfaces/IAdminRepository";
 import { MESSAGES,STATUS_CODES } from "../utils/constants";
 import { isValidEmail } from "../utils/validators";
-import { BarberDto, ListResponseDto, UserDto } from "../dto/admin.dto";
+import { AdminLoginResponseDto, BarberDto, ListResponseDto, UserDto } from "../dto/admin.dto";
 import { IUserRepository } from "../repositories/interfaces/IUserRepository";
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
+import { AdminMapper } from '../mappers/admin.mapper';
 
 export class AdminService implements IAdminService{
 
@@ -18,7 +18,7 @@ export class AdminService implements IAdminService{
     ){}
 
 
-    loginAdmin = async (email: string, password: string): Promise<{ admin: IAdmin; message: string; status: number; }> => {
+    loginAdmin = async (email: string, password: string): Promise<{ response: AdminLoginResponseDto; status: number; }> => {
         if (!isValidEmail(email)) {
             throw new Error("invalid email format");
         }
@@ -40,50 +40,58 @@ export class AdminService implements IAdminService{
         }
 
         return {
-            admin,
-            message: MESSAGES.SUCCESS.LOGIN,
+            response: AdminMapper.toLoginResponse(
+                admin,
+                MESSAGES.SUCCESS.LOGIN,
+            ),
             status: STATUS_CODES.OK,
         };
     }
 
-    listUsers = async (search = ""): Promise<{ response: ListResponseDto<UserDto>; status: number; }> => {
-        const users = await this._userRepo.findBySearchTerm(search)
+listUsers = async (
+    search : string,
+    page : number,
+    limit : number
+): Promise<{ response: ListResponseDto<UserDto>; status: number }> => {
 
-        const userDtos: UserDto[] = users.map((user: any) => ({
-            id: user._id?.toString(),
-            name: user.name,
-            email: user.email,
-            status: user.status,
-            createdAt: user.createdAt,
-        }));
-        
-        const response: ListResponseDto<UserDto> = {
-            data: userDtos,
-            message: "Users fetched successfully"
-        };
+  const { users, totalCount } = await this._userRepo.findBySearchTerm(search, page, limit);
 
-        return {
-            response,
-            status: STATUS_CODES.OK
-        }
+  const response: ListResponseDto<UserDto> = {
+    data: AdminMapper.toUserDtoArray(users),
+    message: "Users fetched successfully",
+    pagination: {
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
+      totalItems: totalCount,
+      itemsPerPage: limit
     }
+  };
 
-    listBarbers = async (search = ""): Promise<{ response: ListResponseDto<BarberDto>; status: number; }> =>{
-        const barbers = await this._barberRepo.find({})
+  return {
+    response,
+    status: STATUS_CODES.OK
+  };
+}
 
-        const barberDtos: BarberDto[] = barbers.map((barber: any) => ({
-            id: barber._id?.toString(),
-            name: barber.name,
-            email: barber.email,
-            phone: barber.phone,
-            district: barber.district,
-            status: barber.status,
-            createdAt: barber.createdAt,
-        }));
+
+    listBarbers = async (
+        search : string,
+        page : number,
+        limit : number
+    ): Promise<{ response: ListResponseDto<BarberDto>; status: number; }> =>{
+        const {barbers,totalCount} = await this._barberRepo.findBySearchTerm( search, page, limit)
 
         const response:ListResponseDto<BarberDto> = {
-            data: barberDtos,
-            message: "Barbers fetched successfully"
+            data: AdminMapper.toBarberDtoArray(
+                barbers
+            ),
+            message: "Barbers fetched successfully",
+            pagination: {
+                currentPage: page,
+                totalPages: Math.ceil(totalCount / limit),
+                totalItems: totalCount,
+                itemsPerPage: limit
+            }
         }
 
         return {
@@ -104,13 +112,7 @@ export class AdminService implements IAdminService{
         })
         if (!updatedUser) throw new Error("Could not block user");
 
-        const response: UserDto = {
-            id: updatedUser._id.toString(),
-            name: updatedUser.name,
-            email: updatedUser.email,
-            status: updatedUser.status,
-            createdAt: updatedUser.createdAt
-        }
+        const response: UserDto = AdminMapper.toUserDto(updatedUser)
 
         return{
             message: MESSAGES.SUCCESS.USER_BLOCKED,
@@ -131,13 +133,7 @@ export class AdminService implements IAdminService{
         })
         if (!updatedUser) throw new Error("Could not unblock user");
 
-        const response: UserDto = {
-            id: updatedUser._id.toString(),
-            name: updatedUser.name,
-            email: updatedUser.email,
-            status: updatedUser.status,
-            createdAt: updatedUser.createdAt
-        }
+        const response: UserDto = AdminMapper.toUserDto(updatedUser)
 
         return{
             message: MESSAGES.SUCCESS.USER_UNBLOCKED,
@@ -158,14 +154,7 @@ export class AdminService implements IAdminService{
         })
         if (!updatedBarber) throw new Error("Could not block barber");
 
-        const response: BarberDto = {
-            id: updatedBarber._id.toString(),
-            name: updatedBarber.name,
-            email: updatedBarber.email,
-            district: updatedBarber.district,
-            status: updatedBarber.status,
-            createdAt: updatedBarber.createdAt
-        }
+        const response: BarberDto = AdminMapper.toBarberDto(updatedBarber)
 
         return{
             message: MESSAGES.SUCCESS.USER_BLOCKED,
@@ -186,14 +175,7 @@ export class AdminService implements IAdminService{
         })
         if (!updatedBarber) throw new Error("Could not unblock barber");
 
-        const response: BarberDto = {
-            id: updatedBarber._id.toString(),
-            name: updatedBarber.name,
-            email: updatedBarber.email,
-            district: updatedBarber.district,
-            status: updatedBarber.status,
-            createdAt: updatedBarber.createdAt
-        }
+        const response: BarberDto = AdminMapper.toBarberDto(updatedBarber)
 
         return{
             message: MESSAGES.SUCCESS.USER_UNBLOCKED,

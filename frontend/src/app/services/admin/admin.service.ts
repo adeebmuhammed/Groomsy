@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
@@ -10,12 +10,29 @@ export class AdminService {
 
   constructor(private http: HttpClient) { }
 
-  listUsers():Observable<any>{
-    return this.http.get(`${environment.apiBaseUrl}/admin/users`,{ withCredentials: true })
-  }
+  listUsers(search = '', page = 1, limit = 5): Observable<any> {
+  const params = new HttpParams()
+    .set('search', search)
+    .set('page', page)
+    .set('limit', limit);
 
-  listBarbers():Observable<any>{
-    return this.http.get(`${environment.apiBaseUrl}/admin/barbers`,{ withCredentials: true })
+  return this.http.get(`${environment.apiBaseUrl}/admin/users`, {
+    params,
+    withCredentials: true
+  });
+}
+
+
+  listBarbers(search = '', page = 1, limit = 5):Observable<any>{
+    const params = new HttpParams()
+    .set('search', search)
+    .set('page', page)
+    .set('limit', limit);
+
+    return this.http.get(`${environment.apiBaseUrl}/admin/barbers`,{
+      params,
+      withCredentials: true 
+    })
   }
 
   updateUserStatus(userId: string, status: string) {

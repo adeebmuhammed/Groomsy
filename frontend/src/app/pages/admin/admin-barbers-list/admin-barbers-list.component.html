@@ -8,13 +8,15 @@
       <h1 class="barber-list-title">Barber Management</h1>
 
       <app-admin-table
-        [data]="barbers"
-        [columns]="columns"
-        [currentPage]="currentPage"
-        [itemsPerPage]="itemsPerPage"
-        (onPageChange)="changePage($event)"
-        (onToggleStatus)="updateUserStatus($event)">
-      </app-admin-table>
+  [data]="barbers"
+  [columns]="columns"
+  [currentPage]="currentPage"
+  [itemsPerPage]="itemsPerPage"
+  [totalPages]="totalPages"
+  (onPageChange)="changePage($event)"
+  (onToggleStatus)="updateBarberStatus($event)"
+  (onSearch)="searchChanged($event)">
+</app-admin-table>
 
       <app-admin-footer></app-admin-footer>
     </div>

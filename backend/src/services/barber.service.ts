@@ -14,6 +14,8 @@ import {
 } from "../utils/validators";
 import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import OTPService from "../utils/OTPService";
+import { BarberMapper } from "../mappers/barber.mapper";
+import { AdminMapper } from "../mappers/admin.mapper";
 
 export class BarberService implements IBarberService {
   constructor(private _barberRepo: BarberRepository) {}
@@ -166,15 +168,10 @@ export class BarberService implements IBarberService {
       throw new Error(MESSAGES.ERROR.INVALID_CREDENTIALS)
     }
 
-    const response: BarberLoginResponseDto = {
-      id: barber._id.toString(),
-      name: barber.name,
-      email: barber.email,
-      phone: barber.phone,
-      status: barber.status,
-      district: barber.district,
-      message: MESSAGES.SUCCESS.LOGIN
-    }
+    const response: BarberLoginResponseDto = BarberMapper.toLoginResponse(
+      barber,
+      MESSAGES.SUCCESS.LOGIN
+    )
 
     return {
       response,

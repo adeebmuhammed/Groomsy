@@ -6,6 +6,7 @@ import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import { isValidEmail,isValidPassword,isValidPhone,isValidOTP } from "../utils/validators";
 import { IUserRepository } from '../repositories/interfaces/IUserRepository'
 import OTPService from '../utils/OTPService'
+import { UserMapper } from "../mappers/user.mapper";
 
 export class UserService implements IUserService{
 
@@ -154,14 +155,10 @@ export class UserService implements IUserService{
             })
         }
 
-        const response : UserLoginResponseDto = {
-            id: user._id.toString(),
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            status: user.status,
-            message: MESSAGES.SUCCESS.LOGIN
-        }
+        const response : UserLoginResponseDto = UserMapper.toLoginResponse(
+            user,
+            MESSAGES.SUCCESS.LOGIN
+        )
 
         return {
             response,
@@ -202,14 +199,10 @@ export class UserService implements IUserService{
             throw new Error(MESSAGES.ERROR.INVALID_CREDENTIALS)
         }
 
-        const response : UserLoginResponseDto = {
-            id: user._id.toString(),
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            status: user.status,
-            message: MESSAGES.SUCCESS.LOGIN
-        }
+        const response : UserLoginResponseDto = UserMapper.toLoginResponse(
+            user,
+            MESSAGES.SUCCESS.LOGIN
+        )
 
         return {
             response,

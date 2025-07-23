@@ -8,13 +8,16 @@
       <h1 class="user-list-title">User Management</h1>
 
       <app-admin-table
-        [data]="users"
-        [columns]="columns"
-        [currentPage]="currentPage"
-        [itemsPerPage]="itemsPerPage"
-        (onPageChange)="changePage($event)"
-        (onToggleStatus)="updateUserStatus($event)">
-      </app-admin-table>
+  [data]="users"
+  [columns]="columns"
+  [currentPage]="currentPage"
+  [itemsPerPage]="itemsPerPage"
+  [totalPages]="totalPages"
+  (onPageChange)="changePage($event)"
+  (onToggleStatus)="updateUserStatus($event)"
+  (onSearch)="searchChanged($event)">
+</app-admin-table>
+
 
       <app-admin-footer></app-admin-footer>
     </div>

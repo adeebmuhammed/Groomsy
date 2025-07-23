@@ -12,16 +12,24 @@ export class UserRepository extends BaseRepository<IUser> implements IUserReposi
         return await User.findOne({email:email})
     }
 
-    async findBySearchTerm(search: string): Promise<IUser[]> {
-        if (!search) {
-            return await User.find({})
-        }
-
-        return await User.find({
-            $or:[
-                { name: { $regex: search, $options: "i" }},
-                { email: { $regex: search, $options: "i" }}
+    async findBySearchTerm(search: string, page: number, limit: number): Promise<{ users: IUser[]; totalCount: number }> {
+    const query = search
+        ? {
+            $or: [
+                { name: { $regex: search, $options: "i" } },
+                { email: { $regex: search, $options: "i" } }
             ]
-        })
-    }
+        }
+        : {};
+
+    const skip = (page - 1) * limit;
+
+    const [users, totalCount] = await Promise.all([
+        User.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }),
+        User.countDocuments(query)
+    ]);
+
+    return { users, totalCount };
+}
+
 }
