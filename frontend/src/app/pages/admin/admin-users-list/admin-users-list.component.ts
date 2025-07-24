@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../services/admin/admin.service';
 import { AdminTableComponent } from '../../../components/admin/admin-table/admin-table.component';
 import Swal from 'sweetalert2';
-import { IUser } from '../../../interfaces/user.interface';
+import { IUser } from '../../../interfaces/interfaces';
 
 @Component({
   selector: 'app-admin-users-list',

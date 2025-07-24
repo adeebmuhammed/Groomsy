@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../services/admin/admin.service';
 import { AdminTableComponent } from '../../../components/admin/admin-table/admin-table.component';
 import Swal from 'sweetalert2';
-import { IBarber } from '../../../interfaces/barber.interface';
+import { IBarber } from '../../../interfaces/interfaces';
 
 @Component({
   selector: 'app-admin-barbers-list',
@@ -68,7 +68,7 @@ export class AdminBarbersListComponent implements OnInit {
                         timer: 2000,
                         showConfirmButton: false,
                       }).then(()=>{
-                        location.reload()
+                        this.fetchBarbers()
                       })
           },
           error: (err) => {

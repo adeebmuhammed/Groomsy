@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject,Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { IAdminLoginResponse, IBarberLoginResponse, IMessageResponse, IResendOtpResponse, IUserLoginResponse, IVerifyOtpResponse } from '../../interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -66,9 +67,9 @@ export class AuthService {
 
 
   // Admin 
-  adminLogin(credentials: { email: string; password: string }): Observable<any> {
+  adminLogin(credentials: { email: string; password: string }): Observable<IAdminLoginResponse> {
   return new Observable(observer => {
-    this.http.post(`${this.API_URL}/admin/login`, credentials,{ withCredentials: true }).subscribe({
+    this.http.post<IAdminLoginResponse>(`${this.API_URL}/admin/login`, credentials,{ withCredentials: true }).subscribe({
       next: (res: any) => {
         localStorage.setItem('role', 'admin');
 
@@ -82,9 +83,9 @@ export class AuthService {
   });
 }
 
-  adminLogout(): Observable<any> {
+  adminLogout(): Observable<{ message: string }> {
     return new Observable(observer => {
-      this.http.post(`${this.API_URL}/admin/logout`, {}, { withCredentials: true }).subscribe({
+      this.http.post<{ message: string }>(`${this.API_URL}/admin/logout`, {}, { withCredentials: true }).subscribe({
         next: res => {
           localStorage.clear();
           this.updateLoginState('admin', false, null, null);
@@ -103,13 +104,13 @@ export class AuthService {
     phone: string;
     password: string;
     confirmPassword: string;
-  }): Observable<any> {
-    return this.http.post(`${this.API_URL}/user/signup`, credentials);
+  }): Observable<IMessageResponse> {
+    return this.http.post<IMessageResponse>(`${this.API_URL}/user/signup`, credentials);
   }
 
-  userVerifyOtp(data: { email: string; otp: string; purpose: 'signup' | 'forgot' }): Observable<any> {
+  userVerifyOtp(data: { email: string; otp: string; purpose: 'signup' | 'forgot' }): Observable<{ message: string; user: { name: string; email: string } }> {
   return new Observable(observer => {
-    this.http.post(`${this.API_URL}/user/verify-otp`, data).subscribe({
+    this.http.post<{ message: string; user: { name: string; email: string } }>(`${this.API_URL}/user/verify-otp`, data).subscribe({
       next: (res: any) => {
         if (data.purpose === 'signup') {
           const name = localStorage.getItem('userSignupName') || '';
@@ -125,13 +126,13 @@ export class AuthService {
 }
 
 
-  userResendOtp(data: { email: string; purpose: 'signup' | 'forgot' }): Observable<any> {
-  return this.http.post(`${this.API_URL}/user/resend-otp`, data);
+  userResendOtp(data: { email: string; purpose: 'signup' | 'forgot' }): Observable<{ message: string; user: { name: string } }> {
+  return this.http.post<{ message: string; user: { name: string } }>(`${this.API_URL}/user/resend-otp`, data);
 }
 
-  userSignin(data: { email: string; password: string }): Observable<any> {
+  userSignin(data: { email: string; password: string }): Observable<{ message: string; user: IUserLoginResponse }> {
   return new Observable(observer => {
-    this.http.post(`${this.API_URL}/user/login`, data).subscribe({
+    this.http.post<{ message: string; user: IUserLoginResponse }>(`${this.API_URL}/user/login`, data).subscribe({
       next: (res: any) => {
         localStorage.setItem('role', 'user');
 
@@ -149,17 +150,17 @@ export class AuthService {
 }
 
 
-  userForgotPassword(email: string): Observable<any> {
-    return this.http.post(`${this.API_URL}/user/forgot-password`, { email });
+  userForgotPassword(email: string): Observable<IMessageResponse> {
+    return this.http.post<IMessageResponse>(`${this.API_URL}/user/forgot-password`, { email });
   }
 
-  userResetPassword(data: {email: string|null, password: string, confirmPassword: string}):Observable<any>{
-    return this.http.post(`${this.API_URL}/user/reset-password`,data)
+  userResetPassword(data: {email: string|null, password: string, confirmPassword: string}):Observable<IMessageResponse>{
+    return this.http.post<IMessageResponse>(`${this.API_URL}/user/reset-password`,data)
   }
   
-  userLogout(): Observable<any> {
+  userLogout(): Observable<IMessageResponse> {
     return new Observable(observer => {
-      this.http.post(`${this.API_URL}/user/logout`, {}, { withCredentials: true }).subscribe({
+      this.http.post<IMessageResponse>(`${this.API_URL}/user/logout`, {}, { withCredentials: true }).subscribe({
         next: res => {
           localStorage.clear();
           this.updateLoginState('user', false, null, null);
@@ -179,13 +180,13 @@ export class AuthService {
     district: string;
     password: string;
     confirmPassword: string;
-  }):Observable<any>{
-    return this.http.post(`${this.API_URL}/barber/signup`,data)
+  }):Observable<IMessageResponse>{
+    return this.http.post<IMessageResponse>(`${this.API_URL}/barber/signup`,data)
   }
 
-  barberVerifyOtp(data: { email: string; otp: string; purpose: 'signup' | 'forgot' }): Observable<any> {
+  barberVerifyOtp(data: { email: string; otp: string; purpose: 'signup' | 'forgot' }): Observable<IVerifyOtpResponse> {
   return new Observable(observer => {
-    this.http.post(`${this.API_URL}/barber/verify-otp`, data).subscribe({
+    this.http.post<IVerifyOtpResponse>(`${this.API_URL}/barber/verify-otp`, data).subscribe({
       next: (res: any) => {
         if (data.purpose === 'signup') {
           const name = localStorage.getItem('barberSignupName') || '';
@@ -201,13 +202,13 @@ export class AuthService {
 }
 
 
-  barberResendOtp(data: { email: string; purpose: 'signup' | 'forgot' }): Observable<any> {
-    return this.http.post(`${this.API_URL}/barber/resend-otp`, data);
+  barberResendOtp(data: { email: string; purpose: 'signup' | 'forgot' }): Observable<IResendOtpResponse> {
+    return this.http.post<IResendOtpResponse>(`${this.API_URL}/barber/resend-otp`, data);
   }
 
-  barberSignin(credentials: { email: string; password: string }): Observable<any> {
+  barberSignin(credentials: { email: string; password: string }): Observable<IBarberLoginResponse> {
     return new Observable(observer => {
-      this.http.post(`${this.API_URL}/barber/login`, credentials).subscribe({
+      this.http.post<IBarberLoginResponse>(`${this.API_URL}/barber/login`, credentials).subscribe({
         next: (res: any) => {
           localStorage.setItem('role', 'barber');
           
@@ -222,17 +223,17 @@ export class AuthService {
   }
 
 
-  barberForgotPassword(email: string): Observable<any> {
-    return this.http.post(`${this.API_URL}/barber/forgot-password`, { email });
+  barberForgotPassword(email: string): Observable<IMessageResponse> {
+    return this.http.post<IMessageResponse>(`${this.API_URL}/barber/forgot-password`, { email });
   }
 
-  barberResetPassword(data: {email: string|null, password: string, confirmPassword: string}):Observable<any>{
-    return this.http.post(`${this.API_URL}/barber/reset-password`,data)
+  barberResetPassword(data: {email: string|null, password: string, confirmPassword: string}):Observable<IMessageResponse>{
+    return this.http.post<IMessageResponse>(`${this.API_URL}/barber/reset-password`,data)
   }
 
-  barberLogout():Observable<any>{
+  barberLogout():Observable<IMessageResponse>{
     return new Observable(observer => {
-      this.http.post(`${this.API_URL}/barber/logout`, {}, { withCredentials: true }).subscribe({
+      this.http.post<IMessageResponse>(`${this.API_URL}/barber/logout`, {}, { withCredentials: true }).subscribe({
         next: res => {
           localStorage.clear();
           this.updateLoginState('barber', false, null, null);
