@@ -112,11 +112,11 @@ export class AuthService {
   return new Observable(observer => {
     this.http.post<{ message: string; user: { name: string; email: string } }>(`${this.API_URL}/user/verify-otp`, data).subscribe({
       next: (res: any) => {
-        if (data.purpose === 'signup') {
-          const name = localStorage.getItem('userSignupName') || '';
-          localStorage.setItem('role', 'user');
-          this.updateLoginState('user', true, name, data.email);
-        }
+        // if (data.purpose === 'signup') {
+        //   const name = localStorage.getItem('userSignupName') || '';
+        //   localStorage.setItem('role', 'user');
+        //   this.updateLoginState('user', true, name, data.email);
+        // }
         observer.next(res);
         observer.complete();
       },
@@ -188,11 +188,11 @@ export class AuthService {
   return new Observable(observer => {
     this.http.post<IVerifyOtpResponse>(`${this.API_URL}/barber/verify-otp`, data).subscribe({
       next: (res: any) => {
-        if (data.purpose === 'signup') {
-          const name = localStorage.getItem('barberSignupName') || '';
-          localStorage.setItem('role', 'barber');
-          this.updateLoginState('barber', true, name, data.email);
-        }
+        // if (data.purpose === 'signup') {
+        //   const name = localStorage.getItem('barberSignupName') || '';
+        //   localStorage.setItem('role', 'barber');
+        //   this.updateLoginState('barber', true, name, data.email);
+        // }
         observer.next(res);
         observer.complete();
       },

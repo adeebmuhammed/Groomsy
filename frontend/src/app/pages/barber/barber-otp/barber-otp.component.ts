@@ -62,8 +62,9 @@ export class BarberOtpComponent implements OnInit {
             timer: 2000,
             showConfirmButton: false,
           });
-
-          this.router.navigate(['/barber/dashboard']);
+          
+          localStorage.clear()
+          this.router.navigate(['/barber/signin']);
         } else {
           Swal.fire({
             icon: 'success',

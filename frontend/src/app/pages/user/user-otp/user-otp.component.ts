@@ -64,8 +64,8 @@ export class UserOtpComponent implements OnInit {
             timer: 2000,
             showConfirmButton: false,
           });
-
-          this.router.navigate(['/user/home']);
+          localStorage.clear()
+          this.router.navigate(['/user/signin']);
         } else {
           Swal.fire({
             icon: 'success',
