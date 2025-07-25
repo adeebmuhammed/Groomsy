@@ -16,51 +16,52 @@ export class AuthService {
   // --- ADMIN subjects ---
   private isAdminLoggedInSubject = new BehaviorSubject<boolean>(this.hasRoleToken('admin'));
   private adminNameSubject = new BehaviorSubject<string | null>(localStorage.getItem('adminName'));
-  private adminEmailSubject = new BehaviorSubject<string | null>(localStorage.getItem('adminEmail'));
+  private adminIdSubject = new BehaviorSubject<string | null>(localStorage.getItem('adminId'));
 
   isAdminLoggedIn$ = this.isAdminLoggedInSubject.asObservable();
   adminName$ = this.adminNameSubject.asObservable();
-  adminEmail$ = this.adminEmailSubject.asObservable();
+  adminId$ = this.adminIdSubject.asObservable();
 
   // --- USER subjects ---
   private isUserLoggedInSubject = new BehaviorSubject<boolean>(this.hasRoleToken('user'));
   private userNameSubject = new BehaviorSubject<string | null>(localStorage.getItem('userName'));
-  private userEmailSubject = new BehaviorSubject<string | null>(localStorage.getItem('userEmail'));
+  private userIdSubject = new BehaviorSubject<string | null>(localStorage.getItem('userId'));
 
   isUserLoggedIn$ = this.isUserLoggedInSubject.asObservable();
   userName$ = this.userNameSubject.asObservable();
-  userEmail$ = this.userEmailSubject.asObservable();
+  userId$ = this.userIdSubject.asObservable();
 
   // --- BARBER subjects ---
   private isBarberLoggedInSubject = new BehaviorSubject<boolean>(this.hasRoleToken('barber'))
   private barberNameSubject = new BehaviorSubject<string | null>(localStorage.getItem('barberName'))
-  private barberEmailSubject = new BehaviorSubject<string | null>(localStorage.getItem('barberEmail'))
+  private barberIdSubject = new BehaviorSubject<string | null>(localStorage.getItem('barberId'))
 
   isBarberLoggedIn$ = this.isBarberLoggedInSubject.asObservable()
   barberName$ = this.barberNameSubject.asObservable()
-  barberEmail$ = this.barberEmailSubject.asObservable()
+  barberId$ = this.barberIdSubject.asObservable()
 
   private hasRoleToken(role: string): boolean {
     return !!localStorage.getItem('token') && localStorage.getItem('role') === role;
   }
 
   // Update login state for roles
-  updateLoginState(role: 'admin' | 'user' | 'barber', isLoggedIn: boolean, name: string | null, email: string | null) {
+  updateLoginState(role: 'admin' | 'user' | 'barber', isLoggedIn: boolean, name: string | null, id: string | null) {
     localStorage.setItem(`${role}Name`, name || '');
-    localStorage.setItem(`${role}Email`, email || '');
+    localStorage.setItem(`${role}Id`, id || '');
+    
     
     if (role === 'admin') {
       this.isAdminLoggedInSubject.next(isLoggedIn);
       this.adminNameSubject.next(name);
-      this.adminEmailSubject.next(email);
+      this.adminIdSubject.next(id);
     } else if (role === 'user') {
       this.isUserLoggedInSubject.next(isLoggedIn);
       this.userNameSubject.next(name);
-      this.userEmailSubject.next(email);
+      this.userIdSubject.next(id);
     } else if (role === 'barber') {
       this.isBarberLoggedInSubject.next(isLoggedIn)
       this.barberNameSubject.next(name)
-      this.barberEmailSubject.next(email)
+      this.barberIdSubject.next(id)
     }
 
   }
@@ -73,7 +74,7 @@ export class AuthService {
       next: (res: any) => {
         localStorage.setItem('role', 'admin');
 
-        this.updateLoginState('admin', true, res.user.name, res.user.email);
+        this.updateLoginState('admin', true, res.user.name, res.user.Id);
 
         observer.next(res);
         observer.complete();
@@ -137,9 +138,9 @@ export class AuthService {
         localStorage.setItem('role', 'user');
 
         const name = res.user?.name || '';
-        const email = res.user?.email || '';
+        const userId = res.user?.id || '';
 
-        this.updateLoginState('user', true, name, email);
+        this.updateLoginState('user', true, name, userId);
 
         observer.next(res); // pass to component
         observer.complete();
@@ -212,7 +213,7 @@ export class AuthService {
         next: (res: any) => {
           localStorage.setItem('role', 'barber');
           
-          this.updateLoginState('barber', true, res.name, res.email);
+          this.updateLoginState('barber', true, res.name, res.id);
           
           observer.next(res);
           observer.complete();

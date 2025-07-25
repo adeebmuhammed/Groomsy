@@ -45,3 +45,61 @@
     font-size: 14px;
   }
 }
+/* Layout Container */
+.barber-layout {
+  display: flex;
+  padding-top: 64px; /* height of header */
+  min-height: 100vh;
+}
+
+/* Sidebar (already fixed in your sidebar styles) */
+.barber-sidebar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  height: calc(100vh - 64px);
+  width: 250px;
+  z-index: 999;
+}
+
+/* Main content beside sidebar */
+.barber-main-content {
+  margin-left: 250px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 64px); /* below header */
+}
+
+/* Dashboard content should take available vertical space */
+.barber-dashboard-page {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Footer sits at the bottom */
+app-barber-footer {
+  margin-top: auto;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .barber-sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: 0;
+  }
+
+  .barber-main-content {
+    margin-left: 0;
+  }
+
+  .barber-layout {
+    flex-direction: column;
+    padding-top: 56px; /* smaller header on mobile */
+  }
+}

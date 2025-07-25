@@ -215,3 +215,7 @@
 2025-07-25 15:04:22 [INFO]: PUT /barber/slots/68831a911a215db7efc1d455
 2025-07-25 15:05:06 [INFO]: PUT /barber/slots/68831a911a215db7efc1d455
 2025-07-25 15:21:20 [INFO]: DELETE /barber/slots/68831a911a215db7efc1d455
+2025-07-25 20:50:35 [INFO]: POST /barber/login
+2025-07-25 20:50:50 [INFO]: POST /barber/login
+2025-07-25 20:51:26 [INFO]: POST /barber/login
+2025-07-25 21:16:26 [INFO]: POST /barber/login

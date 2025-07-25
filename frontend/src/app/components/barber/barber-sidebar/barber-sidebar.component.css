@@ -1,0 +1,52 @@
+.barber-sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #000000; /* changed to black */
+  color: #f9fafb; /* light text for contrast */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* Removed border */
+}
+
+.sidebar-title {
+  font-family: Inter, sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 40px;
+  color: #a855f7;
+  text-align: center;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sidebar-nav a {
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  color: #f3f4f6; /* lighter text on black */
+  text-decoration: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar-nav a:hover {
+  background-color: #1e1b4b; /* subtle hover on black */
+  color: #c084fc;
+}
+
+.active-link {
+  color: #a855f7;
+  font-weight: 600;
+}

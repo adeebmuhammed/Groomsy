@@ -64,7 +64,7 @@ export class UserService implements IUserService{
         email: string,
         otp: string,
         purpose: 'signup' | 'forgot'
-    ): Promise<{ response: MessageResponseDto & { user: { name: string, email: string } }, status: number }> => {
+    ): Promise<{ response: MessageResponseDto & { user: { name: string, id: string } }, status: number }> => {
         
         if (!isValidOTP(otp)) {
             throw new Error("OTP must be a 6-digit number");
@@ -92,7 +92,7 @@ export class UserService implements IUserService{
                 message: MESSAGES.SUCCESS.OTP_VERIFIED,
                 user: {
                     name: user.name,
-                    email: user.email,
+                    id: user.id,
                 },
             },
             status: STATUS_CODES.OK,
