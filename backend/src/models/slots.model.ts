@@ -5,7 +5,7 @@ export interface ISlot extends Document {
   endTime: Date;
   price: number;
   date: Date;
-  barberId: mongoose.Types.ObjectId;
+  barber: mongoose.Types.ObjectId;
 }
 
 const SlotSchema: Schema = new Schema({
@@ -13,7 +13,7 @@ const SlotSchema: Schema = new Schema({
   endTime: { type: Date, required: true },
   price: { type: Number, required: true },
   date: { type: Date, required: true },
-  barberId: { type: mongoose.Types.ObjectId, ref: 'Barber', required: true }
+  barber: { type: mongoose.Types.ObjectId, ref: 'Barber', required: true }
 },{ timestamps: true });
 
 const Slots = mongoose.model<ISlot>('Slot', SlotSchema);

@@ -207,3 +207,6 @@
 2025-07-24 22:54:12 [INFO]: POST /barber/verify-otp
 2025-07-24 22:54:30 [INFO]: POST /barber/login
 2025-07-24 22:54:35 [INFO]: POST /barber/logout
+2025-07-25 11:11:41 [INFO]: POST /barber/slots?barberId=68826c247451d8eb5c4d78e3
+2025-07-25 11:18:01 [INFO]: POST /barber/slots?barberId=68826c247451d8eb5c4d78e3
+2025-07-25 11:18:24 [INFO]: POST /barber/slots?barberId=68826c247451d8eb5c4d78e3
