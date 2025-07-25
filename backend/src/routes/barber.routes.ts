@@ -27,6 +27,9 @@ barberRoutes
 .post('/reset-password',barberController.resetPassword)
 .post('/logout',barberController.logout)
 
-barberRoutes.post('/slots',slotController.createSlot)
+barberRoutes
+.post('/slots',slotController.createSlot)
+.put('/slots/:id',slotController.updateSlot)
+.delete('/slots/:id',slotController.deleteSlot)
 
 export default barberRoutes;

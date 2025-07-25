@@ -1,4 +1,4 @@
-import { SlotCreateRequestDto, SlotReponseDto } from "../dto/slot.dto";
+import { MessageResponseDto, SlotCreateRequestDto, SlotReponseDto, SlotUpdateRequestDto } from "../dto/slot.dto";
 import { ISlot } from "../models/slots.model";
 import { ISlotService } from "./interfaces/ISlotService";
 import { validateSlotData } from "../utils/slotValidator";
@@ -28,9 +28,10 @@ export class SlotService implements ISlotService{
         }
 
         const slot = await this._slotRepo.create({
-    ...data,
-    barber: new mongoose.Types.ObjectId(barberId), // 👈 fix added here
-  });
+            ...data,
+            barber: new mongoose.Types.ObjectId(barberId),
+        });
+
         if (!slot) {
             throw new Error("failed to create slot")
         }
@@ -39,6 +40,49 @@ export class SlotService implements ISlotService{
             response: SlotMapper.toSlotResponse(slot),
             message: "slot created successfully",
             status: STATUS_CODES.CREATED
+        }
+    }
+
+    updateSlot = async (slotId: string, data: SlotCreateRequestDto): Promise<{ response: SlotReponseDto; message: string; status: number; }> => {
+        if (!slotId || !data) {
+            throw new Error("slot id and slot data is required")
+        }
+
+        const errors = validateSlotData(data)
+        if (errors.length > 0) {
+            throw new Error(errors.join(" "));
+        }
+
+        const existingSlot = await this._slotRepo.findById(slotId)
+        if (!existingSlot) {
+            throw new Error("slot not found")
+        }
+
+        const updatedSlot = await this._slotRepo.update(slotId,data)
+        if (!updatedSlot) {
+            throw new Error("slot updation failed")
+        }
+
+        return{
+            response: SlotMapper.toSlotResponse(updatedSlot),
+            message: "slot updated successfully",
+            status: STATUS_CODES.OK
+        }
+    }
+
+    deleteSlot = async (slotId: string): Promise<{ response: MessageResponseDto; status: number; }> => {
+        if (!slotId) {
+            throw new Error("slot id is required")
+        }
+
+        const deletedSlot = await this._slotRepo.deleteSlot(slotId)
+        if (!deletedSlot) {
+            throw new Error("slot deletion failed")
+        }
+
+        return{
+            response:{message: "slot deleted successfully"},
+            status: STATUS_CODES.OK
         }
     }
 }
