@@ -133,7 +133,7 @@ export class AuthService {
 
   userSignin(data: { email: string; password: string }): Observable<{ message: string; user: IUserLoginResponse }> {
   return new Observable(observer => {
-    this.http.post<{ message: string; user: IUserLoginResponse }>(`${this.API_URL}/user/login`, data).subscribe({
+    this.http.post<{ message: string; user: IUserLoginResponse }>(`${this.API_URL}/user/login`, data,{ withCredentials: true }).subscribe({
       next: (res: any) => {
         localStorage.setItem('role', 'user');
 
@@ -209,7 +209,7 @@ export class AuthService {
 
   barberSignin(credentials: { email: string; password: string }): Observable<IBarberLoginResponse> {
     return new Observable(observer => {
-      this.http.post<IBarberLoginResponse>(`${this.API_URL}/barber/login`, credentials).subscribe({
+      this.http.post<IBarberLoginResponse>(`${this.API_URL}/barber/login`, credentials,{ withCredentials: true }).subscribe({
         next: (res: any) => {
           localStorage.setItem('role', 'barber');
           

@@ -1,4 +1,4 @@
-import { MessageResponseDto, SlotCreateRequestDto, SlotReponseDto, SlotUpdateRequestDto } from "../dto/slot.dto";
+import { MessageResponseDto, SlotCreateRequestDto, SlotListResponseDto, SlotReponseDto, SlotUpdateRequestDto } from "../dto/slot.dto";
 import { ISlot } from "../models/slots.model";
 import { ISlotService } from "./interfaces/ISlotService";
 import { validateSlotData } from "../utils/slotValidator";
@@ -10,6 +10,35 @@ import mongoose from "mongoose";
 export class SlotService implements ISlotService{
     
     constructor( private _slotRepo:SlotRepository){}
+
+    getSlotsByBarber = async (
+  barberId: string,
+  page: number,
+  limit: number
+): Promise<{ response: SlotListResponseDto; status: number }> => {
+  if (!barberId) {
+    throw new Error("Barber id is required");
+  }
+
+  const { slots, totalCount } = await this._slotRepo.findByBarber(barberId, page, limit);
+
+  const response: SlotListResponseDto = {
+    data: SlotMapper.toSlotDtoArray(slots),
+    message: "Slots fetched successfully",
+    pagination: {
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
+      totalItems: totalCount,
+      itemsPerPage: limit
+    }
+  };
+
+  return {
+    response,
+    status: STATUS_CODES.OK
+  };
+};
+
     
     createSlot = async (barberId: string, data: SlotCreateRequestDto): Promise<{ response: SlotReponseDto; message: string; status: number; }> =>{
 

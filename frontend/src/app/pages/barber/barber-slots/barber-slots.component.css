@@ -1,0 +1,176 @@
+/* ==== GLOBAL STRUCTURE & LAYOUT ==== */
+.barber-layout {
+  display: flex;
+  padding-top: 64px; /* height of header */
+  min-height: 100vh;
+}
+
+.barber-sidebar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  height: calc(100vh - 64px);
+  width: 250px;
+  z-index: 999;
+}
+
+.barber-main-content {
+  margin-left: 250px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 64px); /* content height below header */
+}
+
+.barber-dashboard-page {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  background: linear-gradient(to right, #f0fdfa, #e0f2fe);
+  font-family: Inter, sans-serif;
+}
+
+.overlay {
+  width: 100%;
+  max-width: 1100px;
+  padding: 20px;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ==== TABLE STYLES ==== */
+table.table {
+  font-family: Inter, sans-serif;
+  font-size: 15px;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+table thead {
+  background-color: #9333ea;
+  color: white;
+}
+
+table th,
+table td {
+  padding: 12px 16px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+table td button {
+  min-width: 60px;
+}
+
+/* ==== PAGE HEADER ==== */
+.admin-sign-in {
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 44px;
+  color: #000;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 991px) {
+  .admin-sign-in {
+    font-size: 28px;
+    line-height: 36px;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-sign-in {
+    font-size: 24px;
+    line-height: 32px;
+    margin-bottom: 16px;
+  }
+}
+
+/* ==== BUTTONS ==== */
+.submit-button {
+  width: auto;
+  padding: 10px 16px;
+  background-color: #9333ea;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: Inter, sans-serif;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.submit-button:hover {
+  background-color: #7c3aed;
+}
+
+.submit-button:disabled {
+  background-color: #c4b5fd;
+  cursor: not-allowed;
+}
+
+button {
+  all: unset;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* ==== PAGINATION TEXT ==== */
+.sign-in-text {
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+  text-align: center;
+}
+
+/* ==== FOOTER ==== */
+app-barber-footer {
+  margin-top: auto;
+}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width: 768px) {
+  .barber-sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: 0;
+  }
+
+  .barber-main-content {
+    margin-left: 0;
+  }
+
+  .barber-layout {
+    flex-direction: column;
+    padding-top: 56px; /* smaller header height */
+  }
+
+  .dashboard-content {
+    padding: 10px;
+  }
+
+  table th,
+  table td {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .submit-button {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}

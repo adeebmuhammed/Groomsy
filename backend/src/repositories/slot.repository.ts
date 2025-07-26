@@ -11,9 +11,22 @@ extends BaseRepository<ISlot>
         super(Slots)
     }
 
-    async findByBarber(barberId: string): Promise<ISlot[]> {
-        return await Slots.find({ barber: barberId})
-    }
+    async findByBarber(
+  barberId: string,
+  page: number,
+  limit: number
+): Promise<{ slots: ISlot[]; totalCount: number }> {
+  const skip = (page - 1) * limit;
+
+  const condition = { barber: barberId };
+  const [slots, totalCount] = await Promise.all([
+    this.findWithPagination(condition, skip, limit),
+    this.countDocuments(condition)
+  ]);
+
+  return { slots, totalCount };
+}
+
 
     async findSimilarSlot(barberId: string, startTime: Date, endTime: Date, date: Date): Promise<ISlot | null> {
         return await Slots.findOne({barber:barberId,startTime,endTime,date})

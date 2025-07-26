@@ -1,4 +1,5 @@
-import { SlotReponseDto } from "../dto/slot.dto";
+import { SlotListResponseDto, SlotReponseDto } from "../dto/slot.dto";
+import { ISlot } from "../models/slots.model";
 
 export class SlotMapper{
     static toSlotResponse(data: any): SlotReponseDto {
@@ -8,5 +9,9 @@ export class SlotMapper{
       price: data.price,
       date: new Date(data.date),
     };
+  }
+
+  static toSlotDtoArray(slots: ISlot[]): SlotReponseDto[] {
+    return slots.map(slot => SlotMapper.toSlotResponse(slot))
   }
 }

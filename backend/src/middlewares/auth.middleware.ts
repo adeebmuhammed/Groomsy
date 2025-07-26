@@ -5,7 +5,7 @@ import { MESSAGES,STATUS_CODES } from '../utils/constants';
 export const authMiddleware = (allowedRoles: string[])=>{
     return (req : Request, res : Response, next : NextFunction)=>{
         const token = req.cookies["auth-token"]
-
+        
         if (!token) {
             res
             .status(STATUS_CODES.UNAUTHORIZED)

@@ -78,3 +78,30 @@ export interface IResendOtpResponse {
     name: string;
   };
 }
+
+export interface ISlot {
+  _id: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  price: number;
+}
+
+export interface SlotDto {
+  _id: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  price: string;
+}
+
+export interface SlotListResponseDto {
+  data: SlotDto[];
+  message: string;
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
+}

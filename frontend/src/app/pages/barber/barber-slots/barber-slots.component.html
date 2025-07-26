@@ -1,0 +1,56 @@
+<app-barber-header></app-barber-header>
+
+<div class="barber-layout">
+  <app-barber-sidebar></app-barber-sidebar>
+
+  <div class="barber-main-content">
+    <div class="barber-dashboard-page">
+      <div class="overlay">
+        <div class="dashboard-content">
+          <h2 class="admin-sign-in">Barber Slots</h2>
+
+          <div style="overflow-x: auto; width: 100%; max-width: 1100px;">
+            <table class="table table-bordered table-striped" style="min-width: 800px;">
+              <thead style="background-color: #9333ea; color: white;">
+                <tr>
+                  <th>#</th>
+                  <th>Date</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
+                  <th>Price</th>
+                  <th style="width: 150px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let slot of slots; let i = index">
+                  <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                  <td>{{ slot.date | date: 'mediumDate' }}</td>
+                  <td>{{ slot.startTime | date: 'shortTime' }}</td>
+                  <td>{{ slot.endTime | date: 'shortTime' }}</td>
+                  <td>₹{{ slot.price }}</td>
+                  <td>
+                    <div style="display: flex; gap: 10px;">
+                      <button class="submit-button" (click)="editSlot(slot._id)">Edit</button>
+                      <button class="submit-button" style="background-color: #dc2626;" (click)="deleteSlot(slot._id)">
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div style="margin-top: 20px; display: flex; gap: 12px; align-items: center;">
+            <button class="submit-button" (click)="previousPage()" [disabled]="currentPage === 1">Prev</button>
+            <span class="sign-in-text" style="color: black;">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button class="submit-button" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-barber-footer></app-barber-footer>
+  </div>
+</div>

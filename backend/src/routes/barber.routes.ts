@@ -28,6 +28,7 @@ barberRoutes
 .post('/logout',barberController.logout)
 
 barberRoutes
+.get('/slots',barberAuth,slotController.getSlotsByBarber)
 .post('/slots',slotController.createSlot)
 .put('/slots/:id',slotController.updateSlot)
 .delete('/slots/:id',slotController.deleteSlot)

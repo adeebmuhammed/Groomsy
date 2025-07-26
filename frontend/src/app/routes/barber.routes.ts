@@ -7,6 +7,7 @@ import { BarberSigninComponent } from "../pages/barber/barber-signin/barber-sign
 import { BarberOtpComponent } from "../pages/barber/barber-otp/barber-otp.component";
 import { BarberForgotPasswordComponent } from "../pages/barber/barber-forgot-password/barber-forgot-password.component";
 import { BarberResetPasswordComponent } from "../pages/barber/barber-reset-password/barber-reset-password.component";
+import { BarberSlotsComponent } from "../pages/barber/barber-slots/barber-slots.component";
 
 export const BARBER_ROUTES: Routes = [
   { path: 'barber/dashboard', component: BarberDashboardComponent, canActivate: [barberAuthGuard] },
@@ -15,4 +16,6 @@ export const BARBER_ROUTES: Routes = [
   { path: 'barber/verify-otp', component: BarberOtpComponent },
   { path: 'barber/forgot-password', component: BarberForgotPasswordComponent, canActivate: [barberAlreadyLoggedInGuard] },
   { path: 'barber/reset-password', component: BarberResetPasswordComponent },
+
+  { path: 'barber/slots', component: BarberSlotsComponent, canActivate: [barberAuthGuard]}
 ];

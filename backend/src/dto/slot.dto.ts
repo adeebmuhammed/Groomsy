@@ -23,3 +23,14 @@ export class SlotUpdateRequestDto {
 export class MessageResponseDto {
   message!: string;
 }
+
+export interface SlotListResponseDto {
+  data: SlotReponseDto[];
+  message: string;
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
+}

@@ -48,21 +48,23 @@ export class BarberController implements IBarberController{
             const { response, status } = await this._barberService.login(email, password)
 
             const accessToken = generateAccessToken({ userId: response.id, type: "barber" });
+            console.log(accessToken);
+            
                   const refreshToken = generateRefreshToken({ userId: response.id, type: "barber" });
                   
                   res.cookie("auth-token", accessToken, {
-                    httpOnly: true,
-                    secure: false,
-                    sameSite: "lax",
-                    maxAge: 60 * 60 * 1000, // 1 hour
-                  });
-                  
-                  res.cookie("refresh-token", refreshToken, {
-                    httpOnly: true,
-                    secure: false,
-                    sameSite: "strict",
-                    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-                  });
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 1000, // 1 hour
+      });
+
+      res.cookie("refresh-token", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
 
             res.status(status).json(response)
         } catch (error) {
