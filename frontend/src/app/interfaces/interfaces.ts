@@ -88,7 +88,7 @@ export interface ISlot {
 }
 
 export interface SlotDto {
-  _id: string;
+  id: string;
   date: string;
   startTime: string;
   endTime: string;

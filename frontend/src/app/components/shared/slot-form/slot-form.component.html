@@ -1,1 +1,24 @@
-<p>slot-form works!</p>
+<div class="modal-overlay" *ngIf="visible">
+  <div class="modal-container">
+    <h3 class="modal-title">{{ slotData ? 'Edit Slot' : 'Add Slot' }}</h3>
+
+    <form [formGroup]="slotForm" (ngSubmit)="submitForm()">
+      <label>Date:</label>
+      <input type="date" formControlName="date" class="form-control"/>
+
+      <label>Start Time:</label>
+      <input type="time" formControlName="startTime" class="form-control"/>
+
+      <label>End Time:</label>
+      <input type="time" formControlName="endTime" class="form-control"/>
+
+      <label>Price (₹):</label>
+      <input type="number" formControlName="price" class="form-control" min="0"/>
+
+      <div class="modal-actions">
+        <button type="submit" class="submit-button">{{ slotData ? 'Update' : 'Add' }}</button>
+        <button type="button" class="submit-button cancel-btn" (click)="close()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

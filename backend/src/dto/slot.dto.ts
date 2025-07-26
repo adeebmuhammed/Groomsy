@@ -6,6 +6,7 @@ export class SlotCreateRequestDto {
 }
 
 export class SlotReponseDto{
+    id!: string;
     startTime!: Date;
     endTime!: Date;
     price!: number;

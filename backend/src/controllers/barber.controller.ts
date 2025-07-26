@@ -48,7 +48,6 @@ export class BarberController implements IBarberController{
             const { response, status } = await this._barberService.login(email, password)
 
             const accessToken = generateAccessToken({ userId: response.id, type: "barber" });
-            console.log(accessToken);
             
                   const refreshToken = generateRefreshToken({ userId: response.id, type: "barber" });
                   

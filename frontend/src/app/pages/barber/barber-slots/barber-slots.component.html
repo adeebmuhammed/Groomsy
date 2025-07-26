@@ -7,11 +7,18 @@
     <div class="barber-dashboard-page">
       <div class="overlay">
         <div class="dashboard-content">
+
           <h2 class="admin-sign-in">Barber Slots</h2>
 
-          <div style="overflow-x: auto; width: 100%; max-width: 1100px;">
-            <table class="table table-bordered table-striped" style="min-width: 800px;">
-              <thead style="background-color: #9333ea; color: white;">
+          <!-- Add Slot Button -->
+          <div class="add-slot-container">
+            <button class="submit-button add-slot-btn" (click)="addSlot()">+ Add Slot</button>
+          </div>
+
+          <!-- Table Container -->
+          <div class="table-wrapper">
+            <table class="table table-bordered table-striped">
+              <thead>
                 <tr>
                   <th>#</th>
                   <th>Date</th>
@@ -30,8 +37,8 @@
                   <td>₹{{ slot.price }}</td>
                   <td>
                     <div style="display: flex; gap: 10px;">
-                      <button class="submit-button" (click)="editSlot(slot._id)">Edit</button>
-                      <button class="submit-button" style="background-color: #dc2626;" (click)="deleteSlot(slot._id)">
+                      <button class="submit-button" (click)="editSlot(slot.id)">Edit</button>
+                      <button class="submit-button" style="background-color: #dc2626;" (click)="deleteSlot(slot.id)">
                         Delete
                       </button>
                     </div>
@@ -39,13 +46,21 @@
                 </tr>
               </tbody>
             </table>
-          </div>
 
-          <!-- Pagination -->
-          <div style="margin-top: 20px; display: flex; gap: 12px; align-items: center;">
-            <button class="submit-button" (click)="previousPage()" [disabled]="currentPage === 1">Prev</button>
-            <span class="sign-in-text" style="color: black;">Page {{ currentPage }} of {{ totalPages }}</span>
-            <button class="submit-button" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+            <app-slot-form
+  [visible]="showSlotModal"
+  [slotData]="selectedSlot"
+  (onClose)="closeSlotModal()"
+  (onSubmit)="handleSlotSubmit($event)">
+</app-slot-form>
+
+
+            <!-- Pagination -->
+            <div class="pagination-wrapper">
+              <button class="submit-button" (click)="previousPage()" [disabled]="currentPage === 1">Prev</button>
+              <span class="sign-in-text">Page {{ currentPage }} of {{ totalPages }}</span>
+              <button class="submit-button" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+            </div>
           </div>
         </div>
       </div>

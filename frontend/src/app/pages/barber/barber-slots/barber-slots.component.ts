@@ -7,10 +7,11 @@ import { BarberHeaderComponent } from '../../../components/barber/barber-header/
 import { BarberSidebarComponent } from '../../../components/barber/barber-sidebar/barber-sidebar.component';
 import { SlotService } from '../../../services/slot/slot.service';
 import { AuthService } from '../../../services/auth/auth.service';
+import { SlotFormComponent } from '../../../components/shared/slot-form/slot-form.component';
 
 @Component({
   selector: 'app-barber-slots',
-  imports: [ BarberHeaderComponent,BarberFooterComponent,BarberSidebarComponent,DatePipe,CommonModule ],
+  imports: [ BarberHeaderComponent,BarberFooterComponent,BarberSidebarComponent,DatePipe,CommonModule,SlotFormComponent ],
   templateUrl: './barber-slots.component.html',
   styleUrl: './barber-slots.component.css'
 })
@@ -19,6 +20,10 @@ export class BarberSlotsComponent implements OnInit {
   currentPage: number = 1;
   pageSize: number = 5;
   totalPages: number = 1;
+  
+  selectedSlot: any = null;
+  showSlotModal = false;
+
 
   constructor(private http: HttpClient, private slotService: SlotService, private authService: AuthService) {}
 
@@ -38,6 +43,7 @@ export class BarberSlotsComponent implements OnInit {
         .subscribe({
           next: (data) => {
             this.slots = data.data;
+            console.log(this.slots);
             
             this.totalPages = data.pagination.totalPages;
           },
@@ -48,22 +54,25 @@ export class BarberSlotsComponent implements OnInit {
   });
 }
 
-
-  editSlot(id: string) {
-    console.log('Editing slot with id:', id);
-    // Navigate or open modal here
+editSlot(slotId: string) {
+  const slotToEdit = this.slots.find(slot => slot.id === slotId);
+  if (slotToEdit) {
+    this.openEditSlotModal(slotToEdit);
   }
+}
+
 
   deleteSlot(id: string) {
-    if (confirm('Are you sure you want to delete this slot?')) {
-      this.http.delete(`/api/slots/${id}`).subscribe({
-        next: () => {
-          this.fetchSlots(); // Refresh current page
-        },
-        error: (err) => console.error('Error deleting slot:', err),
-      });
-    }
+  if (confirm('Are you sure you want to delete this slot?')) {
+    this.slotService.deleteSlot(id).subscribe({
+      next: () => {
+        this.fetchSlots(); // Refresh list after deletion
+      },
+      error: (err) => console.error('Error deleting slot:', err),
+    });
   }
+}
+
 
   nextPage() {
     if (this.currentPage < this.totalPages) {
@@ -78,4 +87,54 @@ export class BarberSlotsComponent implements OnInit {
       this.fetchSlots();
     }
   }
+
+  addSlot() {
+  this.openAddSlotModal();
+}
+
+openAddSlotModal() {
+  this.selectedSlot = null;
+  this.showSlotModal = true;
+}
+
+openEditSlotModal(slot: any) {
+  this.selectedSlot = slot;
+  this.showSlotModal = true;
+}
+
+
+closeSlotModal() {
+  this.showSlotModal = false;
+}
+
+handleSlotSubmit(data: any) {
+  this.authService.barberId$.subscribe({
+    next: (barberId) => {
+      if (!barberId) return;
+
+      if (this.selectedSlot) {
+        // UPDATE
+        this.slotService.updateSlot(this.selectedSlot.id, data).subscribe({
+          next: (res) => {
+            this.fetchSlots();
+            this.closeSlotModal();
+          },
+          error: (err) => console.error('Error updating slot:', err)
+        });
+      } else {
+        // CREATE
+        this.slotService.createSlot(barberId, data).subscribe({
+          next: (res) => {
+            this.fetchSlots();
+            this.closeSlotModal();
+          },
+          error: (err) => console.error('Error creating slot:', err)
+        });
+      }
+    },
+    error: (err) => console.error('Barber ID fetch error:', err)
+  });
+}
+
+
 }
