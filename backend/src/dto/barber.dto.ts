@@ -19,3 +19,11 @@ export class BarberLoginResponseDto {
   status!: string;
   message!: string;
 }
+
+export class BarberDto {
+  id!: string;
+  name!: string;
+  phone?: string;
+  district!: string;
+  status!: string
+}

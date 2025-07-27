@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { IUserService } from "./interfaces/IUserService";
 import { UserRegisterRequestDto, MessageResponseDto, UserLoginResponseDto } from "../dto/user.dto";
 import { MESSAGES, STATUS_CODES } from "../utils/constants";
@@ -7,10 +6,18 @@ import { isValidEmail,isValidPassword,isValidPhone,isValidOTP } from "../utils/v
 import { IUserRepository } from '../repositories/interfaces/IUserRepository'
 import OTPService from '../utils/OTPService'
 import { UserMapper } from "../mappers/user.mapper";
+import { BarberDto } from "../dto/barber.dto";
+
+import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
+import { BarberRepository } from "../repositories/barber.repository";
+import { BarberMapper } from "../mappers/barber.mapper";
 
 export class UserService implements IUserService{
+    private _barberRepo: IBarberRepository
 
-    constructor(private _userRepo : IUserRepository){}
+    constructor(private _userRepo : IUserRepository){
+        this._barberRepo = new BarberRepository
+    }
 
 
     registerUser = async (userData: UserRegisterRequestDto): Promise<{ response: MessageResponseDto, status: number }> => {
@@ -256,6 +263,18 @@ export class UserService implements IUserService{
 
         return {
             response: {message: MESSAGES.SUCCESS.PASSWORD_RESET},
+            status: STATUS_CODES.OK
+        }
+    }
+
+    fetchAllBarbers = async (): Promise<{ response: BarberDto[]; status: number; }> =>{
+        const barbers = await this._barberRepo.findWithPagination({},0,3)
+        if (!barbers) {
+            throw new Error("barbers not found")
+        }
+        
+        return {
+            response : BarberMapper.toBarberDtoArray(barbers),
             status: STATUS_CODES.OK
         }
     }

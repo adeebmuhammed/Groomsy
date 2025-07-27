@@ -164,4 +164,15 @@ export class UserController implements IUserController{
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({error: error instanceof Error ? error.message : "Failed to reset password"})
         }
     }
+
+    fetchAllBarbers = async (req: Request, res: Response): Promise<void>=> {
+        try {
+            const { response,status } = await this._userService.fetchAllBarbers()
+
+            res.status(status).json(response)
+        } catch (error) {
+            console.error(error);
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({error: error instanceof Error ? error.message : "Failed to fetch barbers"})
+        }
+    }
 }

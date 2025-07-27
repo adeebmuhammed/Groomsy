@@ -9,4 +9,6 @@ export interface IUserController{
     forgotPassword(req: Request, res: Response):Promise<void>;
     resetPassword(req: Request, res: Response):Promise<void>;
     logout(req: Request, res: Response): Promise<void>;
+
+    fetchAllBarbers(req: Request, res: Response): Promise<void>;
 }

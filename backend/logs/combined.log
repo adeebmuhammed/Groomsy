@@ -318,3 +318,4 @@
 2025-07-26 20:08:20 [INFO]: GET /barber/slots?barberId=68826c247451d8eb5c4d78e3&page=1&limit=5
 2025-07-27 08:31:16 [INFO]: GET /user/auth/google
 2025-07-27 08:31:20 [INFO]: GET /user/auth/google/callback?code=4%2F0AVMBsJhq3K5kS-jeG_93Dpf7itc1KNTw4OAMzJuRqLUJM6fgBhYk8krfYZSW8YwkLC1MHg&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=0&prompt=none
+2025-07-27 15:52:44 [INFO]: GET /user/get-barbers

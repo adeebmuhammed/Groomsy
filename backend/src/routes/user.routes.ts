@@ -35,6 +35,6 @@ userRoutes
     userController.googleCallback
 );
 
-userRoutes.get('/get-barbers',userAuth)
+userRoutes.get('/get-barbers',userController.fetchAllBarbers)
 
 export default userRoutes;

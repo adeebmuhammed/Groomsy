@@ -1,3 +1,4 @@
+import { BarberDto } from "../../dto/barber.dto";
 import { UserRegisterRequestDto,MessageResponseDto,UserLoginResponseDto } from "../../dto/user.dto";
 
 export interface IUserService{
@@ -8,4 +9,6 @@ export interface IUserService{
     loginUser( email:string,password:string ) : Promise<{ response : UserLoginResponseDto, status : number }>;
     forgotPassword( email:string ) : Promise<{ response: MessageResponseDto, status: number}>;
     resetPassword( email: string, password: string, confirmPassword: string ) : Promise<{ response: MessageResponseDto, status: number}>;
+
+    fetchAllBarbers():Promise<{ response: BarberDto[], status: number}>
 }
