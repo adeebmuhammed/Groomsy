@@ -167,7 +167,11 @@ export class UserController implements IUserController{
 
     fetchAllBarbers = async (req: Request, res: Response): Promise<void>=> {
         try {
-            const { response,status } = await this._userService.fetchAllBarbers()
+            const search = (req.query.search as string) || "";
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 3;
+
+            const { response,status } = await this._userService.fetchAllBarbers(search,page,limit)
 
             res.status(status).json(response)
         } catch (error) {

@@ -1,0 +1,37 @@
+<app-user-header></app-user-header>
+
+<div class="simple-barber-header">
+  <h2 class="barber-title">Barbers</h2>
+  <div class="search-container">
+    <input 
+      type="text" 
+      class="search-input" 
+      [(ngModel)]="searchTerm"
+      placeholder="Search Barbers..."
+      (keyup.enter)="onSearch()"
+    />
+    <button class="search-button" (click)="onSearch()">Search</button>
+  </div>
+</div>
+
+<div class="barbers-section">
+  <div class="barber-cards" *ngIf="barbers.length; else noResults">
+    <app-barber-card *ngFor="let barber of barbers" [barber]="barber"></app-barber-card>
+  </div>
+
+  <ng-template #noResults>
+    <p style="text-align:center; padding:20px; color:#555;">No barbers found.</p>
+  </ng-template>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Prev</button>
+    <span *ngFor="let page of [].constructor(totalPages); let i = index" 
+          [class.active]="currentPage === i+1"
+          (click)="changePage(i + 1)">
+      {{ i + 1 }}
+    </span>
+    <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">Next</button>
+  </div>
+</div>
+
+<app-user-footer></app-user-footer>

@@ -11,6 +11,8 @@ import { BarberDto } from "../dto/barber.dto";
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
 import { BarberRepository } from "../repositories/barber.repository";
 import { BarberMapper } from "../mappers/barber.mapper";
+import { ListResponseDto } from "../dto/admin.dto";
+import { AdminMapper } from "../mappers/admin.mapper";
 
 export class UserService implements IUserService{
     private _barberRepo: IBarberRepository
@@ -267,14 +269,25 @@ export class UserService implements IUserService{
         }
     }
 
-    fetchAllBarbers = async (): Promise<{ response: BarberDto[]; status: number; }> =>{
-        const barbers = await this._barberRepo.findWithPagination({},0,3)
+    fetchAllBarbers = async (search: string,page: number,limit: number): Promise<{ response: ListResponseDto<BarberDto>; status: number; }> =>{
+        const {totalCount,barbers} = await this._barberRepo.findBySearchTerm(search,page,limit)
         if (!barbers) {
             throw new Error("barbers not found")
         }
-        
+        const response:ListResponseDto<BarberDto> = {
+                    data: AdminMapper.toBarberDtoArray(
+                        barbers
+                    ),
+                    message: "Barbers fetched successfully",
+                    pagination: {
+                        currentPage: page,
+                        totalPages: Math.ceil(totalCount / limit),
+                        totalItems: totalCount,
+                        itemsPerPage: limit
+                    }
+                } 
         return {
-            response : BarberMapper.toBarberDtoArray(barbers),
+            response,
             status: STATUS_CODES.OK
         }
     }

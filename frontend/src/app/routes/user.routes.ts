@@ -8,6 +8,7 @@ import { UserSignupComponent } from "../pages/user/user-signup/user-signup.compo
 import { UserOtpComponent } from "../pages/user/user-otp/user-otp.component";
 import { UserForgotPasswordComponent } from "../pages/user/user-forgot-password/user-forgot-password.component";
 import { UserResetPasswordComponent } from "../pages/user/user-reset-password/user-reset-password.component";
+import { UserBarberComponent } from "../pages/user/user-barber/user-barber.component";
 
 export const USER_ROUTES: Routes = [
   {
@@ -25,4 +26,9 @@ export const USER_ROUTES: Routes = [
   { path: 'user/verify-otp', component: UserOtpComponent },
   { path: 'user/forgot-password', component: UserForgotPasswordComponent, canActivate:[userAlreadyLoggedInGuard]},
   { path: 'user/reset-password', component: UserResetPasswordComponent},
+  {
+    path: 'user/barbers',
+    component: UserBarberComponent,
+    canActivate: [userAuthGuard]
+  },
 ];

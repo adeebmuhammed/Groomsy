@@ -2,43 +2,38 @@ import { Component } from '@angular/core';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import { CommonModule } from '@angular/common';
+import { UserService } from '../../../services/user/user.service';
+import { BarberDto } from '../../../interfaces/interfaces';
+import { BarberCardComponent } from '../../../components/shared/barber-card/barber-card.component';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-user-home',
-  imports: [ UserHeaderComponent,UserFooterComponent,CommonModule ],
+  imports: [ UserHeaderComponent,UserFooterComponent,CommonModule,BarberCardComponent,RouterModule ],
   templateUrl: './user-home.component.html',
   styleUrl: './user-home.component.css'
 })
 export class UserHomeComponent{
-  constructor() {}
-  latestBarbers = [
-  {
-    name: 'Dan Gregory',
-    role: 'Barber',
-    price: 99,
-    availableDay: 'Monday',
-    location: 'Calicut',
-    slots: 'Slots Available',
-    image: 'assets/images/dan.jpg'
-  },
-  {
-    name: 'Sam Rascals',
-    role: 'Barber',
-    price: 99,
-    availableDay: 'Monday',
-    location: 'Calicut',
-    slots: 'Limited Slot',
-    image: 'assets/images/sam.jpg'
-  },
-  {
-    name: 'Kochi Faraj',
-    role: 'Stylist',
-    price: 149,
-    availableDay: 'Monday',
-    location: 'Calicut',
-    slots: 'Limited Slots',
-    image: 'assets/images/kochi.jpg'
-  }
-];
+  latestBarbers: BarberDto[] = [];
 
+  constructor(private router: Router,private userService: UserService) {}
+
+  ngOnInit() {
+    this.fetchBarbers();
+  }
+
+  fetchBarbers() {
+    this.userService.fetchBarbers('', 1, 3).subscribe({
+      next: (res) => {
+        this.latestBarbers = res.data;
+      },
+      error: (err) => {
+        console.error('Error fetching barbers:', err);
+      }
+    });
+  }
+
+  redirectToBarbers(){
+    this.router.navigate(['user/barbers']);
+  }
 }

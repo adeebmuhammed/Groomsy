@@ -105,3 +105,10 @@ export interface SlotListResponseDto {
     itemsPerPage: number;
   };
 }
+export class BarberDto {
+  id!: string;
+  name!: string;
+  phone?: string;
+  district!: string;
+  status!: string
+}

@@ -1,0 +1,43 @@
+@import '../user-home/user-home.component.css';
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  gap: 6px;
+}
+
+.pagination button,
+.pagination span {
+  padding: 8px 12px;
+  border: 1px solid #c4b5fd;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: 0.2s;
+}
+
+.pagination span.active {
+  background-color: #9333ea;
+  color: white;
+  border-color: #9333ea;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.simple-barber-header {
+  background-color: #f6f3ff;
+  padding: 40px 20px;
+  text-align: center;
+  font-family: Inter, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.barber-title{
+    padding-top: 40px
+}
