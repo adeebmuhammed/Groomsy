@@ -6,6 +6,8 @@ export interface ISlot extends Document {
   price: number;
   date: Date;
   barber: mongoose.Types.ObjectId;
+  isExpired: boolean;
+  isBooked: boolean;
 }
 
 const SlotSchema: Schema = new Schema({
@@ -13,7 +15,9 @@ const SlotSchema: Schema = new Schema({
   endTime: { type: Date, required: true },
   price: { type: Number, required: true },
   date: { type: Date, required: true },
-  barber: { type: mongoose.Types.ObjectId, ref: 'Barber', required: true }
+  barber: { type: mongoose.Types.ObjectId, ref: 'Barber', required: true },
+  isExpired: { type: Boolean, default: false },
+  isBooked: { type: Boolean, default: false }
 },{ timestamps: true });
 
 const Slots = mongoose.model<ISlot>('Slot', SlotSchema);

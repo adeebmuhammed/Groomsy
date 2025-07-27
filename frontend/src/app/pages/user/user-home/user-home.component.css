@@ -90,3 +90,119 @@
     padding: 12px 0;
   }
 }
+.barbers-section {
+  padding: 40px 20px;
+  font-family: Inter, sans-serif;
+  background-color: #f9f5ff;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto 20px auto;
+}
+
+.section-header h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.view-all-btn {
+  font-size: 14px;
+  color: #7c3aed;
+  text-decoration: none;
+  border: 1px solid #c4b5fd;
+  padding: 6px 14px;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.view-all-btn:hover {
+  background-color: #ede9fe;
+}
+
+.barber-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+}
+
+.barber-card {
+  width: 280px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  text-align: left;
+  transition: transform 0.2s;
+}
+
+.barber-card:hover {
+  transform: translateY(-4px);
+}
+
+.barber-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 16px;
+  position: relative;
+}
+
+.role-tag {
+  display: inline-block;
+  font-size: 12px;
+  background-color: #e0e7ff;
+  color: #4f46e5;
+  border-radius: 6px;
+  padding: 2px 10px;
+  margin-bottom: 6px;
+}
+
+.role-tag.stylist {
+  background-color: #ffe4e6;
+  color: #db2777;
+}
+
+.price {
+  float: right;
+  font-weight: bold;
+  color: #111;
+}
+
+.barber-name {
+  margin: 8px 0 4px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.book-btn {
+  margin-top: 10px;
+  width: 100%;
+  background-color: #9333ea;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.book-btn:hover {
+  background-color: #7e22ce;
+}
+
+@media (max-width: 768px) {
+  .barber-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+}

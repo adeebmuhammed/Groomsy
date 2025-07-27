@@ -13,4 +13,30 @@
   </div>
 </div>
 
+<div class="barbers-section">
+  <div class="section-header">
+    <h2>Best Ones</h2>
+    <a routerLink="/all-barbers" class="view-all-btn">All Barbers</a>
+  </div>
+
+  <div class="barber-cards">
+    <div class="barber-card" *ngFor="let barber of latestBarbers">
+      <img [src]="barber.image" alt="Barber Photo" class="barber-image" />
+
+      <div class="card-content">
+        <span class="role-tag" [class.stylist]="barber.role === 'Stylist'">{{ barber.role }}</span>
+        <span class="price">${{ barber.price }}</span>
+
+        <h3 class="barber-name">{{ barber.name }}</h3>
+        <p><i class="far fa-calendar-alt"></i> {{ barber.availableDay }}</p>
+        <p><i class="fas fa-map-marker-alt"></i> {{ barber.location }}</p>
+        <p><i class="fas fa-clock"></i> {{ barber.slots }}</p>
+
+        <button class="book-btn">Book An Appointment</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <app-user-footer></app-user-footer>
