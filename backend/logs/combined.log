@@ -355,3 +355,12 @@
 2025-07-27 23:17:08 [INFO]: GET /user/get-barbers?search=&page=1&limit=4
 2025-07-27 23:17:17 [INFO]: GET /user/get-barbers?search=&page=2&limit=4
 2025-07-27 23:17:21 [INFO]: GET /user/get-barbers?search=&page=1&limit=4
+2025-07-28 10:51:02 [INFO]: POST /admin/coupons
+2025-07-28 10:54:23 [INFO]: POST /admin/coupons
+2025-07-28 11:12:04 [INFO]: PUT /admin/coupons/688708bebef4b0ccd002899b
+2025-07-28 11:12:23 [INFO]: PUT /admin/coupons/688708bebef4b0ccd002899b
+2025-07-28 11:13:11 [INFO]: POST /admin/coupons
+2025-07-28 11:13:32 [INFO]: POST /admin/coupons
+2025-07-28 11:23:16 [INFO]: DELETE /admin/coupons/68870defd4ba78f14abe3b99
+2025-07-28 11:23:30 [INFO]: POST /admin/coupons
+2025-07-28 11:45:32 [INFO]: GET /admin/coupons
