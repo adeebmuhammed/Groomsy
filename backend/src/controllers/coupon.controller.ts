@@ -8,10 +8,11 @@ export class CouponController implements ICouponController{
 
     getAllCoupons = async (req: Request, res: Response): Promise<void> =>{
         try {
+            const search = (req.query.search as string) || "";
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 5;
 
-            const { response,status } = await this._couponService.getAllCoupons(page, limit)
+            const { response,status } = await this._couponService.getAllCoupons(search, page, limit)
 
             res.status(status).json(response)
         } catch (error) {

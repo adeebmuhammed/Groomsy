@@ -32,10 +32,18 @@
   </td>
 
   <td>
-    <button class="status-toggle-button" (click)="toggleStatus(item)">
-      {{ item.status === 'active' ? 'Block' : 'Unblock' }}
-    </button>
-  </td>
+  <!-- If you want to keep status toggle also -->
+  <button *ngIf="item.status" class="status-toggle-button" (click)="toggleStatus(item)">
+    {{ item.status === 'active' ? 'Block' : 'Unblock' }}
+  </button>
+
+  <!-- Edit Button -->
+  <button *ngIf="!item.status" class="edit-button" (click)="editItem(item)">Edit</button>
+
+  <!-- Delete Button -->
+  <button *ngIf="!item.status" class="delete-button" (click)="deleteItem(item)">Delete</button>
+</td>
+
 </tr>
 
       </tbody>

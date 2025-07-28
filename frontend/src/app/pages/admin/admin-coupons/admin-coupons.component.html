@@ -1,0 +1,41 @@
+<app-admin-header></app-admin-header>
+
+<div class="admin-layout">
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <div class="admin-main-content">
+    <div class="barber-list-page">
+
+      <!-- Header with Add Button -->
+      <div class="barber-list-header">
+        <h1 class="barber-list-title">Coupon Management</h1>
+        <button class="add-coupon-button" (click)="addCoupon()">+ Add Coupon</button>
+      </div>
+
+      <app-admin-table
+        [data]="coupons"
+        [columns]="columns"
+        [currentPage]="currentPage"
+        [itemsPerPage]="itemsPerPage"
+        [totalPages]="totalPages"
+        (onPageChange)="changePage($event)"
+        (onSearch)="searchChanged($event)"
+        (onEdit)="editCoupon($event)"
+        (onDelete)="deleteCoupon($event)">
+      </app-admin-table>
+
+      <ng-container *ngIf="couponModalVisible">
+  <app-coupon-form
+    [couponData]="selectedCouponData"
+    [visible]="couponModalVisible"
+    (onClose)="onModalClose()"
+    (onSubmit)="onModalSubmit($event)">
+  </app-coupon-form>
+</ng-container>
+
+
+
+      <app-admin-footer></app-admin-footer>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+<div class="modal-overlay" *ngIf="visible">
+  <div class="modal-container">
+    <h3 class="modal-title">{{ couponData ? 'Edit Coupon' : 'Add Coupon' }}</h3>
+
+    <form [formGroup]="couponForm" (ngSubmit)="submitForm()">
+      <label>Name:</label>
+      <input type="text" formControlName="name" class="form-control" />
+
+      <label>Code:</label>
+      <input type="text" formControlName="code" class="form-control" />
+
+      <label>Start Date:</label>
+      <input type="date" formControlName="startDate" class="form-control" />
+
+      <label>End Date:</label>
+      <input type="date" formControlName="endDate" class="form-control" />
+
+      <label>Max Count:</label>
+      <input type="number" formControlName="maxCount" class="form-control" min="0" />
+
+      <label>Minimum Limit (₹):</label>
+      <input type="number" formControlName="limitAmount" class="form-control" min="0" />
+
+      <label>Coupon Amount (₹):</label>
+      <input type="number" formControlName="couponAmount" class="form-control" min="0" />
+
+      <div class="modal-actions">
+        <button type="submit" class="submit-button">{{ couponData ? 'Update' : 'Add' }}</button>
+        <button type="button" class="submit-button cancel-btn" (click)="close()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

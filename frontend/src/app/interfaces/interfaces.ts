@@ -105,10 +105,41 @@ export interface SlotListResponseDto {
     itemsPerPage: number;
   };
 }
-export class BarberDto {
-  id!: string;
-  name!: string;
-  phone?: string;
-  district!: string;
-  status!: string
+export interface BarberDto {
+  id: string;
+  name: string;
+  phone: string;
+  district: string;
+  status: string
+}
+export interface CouponResponseDto{
+    id:string;
+    name: string;
+    code: string;
+    startDate: Date;
+    endDate: Date;
+    maxCount: number;
+    limitAmount: number;
+    couponAmount: number;
+}
+
+export interface CouponListResponseDto {
+  data: CouponResponseDto[];
+  message: string;
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
+}
+
+export class CouponRequestDto{
+    name!: string;
+    code!: string;
+    startDate!: Date;
+    endDate!: Date;
+    maxCount!: number;
+    limitAmount!: number;
+    couponAmount!: number;
 }

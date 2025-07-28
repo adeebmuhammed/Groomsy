@@ -23,12 +23,20 @@ extends BaseRepository<ICoupon>
     }
 
     async findAllCoupons(
+      search: string,
       page: number,
       limit: number
     ): Promise<{ coupons: ICoupon[]; totalCount: number }> {
       const skip = (page - 1) * limit;
     
-      const condition = {};
+      const condition = search 
+      ? {
+        $or:[
+          { name: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } }
+        ]}
+      : {};
+
       const [coupons, totalCount] = await Promise.all([
         this.findWithPagination(condition, skip, limit),
         this.countDocuments(condition)

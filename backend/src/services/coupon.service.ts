@@ -9,8 +9,8 @@ import { ICouponService } from "./interfaces/ICouponService";
 export class CouponService implements ICouponService{
     constructor( private _couponRepo: ICouponRepository){}
 
-    getAllCoupons = async (page: number, limit: number): Promise<{ response: ListResponseDto<CouponDto>; status: number; }> => {
-        const { totalCount,coupons } = await this._couponRepo.findAllCoupons(page,limit)
+    getAllCoupons = async (search: string,page: number, limit: number): Promise<{ response: ListResponseDto<CouponDto>; status: number; }> => {
+        const { totalCount,coupons } = await this._couponRepo.findAllCoupons(search,page,limit)
 
         const response: ListResponseDto<CouponDto> = {
             data: Couponmapper.toCouponDtoArray(coupons),

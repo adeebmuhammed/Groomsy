@@ -8,6 +8,7 @@ import { BarberSidebarComponent } from '../../../components/barber/barber-sideba
 import { SlotService } from '../../../services/slot/slot.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { SlotFormComponent } from '../../../components/shared/slot-form/slot-form.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-barber-slots',
@@ -63,14 +64,27 @@ editSlot(slotId: string) {
 
 
   deleteSlot(id: string) {
-  if (confirm('Are you sure you want to delete this slot?')) {
-    this.slotService.deleteSlot(id).subscribe({
+  Swal.fire({
+        title: 'Are you sure?',
+        text: 'You won’t be able to revert this!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      }).then(()=>{
+        this.slotService.deleteSlot(id).subscribe({
       next: () => {
+        Swal.fire('Deleted!', 'Slot has been deleted.', 'success');
         this.fetchSlots(); // Refresh list after deletion
       },
-      error: (err) => console.error('Error deleting slot:', err),
+      error: (err) =>{
+        Swal.fire('Error!', 'Failed to delete the Slot.', 'error');
+        console.error('Error deleting slot:', err
+        )},
     });
-  }
+      })
+    
 }
 
 

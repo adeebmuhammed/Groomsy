@@ -1,0 +1,23 @@
+@import "../admin-barbers-list/admin-barbers-list.component.css";
+
+.barber-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.add-coupon-button {
+  background-color: #4f46e5; /* Indigo */
+  color: white;
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-coupon-button:hover {
+  background-color: #4338ca;
+}

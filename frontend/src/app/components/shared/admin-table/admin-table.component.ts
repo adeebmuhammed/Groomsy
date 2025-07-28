@@ -19,6 +19,9 @@ export class AdminTableComponent{
   @Output() onPageChange = new EventEmitter<number>();
   @Output() onToggleStatus = new EventEmitter<any>();
   @Output() onSearch = new EventEmitter<string>();
+  @Output() onEdit = new EventEmitter<any>();
+  @Output() onDelete = new EventEmitter<any>();
+
 
   searchTerm = '';
 
@@ -43,4 +46,13 @@ export class AdminTableComponent{
   onSearchChange(): void {
     this.onSearch.emit(this.searchTerm.trim());
   }
+
+  editItem(item: any): void {
+  this.onEdit.emit(item);
+}
+
+deleteItem(item: any): void {
+  this.onDelete.emit(item);
+}
+
 }

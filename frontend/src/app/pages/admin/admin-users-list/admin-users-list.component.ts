@@ -4,7 +4,7 @@ import { AdminFooterComponent } from '../../../components/admin/admin-footer/adm
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../services/admin/admin.service';
-import { AdminTableComponent } from '../../../components/admin/admin-table/admin-table.component';
+import { AdminTableComponent } from '../../../components/shared/admin-table/admin-table.component';
 import Swal from 'sweetalert2';
 import { IUser } from '../../../interfaces/interfaces';
 
