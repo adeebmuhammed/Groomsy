@@ -34,9 +34,9 @@ const couponService = new CouponService(couponRepo)
 const couponController = new CouponController(couponService)
 
 adminRoutes
-.get("/coupons",couponController.getAllCoupons)
-.post("/coupons",couponController.createCoupon)
-.put("/coupons/:id",couponController.updateCoupon)
-.delete("/coupons/:id",couponController.deleteCoupon)
+.get("/coupons", adminAuth,couponController.getAllCoupons)
+.post("/coupons", adminAuth,couponController.createCoupon)
+.put("/coupons/:id", adminAuth,couponController.updateCoupon)
+.delete("/coupons/:id", adminAuth,couponController.deleteCoupon)
 
 export default adminRoutes;

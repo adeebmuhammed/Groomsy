@@ -4,6 +4,9 @@ import { UserController } from "../controllers/user.controller";
 import { UserService } from "../services/user.service";
 import { UserRepository } from "../repositories/user.repository";
 import passport from '../config/passport'
+import { FavoritesController } from "../controllers/favorites.controller";
+import { FavoritesRepository } from "../repositories/favorites.repository";
+import { FavoritesService } from "../services/favorites.service";
 
 const userRoutes = Router()
 const userAuth = authMiddleware(["user"])
@@ -36,5 +39,12 @@ userRoutes
 );
 
 userRoutes.get('/get-barbers',userAuth,userController.fetchAllBarbers)
+
+const favoritesRepo = new FavoritesRepository()
+const favoritesService = new FavoritesService(favoritesRepo)
+const favoritesController = new FavoritesController(favoritesService)
+
+userRoutes.
+patch("/update-favorites",favoritesController.updateFavorites)
 
 export default userRoutes;
