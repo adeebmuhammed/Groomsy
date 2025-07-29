@@ -16,6 +16,7 @@ import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import OTPService from "../utils/OTPService";
 import { BarberMapper } from "../mappers/barber.mapper";
 import { AdminMapper } from "../mappers/admin.mapper";
+import { generateAccessToken } from "../utils/jwt.generator";
 
 export class BarberService implements IBarberService {
   constructor(private _barberRepo: BarberRepository) {}
@@ -168,9 +169,12 @@ export class BarberService implements IBarberService {
       throw new Error(MESSAGES.ERROR.INVALID_CREDENTIALS)
     }
 
+    const token = generateAccessToken({ userId: barber._id, type: "barber" })
+
     const response: BarberLoginResponseDto = BarberMapper.toLoginResponse(
       barber,
-      MESSAGES.SUCCESS.LOGIN
+      MESSAGES.SUCCESS.LOGIN,
+      token
     )
 
     return {

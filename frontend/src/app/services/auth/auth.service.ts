@@ -73,7 +73,7 @@ export class AuthService {
     this.http.post<IAdminLoginResponse>(`${this.API_URL}/admin/login`, credentials,{ withCredentials: true }).subscribe({
       next: (res: any) => {
         localStorage.setItem('role', 'admin');
-
+        localStorage.setItem('token',res.token)
         this.updateLoginState('admin', true, res.user.name, res.user.Id);
 
         observer.next(res);
@@ -136,7 +136,7 @@ export class AuthService {
     this.http.post<{ message: string; user: IUserLoginResponse }>(`${this.API_URL}/user/login`, data,{ withCredentials: true }).subscribe({
       next: (res: any) => {
         localStorage.setItem('role', 'user');
-
+        localStorage.setItem('token',res?.user?.token)
         const name = res.user?.name || '';
         const userId = res.user?.id || '';
 
@@ -212,7 +212,7 @@ export class AuthService {
       this.http.post<IBarberLoginResponse>(`${this.API_URL}/barber/login`, credentials,{ withCredentials: true }).subscribe({
         next: (res: any) => {
           localStorage.setItem('role', 'barber');
-          
+          localStorage.setItem('token',res?.token)
           this.updateLoginState('barber', true, res.name, res.id);
           
           observer.next(res);

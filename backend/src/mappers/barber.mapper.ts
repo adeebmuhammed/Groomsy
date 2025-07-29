@@ -4,7 +4,8 @@ import { BarberLoginResponseDto,BarberDto } from "../dto/barber.dto";
 export class BarberMapper{
     static toLoginResponse(
     barber: IBarber,
-    message: string
+    message: string,
+    token: string
   ): BarberLoginResponseDto {
     return {
       id: barber._id.toString(),
@@ -13,6 +14,7 @@ export class BarberMapper{
       phone: barber.phone,
       district: barber.district,
       status: barber.status,
+      token,
       message,
     };
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
@@ -8,9 +8,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
   templateUrl: './slot-form.component.html',
   styleUrl: './slot-form.component.css'
 })
-export class SlotFormComponent {
+export class SlotFormComponent implements OnChanges {
   @Input() slotData: any = null; // null for Add, existing data for Edit
-  @Input() visible: boolean = false;
+  @Input() visible = false;
   @Output() onClose = new EventEmitter<void>();
   @Output() onSubmit = new EventEmitter<any>();
 

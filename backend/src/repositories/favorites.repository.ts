@@ -12,33 +12,33 @@ export class FavoritesRepository
   }
 
   async updateFavorites(
-  userId: string,
-  barberId: string
-): Promise<{ added: boolean }> {
-  const barberObjectId = new mongoose.Types.ObjectId(barberId);
+    userId: string,
+    barberId: string
+  ): Promise<{ added: boolean }> {
+    const barberObjectId = new mongoose.Types.ObjectId(barberId);
 
-  const existing = await Favorites.findOne({
-    userId,
-    "barbers.barberId": barberObjectId,
-  });
+    const existing = await Favorites.findOne({
+      userId,
+      "barbers.barberId": barberObjectId,
+    });
 
-  if (existing) {
-    // Barber already in favorites — remove it
-    await Favorites.updateOne(
-      { userId },
-      { $pull: { barbers: { barberId: barberObjectId } } }
-    );
-    return { added: false };
-  } else {
-    // Barber not in favorites — add it
-    await Favorites.updateOne(
-      { userId },
-      { $addToSet: { barbers: { barberId: barberObjectId } } },
-      { upsert: true }
-    );
-    return { added: true };
+    if (existing) {
+      await Favorites.updateOne(
+        { userId },
+        { $pull: { barbers: { barberId: barberObjectId } } }
+      );
+      return { added: false };
+    } else {
+      await Favorites.updateOne(
+        { userId },
+        { $addToSet: { barbers: { barberId: barberObjectId } } },
+        { upsert: true }
+      );
+      return { added: true };
+    }
   }
-}
 
-
+  async getFavoritesByUser(userId: string): Promise<IFavorites | null> {
+    return await Favorites.findOne({ userId });
+  }
 }

@@ -18,6 +18,7 @@ export class BarberLoginResponseDto {
   district!: string;
   status!: string;
   message!: string;
+  token!:string;
 }
 
 export class BarberDto {

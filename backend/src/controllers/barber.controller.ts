@@ -45,13 +45,11 @@ export class BarberController implements IBarberController{
     login = async (req: Request, res: Response): Promise<void> => {
         try {
             const { email, password} = req.body
-            const { response, status } = await this._barberService.login(email, password)
-
-            const accessToken = generateAccessToken({ userId: response.id, type: "barber" });
+            let { response, status } = await this._barberService.login(email, password)
             
                   const refreshToken = generateRefreshToken({ userId: response.id, type: "barber" });
                   
-                  res.cookie("auth-token", accessToken, {
+                  res.cookie("auth-token", response.token, {
         httpOnly: true,
         secure: false,
         sameSite: "lax",

@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { Request,Response,NextFunction } from 'express';
 import { MESSAGES,STATUS_CODES } from '../utils/constants';
+import Users from '../models/user.model';
 
 export const authMiddleware = (allowedRoles: string[])=>{
-    return (req : Request, res : Response, next : NextFunction)=>{
+    return async (req : Request, res : Response, next : NextFunction)=>{
         const token = req.cookies["auth-token"]
         
         if (!token) {

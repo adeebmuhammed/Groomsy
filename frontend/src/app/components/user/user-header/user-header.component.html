@@ -9,9 +9,19 @@
 
   <div class="header-right">
     <ng-container *ngIf="isLoggedIn && userName">
-      <div class="header-profile">
-        <span class="profile-text">Hello, {{ userName }}</span>
-      </div>
+      <div class="header-profile-container" (click)="toggleDropdown()" tabindex="0" (blur)="closeDropdown()">
+  <div class="header-profile">
+    <span class="profile-text">Hello, {{ userName }}</span>
+  </div>
+
+  <ul class="dropdown-menu" *ngIf="showDropdown">
+    <li (click)="navigateTo('profile')">Profile</li>
+    <li (click)="navigateTo('bookings')">Bookings</li>
+    <li (click)="navigateTo('favorites')">Favorites</li>
+    <li (click)="navigateTo('reviews')">Reviews</li>
+  </ul>
+</div>
+
     </ng-container>
 
     <button class="header-button" (click)="handleAuth()">

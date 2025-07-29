@@ -10,13 +10,13 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { FavoritesService } from '../../../services/favorites/favorites.service';
 
 @Component({
-  selector: 'app-user-barber',
-  imports: [ UserHeaderComponent,UserFooterComponent,BarberCardComponent,CommonModule,FormsModule ],
-  templateUrl: './user-barber.component.html',
-  styleUrl: './user-barber.component.css'
+  selector: 'app-user-favorites',
+  imports: [ UserHeaderComponent,UserFooterComponent,BarberCardComponent,CommonModule,FormsModule],
+  templateUrl: './user-favorites.component.html',
+  styleUrl: './user-favorites.component.css'
 })
-export class UserBarberComponent implements OnInit {
-   barbers: BarberDto[] = [];
+export class UserFavoritesComponent implements OnInit {
+  barbers: BarberDto[] = [];
   searchTerm = '';
   currentPage = 1;
   totalPages = 1;
@@ -25,20 +25,7 @@ export class UserBarberComponent implements OnInit {
   constructor(private userService: UserService, private authService: AuthService, private favoritesService: FavoritesService) {}
 
   ngOnInit(): void {
-    this.fetchBarbers();
     this.fetchFavorites()
-  }
-
-  favoriteIds: string[] = [];
-
-  fetchBarbers(): void {
-    this.userService.fetchBarbers(this.searchTerm, this.currentPage, this.pageSize).subscribe({
-      next: (res: PaginatedResponse<BarberDto>) => {
-        this.barbers = res.data;
-        this.totalPages = res.pagination.totalPages;
-      },
-      error: (err) => console.error('Error fetching barbers:', err)
-    });
   }
 
   fetchFavorites() {
@@ -49,7 +36,7 @@ export class UserBarberComponent implements OnInit {
 
     this.favoritesService.getFavoriteBarbers(userId, 1, 100).subscribe({
       next: (res) => {
-        this.favoriteIds = res.data.map((barber) => barber.id);
+        this.barbers = res.data;
       },
       error: (err) => {
         console.error('Error fetching favorites:', err);
@@ -65,7 +52,6 @@ export class UserBarberComponent implements OnInit {
     this.favoritesService.updateFavorite(userId, barberId).subscribe({
       next: (res) => {
         console.log('Favorite updated:', res);
-        this.fetchBarbers();
         this.fetchFavorites();
       },
       error: (err) => {
@@ -76,14 +62,12 @@ export class UserBarberComponent implements OnInit {
 
   onSearch(): void {
     this.currentPage = 1;
-    this.fetchBarbers();
     this.fetchFavorites()
   }
 
   changePage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.fetchBarbers();
       this.fetchFavorites()
     }
   }

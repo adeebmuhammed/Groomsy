@@ -13,8 +13,8 @@ export class SlotService {
 
   getSlotsByBarber(
     barberId: string,
-    page: number = 1,
-    limit: number = 10
+    page = 1,
+    limit = 10
   ): Observable<SlotListResponseDto> {
     const params = new HttpParams()
     .set('barberId', barberId)

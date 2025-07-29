@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BarberDto } from '../../../interfaces/interfaces';
 
 @Component({
@@ -8,4 +8,7 @@ import { BarberDto } from '../../../interfaces/interfaces';
 })
 export class BarberCardComponent {
   @Input() barber!: BarberDto;
+  @Input() isFavorite = false; // Get from parent
+
+  @Output() favoriteToggle = new EventEmitter<void>();
 }

@@ -18,9 +18,9 @@ import Swal from 'sweetalert2';
 })
 export class BarberSlotsComponent implements OnInit {
   slots: SlotDto[] = [];
-  currentPage: number = 1;
-  pageSize: number = 5;
-  totalPages: number = 1;
+  currentPage = 1;
+  pageSize = 5;
+  totalPages = 1;
   
   selectedSlot: any = null;
   showSlotModal = false;

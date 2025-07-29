@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
@@ -8,9 +8,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
   templateUrl: './coupon-form.component.html',
   styleUrl: './coupon-form.component.css'
 })
-export class CouponFormComponent {
+export class CouponFormComponent implements OnChanges {
    @Input() couponData: any = null; // For edit
-  @Input() visible: boolean = false;
+  @Input() visible = false;
   @Output() onClose = new EventEmitter<void>();
   @Output() onSubmit = new EventEmitter<any>();
 

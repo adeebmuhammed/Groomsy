@@ -129,6 +129,7 @@ export class UserController implements IUserController{
                     email: response.email,
                     phone: response.phone,
                     status: response.status,
+                    token: accessToken
                 }
             })
         } catch (error) {

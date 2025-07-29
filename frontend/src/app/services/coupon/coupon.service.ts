@@ -13,7 +13,7 @@ export class CouponService {
   getCoupons(
     page: number,
     limit: number,
-    searchTerm: string = ''
+    searchTerm = ''
   ): Observable<CouponListResponseDto> {
     const params = {
       page: page.toString(),

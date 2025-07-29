@@ -44,7 +44,10 @@ const favoritesRepo = new FavoritesRepository()
 const favoritesService = new FavoritesService(favoritesRepo)
 const favoritesController = new FavoritesController(favoritesService)
 
-userRoutes.
-patch("/update-favorites",favoritesController.updateFavorites)
+userRoutes
+.get("/favorites",userAuth,favoritesController.getFavoritesByUser)
+.patch("/favorites",userAuth,favoritesController.updateFavorites)
+
+
 
 export default userRoutes;
