@@ -6,6 +6,7 @@ import { BarberRepository } from "../repositories/barber.repository";
 import { SlotRepository } from "../repositories/slot.repository";
 import { SlotService } from "../services/slot.service";
 import { SlotController } from "../controllers/slot.controller";
+import { isBlockedMiddleware } from "../middlewares/isBlocked.middleware";
 
 const barberRoutes = Router()
 const barberAuth = authMiddleware(["barber"])
@@ -28,9 +29,9 @@ barberRoutes
 .post('/logout',barberController.logout)
 
 barberRoutes
-.get('/slots',barberAuth,slotController.getSlotsByBarber)
-.post('/slots',slotController.createSlot)
-.put('/slots/:id',slotController.updateSlot)
-.delete('/slots/:id',slotController.deleteSlot)
+.get('/slots',barberAuth, isBlockedMiddleware,slotController.getSlotsByBarber)
+.post('/slots',barberAuth, isBlockedMiddleware,slotController.createSlot)
+.put('/slots/:id',barberAuth, isBlockedMiddleware,slotController.updateSlot)
+.delete('/slots/:id',barberAuth, isBlockedMiddleware,slotController.deleteSlot)
 
 export default barberRoutes;

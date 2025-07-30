@@ -7,6 +7,7 @@ import passport from '../config/passport'
 import { FavoritesController } from "../controllers/favorites.controller";
 import { FavoritesRepository } from "../repositories/favorites.repository";
 import { FavoritesService } from "../services/favorites.service";
+import { isBlockedMiddleware } from "../middlewares/isBlocked.middleware";
 
 const userRoutes = Router()
 const userAuth = authMiddleware(["user"])
@@ -38,15 +39,15 @@ userRoutes
     userController.googleCallback
 );
 
-userRoutes.get('/get-barbers',userAuth,userController.fetchAllBarbers)
+userRoutes.get('/get-barbers', userAuth, isBlockedMiddleware, userController.fetchAllBarbers)
 
 const favoritesRepo = new FavoritesRepository()
 const favoritesService = new FavoritesService(favoritesRepo)
 const favoritesController = new FavoritesController(favoritesService)
 
 userRoutes
-.get("/favorites",userAuth,favoritesController.getFavoritesByUser)
-.patch("/favorites",userAuth,favoritesController.updateFavorites)
+.get("/favorites",userAuth,isBlockedMiddleware,favoritesController.getFavoritesByUser)
+.patch("/favorites",userAuth,isBlockedMiddleware,favoritesController.updateFavorites)
 
 
 
