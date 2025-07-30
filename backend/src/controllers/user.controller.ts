@@ -83,7 +83,7 @@ export class UserController implements IUserController{
                                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
                               });
 
-            res.redirect(`${process.env.FRONTEND_URL}/user/auth-callback?token=${accessToken}&name=${encodeURIComponent(response.name)}&email=${encodeURIComponent(response.email)}`);
+            res.redirect(`${process.env.FRONTEND_URL}/user/auth-callback?token=${accessToken}&name=${encodeURIComponent(response.name)}&id=${encodeURIComponent(response.id)}`);
         } catch (error) {
             console.error("Google auth error:", error);
             res.redirect(`${process.env.FRONTEND_URL}/user/signup?error=google_auth_failed`);

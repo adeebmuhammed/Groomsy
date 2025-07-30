@@ -8,83 +8,115 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import { FavoritesService } from '../../../services/favorites/favorites.service';
+import { first } from 'rxjs';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-user-barber',
-  imports: [ UserHeaderComponent,UserFooterComponent,BarberCardComponent,CommonModule,FormsModule ],
+  imports: [
+    UserHeaderComponent,
+    UserFooterComponent,
+    BarberCardComponent,
+    CommonModule,
+    FormsModule,
+  ],
   templateUrl: './user-barber.component.html',
-  styleUrl: './user-barber.component.css'
+  styleUrl: './user-barber.component.css',
 })
 export class UserBarberComponent implements OnInit {
-   barbers: BarberDto[] = [];
+  barbers: BarberDto[] = [];
   searchTerm = '';
   currentPage = 1;
   totalPages = 1;
   pageSize = 4;
 
-  constructor(private userService: UserService, private authService: AuthService, private favoritesService: FavoritesService) {}
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+    private favoritesService: FavoritesService
+  ) {}
 
   ngOnInit(): void {
-    this.fetchBarbers();
-    this.fetchFavorites()
+    this.loadBarbersAndFavorites();
   }
 
   favoriteIds: string[] = [];
 
   fetchBarbers(): void {
-    this.userService.fetchBarbers(this.searchTerm, this.currentPage, this.pageSize).subscribe({
-      next: (res: PaginatedResponse<BarberDto>) => {
-        this.barbers = res.data;
-        this.totalPages = res.pagination.totalPages;
-      },
-      error: (err) => console.error('Error fetching barbers:', err)
-    });
+    this.userService
+      .fetchBarbers(this.searchTerm, this.currentPage, this.pageSize)
+      .subscribe({
+        next: (res: PaginatedResponse<BarberDto>) => {
+          this.barbers = res.data;
+          this.totalPages = res.pagination.totalPages;
+        },
+        error: (err) => console.error('Error fetching barbers:', err),
+      });
   }
 
   fetchFavorites() {
-    let userId = '';
-    this.authService.userId$.subscribe((id) => {
-      if (id) userId = id;
-    });
+    this.authService.userId$.pipe(first()).subscribe((userId) => {
+      if (!userId) return;
 
-    this.favoritesService.getFavoriteBarbers(userId, 1, 100).subscribe({
-      next: (res) => {
-        this.favoriteIds = res.data.map((barber) => barber.id);
-      },
-      error: (err) => {
-        console.error('Error fetching favorites:', err);
-      },
+      this.favoritesService.getFavoriteBarbers(userId, 1, 100).subscribe({
+        next: (res) => {
+          this.favoriteIds = res.data.map((barber) => barber.id);
+        },
+        error: (err) => {
+          console.error('Error fetching favorites:', err);
+        },
+      });
     });
   }
 
   toggleFavorite(barberId: string) {
-    let userId = '';
-    this.authService.userId$.subscribe((id) => {
-      if (id) userId = id;
-    });
-    this.favoritesService.updateFavorite(userId, barberId).subscribe({
-      next: (res) => {
-        console.log('Favorite updated:', res);
-        this.fetchBarbers();
-        this.fetchFavorites();
-      },
-      error: (err) => {
-        console.error('Error updating favorite:', err);
-      },
+    this.authService.userId$.pipe(first()).subscribe((userId) => {
+      if (!userId) return;
+
+      this.favoritesService.updateFavorite(userId, barberId).subscribe({
+        next: () => {
+          this.loadBarbersAndFavorites(); // 💡 updated to consistent loader
+        },
+        error: (err) => {
+          console.error('Error updating favorite:', err);
+        },
+      });
     });
   }
 
   onSearch(): void {
     this.currentPage = 1;
-    this.fetchBarbers();
-    this.fetchFavorites()
+    this.loadBarbersAndFavorites();
   }
 
   changePage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.fetchBarbers();
-      this.fetchFavorites()
+      this.loadBarbersAndFavorites();
     }
+  }
+
+  loadBarbersAndFavorites(): void {
+    this.authService.userId$.pipe(first()).subscribe((userId) => {
+      if (!userId) return;
+
+      forkJoin({
+        barbers: this.userService.fetchBarbers(
+          this.searchTerm,
+          this.currentPage,
+          this.pageSize
+        ),
+        favorites: this.favoritesService.getFavoriteBarbers(userId, 1, 100),
+      }).subscribe({
+        next: ({ barbers, favorites }) => {
+          this.barbers = barbers.data;
+          this.totalPages = barbers.pagination.totalPages;
+          this.favoriteIds = favorites.data.map((barber) => barber.id);
+        },
+        error: (err) => {
+          console.error('Error loading barbers and favorites:', err);
+        },
+      });
+    });
   }
 }

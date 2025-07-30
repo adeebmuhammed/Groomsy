@@ -8,7 +8,7 @@ import { BarberDto } from '../../../interfaces/interfaces';
 })
 export class BarberCardComponent {
   @Input() barber!: BarberDto;
-  @Input() isFavorite = false; // Get from parent
+  @Input() isFavorite: boolean = false;
 
   @Output() favoriteToggle = new EventEmitter<void>();
 }

@@ -19,15 +19,15 @@ export class AuthCallbackComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       const token = params['token'];
       const name = params['name'];
-      const email = params['email'];
+      const id = params['id'];
 
-      if (token && name && email) {
+      if (token && name && id) {
         localStorage.setItem('token', token);
         localStorage.setItem('role', 'user');
         localStorage.setItem('userName', name);
-        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userId', id);
 
-        this.authService.updateLoginState('user', true, name, email);
+        this.authService.updateLoginState('user', true, name, id);
 
         // Clean up query params and redirect to home
         this.router.navigate(['/user/home']);

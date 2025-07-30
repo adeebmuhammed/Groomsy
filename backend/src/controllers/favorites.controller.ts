@@ -16,10 +16,10 @@ export class FavoritesController implements IFavoritesController {
 
       res.status(status).json(response)
     } catch (error) {
-      console.error("error updating favorites:", error);
+      console.error("error fetching favorites:", error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
         error:
-          error instanceof Error ? error.message : "Update favorites failed",
+          error instanceof Error ? error.message : "fetching favorites failed",
       });
     }
   }
