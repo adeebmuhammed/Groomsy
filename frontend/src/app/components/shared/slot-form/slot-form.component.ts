@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 @Component({
   selector: 'app-slot-form',
   imports: [ ReactiveFormsModule,CommonModule ],
@@ -18,11 +17,22 @@ export class SlotFormComponent implements OnChanges {
 
   constructor(private fb: FormBuilder) {
     this.slotForm = this.fb.group({
-      date: ['', Validators.required],
+      date: ['', [Validators.required, this.futureDateValidator]],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
-      price: ['', [Validators.required, Validators.min(0)]]
+      price: ['', [Validators.required, Validators.min(1)]]
     });
+  }
+
+  futureDateValidator(control: AbstractControl): ValidationErrors | null {
+    const selectedDate = new Date(control.value);
+    const today = new Date();
+
+    // Remove time portion for comparison
+    selectedDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    return selectedDate >= today ? null : { pastDate: true };
   }
 
   ngOnChanges() {

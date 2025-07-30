@@ -5,6 +5,9 @@
     <form [formGroup]="slotForm" (ngSubmit)="submitForm()">
       <label>Date:</label>
       <input type="date" formControlName="date" class="form-control"/>
+      <div *ngIf="slotForm.get('date')?.errors?.['pastDate']">
+    Date cannot be in the past
+  </div>
 
       <label>Start Time:</label>
       <input type="time" formControlName="startTime" class="form-control"/>

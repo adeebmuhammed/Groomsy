@@ -148,7 +148,7 @@ export class AdminCouponsComponent implements OnInit {
         next: () => {
           Swal.fire({
             icon: 'success',
-            title: 'Status Updated',
+            title: 'Coupon Created',
             text: 'Coupon Created Successfully',
             timer: 2000,
             showConfirmButton: false,
@@ -161,7 +161,7 @@ export class AdminCouponsComponent implements OnInit {
           Swal.fire({
             icon: 'error',
             title: 'Failed',
-            text: 'Coupon Updation Failed',
+            text: 'Coupon Creation Failed',
           });
         },
       });

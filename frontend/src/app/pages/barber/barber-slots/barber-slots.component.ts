@@ -44,7 +44,6 @@ export class BarberSlotsComponent implements OnInit {
         .subscribe({
           next: (data) => {
             this.slots = data.data;
-            console.log(this.slots);
             
             this.totalPages = data.pagination.totalPages;
           },
@@ -142,7 +141,10 @@ handleSlotSubmit(data: any) {
             this.fetchSlots();
             this.closeSlotModal();
           },
-          error: (err) => console.error('Error creating slot:', err)
+          error: (err) => {
+            console.error('Error creating slot:', err)
+            Swal.fire('Error!', err.error?.error || 'An unexpected error occurred', 'error');
+          }
         });
       }
     },

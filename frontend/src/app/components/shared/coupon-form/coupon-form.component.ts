@@ -23,8 +23,8 @@ export class CouponFormComponent implements OnChanges {
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       maxCount: ['', [Validators.required, Validators.min(1)]],
-      limitAmount: ['', [Validators.required, Validators.min(0)]],
-      couponAmount: ['', [Validators.required, Validators.min(0)]],
+      limitAmount: ['', [Validators.required, Validators.min(1)]],
+      couponAmount: ['', [Validators.required, Validators.min(1)]],
     });
   }
 
