@@ -1,34 +1,45 @@
 import { IBarberRepository } from "./interfaces/IBarberRepository";
-import Barbers,{IBarber} from "../models/barber.model";
+import Barbers, { IBarber } from "../models/barber.model";
 import { BaseRepository } from "./base.repository";
 
-export class BarberRepository extends BaseRepository<IBarber> implements IBarberRepository{
+export class BarberRepository
+  extends BaseRepository<IBarber>
+  implements IBarberRepository
+{
+  constructor() {
+    super(Barbers);
+  }
 
-    constructor(){
-        super(Barbers)
+  async findByEmail(email: string): Promise<IBarber | null> {
+    return await Barbers.findOne({ email: email });
+  }
+
+  async findBySearchTerm(
+    search: string,
+    page: number,
+    limit: number,
+    district: string
+  ): Promise<{ barbers: IBarber[]; totalCount: number }> {
+    const query: any = {};
+
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
     }
 
-    async findByEmail(email: string): Promise<IBarber | null> {
-        return await Barbers.findOne({email: email})
+    if (district) {
+      query.district = district;
     }
 
-    async findBySearchTerm(search: string, page: number, limit: number): Promise<{ barbers: IBarber[]; totalCount: number }> {
-        const query = search
-            ? {
-                $or: [
-                    { name: { $regex: search, $options: "i" } },
-                    { email: { $regex: search, $options: "i" } }
-                ]
-            }
-            : {};
-    
-        const skip = (page - 1) * limit;
-    
-        const [barbers, totalCount] = await Promise.all([
-            Barbers.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }),
-            Barbers.countDocuments(query)
-        ]);
-    
-        return { barbers, totalCount };
-    }
+    const skip = (page - 1) * limit;
+
+    const [barbers, totalCount] = await Promise.all([
+      Barbers.find(query).skip(skip).limit(limit).sort({ createdAt: -1 }),
+      Barbers.countDocuments(query),
+    ]);
+
+    return { barbers, totalCount };
+  }
 }

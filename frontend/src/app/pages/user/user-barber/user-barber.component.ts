@@ -29,6 +29,23 @@ export class UserBarberComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
   pageSize = 4;
+  selectedDistrict: string = '';
+  districts: string[] = [
+    'Thiruvananthapuram',
+    'Kollam',
+    'Pathanamthitta',
+    'Alappuzha',
+    'Kottayam',
+    'Idukki',
+    'Ernakulam',
+    'Thrissur',
+    'Palakkad',
+    'Malappuram',
+    'Kozhikode',
+    'Wayanad',
+    'Kannur',
+    'Kasaragod',
+  ];
 
   constructor(
     private userService: UserService,
@@ -41,33 +58,6 @@ export class UserBarberComponent implements OnInit {
   }
 
   favoriteIds: string[] = [];
-
-  fetchBarbers(): void {
-    this.userService
-      .fetchBarbers(this.searchTerm, this.currentPage, this.pageSize)
-      .subscribe({
-        next: (res: PaginatedResponse<BarberDto>) => {
-          this.barbers = res.data;
-          this.totalPages = res.pagination.totalPages;
-        },
-        error: (err) => console.error('Error fetching barbers:', err),
-      });
-  }
-
-  fetchFavorites() {
-    this.authService.userId$.pipe(first()).subscribe((userId) => {
-      if (!userId) return;
-
-      this.favoritesService.getFavoriteBarbers(userId, 1, 100).subscribe({
-        next: (res) => {
-          this.favoriteIds = res.data.map((barber) => barber.id);
-        },
-        error: (err) => {
-          console.error('Error fetching favorites:', err);
-        },
-      });
-    });
-  }
 
   toggleFavorite(barberId: string) {
     this.authService.userId$.pipe(first()).subscribe((userId) => {
@@ -104,7 +94,8 @@ export class UserBarberComponent implements OnInit {
         barbers: this.userService.fetchBarbers(
           this.searchTerm,
           this.currentPage,
-          this.pageSize
+          this.pageSize,
+          this.selectedDistrict // 👈 pass selected district
         ),
         favorites: this.favoritesService.getFavoriteBarbers(userId, 1, 100),
       }).subscribe({

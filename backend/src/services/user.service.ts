@@ -269,8 +269,8 @@ export class UserService implements IUserService{
         }
     }
 
-    fetchAllBarbers = async (search: string,page: number,limit: number): Promise<{ response: ListResponseDto<BarberDto>; status: number; }> =>{
-        const {totalCount,barbers} = await this._barberRepo.findBySearchTerm(search,page,limit)
+    fetchAllBarbers = async (search: string,page: number,limit: number,district: string): Promise<{ response: ListResponseDto<BarberDto>; status: number; }> =>{
+        const {totalCount,barbers} = await this._barberRepo.findBySearchTerm(search,page,limit,district)
         if (!barbers) {
             throw new Error("barbers not found")
         }

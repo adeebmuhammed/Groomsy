@@ -3,15 +3,25 @@
 <div class="simple-barber-header">
   <h2 class="barber-title">Barbers</h2>
   <div class="search-container">
-    <input 
-      type="text" 
-      class="search-input" 
-      [(ngModel)]="searchTerm"
-      placeholder="Search Barbers..."
-      (keyup.enter)="onSearch()"
-    />
-    <button class="search-button" (click)="onSearch()">Search</button>
-  </div>
+  <select 
+    class="district-dropdown" 
+    [(ngModel)]="selectedDistrict"
+    (change)="onSearch()"
+  >
+    <option value="">All Districts</option>
+    <option *ngFor="let district of districts" [value]="district">{{ district }}</option>
+  </select>
+
+  <input 
+    type="text" 
+    class="search-input" 
+    [(ngModel)]="searchTerm"
+    placeholder="Search Barbers..."
+    (keyup.enter)="onSearch()"
+  />
+  <button class="search-button" (click)="onSearch()">Search</button>
+</div>
+
 </div>
 
 <div class="barbers-section">

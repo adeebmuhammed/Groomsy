@@ -79,7 +79,7 @@ listUsers = async (
         page : number,
         limit : number
     ): Promise<{ response: ListResponseDto<BarberDto>; status: number; }> =>{
-        const {barbers,totalCount} = await this._barberRepo.findBySearchTerm( search, page, limit)
+        const {barbers,totalCount} = await this._barberRepo.findBySearchTerm( search, page, limit, '')
 
         const response:ListResponseDto<BarberDto> = {
             data: AdminMapper.toBarberDtoArray(

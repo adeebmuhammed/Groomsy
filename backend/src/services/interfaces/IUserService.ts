@@ -11,5 +11,5 @@ export interface IUserService{
     forgotPassword( email:string ) : Promise<{ response: MessageResponseDto, status: number}>;
     resetPassword( email: string, password: string, confirmPassword: string ) : Promise<{ response: MessageResponseDto, status: number}>;
 
-    fetchAllBarbers(search: string,page: number,limit: number):Promise<{ response: ListResponseDto<BarberDto>, status: number}>
+    fetchAllBarbers(search: string,page: number,limit: number,district: string):Promise<{ response: ListResponseDto<BarberDto>, status: number}>
 }

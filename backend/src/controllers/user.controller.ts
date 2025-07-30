@@ -218,11 +218,13 @@ export class UserController implements IUserController {
       const search = (req.query.search as string) || "";
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 3;
+      const district = (req.query.district as string) || "";
 
       const { response, status } = await this._userService.fetchAllBarbers(
         search,
         page,
-        limit
+        limit,
+        district
       );
 
       res.status(status).json(response);
