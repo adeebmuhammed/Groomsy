@@ -25,17 +25,17 @@ export class AdminController implements IAdminController {
       });
 
       res.cookie("auth-token", accessToken, {
-        httpOnly: true,
-        secure: false,
+        httpOnly: process.env.AUTH_TOKEN_HTTP_ONLY === "true",
+        secure: process.env.AUTH_TOKEN_SECURE === "true",
         sameSite: "lax",
-        maxAge: 60 * 60 * 1000, // 1 hour
+        maxAge: Number(process.env.AUTH_TOKEN_MAX_AGE),
       });
 
       res.cookie("refresh-token", refreshToken, {
-        httpOnly: true,
-        secure: false,
+        httpOnly: process.env.REFRESH_TOKEN_HTTP_ONLY === "true",
+        secure: process.env.REFRESH_TOKEN_SECURE === "true",
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        maxAge: Number(process.env.REFRESH_TOKEN_MAX_AGE),
       });
 
       res.status(result.status).json({
@@ -100,12 +100,10 @@ export class AdminController implements IAdminController {
       res.status(status).json(response);
     } catch (error) {
       console.error(error);
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({
-          error:
-            error instanceof Error ? error.message : "Fetching Barbers Failed",
-        });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "Fetching Barbers Failed",
+      });
     }
   };
 
@@ -129,14 +127,10 @@ export class AdminController implements IAdminController {
       });
     } catch (error) {
       console.error(error);
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({
-          error:
-            error instanceof Error
-              ? error.message
-              : "user status update Failed",
-        });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "user status update Failed",
+      });
     }
   };
 
@@ -160,14 +154,12 @@ export class AdminController implements IAdminController {
       });
     } catch (error) {
       console.error(error);
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({
-          error:
-            error instanceof Error
-              ? error.message
-              : "barber status update Failed",
-        });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "barber status update Failed",
+      });
     }
   };
 }
