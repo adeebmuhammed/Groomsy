@@ -29,9 +29,9 @@ barberRoutes
 .post('/logout',barberController.logout)
 
 barberRoutes
-.get('/slots',barberAuth, isBlockedMiddleware,slotController.getSlotsByBarber)
-.post('/slots',barberAuth, isBlockedMiddleware,slotController.createSlot)
-.put('/slots/:id',barberAuth, isBlockedMiddleware,slotController.updateSlot)
-.delete('/slots/:id',barberAuth, isBlockedMiddleware,slotController.deleteSlot)
+.get('/slots',slotController.getSlotRulesByBarber)
+.post('/slots',slotController.createSlotRule)
+.put('/slots/:id',slotController.updateSlotRule)
+.delete('/slots/:id',slotController.deleteSlotRule)
 
 export default barberRoutes;

@@ -1,23 +1,20 @@
 export class SlotCreateRequestDto {
-    startTime!: Date;
-    endTime!: Date;
-    price!: number;
-    date!: Date;
+    slots!: DaySlot[];
+  price!: number;
+  duration!: string;
 }
 
 export class SlotReponseDto{
     id!: string;
-    startTime!: Date;
-    endTime!: Date;
-    price!: number;
-    date!: Date;
+    slots!: DaySlot[];
+  price!: number;
+  duration!: string;
 }
 
 export class SlotUpdateRequestDto {
-    startTime!: Date;
-    endTime!: Date;
-    price!: number;
-    date!: Date;
+    slots!: DaySlot[];
+  price!: number;
+  duration!: string;
     barber!: string;
 }
 
@@ -34,4 +31,10 @@ export interface SlotListResponseDto {
     totalItems: number;
     itemsPerPage: number;
   };
+}
+
+export interface DaySlot {
+  day: string;
+  startTime: Date;
+  endTime: Date;
 }

@@ -1,27 +1,39 @@
 import { SlotCreateRequestDto } from "../dto/slot.dto";
 
-export const validateSlotData = (data: SlotCreateRequestDto):string[] => {
-    const errors = []
+export const validateSlotData = (data: SlotCreateRequestDto): string[] => {
+  const errors: string[] = [];
 
-    if (!data.date || !data.startTime || !data.endTime || !data.price) {
-        errors.push('Required fields: Date, start and end time, price')
+  if (!data || !Array.isArray(data.slots) || data.slots.length === 0) {
+    errors.push("At least one slot (day, startTime, endTime) is required.");
+  }
+
+  if (data.price == null || data.price <= 0) {
+    errors.push("Price should be a valid number greater than zero.");
+  }
+
+  if (!data.duration || !["30m", "1h", "1h 30m", "2"].includes(data.duration)) {
+    errors.push("Duration must be one of: 30m, 1h, 1h 30m, 2");
+  }
+
+  const now = new Date();
+
+  for (const slot of data.slots) {
+    if (!slot.day || !slot.startTime || !slot.endTime) {
+      errors.push("Each slot must include day, startTime, and endTime.");
+      continue;
     }
 
-    const now =  new Date()
+    const start = new Date(slot.startTime);
+    const end = new Date(slot.endTime);
 
-    if (data.date < now) {
-        errors.push("Cannot create a slot with a past date")
+    if (start >= end) {
+      errors.push(`Start time must be before end time for day: ${slot.day}`);
     }
 
-    if (data.startTime && data.endTime) {
-        if (data.startTime >= data.endTime) {
-            errors.push("Start time should be less than end time");
-        }
+    if (start < now) {
+      errors.push(`Start time for day ${slot.day} is in the past.`);
     }
+  }
 
-    if (data.price != null && data.price <= 0) {
-        errors.push("Price should be a valid number greater than zero");
-    }
-
-    return errors
-}
+  return errors;
+};

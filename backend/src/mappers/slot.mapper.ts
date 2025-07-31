@@ -1,18 +1,22 @@
-import { SlotListResponseDto, SlotReponseDto } from "../dto/slot.dto";
-import { ISlot } from "../models/slots.model";
+import mongoose from "mongoose";
+import { DaySlot, SlotListResponseDto, SlotReponseDto } from "../dto/slot.dto";
+import { ISlotRule } from "../models/slots.model";
 
 export class SlotMapper{
-    static toSlotResponse(data: any): SlotReponseDto {
+    static toSlotResponse(data: ISlotRule): SlotReponseDto {
     return {
-      id: data._id,
-      startTime: new Date(data.startTime),
-      endTime: new Date(data.endTime),
-      price: data.price,
-      date: new Date(data.date),
+      id: (data._id as mongoose.Types.ObjectId).toString(),
+    price: data.price,
+    duration: data.duration,
+    slots: data.slots.map((slot: DaySlot) => ({
+      day: slot.day,
+      startTime: new Date(slot.startTime),
+      endTime: new Date(slot.endTime)
+    }))
     };
   }
 
-  static toSlotDtoArray(slots: ISlot[]): SlotReponseDto[] {
+  static toSlotDtoArray(slots: ISlotRule[]): SlotReponseDto[] {
     return slots.map(slot => SlotMapper.toSlotResponse(slot))
   }
 }
