@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ISlot, SlotDto } from '../../../interfaces/interfaces';
+import { SlotDto } from '../../../interfaces/interfaces';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule, DatePipe } from '@angular/common';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
@@ -44,7 +44,7 @@ export class BarberSlotsComponent implements OnInit {
         .subscribe({
           next: (data) => {
             this.slots = data.data;
-            
+            console.log(this.slots)
             this.totalPages = data.pagination.totalPages;
           },
           error: (err) => console.error('Error fetching slots:', err),

@@ -1,26 +1,98 @@
 <div class="modal-overlay" *ngIf="visible">
   <div class="modal-container">
-    <h3 class="modal-title">{{ slotData ? 'Edit Slot' : 'Add Slot' }}</h3>
+    <h3 class="modal-title">{{ slotData ? "Edit Slot" : "Add Slot" }}</h3>
 
     <form [formGroup]="slotForm" (ngSubmit)="submitForm()">
-      <label>Date:</label>
-      <input type="date" formControlName="date" class="form-control"/>
-      <div *ngIf="slotForm.get('date')?.errors?.['pastDate']">
-    Date cannot be in the past
-  </div>
+      <!-- Day-wise Time Slots -->
+      <div *ngFor="let day of weekDays">
+        <label>
+          <input type="checkbox" [formControlName]="day" />
+          {{ day }}
+        </label>
 
-      <label>Start Time:</label>
-      <input type="time" formControlName="startTime" class="form-control"/>
+        <div *ngIf="slotForm.get(day)?.value" class="time-slot-fields">
+          <label>Start Time:</label>
+          <input
+            type="time"
+            [formControl]="getDayControl(day, 'startTime')"
+            class="form-control"
+          />
+          <div
+            class="error"
+            *ngIf="
+              getDayControl(day, 'startTime').touched &&
+              getDayControl(day, 'startTime').invalid
+            "
+          >
+            Start time is required
+          </div>
 
-      <label>End Time:</label>
-      <input type="time" formControlName="endTime" class="form-control"/>
+          <label>End Time:</label>
+          <input
+            type="time"
+            [formControl]="getDayControl(day, 'endTime')"
+            class="form-control"
+          />
+          <div
+            class="error"
+            *ngIf="
+              getDayControl(day, 'endTime').touched &&
+              getDayControl(day, 'endTime').invalid
+            "
+          >
+            End time is required
+          </div>
+        </div>
+      </div>
 
+      <!-- Price Field -->
       <label>Price (₹):</label>
-      <input type="number" formControlName="price" class="form-control" min="0"/>
+      <input
+        type="number"
+        formControlName="price"
+        class="form-control"
+        min="0"
+      />
+      <div
+        class="error"
+        *ngIf="slotForm.get('price')?.touched && slotForm.get('price')?.invalid"
+      >
+        <div *ngIf="slotForm.get('price')?.errors?.['required']">
+          Price is required
+        </div>
+        <div *ngIf="slotForm.get('price')?.errors?.['min']">
+          Minimum price should be ₹99
+        </div>
+      </div>
 
+      <label>Duration:</label>
+      <select formControlName="duration" class="form-control">
+        <option value="30m">30 minutes</option>
+        <option value="1h">1 hour</option>
+        <option value="1h 30m">1 hour 30 minutes</option>
+        <option value="2h">2 hours</option>
+      </select>
+      <div
+        class="error"
+        *ngIf="
+          slotForm.get('duration')?.touched && slotForm.get('duration')?.invalid
+        "
+      >
+        Duration is required
+      </div>
+
+      <!-- Actions -->
       <div class="modal-actions">
-        <button type="submit" class="submit-button">{{ slotData ? 'Update' : 'Add' }}</button>
-        <button type="button" class="submit-button cancel-btn" (click)="close()">Cancel</button>
+        <button type="submit" class="submit-button">
+          {{ slotData ? "Update" : "Add" }}
+        </button>
+        <button
+          type="button"
+          class="submit-button cancel-btn"
+          (click)="close()"
+        >
+          Cancel
+        </button>
       </div>
     </form>
   </div>

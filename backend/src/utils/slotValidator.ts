@@ -11,7 +11,7 @@ export const validateSlotData = (data: SlotCreateRequestDto): string[] => {
     errors.push("Price should be a valid number greater than zero.");
   }
 
-  if (!data.duration || !["30m", "1h", "1h 30m", "2"].includes(data.duration)) {
+  if (!data.duration || !["30m", "1h", "1h 30m", "2h"].includes(data.duration)) {
     errors.push("Duration must be one of: 30m, 1h, 1h 30m, 2");
   }
 
@@ -28,10 +28,6 @@ export const validateSlotData = (data: SlotCreateRequestDto): string[] => {
 
     if (start >= end) {
       errors.push(`Start time must be before end time for day: ${slot.day}`);
-    }
-
-    if (start < now) {
-      errors.push(`Start time for day ${slot.day} is in the past.`);
     }
   }
 

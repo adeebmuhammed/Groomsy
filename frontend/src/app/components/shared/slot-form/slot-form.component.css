@@ -21,6 +21,12 @@
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
   font-family: 'Inter', sans-serif;
   border-top: 4px solid #7c3aed;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-container {
+  scroll-behavior: smooth;
 }
 
 .modal-title {
@@ -92,4 +98,16 @@ label {
 
 .cancel-btn:hover {
   background-color: #be123c;
+}
+.error {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 4px;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.2);
 }

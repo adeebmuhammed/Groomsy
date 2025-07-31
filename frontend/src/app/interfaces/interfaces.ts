@@ -79,20 +79,19 @@ export interface IResendOtpResponse {
   };
 }
 
-export interface ISlot {
-  _id: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  price: number;
-}
+
 
 export interface SlotDto {
   id: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  price: string;
+    slots: DaySlot[];
+  price: number;
+  duration: string;
+}
+
+export interface DaySlot {
+  day: string;
+  startTime: Date;
+  endTime: Date;
 }
 
 export interface SlotListResponseDto {

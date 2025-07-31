@@ -1,79 +1,140 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  OnChanges,
+} from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
+import { DaySlot } from '../../../interfaces/interfaces';
 @Component({
   selector: 'app-slot-form',
-  imports: [ ReactiveFormsModule,CommonModule ],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './slot-form.component.html',
-  styleUrl: './slot-form.component.css'
+  styleUrl: './slot-form.component.css',
 })
 export class SlotFormComponent implements OnChanges {
-  @Input() slotData: any = null; // null for Add, existing data for Edit
+  @Input() slotData: any = null;
   @Input() visible = false;
   @Output() onClose = new EventEmitter<void>();
   @Output() onSubmit = new EventEmitter<any>();
+
+  weekDays = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
 
   slotForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
     this.slotForm = this.fb.group({
-      date: ['', [Validators.required, this.futureDateValidator]],
-      startTime: ['', Validators.required],
-      endTime: ['', Validators.required],
-      price: ['', [Validators.required, Validators.min(1)]]
+      price: [null, [Validators.required, Validators.min(99)]],
+      duration: ['30m', Validators.required],
     });
-  }
 
-  futureDateValidator(control: AbstractControl): ValidationErrors | null {
-    const selectedDate = new Date(control.value);
-    const today = new Date();
+    // Initialize form controls dynamically
+    for (const day of this.weekDays) {
+      this.slotForm.addControl(day, new FormControl(false));
 
-    // Remove time portion for comparison
-    selectedDate.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
+      this.slotForm.addControl(
+        `${day}_startTime`,
+        new FormControl({ value: '', disabled: true }, Validators.required)
+      );
+      this.slotForm.addControl(
+        `${day}_endTime`,
+        new FormControl({ value: '', disabled: true }, Validators.required)
+      );
 
-    return selectedDate >= today ? null : { pastDate: true };
+      // Enable/disable time fields dynamically
+      this.slotForm.get(day)?.valueChanges.subscribe((checked) => {
+        const startCtrl = this.slotForm.get(`${day}_startTime`);
+        const endCtrl = this.slotForm.get(`${day}_endTime`);
+        if (checked) {
+          startCtrl?.enable();
+          endCtrl?.enable();
+        } else {
+          startCtrl?.disable();
+          endCtrl?.disable();
+        }
+      });
+    }
   }
 
   ngOnChanges() {
-  if (this.slotData) {
-    const dateObj = new Date(this.slotData.date);
-    const startObj = new Date(this.slotData.startTime);
-    const endObj = new Date(this.slotData.endTime);
+    if (this.slotData) {
+      this.slotForm.patchValue({
+        price: this.slotData.price,
+        duration: this.slotData.duration,
+      });
 
-    const formattedDate = dateObj.toISOString().split('T')[0]; // 'YYYY-MM-DD'
-    const formattedStartTime = startObj.toISOString().slice(11, 16); // 'HH:mm'
-    const formattedEndTime = endObj.toISOString().slice(11, 16); // 'HH:mm'
-
-    this.slotForm.patchValue({
-      date: formattedDate,
-      startTime: formattedStartTime,
-      endTime: formattedEndTime,
-      price: this.slotData.price
-    });
-  } else {
-    this.slotForm.reset();
+      this.slotData.slots.forEach((slot: any) => {
+        this.slotForm.patchValue({
+          [slot.day]: true,
+          [`${slot.day}_startTime`]: this.formatTime(slot.startTime),
+          [`${slot.day}_endTime`]: this.formatTime(slot.endTime),
+        });
+      });
+    } else {
+      this.slotForm.reset({
+        price: 0,
+        duration: '30m',
+      });
+    }
   }
-}
 
+  formatTime(date: string | Date): string {
+    const d = new Date(date);
+    return d.toISOString().slice(11, 16);
+  }
+
+  getDayControl(day: string, field: 'startTime' | 'endTime'): FormControl {
+    return this.slotForm.get(`${day}_${field}`) as FormControl;
+  }
 
   submitForm() {
-  if (this.slotForm.valid) {
-    const { date, startTime, endTime, price } = this.slotForm.value;
+    this.slotForm.markAllAsTouched();
 
-    const startDateTime = new Date(`${date}T${startTime}`);
-    const endDateTime = new Date(`${date}T${endTime}`);
+    if (this.slotForm.valid) {
+      const formValues = this.slotForm.value;
 
-    const finalPayload = {
-      date: new Date(date),
-      startTime: startDateTime,
-      endTime: endDateTime,
-      price
-    };
+      const slots: DaySlot[] = this.weekDays
+        .filter((day) => formValues[day])
+        .map((day) => {
+          const [sh, sm] = formValues[`${day}_startTime`]
+            .split(':')
+            .map(Number);
+          const [eh, em] = formValues[`${day}_endTime`].split(':').map(Number);
 
-    this.onSubmit.emit(finalPayload);
+          return {
+            day,
+            startTime: new Date(1970, 0, 1, sh, sm), // Local time
+            endTime: new Date(1970, 0, 1, eh, em),
+          };
+        });
+
+      const finalPayload = {
+        slots,
+        price: formValues.price,
+        duration: formValues.duration,
+      };
+
+      this.onSubmit.emit(finalPayload);
+    }
   }
-}
 
   close() {
     this.onClose.emit();
