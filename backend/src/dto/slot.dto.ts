@@ -1,17 +1,17 @@
-export class SlotCreateRequestDto {
+export class SlotRuleCreateRequestDto {
     slots!: DaySlot[];
   price!: number;
   duration!: string;
 }
 
-export class SlotReponseDto{
+export class SlotRuleReponseDto{
     id!: string;
     slots!: DaySlot[];
   price!: number;
   duration!: string;
 }
 
-export class SlotUpdateRequestDto {
+export class SlotRuleUpdateRequestDto {
     slots!: DaySlot[];
   price!: number;
   duration!: string;
@@ -22,8 +22,8 @@ export class MessageResponseDto {
   message!: string;
 }
 
-export interface SlotListResponseDto {
-  data: SlotReponseDto[];
+export interface SlotRuleListResponseDto {
+  data: SlotRuleReponseDto[];
   message: string;
   pagination: {
     currentPage: number;
@@ -37,4 +37,13 @@ export interface DaySlot {
   day: string;
   startTime: Date;
   endTime: Date;
+}
+
+export interface SlotTimeDto {
+  startTime: Date;
+  endTime: Date;
+}
+
+export interface SlotResponseDto {
+  [date: string]: SlotTimeDto[];
 }

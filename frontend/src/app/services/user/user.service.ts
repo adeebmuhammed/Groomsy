@@ -2,7 +2,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { BarberDto, PaginatedResponse } from '../../interfaces/interfaces';
+import {
+  BarberDto,
+  PaginatedResponse,
+  SlotResponse,
+} from '../../interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +35,18 @@ export class UserService {
         params,
         withCredentials: true,
       }
+    );
+  }
+
+  fetchSlotsByBarber(
+    barberId: string,
+    page = 1,
+    limit = 5
+  ): Observable<SlotResponse> {
+    let params = new HttpParams().set('page', page).set('limit', limit);
+    return this.http.get<SlotResponse>(
+      `${environment.apiBaseUrl}/user/get-barber-slots/${barberId}`,
+      { params, withCredentials: true }
     );
   }
 }

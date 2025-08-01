@@ -1,10 +1,11 @@
+import { SlotResponseDto } from "../dto/slot.dto";
 import { ISlotRule } from "../models/slots.model";
 
 export const generateSlotsFromRules = (
   rules: ISlotRule[],
   startDate: Date,   // e.g., start of current week
   endDate: Date      // e.g., end of current week
-): { [date: string]: { startTime: Date; endTime: Date }[] } => {
+): SlotResponseDto => {
   const dayMap: { [key: string]: number } = {
     Sunday: 0,
     Monday: 1,

@@ -1,6 +1,6 @@
-import { SlotCreateRequestDto } from "../dto/slot.dto";
+import { SlotRuleCreateRequestDto } from "../dto/slot.dto";
 
-export const validateSlotData = (data: SlotCreateRequestDto): string[] => {
+export const validateSlotData = (data: SlotRuleCreateRequestDto): string[] => {
   const errors: string[] = [];
 
   if (!data || !Array.isArray(data.slots) || data.slots.length === 0) {

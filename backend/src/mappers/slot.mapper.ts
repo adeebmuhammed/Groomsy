@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import { DaySlot, SlotListResponseDto, SlotReponseDto } from "../dto/slot.dto";
+import { DaySlot, SlotRuleListResponseDto, SlotRuleReponseDto } from "../dto/slot.dto";
 import { ISlotRule } from "../models/slots.model";
 
 export class SlotMapper{
-    static toSlotResponse(data: ISlotRule): SlotReponseDto {
+    static toSlotResponse(data: ISlotRule): SlotRuleReponseDto {
     return {
       id: (data._id as mongoose.Types.ObjectId).toString(),
     price: data.price,
@@ -16,7 +16,7 @@ export class SlotMapper{
     };
   }
 
-  static toSlotDtoArray(slots: ISlotRule[]): SlotReponseDto[] {
+  static toSlotDtoArray(slots: ISlotRule[]): SlotRuleReponseDto[] {
     return slots.map(slot => SlotMapper.toSlotResponse(slot))
   }
 }

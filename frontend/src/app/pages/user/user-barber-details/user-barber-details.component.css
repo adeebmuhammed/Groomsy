@@ -1,0 +1,81 @@
+/* barber-details.component.scss */
+
+.barber-details-container {
+  background: linear-gradient(to right, #ede9fe, #f3e8ff);
+  padding: 40px 20px;
+  border-radius: 12px;
+  max-width: 900px;
+  margin: 20px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-family: Inter, sans-serif;
+}
+
+.barber-info {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 30px;
+  box-shadow: 0 0 0 1px #a855f7;
+}
+
+.barber-info h2 {
+  font-size: 24px;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.barber-info p {
+  margin: 4px 0;
+  color: #4b5563;
+  font-size: 16px;
+}
+
+.active-status {
+  color: #16a34a;
+  font-weight: bold;
+}
+
+.blocked-status {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.slot-section {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 0 0 1px #a855f7;
+}
+
+.slot-section h3 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #111827;
+}
+
+.slot-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.slot-table th,
+.slot-table td {
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.slot-table th {
+  background-color: #f3e8ff;
+  color: #6b21a8;
+}
+
+.slot-table tr:nth-child(even) {
+  background-color: #f9f5ff;
+}
+
+.no-slots-text {
+  color: #9ca3af;
+  font-style: italic;
+}

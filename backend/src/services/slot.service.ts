@@ -1,9 +1,9 @@
 import {
   MessageResponseDto,
-  SlotCreateRequestDto,
-  SlotListResponseDto,
-  SlotReponseDto,
-  SlotUpdateRequestDto,
+  SlotRuleCreateRequestDto,
+  SlotRuleListResponseDto,
+  SlotRuleReponseDto,
+  SlotRuleUpdateRequestDto,
 } from "../dto/slot.dto";
 import { ISlotRule } from "../models/slots.model";
 import { ISlotService } from "./interfaces/ISlotService";
@@ -20,7 +20,7 @@ export class SlotService implements ISlotService {
     barberId: string,
     page: number,
     limit: number
-  ): Promise<{ response: SlotListResponseDto; status: number }> => {
+  ): Promise<{ response: SlotRuleListResponseDto; status: number }> => {
     if (!barberId) {
       throw new Error("Barber id is required");
     }
@@ -30,7 +30,7 @@ export class SlotService implements ISlotService {
       { page, limit }
     );
 
-    const response: SlotListResponseDto = {
+    const response: SlotRuleListResponseDto = {
       data: SlotMapper.toSlotDtoArray(slots),
       message: "Slots fetched successfully",
       pagination: {
@@ -49,8 +49,8 @@ export class SlotService implements ISlotService {
 
   createSlotRule = async (
     barberId: string,
-    data: SlotCreateRequestDto
-  ): Promise<{ response: SlotReponseDto; message: string; status: number }> => {
+    data: SlotRuleCreateRequestDto
+  ): Promise<{ response: SlotRuleReponseDto; message: string; status: number }> => {
     if (!barberId || !data) {
       throw new Error("barber id and slot data is required");
     }
@@ -91,8 +91,8 @@ export class SlotService implements ISlotService {
 
   updateSlotRule = async (
     slotId: string,
-    data: SlotCreateRequestDto
-  ): Promise<{ response: SlotReponseDto; message: string; status: number }> => {
+    data: SlotRuleCreateRequestDto
+  ): Promise<{ response: SlotRuleReponseDto; message: string; status: number }> => {
     if (!slotId || !data) {
       throw new Error("slot id and slot data is required");
     }

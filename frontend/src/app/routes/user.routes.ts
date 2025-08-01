@@ -10,6 +10,7 @@ import { UserForgotPasswordComponent } from '../pages/user/user-forgot-password/
 import { UserResetPasswordComponent } from '../pages/user/user-reset-password/user-reset-password.component';
 import { UserBarberComponent } from '../pages/user/user-barber/user-barber.component';
 import { UserFavoritesComponent } from '../pages/user/user-favorites/user-favorites.component';
+import { UserBarberDetailsComponent } from '../pages/user/user-barber-details/user-barber-details.component';
 
 export const USER_ROUTES: Routes = [
   {
@@ -47,6 +48,11 @@ export const USER_ROUTES: Routes = [
   {
     path: 'user/favorites',
     component: UserFavoritesComponent,
+    canActivate: [userAuthGuard]
+  },
+  {
+    path: 'user/barber-details/:id',
+    component: UserBarberDetailsComponent,
     canActivate: [userAuthGuard]
   },
 ];

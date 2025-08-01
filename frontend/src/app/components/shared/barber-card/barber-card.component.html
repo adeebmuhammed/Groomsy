@@ -13,7 +13,7 @@
     <h3 class="barber-name">{{ barber.name }}</h3>
     <p><i class="fas fa-map-marker-alt"></i> {{ barber.district }}</p>
     <p><i class="fas fa-check-circle"></i> {{ barber.status }}</p>
-    <button class="book-btn">View Slots</button>
+    <button (click)="getBarberDetails()" class="book-btn">View Slots</button>
   </div>
 </div>
 <!-- Font Awesome CDN -->

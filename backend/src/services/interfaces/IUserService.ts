@@ -1,5 +1,6 @@
 import { ListResponseDto } from "../../dto/admin.dto";
 import { BarberDto } from "../../dto/barber.dto";
+import { SlotResponseDto } from "../../dto/slot.dto";
 import { UserRegisterRequestDto,MessageResponseDto,UserLoginResponseDto } from "../../dto/user.dto";
 
 export interface IUserService{
@@ -12,5 +13,5 @@ export interface IUserService{
     resetPassword( email: string, password: string, confirmPassword: string ) : Promise<{ response: MessageResponseDto, status: number}>;
 
     fetchAllBarbers(search: string,page: number,limit: number,district: string):Promise<{ response: ListResponseDto<BarberDto>, status: number}>
-    fetchBarbersAndSlots(page: number,limit: number,barberId: string):Promise<{ response: any, status: number}>
+    fetchBarbersAndSlots(page: number,limit: number,barberId: string):Promise<{ response: SlotResponseDto, status: number}>
 }

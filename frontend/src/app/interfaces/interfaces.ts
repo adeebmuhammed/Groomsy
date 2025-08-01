@@ -107,7 +107,7 @@ export interface SlotListResponseDto {
 export interface BarberDto {
   id: string;
   name: string;
-  phone: string;
+  email: string;
   district: string;
   status: string
 }
@@ -141,4 +141,13 @@ export class CouponRequestDto{
     maxCount!: number;
     limitAmount!: number;
     couponAmount!: number;
+}
+
+export class SlotTime {
+  startTime!: Date;
+  endTime!: Date;
+}
+
+export class SlotResponse {
+  [date: string]: SlotTime[];
 }

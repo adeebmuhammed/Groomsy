@@ -25,6 +25,7 @@ import { AdminMapper } from "../mappers/admin.mapper";
 import { ISlotRepository } from "../repositories/interfaces/ISlotRepository";
 import { SlotRepository } from "../repositories/slot.repository";
 import { generateSlotsFromRules } from "../utils/slot.generator";
+import { SlotResponseDto } from "../dto/slot.dto";
 
 export class UserService implements IUserService {
   private _barberRepo: IBarberRepository;
@@ -332,7 +333,7 @@ export class UserService implements IUserService {
     page: number,
     limit: number,
     barberId: string
-  ): Promise<{ response: any; status: number }> => {
+  ): Promise<{ response: SlotResponseDto; status: number }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
