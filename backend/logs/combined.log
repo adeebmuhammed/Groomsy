@@ -1519,3 +1519,6 @@
 2025-07-31 21:47:30 [INFO]: GET /barber/slots?barberId=68826c247451d8eb5c4d78e3&page=1&limit=5
 2025-07-31 21:47:34 [INFO]: DELETE /barber/slots/688b971ab30019ae20b42380
 2025-07-31 21:47:34 [INFO]: GET /barber/slots?barberId=68826c247451d8eb5c4d78e3&page=1&limit=5
+2025-08-01 10:26:23 [INFO]: GET /user/get-barber-slots/68826c247451d8eb5c4d78e3
+2025-08-01 10:27:01 [INFO]: GET /user/get-barber-slots/68826c247451d8eb5c4d78e3
+2025-08-01 10:28:29 [INFO]: GET /user/get-barber-slots/68826c247451d8eb5c4d78e3

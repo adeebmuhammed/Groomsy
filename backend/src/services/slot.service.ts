@@ -27,8 +27,7 @@ export class SlotService implements ISlotService {
 
     const { slots, totalCount } = await this._slotRepo.findByBarber(
       barberId,
-      page,
-      limit
+      { page, limit }
     );
 
     const response: SlotListResponseDto = {

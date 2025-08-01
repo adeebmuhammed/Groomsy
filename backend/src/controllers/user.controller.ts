@@ -238,4 +238,24 @@ export class UserController implements IUserController {
         });
     }
   };
+
+  fetchBarbersAndSlots = async (req: Request, res: Response): Promise<void> =>{
+    try {
+      const barberId = req.params["barberId"]
+      const page = parseInt(req.query.page as string) || 1
+      const limit = parseInt(req.query.limit as string) || 5
+
+      const { response,status } = await this._userService.fetchBarbersAndSlots(page,limit,barberId)
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error(error);
+      res
+        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+        .json({
+          error:
+            error instanceof Error ? error.message : "Failed to fetch slots and barber",
+        });
+    }
+  }
 }

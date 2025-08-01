@@ -40,6 +40,7 @@ userRoutes
 );
 
 userRoutes.get('/get-barbers', userAuth, isBlockedMiddleware, userController.fetchAllBarbers)
+userRoutes.get('/get-barber-slots/:barberId',  userController.fetchBarbersAndSlots)
 
 const favoritesRepo = new FavoritesRepository()
 const favoritesService = new FavoritesService(favoritesRepo)

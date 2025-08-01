@@ -11,4 +11,5 @@ export interface IUserController{
     logout(req: Request, res: Response): Promise<void>;
 
     fetchAllBarbers(req: Request, res: Response): Promise<void>;
+    fetchBarbersAndSlots(req: Request, res: Response): Promise<void>;
 }
