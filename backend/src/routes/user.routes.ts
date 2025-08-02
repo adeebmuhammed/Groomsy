@@ -8,6 +8,9 @@ import { FavoritesController } from "../controllers/favorites.controller";
 import { FavoritesRepository } from "../repositories/favorites.repository";
 import { FavoritesService } from "../services/favorites.service";
 import { isBlockedMiddleware } from "../middlewares/isBlocked.middleware";
+import { BookingRepository } from "../repositories/booking.repository";
+import { BookingService } from "../services/booking.service";
+import { BookingController } from "../controllers/booking.controller";
 
 const userRoutes = Router()
 const userAuth = authMiddleware(["user"])
@@ -41,6 +44,14 @@ userRoutes
 
 userRoutes.get('/get-barbers', userAuth, isBlockedMiddleware, userController.fetchAllBarbers)
 userRoutes.get('/get-barber-slots/:barberId', userAuth, isBlockedMiddleware, userController.fetchBarbersAndSlots)
+
+const bookingRepo = new BookingRepository()
+const bookingService = new BookingService(bookingRepo)
+const bookingController = new BookingController(bookingService)
+
+userRoutes
+.post('/booking',bookingController.createBooking)
+.patch("/booking/:id",bookingController.updateBookingStatus)
 
 const favoritesRepo = new FavoritesRepository()
 const favoritesService = new FavoritesService(favoritesRepo)
