@@ -25,7 +25,8 @@ import { AdminMapper } from "../mappers/admin.mapper";
 import { ISlotRepository } from "../repositories/interfaces/ISlotRepository";
 import { SlotRepository } from "../repositories/slot.repository";
 import { generateSlotsFromRules } from "../utils/slot.generator";
-import { SlotResponseDto } from "../dto/slot.dto";
+import { SlotResponseDto, SlotRuleListResponseDto } from "../dto/slot.dto";
+import { SlotMapper } from "../mappers/slot.mapper";
 
 export class UserService implements IUserService {
   private _barberRepo: IBarberRepository;
@@ -329,26 +330,35 @@ export class UserService implements IUserService {
     };
   };
 
-  fetchBarbersAndSlots = async (
+  fetchBarbersAndSlotRules = async (
     page: number,
     limit: number,
     barberId: string
-  ): Promise<{ response: SlotResponseDto; status: number }> => {
+  ): Promise<{ response: SlotRuleListResponseDto; status: number }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
     }
 
-    const { totalCount, slots } = await this._slotRepo.findByBarber(barberId);
+    const { totalCount, slotRules } = await this._slotRepo.findByBarber(
+      barberId,
+      page,
+      limit
+    );
 
-    const startDate = new Date(); // e.g., now
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 7); // for next 7 days
-
-    const generatedSlots = generateSlotsFromRules(slots, startDate, endDate);
+    const response: SlotRuleListResponseDto = {
+      data: SlotMapper.toSlotDtoArray(slotRules),
+      message: "Slots fetched successfully",
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalCount / limit),
+        totalItems: totalCount,
+        itemsPerPage: limit,
+      },
+    };
 
     return {
-      response: generatedSlots,
+      response,
       status: STATUS_CODES.OK,
     };
   };

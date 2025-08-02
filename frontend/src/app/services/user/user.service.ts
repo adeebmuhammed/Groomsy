@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import {
   BarberDto,
   PaginatedResponse,
+  SlotListResponseDto,
   SlotResponse,
 } from '../../interfaces/interfaces';
 
@@ -38,13 +39,13 @@ export class UserService {
     );
   }
 
-  fetchSlotsByBarber(
+  fetchSlotRulesByBarber(
     barberId: string,
     page = 1,
     limit = 5
-  ): Observable<SlotResponse> {
+  ): Observable<SlotListResponseDto> {
     let params = new HttpParams().set('page', page).set('limit', limit);
-    return this.http.get<SlotResponse>(
+    return this.http.get<SlotListResponseDto>(
       `${environment.apiBaseUrl}/user/get-barber-slots/${barberId}`,
       { params, withCredentials: true }
     );

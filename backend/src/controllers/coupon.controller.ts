@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { ICouponController } from "./interfaces/ICouponController";
-import { CouponService } from "../services/coupon.service";
 import { STATUS_CODES } from "../utils/constants";
+import { ICouponService } from "../services/interfaces/ICouponService";
 
 export class CouponController implements ICouponController{
-    constructor( private _couponService: CouponService){}
+    constructor( private _couponService: ICouponService){}
 
     getAllCoupons = async (req: Request, res: Response): Promise<void> =>{
         try {

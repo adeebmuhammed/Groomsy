@@ -239,13 +239,13 @@ export class UserController implements IUserController {
     }
   };
 
-  fetchBarbersAndSlots = async (req: Request, res: Response): Promise<void> =>{
+  fetchBarbersAndSlotRules = async (req: Request, res: Response): Promise<void> =>{
     try {
       const barberId = req.params["barberId"]
       const page = parseInt(req.query.page as string) || 1
       const limit = parseInt(req.query.limit as string) || 5
 
-      const { response,status } = await this._userService.fetchBarbersAndSlots(page,limit,barberId)
+      const { response,status } = await this._userService.fetchBarbersAndSlotRules(page,limit,barberId)
 
       res.status(status).json(response)
     } catch (error) {

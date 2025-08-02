@@ -1,14 +1,14 @@
 import { Request, response, Response } from "express";
 import { IBarberController } from "./interfaces/IBarberController";
-import { BarberService } from "../services/barber.service";
 import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import {
   generateAccessToken,
   generateRefreshToken,
 } from "../utils/jwt.generator";
+import { IBarberService } from "../services/interfaces/IBarberService";
 
 export class BarberController implements IBarberController {
-  constructor(private _barberService: BarberService) {}
+  constructor(private _barberService: IBarberService) {}
 
   signup = async (req: Request, res: Response): Promise<void> => {
     try {

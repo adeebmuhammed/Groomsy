@@ -11,6 +11,9 @@ import { isBlockedMiddleware } from "../middlewares/isBlocked.middleware";
 import { BookingRepository } from "../repositories/booking.repository";
 import { BookingService } from "../services/booking.service";
 import { BookingController } from "../controllers/booking.controller";
+import { SlotRepository } from "../repositories/slot.repository";
+import { SlotService } from "../services/slot.service";
+import { SlotController } from "../controllers/slot.controller";
 
 const userRoutes = Router()
 const userAuth = authMiddleware(["user"])
@@ -18,6 +21,18 @@ const userAuth = authMiddleware(["user"])
 const userRepo = new UserRepository()
 const userService = new UserService(userRepo)
 const userController = new UserController(userService)
+
+const bookingRepo = new BookingRepository()
+const bookingService = new BookingService(bookingRepo)
+const bookingController = new BookingController(bookingService)
+
+const favoritesRepo = new FavoritesRepository()
+const favoritesService = new FavoritesService(favoritesRepo)
+const favoritesController = new FavoritesController(favoritesService)
+
+const slotRepo = new SlotRepository()
+const slotService = new SlotService(slotRepo)
+const slotController = new SlotController(slotService)
 
 userRoutes
 .post('/signup',userController.register)
@@ -42,20 +57,14 @@ userRoutes
     userController.googleCallback
 );
 
-userRoutes.get('/get-barbers', userAuth, isBlockedMiddleware, userController.fetchAllBarbers)
-userRoutes.get('/get-barber-slots/:barberId', userAuth, isBlockedMiddleware, userController.fetchBarbersAndSlots)
-
-const bookingRepo = new BookingRepository()
-const bookingService = new BookingService(bookingRepo)
-const bookingController = new BookingController(bookingService)
+userRoutes
+.get('/get-barbers', userAuth, isBlockedMiddleware, userController.fetchAllBarbers)
+.get('/get-barber-slots/:barberId', userAuth, isBlockedMiddleware, userController.fetchBarbersAndSlotRules)
+.get('/populated-slots/:id',slotController.getPopulatedSlots)
 
 userRoutes
 .post('/booking',bookingController.createBooking)
 .patch("/booking/:id",bookingController.updateBookingStatus)
-
-const favoritesRepo = new FavoritesRepository()
-const favoritesService = new FavoritesService(favoritesRepo)
-const favoritesController = new FavoritesController(favoritesService)
 
 userRoutes
 .get("/favorites",userAuth,isBlockedMiddleware,favoritesController.getFavoritesByUser)

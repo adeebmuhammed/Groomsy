@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { IFavoritesController } from "./interfaces/IFavoritesController";
-import { FavoritesService } from "../services/favorites.service";
 import { STATUS_CODES } from "../utils/constants";
+import { IFavoritesService } from "../services/interfaces/IFavoritesService";
 
 export class FavoritesController implements IFavoritesController {
-  constructor(private _favoritesService: FavoritesService) {}
+  constructor(private _favoritesService: IFavoritesService) {}
 
   getFavoritesByUser = async (req: Request, res: Response): Promise<void> => {
     try {

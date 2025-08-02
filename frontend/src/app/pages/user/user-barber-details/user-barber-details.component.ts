@@ -3,23 +3,25 @@ import { UserService } from '../../../services/user/user.service';
 import {
   BarberDto,
   IBarber,
+  SlotDto,
   SlotResponse,
 } from '../../../interfaces/interfaces';
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
+import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 
 @Component({
   selector: 'app-user-barber-details',
-  imports: [DatePipe, CommonModule],
+  imports: [DatePipe, CommonModule, UserHeaderComponent,UserFooterComponent],
   templateUrl: './user-barber-details.component.html',
   styleUrl: './user-barber-details.component.css',
 })
 export class UserBarberDetailsComponent implements OnInit {
   barber: BarberDto | null = null;
-  slots: SlotResponse = {};
-  dates: string[] = [];
+  slots: SlotDto[] = [];
   barberId: string = '';
 
   constructor(
@@ -32,14 +34,13 @@ export class UserBarberDetailsComponent implements OnInit {
     this.barberId = this.activatedRoute.snapshot.paramMap.get('id') || '';
     forkJoin({
       barbers: this.userService.fetchBarbers(),
-      slots: this.userService.fetchSlotsByBarber(this.barberId),
+      slots: this.userService.fetchSlotRulesByBarber(this.barberId),
     }).subscribe({
       next: ({ barbers, slots }) => {
         const found = barbers.data.find((b) => b.id === this.barberId);
         this.barber = found || null;
 
-        this.slots = slots;
-        this.dates = Object.keys(slots);
+        this.slots = slots.data;
       },
       error: (err) => {
         console.error('Error fetching data:', err);
@@ -55,18 +56,14 @@ export class UserBarberDetailsComponent implements OnInit {
   }
 
   fetchSlots() {
-    this.userService.fetchSlotsByBarber(this.barberId).subscribe((res) => {
-      this.slots = res;
-      this.dates = Object.keys(res);
+    this.userService.fetchSlotRulesByBarber(this.barberId).subscribe((res) => {
+      this.slots = res.data;
     });
   }
 
-  get slotDates(): string[] {
-    return Object.keys(this.slots || {});
-  }
+  bookSlotFromOutside(): void {
+  console.log('Navigating to booking...');
+  // Navigate to booking page or open a modal — your logic here
+}
 
-  bookSlot(slot: any, date: string): void {
-    console.log('Booking slot:', { date, slot });
-    // Implement booking logic here, e.g. navigate to payment page or call API
-  }
 }

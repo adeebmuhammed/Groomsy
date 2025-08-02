@@ -5,4 +5,5 @@ export interface ISlotController{
     createSlotRule(req: Request, res: Response):Promise<void>;
     updateSlotRule(req: Request, res: Response):Promise<void>;
     deleteSlotRule(req: Request, res: Response):Promise<void>;
+    getPopulatedSlots(req: Request, res: Response):Promise<void>;
 }

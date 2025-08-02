@@ -77,4 +77,22 @@ export class SlotController implements ISlotController {
       });
     }
   };
+
+  getPopulatedSlots = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const date = req.query.date as string
+      const page = parseInt(req.query.page as string) | 1
+      const limit = parseInt(req.query.limit as string) | 5
+      const barberId = req.params["id"]
+
+      const { response,status } = await this._slotService.getPopulatedSlots(barberId,date,page,limit)
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error("error deleting slot:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : "slot population failed",
+      });
+    }
+  }
 }

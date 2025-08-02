@@ -1,81 +1,116 @@
-/* barber-details.component.scss */
-
 .barber-details-container {
   background: linear-gradient(to right, #ede9fe, #f3e8ff);
   padding: 40px 20px;
-  border-radius: 12px;
-  max-width: 900px;
-  margin: 20px auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  font-family: Inter, sans-serif;
+  max-width: 960px;
+  margin: 50px auto;
+  border-radius: 16px;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
-.barber-info {
+/* Section Cards */
+.barber-info,
+.slot-section {
   background-color: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 30px;
-  box-shadow: 0 0 0 1px #a855f7;
+  border: 1.5px solid #d8b4fe;
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 6px 24px rgba(168, 85, 247, 0.15);
 }
 
+/* Barber Info Styling */
 .barber-info h2 {
-  font-size: 24px;
-  color: #111827;
-  margin-bottom: 12px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 16px;
 }
 
 .barber-info p {
-  margin: 4px 0;
-  color: #4b5563;
   font-size: 16px;
+  margin: 4px 0;
+  color: #374151;
 }
 
+/* Status Indicator */
 .active-status {
   color: #16a34a;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .blocked-status {
   color: #dc2626;
-  font-weight: bold;
+  font-weight: 600;
 }
 
-.slot-section {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 0 0 1px #a855f7;
-}
-
+/* Slot Section Header */
 .slot-section h3 {
-  font-size: 20px;
-  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 24px;
   color: #111827;
 }
 
-.slot-table {
+/* Table Styling */
+.table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 16px;
+  font-size: 15px;
+  border-radius: 8px;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.slot-table th,
-.slot-table td {
-  padding: 12px;
-  border: 1px solid #e5e7eb;
-  text-align: left;
-}
-
-.slot-table th {
-  background-color: #f3e8ff;
+.table th {
+  background-color: #ede9fe;
   color: #6b21a8;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 2px solid #ddd6fe;
 }
 
-.slot-table tr:nth-child(even) {
-  background-color: #f9f5ff;
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #f3e8ff;
+  color: #374151;
+  vertical-align: top;
 }
 
+.table td div {
+  margin-bottom: 4px;
+}
+
+/* Button Alignment & Styling */
+.text-center.mt-3 {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  background-color: #7c3aed;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: white;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #6d28d9;
+}
+
+/* No slots available */
 .no-slots-text {
-  color: #9ca3af;
+  text-align: center;
   font-style: italic;
+  color: #6b7280;
+  margin-top: 20px;
 }

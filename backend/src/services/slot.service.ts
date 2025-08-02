@@ -1,5 +1,6 @@
 import {
   MessageResponseDto,
+  SlotResponseDto,
   SlotRuleCreateRequestDto,
   SlotRuleListResponseDto,
   SlotRuleReponseDto,
@@ -12,6 +13,7 @@ import { SlotMapper } from "../mappers/slot.mapper";
 import { STATUS_CODES } from "../utils/constants";
 import mongoose from "mongoose";
 import { ISlotRepository } from "../repositories/interfaces/ISlotRepository";
+import { generateSlotsFromRules } from "../utils/slot.generator";
 
 export class SlotService implements ISlotService {
   constructor(private _slotRepo: ISlotRepository) {}
@@ -25,13 +27,14 @@ export class SlotService implements ISlotService {
       throw new Error("Barber id is required");
     }
 
-    const { slots, totalCount } = await this._slotRepo.findByBarber(
+    const { slotRules, totalCount } = await this._slotRepo.findByBarber(
       barberId,
-      { page, limit }
+      page,
+      limit
     );
 
     const response: SlotRuleListResponseDto = {
-      data: SlotMapper.toSlotDtoArray(slots),
+      data: SlotMapper.toSlotDtoArray(slotRules),
       message: "Slots fetched successfully",
       pagination: {
         currentPage: page,
@@ -50,7 +53,11 @@ export class SlotService implements ISlotService {
   createSlotRule = async (
     barberId: string,
     data: SlotRuleCreateRequestDto
-  ): Promise<{ response: SlotRuleReponseDto; message: string; status: number }> => {
+  ): Promise<{
+    response: SlotRuleReponseDto;
+    message: string;
+    status: number;
+  }> => {
     if (!barberId || !data) {
       throw new Error("barber id and slot data is required");
     }
@@ -61,17 +68,19 @@ export class SlotService implements ISlotService {
     }
 
     for (const slotItem of data.slots) {
-    const similarSlot = await this._slotRepo.findSimilarSlot(
-      barberId,
-      slotItem.startTime,
-      slotItem.endTime,
-      slotItem.day
-    );
+      const similarSlot = await this._slotRepo.findSimilarSlot(
+        barberId,
+        slotItem.startTime,
+        slotItem.endTime,
+        slotItem.day
+      );
 
-    if (similarSlot) {
-      throw new Error(`Slot already exists for ${slotItem.day} at the same time`);
+      if (similarSlot) {
+        throw new Error(
+          `Slot already exists for ${slotItem.day} at the same time`
+        );
+      }
     }
-  }
 
     const slot = await this._slotRepo.create({
       ...data,
@@ -92,7 +101,11 @@ export class SlotService implements ISlotService {
   updateSlotRule = async (
     slotId: string,
     data: SlotRuleCreateRequestDto
-  ): Promise<{ response: SlotRuleReponseDto; message: string; status: number }> => {
+  ): Promise<{
+    response: SlotRuleReponseDto;
+    message: string;
+    status: number;
+  }> => {
     if (!slotId || !data) {
       throw new Error("slot id and slot data is required");
     }
@@ -134,6 +147,46 @@ export class SlotService implements ISlotService {
     return {
       response: { message: "slot deleted successfully" },
       status: STATUS_CODES.OK,
+    };
+  };
+
+  getPopulatedSlots = async (
+    barberId: string,
+    date: string,
+    page: number,
+    limit: number
+  ): Promise<{ response: SlotResponseDto; status: number }> => {
+    const selectedDate = new Date(date); // e.g. 2025-08-03
+    const selectedDayName = selectedDate.toLocaleDateString("en-US", {
+      weekday: "long",
+    }); // e.g. Sunday
+
+    // 1. Fetch slot rules for the barber
+    const slotRules = await this._slotRepo.find({ barber: barberId });
+
+    if (!slotRules) {
+      throw new Error("slot rules not found")
+    }
+
+    // 2. Filter rules that match the given date's day
+    const filteredRules = slotRules.filter((rule) =>
+      rule.slots.some((slot) => slot.day === selectedDayName)
+    );
+
+    if (!filteredRules.length) {
+      throw new Error("slots for the given date is not available")
+    }
+
+    // 3. Generate slots only for that single day
+    const slots = generateSlotsFromRules(
+      filteredRules,
+      selectedDate,
+      selectedDate
+    ); // startDate = endDate
+
+    return {
+      response: slots,
+      status: 200,
     };
   };
 }

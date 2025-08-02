@@ -13,29 +13,21 @@ export class SlotRepository
 
   async findByBarber(
     barberId: string,
-    options?: { page?: number; limit?: number }
-  ): Promise<{ slots: ISlotRule[]; totalCount: number }> {
+    page: number,
+    limit: number
+  ): Promise<{ slotRules: ISlotRule[]; totalCount: number }> {
     const condition = { barber: barberId };
 
-    if (options?.page && options?.limit) {
-      const skip = (options.page - 1) * options.limit;
+    const skip = (page - 1) * limit;
 
-      const [slots, totalCount] = await Promise.all([
-        this.findWithPagination(condition, skip, options.limit),
-        this.countDocuments(condition),
-      ]);
+    const [slotRules, totalCount] = await Promise.all([
+      this.findWithPagination(condition, skip, limit),
+      this.countDocuments(condition),
+    ]);
 
-      return { slots, totalCount };
-    } else {
-      const [slots, totalCount] = await Promise.all([
-        Slots.find(condition),
-        this.countDocuments(condition),
-      ]);
-
-      return { slots, totalCount };
-    }
+    return { slotRules, totalCount };
   }
-
+  
   async findSimilarSlot(
     barberId: string,
     startTime: Date,
