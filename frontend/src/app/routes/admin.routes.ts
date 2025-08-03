@@ -6,6 +6,7 @@ import { adminAuthGuard } from "../guards/admin/admin-auth/admin-auth.guard";
 import { AdminUsersListComponent } from "../pages/admin/admin-users-list/admin-users-list.component";
 import { AdminBarbersListComponent } from "../pages/admin/admin-barbers-list/admin-barbers-list.component";
 import { AdminCouponsComponent } from "../pages/admin/admin-coupons/admin-coupons.component";
+import { AdminBookingComponent } from "../pages/admin/admin-booking/admin-booking.component";
 
 export const ADMIN_ROUTES: Routes = [
   { path: 'admin/signin', component: AdminSigninComponent, canActivate: [adminAlreadyLoggedInGuard] },
@@ -13,4 +14,5 @@ export const ADMIN_ROUTES: Routes = [
   { path: 'admin/users', component: AdminUsersListComponent, canActivate: [adminAuthGuard] },
   { path: 'admin/barbers', component: AdminBarbersListComponent, canActivate: [adminAuthGuard] },
   { path: 'admin/coupons', component: AdminCouponsComponent, canActivate: [adminAuthGuard] },
+  { path: 'admin/bookings', component: AdminBookingComponent, canActivate: [adminAuthGuard] },
 ];

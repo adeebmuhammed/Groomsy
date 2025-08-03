@@ -4,7 +4,7 @@ export interface IBooking extends Document {
   user: mongoose.Types.ObjectId;
   barber: mongoose.Types.ObjectId;
   totalPrice: number;
-  status: "pending" | "cancelled_by_barber" | "cancelled_by_user" | "finished";
+  status: "pending" | "cancelled_by_barber" | "cancelled_by_user" | "cancelled_by_admin" | "finished";
   slotDetails: {
     startTime: Date;
     endTime: Date;
@@ -18,7 +18,7 @@ const BookingSchema: Schema = new Schema({
   totalPrice: { type: Number, required: true },
   status: {
     type: String,
-    enum: ["pending", "cancelled_by_barber", "cancelled_by_user", "finished"],
+    enum: ["pending", "cancelled_by_barber", "cancelled_by_user", "cancelled_by_admin", "finished"],
     default: "pending",
   },
   slotDetails: {

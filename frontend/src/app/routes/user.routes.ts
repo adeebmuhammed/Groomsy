@@ -11,6 +11,7 @@ import { UserResetPasswordComponent } from '../pages/user/user-reset-password/us
 import { UserBarberComponent } from '../pages/user/user-barber/user-barber.component';
 import { UserFavoritesComponent } from '../pages/user/user-favorites/user-favorites.component';
 import { UserBarberDetailsComponent } from '../pages/user/user-barber-details/user-barber-details.component';
+import { UserBookingComponent } from '../pages/user/user-booking/user-booking.component';
 
 export const USER_ROUTES: Routes = [
   {
@@ -55,4 +56,9 @@ export const USER_ROUTES: Routes = [
     component: UserBarberDetailsComponent,
     canActivate: [userAuthGuard]
   },
+  {
+    path: 'user/bookings',
+    component: UserBookingComponent,
+    canActivate: [userAuthGuard]
+  }
 ];

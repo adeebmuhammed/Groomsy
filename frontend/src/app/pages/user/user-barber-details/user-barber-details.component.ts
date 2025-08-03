@@ -5,6 +5,7 @@ import {
   IBarber,
   SlotDto,
   SlotResponse,
+  SlotTime,
 } from '../../../interfaces/interfaces';
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -16,6 +17,7 @@ import * as bootstrap from 'bootstrap';
 import { FormsModule } from '@angular/forms';
 import { SlotTableModalComponent } from '../../../components/shared/slot-table-modal/slot-table-modal.component';
 import Swal from 'sweetalert2';
+import { BookingService } from '../../../services/booking/booking.service';
 
 @Component({
   selector: 'app-user-barber-details',
@@ -42,6 +44,7 @@ export class UserBarberDetailsComponent implements OnInit {
   constructor(
     private userService: UserService,
     private authService: AuthService,
+    private bookingService: BookingService,
     private activatedRoute: ActivatedRoute
   ) {}
 
@@ -115,8 +118,12 @@ export class UserBarberDetailsComponent implements OnInit {
           }, 200); // 200ms delay
         },
         error: (err) => {
-          console.error('Error fetching populated slots:', err)
-          Swal.fire('Error!', err.error?.error || 'An unexpected error occurred', 'error');
+          console.error('Error fetching populated slots:', err);
+          Swal.fire(
+            'Error!',
+            err.error?.error || 'An unexpected error occurred',
+            'error'
+          );
         },
       });
   }
@@ -125,8 +132,34 @@ export class UserBarberDetailsComponent implements OnInit {
     return Object.keys(slotObj);
   }
 
-  bookTimeSlot(slot: unknown, date: string): void {
-    console.log('Booking slot:', slot, 'on', date);
-    // You can now navigate to booking page or open a confirmation modal
+  bookTimeSlot(slot: SlotTime, date: string): void {
+    this.authService.userId$.subscribe((id) => {
+      if (!id) {
+        return;
+      }
+
+      if (!this.barberId) return;
+      
+      const bookingData = {
+        barberId: this.barberId,
+        date: new Date(date),
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+        price: slot.price,
+      };
+
+      this.bookingService.bookSlot(id, bookingData).subscribe({
+        next: (res) => {
+          Swal.fire('Success', res.message, 'success');
+        },
+        error: (err) => {
+          Swal.fire(
+            'Error',
+            err.error?.error || 'Failed to book slot',
+            'error'
+          );
+        },
+      });
+    });
   }
 }

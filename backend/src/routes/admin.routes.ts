@@ -8,6 +8,9 @@ import { BarberRepository } from "../repositories/barber.repository";
 import { CouponController } from "../controllers/coupon.controller";
 import { CouponResitory } from "../repositories/coupon.repository";
 import { CouponService } from "../services/coupon.service";
+import { BookingController } from "../controllers/booking.controller";
+import { BookingRepository } from "../repositories/booking.repository";
+import { BookingService } from "../services/booking.service";
 
 const adminRoutes = Router()
 const adminAuth = authMiddleware(["admin"])
@@ -17,6 +20,14 @@ const userRepo = new UserRepository()
 const barberRepo = new BarberRepository()
 const adminService = new AdminService(adminRepo,userRepo,barberRepo);
 const adminController = new AdminController(adminService)
+
+const bookingRepo = new BookingRepository()
+const bookingService = new BookingService(bookingRepo)
+const bookingController = new BookingController(bookingService)
+
+const couponRepo = new CouponResitory()
+const couponService = new CouponService(couponRepo)
+const couponController = new CouponController(couponService)
 
 adminRoutes.post('/login',adminController.login)
 adminRoutes.post('/logout',adminController.logout)
@@ -29,14 +40,14 @@ adminRoutes
 .get('/barbers', adminAuth, adminController.listBarbers)
 .patch('/update-barber-status/:id', adminAuth, adminController.updateBarberStatus)
 
-const couponRepo = new CouponResitory()
-const couponService = new CouponService(couponRepo)
-const couponController = new CouponController(couponService)
-
 adminRoutes
 .get("/coupons", adminAuth,couponController.getAllCoupons)
 .post("/coupons", adminAuth,couponController.createCoupon)
 .put("/coupons/:id", adminAuth,couponController.updateCoupon)
 .delete("/coupons/:id", adminAuth,couponController.deleteCoupon)
+
+adminRoutes
+.get('/bookings',bookingController.fetchBookings)
+.patch("/bookings/:id",bookingController.updateBookingStatus)
 
 export default adminRoutes;

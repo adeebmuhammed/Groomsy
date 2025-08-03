@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -15,17 +15,29 @@ export class UserHeaderComponent implements OnInit {
   isLoggedIn = false;
   userName: string | null = null;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  private clickListener: any;
+
+  constructor(private router: Router, private authService: AuthService, private elementRef: ElementRef) {}
 
   ngOnInit(): void {
-    // Subscribe to user-specific login state and name
-    this.authService.isUserLoggedIn$.subscribe((status) => {
-      this.isLoggedIn = status;
-    });
+    this.authService.isUserLoggedIn$.subscribe((status) => (this.isLoggedIn = status));
+    this.authService.userName$.subscribe((name) => (this.userName = name));
 
-    this.authService.userName$.subscribe((name) => {
-      this.userName = name;
-    });
+    // Listen for outside clicks
+    this.clickListener = (event: MouseEvent) => {
+      if (!this.elementRef.nativeElement.contains(event.target)) {
+        this.showDropdown = false;
+      }
+    };
+    document.addEventListener('click', this.clickListener);
+  }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('click', this.clickListener);
+  }
+
+  toggleDropdown() {
+    this.showDropdown = !this.showDropdown;
   }
 
   handleAuth(): void {
@@ -69,10 +81,6 @@ export class UserHeaderComponent implements OnInit {
     }
   }
   showDropdown = false;
-
-  toggleDropdown() {
-    this.showDropdown = !this.showDropdown;
-  }
 
   closeDropdown() {
     // Delay to allow click event on dropdown items to trigger

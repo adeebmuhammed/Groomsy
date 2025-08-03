@@ -42,6 +42,7 @@ barberRoutes
 .delete('/slots/:id',slotController.deleteSlotRule)
 
 barberRoutes
-.patch("/booking/:id",bookingController.updateBookingStatus)
+.get('/bookings',bookingController.fetchBookings)
+.patch("/bookings/:id",bookingController.updateBookingStatus)
 
 export default barberRoutes;

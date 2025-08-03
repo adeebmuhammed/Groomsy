@@ -1,0 +1,81 @@
+<app-barber-header></app-barber-header>
+
+<div class="layout">
+  <div class="sidebar">
+    <app-barber-sidebar></app-barber-sidebar>
+  </div>
+
+  <div class="main-content user-booking-wrapper">
+    <h2 class="heading">My Bookings</h2>
+
+    <div class="table">
+      <table class="user-booking-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Status</th>
+            <th>Price</th>
+            <th>Update</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let booking of bookings; let i = index">
+            <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+            <td>{{ booking.slotDetails.date | date : "shortDate" }}</td>
+            <td>{{ booking.slotDetails.startTime | date : "shortTime" }}</td>
+            <td>{{ booking.slotDetails.endTime | date : "shortTime" }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="booking.status">
+                {{ booking.status }}
+              </span>
+            </td>
+            <td>₹{{ booking.totalPrice }}</td>
+            <td>
+              <select
+              *ngIf="booking.status === 'pending'"
+                class="status-select"
+                (change)="onStatusChange($event, booking)"
+              >
+                <option value="">Choose</option>
+                <option value="finished">Finished</option>
+                <option value="cancel">Cancel</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-controls">
+      <button
+        [disabled]="currentPage === 1"
+        (click)="handlePageChange(currentPage - 1)"
+      >
+        Previous
+      </button>
+
+      <ng-container
+        *ngFor="let page of [].constructor(totalPages); let idx = index"
+      >
+        <button
+          [class.active]="currentPage === idx + 1"
+          (click)="handlePageChange(idx + 1)"
+        >
+          {{ idx + 1 }}
+        </button>
+      </ng-container>
+
+      <button
+        [disabled]="currentPage === totalPages"
+        (click)="handlePageChange(currentPage + 1)"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-barber-footer></app-barber-footer>

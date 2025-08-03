@@ -1,4 +1,4 @@
-import { SlotResponseDto } from "../dto/slot.dto";
+import { SlotResponseDto, SlotTimeDto } from "../dto/slot.dto";
 import { ISlotRule } from "../models/slots.model";
 
 export const generateSlotsFromRules = (
@@ -16,7 +16,7 @@ export const generateSlotsFromRules = (
     Saturday: 6,
   };
 
-  const result: { [date: string]: { startTime: Date; endTime: Date }[] } = {};
+  const result: { [date: string]: SlotTimeDto[] } = {};
 
   for (const rule of rules) {
     for (const slot of rule.slots) {
@@ -36,13 +36,13 @@ export const generateSlotsFromRules = (
           dayEnd.setHours(slot.endTime.getHours(), slot.endTime.getMinutes(), 0, 0);
 
           let durationMinutes = parseDuration(rule.duration); // helper to convert '1h 30m' -> 90
-          const slotsForDay: { startTime: Date; endTime: Date }[] = [];
+          const slotsForDay: { startTime: Date; endTime: Date, price: number }[] = [];
 
           let tempStart = new Date(dayStart);
           while (tempStart < dayEnd) {
             const tempEnd = new Date(tempStart.getTime() + durationMinutes * 60000);
             if (tempEnd <= dayEnd) {
-              slotsForDay.push({ startTime: new Date(tempStart), endTime: tempEnd });
+              slotsForDay.push({ startTime: new Date(tempStart), endTime: tempEnd, price: rule.price, });
             }
             tempStart = tempEnd;
           }

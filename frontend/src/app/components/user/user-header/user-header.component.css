@@ -133,3 +133,9 @@
 .dropdown-menu li:hover {
   background-color: #7c3aed;
 }
+.dropdown-menu {
+  display: none;
+}
+.dropdown-menu.show {
+  display: block;
+}

@@ -42,6 +42,7 @@ export interface DaySlot {
 export interface SlotTimeDto {
   startTime: Date;
   endTime: Date;
+  price: number;
 }
 
 export interface SlotResponseDto {

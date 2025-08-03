@@ -1,0 +1,65 @@
+<app-user-header></app-user-header>
+
+<div class="user-booking-wrapper">
+  <h2 class="heading">My Bookings</h2>
+
+  <div class="table">
+    <table class="user-booking-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Status</th>
+          <th>Price</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let booking of bookings; let i = index">
+          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+          <td>{{ booking.slotDetails.date | date: 'shortDate' }}</td>
+          <td>{{ booking.slotDetails.startTime | date: 'shortTime' }}</td>
+          <td>{{ booking.slotDetails.endTime | date: 'shortTime' }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="booking.status">
+              {{ booking.status }}
+            </span>
+          </td>
+          <td>₹{{ booking.totalPrice }}</td>
+          <td>
+            <button
+              class="btn-primary"
+              *ngIf="booking.status === 'pending'"
+              (click)="cancelBooking(booking)"
+            >
+              Cancel
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-controls">
+    <button [disabled]="currentPage === 1" (click)="handlePageChange(currentPage - 1)">
+      Previous
+    </button>
+
+    <ng-container *ngFor="let page of [].constructor(totalPages); let idx = index">
+      <button
+        [class.active]="currentPage === idx + 1"
+        (click)="handlePageChange(idx + 1)"
+      >
+        {{ idx + 1 }}
+      </button>
+    </ng-container>
+
+    <button [disabled]="currentPage === totalPages" (click)="handlePageChange(currentPage + 1)">
+      Next
+    </button>
+  </div>
+</div>
+
+<app-user-footer></app-user-footer>

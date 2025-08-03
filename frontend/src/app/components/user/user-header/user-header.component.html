@@ -14,7 +14,7 @@
     <span class="profile-text">Hello, {{ userName }}</span>
   </div>
 
-  <ul class="dropdown-menu" *ngIf="showDropdown">
+  <ul class="dropdown-menu" [class.show]="showDropdown">
     <li (click)="navigateTo('profile')">Profile</li>
     <li (click)="navigateTo('bookings')">Bookings</li>
     <li (click)="navigateTo('favorites')">Favorites</li>

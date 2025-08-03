@@ -146,8 +146,31 @@ export class CouponRequestDto{
 export class SlotTime {
   startTime!: Date;
   endTime!: Date;
+  price!: number;
 }
 
 export class SlotResponse {
   [date: string]: SlotTime[];
+}
+
+
+export class BookingCreateRequestDto {
+    barberId!: string
+    date!: Date
+    startTime!: Date
+    endTime!: Date
+    price!: number
+}
+
+export class BookingResponseDto {
+  id!: string;
+  user!: string;
+  barber!: string;
+  totalPrice!: number;
+  status!: "pending" | "cancelled_by_barber" | "cancelled_by_user" | "finished";
+  slotDetails!: {
+    startTime: Date;
+    endTime: Date;
+    date: Date;
+  };
 }

@@ -1,17 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Input,Output,EventEmitter } from '@angular/core';
+import { Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-table',
-  imports: [ CommonModule,FormsModule ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin-table.component.html',
-  styleUrl: './admin-table.component.css'
+  styleUrl: './admin-table.component.css',
 })
-export class AdminTableComponent{
+export class AdminTableComponent {
   @Input() data: any[] = [];
-  @Input() columns: { key: string; label: string; isDate?: boolean; isStatus?: boolean }[] = [];
+  @Input() columns: {
+    key: string;
+    label: string;
+    isDate?: boolean;
+    isStatus?: boolean;
+  }[] = [];
   @Input() currentPage = 1;
   @Input() itemsPerPage = 5;
   @Input() totalPages = 1;
@@ -21,7 +26,11 @@ export class AdminTableComponent{
   @Output() onSearch = new EventEmitter<string>();
   @Output() onEdit = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
+  @Output() onCancel = new EventEmitter<any>();
 
+  cancelItem(item: any): void {
+    this.onCancel.emit(item);
+  }
 
   searchTerm = '';
 
@@ -48,11 +57,10 @@ export class AdminTableComponent{
   }
 
   editItem(item: any): void {
-  this.onEdit.emit(item);
-}
+    this.onEdit.emit(item);
+  }
 
-deleteItem(item: any): void {
-  this.onDelete.emit(item);
-}
-
+  deleteItem(item: any): void {
+    this.onDelete.emit(item);
+  }
 }

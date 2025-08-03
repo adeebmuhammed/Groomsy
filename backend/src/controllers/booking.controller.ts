@@ -6,6 +6,30 @@ import { STATUS_CODES } from "../utils/constants";
 export class BookingController implements IBookingController {
   constructor(private _bookingService: IBookingService) {}
 
+  fetchBookings = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const role = req.query.role as "user" | "barber" | "admin";
+      const id = req.query.id as string | undefined;
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+
+      const { response, status } = await this._bookingService.fetchBookings(
+        role,
+        id,
+        page,
+        limit
+      );
+
+      res.status(status).json(response);
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : "Failed to book slot",
+      });
+    }
+  };
+
   createBooking = async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = req.query.userId as string;
@@ -27,10 +51,11 @@ export class BookingController implements IBookingController {
 
   updateBookingStatus = async (req: Request, res: Response): Promise<void> => {
     try {
-      const role: "user" | "barber" = req.query.role as "user" | "barber";
+      const role: "user" | "barber" | "admin" = req.query.role as "user" | "barber" | "admin";
       const bookingId = req.params.id as string;
 
       const { bookingStatus } = req.body;
+      
 
       const { response, status } =
         await this._bookingService.updateBookingStatus(

@@ -63,8 +63,9 @@ userRoutes
 .get('/populated-slots/:id',slotController.getPopulatedSlots)
 
 userRoutes
-.post('/booking',bookingController.createBooking)
-.patch("/booking/:id",bookingController.updateBookingStatus)
+.get('/bookings',bookingController.fetchBookings)
+.post('/bookings',bookingController.createBooking)
+.patch("/bookings/:id",bookingController.updateBookingStatus)
 
 userRoutes
 .get("/favorites",userAuth,isBlockedMiddleware,favoritesController.getFavoritesByUser)
