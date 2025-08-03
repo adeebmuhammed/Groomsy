@@ -50,4 +50,19 @@ export class UserService {
       { params, withCredentials: true }
     );
   }
+
+  fetchPopulatedSlots(
+    date: string,
+    page: number,
+    limit: number,
+    barberId: string
+  ): Observable<SlotResponse> {
+    let params = new HttpParams()
+      .set('page', page)
+      .set('limit', limit)
+      .set('date', date);
+    return this.http.get<SlotResponse>(
+      `${environment.apiBaseUrl}/user/populated-slots/${barberId}`,{ params , withCredentials: true}
+    );
+  }
 }

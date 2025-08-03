@@ -4,7 +4,6 @@ import {
   SlotRuleCreateRequestDto,
   SlotRuleListResponseDto,
   SlotRuleReponseDto,
-  SlotRuleUpdateRequestDto,
 } from "../dto/slot.dto";
 import { ISlotRule } from "../models/slots.model";
 import { ISlotService } from "./interfaces/ISlotService";
@@ -70,8 +69,6 @@ export class SlotService implements ISlotService {
     for (const slotItem of data.slots) {
       const similarSlot = await this._slotRepo.findSimilarSlot(
         barberId,
-        slotItem.startTime,
-        slotItem.endTime,
         slotItem.day
       );
 
@@ -120,6 +117,17 @@ export class SlotService implements ISlotService {
       throw new Error("slot not found");
     }
 
+    let similarSlot: ISlotRule | null = null;
+
+    for (const slot of data.slots) {
+      similarSlot = await this._slotRepo.findSimilarSlot(
+        existingSlot.barber.toString(),
+        slot.day
+      );
+
+      if (similarSlot) throw new Error(`slot for the given day already exists`);
+    }
+
     const updatedSlot = await this._slotRepo.update(slotId, data);
     if (!updatedSlot) {
       throw new Error("slot updation failed");
@@ -159,30 +167,26 @@ export class SlotService implements ISlotService {
     const selectedDate = new Date(date); // e.g. 2025-08-03
     const selectedDayName = selectedDate.toLocaleDateString("en-US", {
       weekday: "long",
-    }); // e.g. Sunday
+    });
 
-    // 1. Fetch slot rules for the barber
     const slotRules = await this._slotRepo.find({ barber: barberId });
 
     if (!slotRules) {
-      throw new Error("slot rules not found")
+      throw new Error("slot rules not found");
     }
-
-    // 2. Filter rules that match the given date's day
     const filteredRules = slotRules.filter((rule) =>
       rule.slots.some((slot) => slot.day === selectedDayName)
     );
 
     if (!filteredRules.length) {
-      throw new Error("slots for the given date is not available")
+      throw new Error("slots for the given date is not available");
     }
 
-    // 3. Generate slots only for that single day
     const slots = generateSlotsFromRules(
       filteredRules,
       selectedDate,
       selectedDate
-    ); // startDate = endDate
+    );
 
     return {
       response: slots,

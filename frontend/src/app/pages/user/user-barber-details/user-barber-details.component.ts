@@ -12,10 +12,21 @@ import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
+import * as bootstrap from 'bootstrap';
+import { FormsModule } from '@angular/forms';
+import { SlotTableModalComponent } from '../../../components/shared/slot-table-modal/slot-table-modal.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-barber-details',
-  imports: [DatePipe, CommonModule, UserHeaderComponent,UserFooterComponent],
+  imports: [
+    DatePipe,
+    CommonModule,
+    UserHeaderComponent,
+    UserFooterComponent,
+    FormsModule,
+    SlotTableModalComponent,
+  ],
   templateUrl: './user-barber-details.component.html',
   styleUrl: './user-barber-details.component.css',
 })
@@ -23,6 +34,10 @@ export class UserBarberDetailsComponent implements OnInit {
   barber: BarberDto | null = null;
   slots: SlotDto[] = [];
   barberId: string = '';
+  selectedDate: string = '';
+  populatedSlots: SlotResponse = {};
+  fetchedDate: string = '';
+  todayDate: string = '';
 
   constructor(
     private userService: UserService,
@@ -32,6 +47,7 @@ export class UserBarberDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.barberId = this.activatedRoute.snapshot.paramMap.get('id') || '';
+    this.todayDate = new Date().toISOString().split('T')[0];
     forkJoin({
       barbers: this.userService.fetchBarbers(),
       slots: this.userService.fetchSlotRulesByBarber(this.barberId),
@@ -62,8 +78,55 @@ export class UserBarberDetailsComponent implements OnInit {
   }
 
   bookSlotFromOutside(): void {
-  console.log('Navigating to booking...');
-  // Navigate to booking page or open a modal — your logic here
-}
+    const modalEl = document.getElementById('bookingModal');
+    if (modalEl) {
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+    }
+  }
 
+  submitDate(): void {
+    if (!this.selectedDate) return;
+
+    const today = new Date().toISOString().split('T')[0];
+    if (this.selectedDate < today) {
+      alert('Please select a future date.');
+      return;
+    }
+
+    this.userService
+      .fetchPopulatedSlots(this.selectedDate, 1, 5, this.barberId)
+      .subscribe({
+        next: (res) => {
+          this.populatedSlots = res;
+          this.fetchedDate = this.selectedDate;
+
+          // 👇 Blur focused element before hiding modal
+          if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+          }
+
+          const calendarModal = document.getElementById('bookingModal');
+          if (calendarModal) bootstrap.Modal.getInstance(calendarModal)?.hide();
+
+          setTimeout(() => {
+            const slotModal = document.getElementById('slotTableModal');
+            if (slotModal) new bootstrap.Modal(slotModal).show();
+          }, 200); // 200ms delay
+        },
+        error: (err) => {
+          console.error('Error fetching populated slots:', err)
+          Swal.fire('Error!', err.error?.error || 'An unexpected error occurred', 'error');
+        },
+      });
+  }
+
+  getDates(slotObj: SlotResponse): string[] {
+    return Object.keys(slotObj);
+  }
+
+  bookTimeSlot(slot: unknown, date: string): void {
+    console.log('Booking slot:', slot, 'on', date);
+    // You can now navigate to booking page or open a confirmation modal
+  }
 }

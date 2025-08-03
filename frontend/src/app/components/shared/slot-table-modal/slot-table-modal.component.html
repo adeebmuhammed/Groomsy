@@ -1,0 +1,54 @@
+<!-- slot-table-modal.component.html -->
+<div
+  class="modal fade"
+  id="slotTableModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="slotTableModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="slotTableModalLabel">
+          Slots for {{ date }}
+        </h5>
+        <button
+  type="button"
+  class="btn-close ms-auto"
+  data-bs-dismiss="modal"
+  aria-label="Close"
+></button>
+
+      </div>
+
+      <div class="modal-body">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let date of getDates()">
+            <tr *ngFor="let slot of slots[date]; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ slot.startTime | date: 'shortTime' }}</td>
+              <td>{{ slot.endTime | date: 'shortTime' }}</td>
+              <td>
+                <button
+                  class="btn btn-success btn-sm"
+                  (click)="book(slot, date)"
+                >
+                  Book
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
