@@ -11,6 +11,10 @@ export class FavoritesRepository
     super(Favorites);
   }
 
+  async createNew(userId: string): Promise<IFavorites> {
+    return await Favorites.create({userId, barbers: []})
+  }
+
   async updateFavorites(
     userId: string,
     barberId: string

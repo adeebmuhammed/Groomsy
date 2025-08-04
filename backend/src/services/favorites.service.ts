@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { BarberDto } from "../dto/barber.dto";
 import {
   FavoritesListResponseDto,
@@ -26,9 +27,23 @@ export class FavoritesService implements IFavoritesService {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
     }
 
-    const favorites = await this._favoritesRepo.getFavoritesByUser(userId);
-    if (!favorites || favorites.barbers.length === 0) {
-      throw new Error("Favorites not found");
+    let favorites = await this._favoritesRepo.getFavoritesByUser(userId);
+    if (!favorites) {
+      favorites = await this._favoritesRepo.createNew(userId);
+    }
+
+    if (favorites.barbers.length === 0) {
+      const response: FavoritesListResponseDto = {
+        data: [],
+        message: "No favorites yet",
+        pagination: {
+          totalPages: 0,
+          totalItems: 0,
+          itemsPerPage: limit,
+          currentPage: page,
+        },
+      };
+      return { response, status: STATUS_CODES.OK };
     }
 
     const allBarbers = await Promise.all(
