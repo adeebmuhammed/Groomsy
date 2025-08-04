@@ -174,3 +174,29 @@ export class BookingResponseDto {
     date: Date;
   };
 }
+
+export interface OfferRequestDto{
+    name: string;
+    startDate: Date;
+    endDate: Date;
+    discount: number;
+}
+
+export interface OfferResponseDto{
+    id: string;
+    name: string;
+    startDate: Date;
+    endDate: Date;
+    discount: number;
+}
+
+export interface OfferListResponseDto {
+  data: OfferResponseDto[];
+  message: string;
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
+}

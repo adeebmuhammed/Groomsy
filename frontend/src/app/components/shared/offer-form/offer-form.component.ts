@@ -1,11 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  OnChanges,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -16,37 +10,33 @@ import {
 } from '@angular/forms';
 
 @Component({
-  selector: 'app-coupon-form',
+  selector: 'app-offer-form',
   imports: [ReactiveFormsModule, CommonModule],
-  templateUrl: './coupon-form.component.html',
-  styleUrl: './coupon-form.component.css',
+  templateUrl: './offer-form.component.html',
+  styleUrl: './offer-form.component.css',
 })
-export class CouponFormComponent implements OnChanges {
-  @Input() couponData: any = null; // For edit
+export class OfferFormComponent {
+  @Input() offerData: any = null; // For edit
   @Input() visible = false;
   @Output() onClose = new EventEmitter<void>();
   @Output() onSubmit = new EventEmitter<any>();
 
-  couponForm: FormGroup;
+  offerForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
-    this.couponForm = this.fb.group(
+    this.offerForm = this.fb.group(
       {
         name: ['', [Validators.required, Validators.pattern(/\S+/)]],
-        code: ['', [Validators.required, Validators.pattern(/^\S+$/)]],
         startDate: ['', Validators.required],
         endDate: ['', Validators.required],
-        maxCount: [
+        discount: [
           '',
-          [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)],
-        ],
-        limitAmount: [
-          '',
-          [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)],
-        ],
-        couponAmount: [
-          '',
-          [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)],
+          [
+            Validators.required,
+            Validators.min(1),
+            Validators.max(100),
+            Validators.pattern(/^\d+$/),
+          ],
         ],
       },
       { validators: this.dateRangeValidator }
@@ -60,27 +50,24 @@ export class CouponFormComponent implements OnChanges {
   }
 
   ngOnChanges() {
-    if (this.couponData) {
+    if (this.offerData) {
       const formatDate = (dateStr: string | Date) =>
         new Date(dateStr).toISOString().split('T')[0];
 
-      this.couponForm.patchValue({
-        name: this.couponData.name,
-        code: this.couponData.code,
-        startDate: formatDate(this.couponData.startDate),
-        endDate: formatDate(this.couponData.endDate),
-        maxCount: this.couponData.maxCount,
-        limitAmount: this.couponData.limitAmount,
-        couponAmount: this.couponData.couponAmount,
+      this.offerForm.patchValue({
+        name: this.offerData.name,
+        startDate: formatDate(this.offerData.startDate),
+        endDate: formatDate(this.offerData.endDate),
+        discount: this.offerData.discount,
       });
     } else {
-      this.couponForm.reset();
+      this.offerForm.reset();
     }
   }
 
-  submitForm() {
-    if (this.couponForm.valid) {
-      const value = this.couponForm.value;
+  submitOfferForm() {
+    if (this.offerForm.valid) {
+      const value = this.offerForm.value;
 
       const payload = {
         ...value,

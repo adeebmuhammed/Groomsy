@@ -1,0 +1,42 @@
+<app-admin-header></app-admin-header>
+
+<div class="admin-layout">
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <div class="admin-main-content">
+    <div class="barber-list-page">
+      <!-- Header with Add Button -->
+      <div class="barber-list-header">
+        <h1 class="barber-list-title">Offer Management</h1>
+        <button class="add-coupon-button" (click)="addOffer()">
+          + Add Offer
+        </button>
+      </div>
+
+      <app-admin-table
+        [data]="offers"
+        [columns]="columns"
+        [currentPage]="currentPage"
+        [itemsPerPage]="itemsPerPage"
+        [totalPages]="totalPages"
+        (onPageChange)="changePage($event)"
+        (onSearch)="searchChanged($event)"
+        (onEdit)="editOffer($event)"
+        (onDelete)="deleteOffer($event)"
+      >
+      </app-admin-table>
+
+      <ng-container *ngIf="offerModalVisible">
+        <app-offer-form
+          [offerData]="selectedOfferData"
+          [visible]="offerModalVisible"
+          (onClose)="onModalClose()"
+          (onSubmit)="onModalSubmit($event)"
+        >
+        </app-offer-form>
+      </ng-container>
+
+      <app-admin-footer></app-admin-footer>
+    </div>
+  </div>
+</div>

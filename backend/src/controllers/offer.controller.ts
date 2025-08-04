@@ -1,0 +1,72 @@
+import { Request, Response } from "express";
+import { IOfferController } from "./interfaces/IOfferController";
+import { STATUS_CODES } from "../utils/constants";
+import { IOfferService } from "../services/interfaces/IOfferService";
+
+export class OfferController implements IOfferController {
+  constructor(private _offerService: IOfferService) {}
+
+  getAllOffers = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const search = (req.query.search as string) || "";
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 5;
+
+      const { response,status } = await this._offerService.getAllCoupons(search,page,limit)
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error("error fetching offers:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : "offer fetching failed",
+      });
+    }
+  };
+
+  create = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const data = req.body;
+
+      const { response, status } = await this._offerService.create(data);
+
+      res.status(status).json(response);
+    } catch (error) {
+      console.error("error creating offer:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : "offer creation failed",
+      });
+    }
+  };
+
+  edit = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const offerId = req.params["id"];
+      const data = req.body;
+
+      const { response, status } = await this._offerService.edit(offerId, data);
+
+      res.status(status).json(response);
+    } catch (error) {
+      console.error("error editing offer:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : "offer editing failed",
+      });
+    }
+  };
+
+  delete = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const offerId = req.params["id"];
+
+      const { response, status } = await this._offerService.delete(offerId);
+
+      res.status(status).json(response);
+    } catch (error) {
+      console.error("error updating status:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "status updation failed",
+      });
+    }
+  };
+}

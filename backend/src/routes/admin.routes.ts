@@ -11,6 +11,9 @@ import { CouponService } from "../services/coupon.service";
 import { BookingController } from "../controllers/booking.controller";
 import { BookingRepository } from "../repositories/booking.repository";
 import { BookingService } from "../services/booking.service";
+import { OfferRepository } from "../repositories/offer.repository";
+import { OfferService } from "../services/offer.service";
+import { OfferController } from "../controllers/offer.controller";
 
 const adminRoutes = Router()
 const adminAuth = authMiddleware(["admin"])
@@ -28,6 +31,10 @@ const bookingController = new BookingController(bookingService)
 const couponRepo = new CouponResitory()
 const couponService = new CouponService(couponRepo)
 const couponController = new CouponController(couponService)
+
+const offerRepo = new OfferRepository()
+const offerService = new OfferService(offerRepo)
+const offerController = new OfferController(offerService)
 
 adminRoutes.post('/login',adminController.login)
 adminRoutes.post('/logout',adminController.logout)
@@ -47,7 +54,13 @@ adminRoutes
 .delete("/coupons/:id", adminAuth,couponController.deleteCoupon)
 
 adminRoutes
-.get('/bookings',bookingController.fetchBookings)
-.patch("/bookings/:id",bookingController.updateBookingStatus)
+.get('/bookings', adminAuth,bookingController.fetchBookings)
+.patch("/bookings/:id", adminAuth,bookingController.updateBookingStatus)
+
+adminRoutes
+.get("/offers", adminAuth,offerController.getAllOffers)
+.post("/offers", adminAuth,offerController.create)
+.put("/offers/:id", adminAuth,offerController.edit)
+.delete("/offers/:id", adminAuth,offerController.delete)
 
 export default adminRoutes;

@@ -20,7 +20,7 @@
 .main-section {
   display: flex;
   flex: 1;
-  background-color: #1f2937;
+  background-color:  #111827;
   min-height: calc(100vh - 64px);
 }
 
@@ -57,7 +57,7 @@
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: #111827;
+  background-color: #1f2937;;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
@@ -113,42 +113,31 @@
   background-color: #10b981;
 }
 
-/* Pagination Controls */
+/* Pagination controls */
 .pagination-controls {
-  margin-top: 30px;
+  margin-top: 16px;
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
 }
 
 .pagination-controls button {
-  padding: 8px 14px;
-  border: 1px solid #4b5563;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
   background-color: #1f2937;
-  color: #e5e7eb;
-  border-radius: 6px;
-  font-weight: 500;
+  color: #f9fafb;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  font-size: 13px;
 }
 
 .pagination-controls button:hover {
   background-color: #374151;
-  color: #f9fafb;
 }
 
 .pagination-controls button.active {
   background-color: #3b82f6;
   color: white;
-  border-color: #3b82f6;
-}
-
-.pagination-controls button:disabled {
-  background-color: #374151;
-  color: #6b7280;
-  cursor: not-allowed;
 }
 
 /* Footer */
