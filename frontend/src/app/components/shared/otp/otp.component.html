@@ -1,0 +1,30 @@
+
+
+<form [formGroup]="otpForm" (ngSubmit)="onSubmit()" class="main-content">
+  <div class="admin-sign-in">OTP Verification</div>
+
+  <div class="form-container">
+    <div class="field-group">
+      <div class="email-field">
+        <input type="text" formControlName="otp" placeholder="Enter OTP" class="email" maxlength="6" />
+      </div>
+      <div class="error" *ngIf="otpForm.get('otp')?.touched && otpForm.get('otp')?.errors?.['required']">
+        OTP is required.
+      </div>
+      <div class="error" *ngIf="otpForm.get('otp')?.touched && otpForm.get('otp')?.errors?.['pattern']">
+        Enter a valid 6-digit OTP.
+      </div>
+    </div>
+
+    <div class="resend-section">
+      <button class="resend-btn" type="button" (click)="resendOtp()" [disabled]="isResendDisabled">
+        Resend OTP <span *ngIf="isResendDisabled">({{ countdown }}s)</span>
+      </button>
+    </div>
+
+    <div class="submit-button">
+      <button type="submit" class="sign-in-text" [disabled]="otpForm.invalid">Verify</button>
+    </div>
+  </div>
+</form>
+
