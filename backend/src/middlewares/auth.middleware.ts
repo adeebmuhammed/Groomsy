@@ -10,7 +10,7 @@ export interface AuthenticatedRequest extends Request {
 
 
 export const authMiddleware = (allowedRoles: string[])=>{
-    return async (req : AuthenticatedRequest, res : Response, next : NextFunction)=>{
+    return async (req : Request, res : Response, next : NextFunction)=>{
         const token = req.cookies["auth-token"]
         
         if (!token) {
@@ -34,8 +34,8 @@ export const authMiddleware = (allowedRoles: string[])=>{
                 return;
             }
 
-            req.userId = decoded.userId;
-            req.userType = decoded.type;
+            (req as AuthenticatedRequest).userId = decoded.userId;
+            (req as AuthenticatedRequest).userType = decoded.type;
 
             next()
         } catch (error) {
