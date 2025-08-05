@@ -30,7 +30,7 @@ export class BookingService implements IBookingService {
     const skip = (page - 1) * limit;
     let bookings: IBooking[] = [];
 
-    const filter: any = {};
+    const filter: Partial<{ user: string; barber: string }> = {};
     if (role === "user") {
       filter.user = id;
     } else if (role === "barber") {

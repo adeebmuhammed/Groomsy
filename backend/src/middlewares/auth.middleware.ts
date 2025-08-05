@@ -3,8 +3,14 @@ import { Request,Response,NextFunction } from 'express';
 import { MESSAGES,STATUS_CODES } from '../utils/constants';
 import Users from '../models/user.model';
 
+export interface AuthenticatedRequest extends Request {
+  userId: string;
+  userType: string;
+}
+
+
 export const authMiddleware = (allowedRoles: string[])=>{
-    return async (req : Request, res : Response, next : NextFunction)=>{
+    return async (req : AuthenticatedRequest, res : Response, next : NextFunction)=>{
         const token = req.cookies["auth-token"]
         
         if (!token) {
@@ -28,8 +34,8 @@ export const authMiddleware = (allowedRoles: string[])=>{
                 return;
             }
 
-            (req as any).userId = decoded.userId;
-            (req as any).userType = decoded.type;
+            req.userId = decoded.userId;
+            req.userType = decoded.type;
 
             next()
         } catch (error) {

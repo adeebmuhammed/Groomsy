@@ -72,7 +72,7 @@ export class UserController implements IUserController {
 
   googleCallback = async (req: Request, res: Response): Promise<void> => {
     try {
-      const user = req.user as any;
+      const user = req.user;
       const { response, status } = await this._userService.processGoogleAuth(
         user
       );

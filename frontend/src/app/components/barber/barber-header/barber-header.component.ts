@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { IMessageResponse } from '../../../interfaces/interfaces';
 
 @Component({
   selector: 'app-barber-header',
@@ -32,7 +33,7 @@ export class BarberHeaderComponent implements OnInit {
   if (this.isLoggedIn) {
     const role = localStorage.getItem('role');
 
-    let logoutObservable: Observable<any> | null = null;
+    let logoutObservable: Observable<IMessageResponse> | null = null;
 
     if (role === 'barber') {
       logoutObservable = this.authService.barberLogout();

@@ -1,6 +1,7 @@
 import { IBarberRepository } from "./interfaces/IBarberRepository";
 import Barbers, { IBarber } from "../models/barber.model";
 import { BaseRepository } from "./base.repository";
+import { FilterQuery } from "mongoose";
 
 export class BarberRepository
   extends BaseRepository<IBarber>
@@ -20,7 +21,7 @@ export class BarberRepository
     limit: number,
     district: string
   ): Promise<{ barbers: IBarber[]; totalCount: number }> {
-    const query: any = {};
+    const query: FilterQuery<IBarber> = {};
 
     if (search) {
       query.$or = [

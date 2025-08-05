@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { CouponDto, CouponResponseDto, MessageResponseDto } from "../dto/coupon.dto";
 import { ICoupon } from "../models/coupon.model";
 
@@ -10,9 +11,9 @@ export class Couponmapper{
           return coupons.map(coupon => Couponmapper.toCouponResponse(coupon))
         }
 
-    static toCouponResponse(data: any): CouponResponseDto {
+    static toCouponResponse(data: ICoupon): CouponResponseDto {
         return {
-          id: data._id,
+          id: (data._id as mongoose.Types.ObjectId).toString(),
           startDate: new Date(data.startDate),
           endDate: new Date(data.endDate),
           name: data.name,
