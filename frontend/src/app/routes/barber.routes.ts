@@ -9,15 +9,16 @@ import { BarberForgotPasswordComponent } from "../pages/barber/barber-forgot-pas
 import { BarberResetPasswordComponent } from "../pages/barber/barber-reset-password/barber-reset-password.component";
 import { BarberSlotsComponent } from "../pages/barber/barber-slots/barber-slots.component";
 import { BarberBookingComponent } from "../pages/barber/barber-booking/barber-booking.component";
+import { BARBER_ROUTES_PATHS } from "../constants/barber-route.constant";
 
 export const BARBER_ROUTES: Routes = [
-  { path: 'barber/dashboard', component: BarberDashboardComponent, canActivate: [barberAuthGuard] },
-  { path: 'barber/signup', component: BarberSignupComponent, canActivate: [barberAlreadyLoggedInGuard] },
-  { path: 'barber/signin', component: BarberSigninComponent, canActivate: [barberAlreadyLoggedInGuard] },
-  { path: 'barber/verify-otp', component: BarberOtpComponent },
-  { path: 'barber/forgot-password', component: BarberForgotPasswordComponent, canActivate: [barberAlreadyLoggedInGuard] },
-  { path: 'barber/reset-password', component: BarberResetPasswordComponent },
+  { path: BARBER_ROUTES_PATHS.DASHBOARD, component: BarberDashboardComponent, canActivate: [barberAuthGuard] },
+  { path: BARBER_ROUTES_PATHS.SIGNUP, component: BarberSignupComponent, canActivate: [barberAlreadyLoggedInGuard] },
+  { path: BARBER_ROUTES_PATHS.SIGNIN, component: BarberSigninComponent, canActivate: [barberAlreadyLoggedInGuard] },
+  { path: BARBER_ROUTES_PATHS.VERIFY_OTP, component: BarberOtpComponent },
+  { path: BARBER_ROUTES_PATHS.FORGOT_PASSWORD, component: BarberForgotPasswordComponent, canActivate: [barberAlreadyLoggedInGuard] },
+  { path: BARBER_ROUTES_PATHS.RESET_PASSWORD, component: BarberResetPasswordComponent },
 
-  { path: 'barber/slots', component: BarberSlotsComponent, canActivate: [barberAuthGuard]},
-  { path: 'barber/bookings', component: BarberBookingComponent, canActivate: [barberAuthGuard]}
+  { path: BARBER_ROUTES_PATHS.SLOTS, component: BarberSlotsComponent, canActivate: [barberAuthGuard]},
+  { path: BARBER_ROUTES_PATHS.BOOKINGS, component: BarberBookingComponent, canActivate: [barberAuthGuard]}
 ];

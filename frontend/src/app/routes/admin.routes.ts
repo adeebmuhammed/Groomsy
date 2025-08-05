@@ -8,13 +8,14 @@ import { AdminBarbersListComponent } from "../pages/admin/admin-barbers-list/adm
 import { AdminCouponsComponent } from "../pages/admin/admin-coupons/admin-coupons.component";
 import { AdminBookingComponent } from "../pages/admin/admin-booking/admin-booking.component";
 import { AdminOfferComponent } from "../pages/admin/admin-offer/admin-offer.component";
+import { ADMIN_ROUTES_PATHS } from "../constants/admin-route.constant";
 
 export const ADMIN_ROUTES: Routes = [
-  { path: 'admin/signin', component: AdminSigninComponent, canActivate: [adminAlreadyLoggedInGuard] },
-  { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [adminAuthGuard] },
-  { path: 'admin/users', component: AdminUsersListComponent, canActivate: [adminAuthGuard] },
-  { path: 'admin/barbers', component: AdminBarbersListComponent, canActivate: [adminAuthGuard] },
-  { path: 'admin/coupons', component: AdminCouponsComponent, canActivate: [adminAuthGuard] },
-  { path: 'admin/bookings', component: AdminBookingComponent, canActivate: [adminAuthGuard] },
-  { path: 'admin/offers', component: AdminOfferComponent, canActivate: [adminAuthGuard] },
+  { path: ADMIN_ROUTES_PATHS.SIGNIN, component: AdminSigninComponent, canActivate: [adminAlreadyLoggedInGuard] },
+  { path: ADMIN_ROUTES_PATHS.DASHBOARD, component: AdminDashboardComponent, canActivate: [adminAuthGuard] },
+  { path: ADMIN_ROUTES_PATHS.USERS, component: AdminUsersListComponent, canActivate: [adminAuthGuard] },
+  { path: ADMIN_ROUTES_PATHS.BARBERS, component: AdminBarbersListComponent, canActivate: [adminAuthGuard] },
+  { path: ADMIN_ROUTES_PATHS.COUPONS, component: AdminCouponsComponent, canActivate: [adminAuthGuard] },
+  { path: ADMIN_ROUTES_PATHS.BOOKINGS, component: AdminBookingComponent, canActivate: [adminAuthGuard] },
+  { path: ADMIN_ROUTES_PATHS.OFFERS, component: AdminOfferComponent, canActivate: [adminAuthGuard] },
 ];

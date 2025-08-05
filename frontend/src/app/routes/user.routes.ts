@@ -12,52 +12,53 @@ import { UserBarberComponent } from '../pages/user/user-barber/user-barber.compo
 import { UserFavoritesComponent } from '../pages/user/user-favorites/user-favorites.component';
 import { UserBarberDetailsComponent } from '../pages/user/user-barber-details/user-barber-details.component';
 import { UserBookingComponent } from '../pages/user/user-booking/user-booking.component';
+import { USER_ROUTES_PATHS } from '../constants/user-route.constant';
 
 export const USER_ROUTES: Routes = [
   {
-    path: 'user/home',
+    path: USER_ROUTES_PATHS.HOME,
     component: UserHomeComponent,
     canActivate: [userAuthGuard],
   },
   {
-    path: 'user/auth-callback',
+    path: USER_ROUTES_PATHS.AUTH_CALLBACK,
     component: AuthCallbackComponent,
     canActivate: [userAlreadyLoggedInGuard],
   },
   {
-    path: 'user/signin',
+    path: USER_ROUTES_PATHS.SIGNIN,
     component: UserSigninComponent,
     canActivate: [userAlreadyLoggedInGuard],
   },
   {
-    path: 'user/signup',
+    path: USER_ROUTES_PATHS.SIGNUP,
     component: UserSignupComponent,
     canActivate: [userAlreadyLoggedInGuard],
   },
-  { path: 'user/verify-otp', component: UserOtpComponent },
+  { path: USER_ROUTES_PATHS.VERIFY_OTP, component: UserOtpComponent },
   {
-    path: 'user/forgot-password',
+    path: USER_ROUTES_PATHS.FORGOT_PASSWORD,
     component: UserForgotPasswordComponent,
     canActivate: [userAlreadyLoggedInGuard],
   },
-  { path: 'user/reset-password', component: UserResetPasswordComponent },
+  { path: USER_ROUTES_PATHS.RESET_PASSWORD, component: UserResetPasswordComponent },
   {
-    path: 'user/barbers',
+    path: USER_ROUTES_PATHS.BARBERS,
     component: UserBarberComponent,
     canActivate: [userAuthGuard],
   },
   {
-    path: 'user/favorites',
+    path: USER_ROUTES_PATHS.FAVORITES,
     component: UserFavoritesComponent,
     canActivate: [userAuthGuard]
   },
   {
-    path: 'user/barber-details/:id',
+    path: USER_ROUTES_PATHS.BARBER_DETAILS,
     component: UserBarberDetailsComponent,
     canActivate: [userAuthGuard]
   },
   {
-    path: 'user/bookings',
+    path: USER_ROUTES_PATHS.BOOKINGS,
     component: UserBookingComponent,
     canActivate: [userAuthGuard]
   }
