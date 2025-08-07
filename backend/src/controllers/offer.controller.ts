@@ -12,7 +12,7 @@ export class OfferController implements IOfferController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;
 
-      const { response,status } = await this._offerService.getAllCoupons(search,page,limit)
+      const { response,status } = await this._offerService.getAllOffers(search,page,limit)
 
       res.status(status).json(response)
     } catch (error) {

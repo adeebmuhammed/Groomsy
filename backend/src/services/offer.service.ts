@@ -1,15 +1,16 @@
 import { ListResponseDto } from "../dto/admin.dto";
-import { CreateOfferDto, MessageResponseDto, OfferDto } from "../dto/offer.dto";
+import { CreateOfferDto, OfferDto } from "../dto/offer.dto";
 import { OfferMapper } from "../mappers/offer.mapper";
 import { IOfferRepository } from "../repositories/interfaces/IOfferRepository";
 import { STATUS_CODES } from "../utils/constants";
 import { validateOfferData } from "../utils/offerValidator";
 import { IOfferService } from "./interfaces/IOfferService";
+import { MessageResponseDto } from "../dto/base.dto";
 
 export class OfferService implements IOfferService {
   constructor(private _offerRepo: IOfferRepository) {}
 
-  getAllCoupons = async (
+  getAllOffers = async (
     search: string,
     page: number,
     limit: number

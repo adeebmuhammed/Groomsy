@@ -8,9 +8,6 @@ export class CouponDto{
     couponAmount!: number;
 }
 
-export class MessageResponseDto {
-  message!: string;
-}
 
 export class CouponResponseDto{
     id!:string;

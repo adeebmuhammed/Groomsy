@@ -6,9 +6,6 @@ export class UserRegisterRequestDto {
   confirmPassword!: string;
 }
 
-export class MessageResponseDto {
-  message!: string;
-}
 
 export class UserLoginResponseDto {
   id!: string;

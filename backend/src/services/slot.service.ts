@@ -1,5 +1,4 @@
 import {
-  MessageResponseDto,
   SlotResponseDto,
   SlotRuleCreateRequestDto,
   SlotRuleListResponseDto,
@@ -13,6 +12,7 @@ import { STATUS_CODES } from "../utils/constants";
 import mongoose from "mongoose";
 import { ISlotRepository } from "../repositories/interfaces/ISlotRepository";
 import { generateSlotsFromRules } from "../utils/slot.generator";
+import { MessageResponseDto } from "../dto/base.dto";
 
 export class SlotService implements ISlotService {
   constructor(private _slotRepo: ISlotRepository) {}

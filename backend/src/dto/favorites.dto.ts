@@ -1,8 +1,5 @@
 import { BarberDto } from "./barber.dto";
 
-export class MessageResponseDto {
-  message!: string;
-}
 
 export interface FavoritesListResponseDto {
   data: BarberDto[];
