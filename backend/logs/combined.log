@@ -2374,3 +2374,15 @@
 2025-08-07 09:42:20 [INFO]: PATCH /barber/unavailability/weekly/68941cf4be7acba7b8405d1f
 2025-08-07 09:44:20 [INFO]: PATCH /barber/unavailability/weekly/68941cf4be7acba7b8405d1f
 2025-08-07 09:44:36 [INFO]: PATCH /barber/unavailability/weekly/68941cf4be7acba7b8405d1f
+2025-08-07 12:54:28 [INFO]: GET /barber/unavailability/special/68941cf4be7acba7b8405d1f
+2025-08-07 12:54:52 [INFO]: GET /barber/unavailability/special/687df7da3c3d135213122fb8
+2025-08-07 12:54:59 [INFO]: GET /barber/unavailability/special/68941cf4be7acba7b8405d1f
+2025-08-07 13:31:07 [INFO]: POST /barber/unavailability/special/68941cf4be7acba7b8405d1f
+2025-08-07 13:31:17 [INFO]: POST /barber/unavailability/special/68941cf4be7acba7b8405d1f
+2025-08-07 13:31:20 [INFO]: POST /barber/unavailability/special/68941cf4be7acba7b8405d1f
+2025-08-07 13:31:27 [INFO]: POST /barber/unavailability/special/68941cf4be7acba7b8405d1f
+2025-08-07 13:45:55 [INFO]: DELETE /barber/unavailability/special/68941cf4be7acba7b8405d1f?date=2025-08-12
+2025-08-07 13:46:49 [INFO]: DELETE /barber/unavailability/special/68941cf4be7acba7b8405d1f?date=2025-08-12
+2025-08-07 13:49:19 [INFO]: DELETE /barber/unavailability/special/68941cf4be7acba7b8405d1f?date=2025-08-12
+2025-08-07 13:49:33 [INFO]: DELETE /barber/unavailability/special/68941cf4be7acba7b8405d1f?date=2025-08-12
+2025-08-07 13:49:46 [INFO]: DELETE /barber/unavailability/special/68941cf4be7acba7b8405d1f?date=2025-08-24

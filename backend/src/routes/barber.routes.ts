@@ -53,6 +53,9 @@ barberRoutes
 .patch("/bookings/:id",bookingController.updateBookingStatus)
 
 barberRoutes
+.get("/unavailability/special/:id",barberUnavailabilityController.fetchBarberUnavailability)
 .patch("/unavailability/weekly/:id",barberUnavailabilityController.editWeeklyDayOff)
+.post("/unavailability/special/:id",barberUnavailabilityController.addOffDay)
+.delete("/unavailability/special/:id",barberUnavailabilityController.removeOffDay)
 
 export default barberRoutes;
