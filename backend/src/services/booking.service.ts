@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import {
   BookingCreateRequestDto,
   BookingResponseDto,
-  MessageResponseDto,
 } from "../dto/booking.dto";
 import { IBooking } from "../models/booking.model";
 import { BarberRepository } from "../repositories/barber.repository";
@@ -12,6 +11,7 @@ import { IUserRepository } from "../repositories/interfaces/IUserRepository";
 import { UserRepository } from "../repositories/user.repository";
 import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import { IBookingService } from "./interfaces/IBookingService";
+import { MessageResponseDto } from "../dto/base.dto";
 
 export class BookingService implements IBookingService {
   private _userRepo: IUserRepository;

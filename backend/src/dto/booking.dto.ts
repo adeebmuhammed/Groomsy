@@ -6,10 +6,6 @@ export interface BookingCreateRequestDto {
     price: number
 }
 
-export class MessageResponseDto {
-  message!: string;
-}
-
 export interface BookingResponseDto {
   id: string;
   user: string;

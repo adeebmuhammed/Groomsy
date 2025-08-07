@@ -5,10 +5,6 @@ export interface CreateOfferDto{
     discount: number;
 }
 
-export class MessageResponseDto {
-  message!: string;
-}
-
 export interface OfferDto{
     id: string;
     name: string;

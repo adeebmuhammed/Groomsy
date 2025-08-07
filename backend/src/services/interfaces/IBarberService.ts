@@ -1,5 +1,5 @@
 import { BarberRegisterRequestDto, BarberLoginResponseDto } from "../../dto/barber.dto";
-import { MessageResponseDto } from "../../dto/barber.dto";
+import { MessageResponseDto } from "../../dto/base.dto";
 
 export interface IBarberService {
     registerBarber( barberData: BarberRegisterRequestDto): Promise<{ response: MessageResponseDto, status: number}>;

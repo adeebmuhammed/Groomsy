@@ -1,10 +1,11 @@
 import { ListResponseDto } from "../dto/admin.dto";
-import { CouponDto, MessageResponseDto } from "../dto/coupon.dto";
+import { CouponDto } from "../dto/coupon.dto";
 import { Couponmapper } from "../mappers/coupon.mapper";
 import { ICouponRepository } from "../repositories/interfaces/ICouponRepository";
 import { STATUS_CODES } from "../utils/constants";
 import { validateCouponData } from "../utils/couponValidator";
 import { ICouponService } from "./interfaces/ICouponService";
+import { MessageResponseDto } from "../dto/base.dto";
 
 export class CouponService implements ICouponService{
     constructor( private _couponRepo: ICouponRepository){}

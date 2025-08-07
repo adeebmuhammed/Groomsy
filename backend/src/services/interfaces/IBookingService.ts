@@ -1,4 +1,5 @@
-import { BookingCreateRequestDto, BookingResponseDto, MessageResponseDto } from "../../dto/booking.dto";
+import { BookingCreateRequestDto, BookingResponseDto } from "../../dto/booking.dto";
+import { MessageResponseDto } from "../../dto/base.dto";
 
 export interface IBookingService{
     fetchBookings(role: string, id: string | undefined, page: number, limit: number):Promise<{response: {data: BookingResponseDto[],totalCount: number}, status:number}>;

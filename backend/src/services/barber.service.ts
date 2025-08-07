@@ -1,10 +1,8 @@
 import {
   BarberLoginResponseDto,
   BarberRegisterRequestDto,
-  MessageResponseDto,
 } from "../dto/barber.dto";
 import { IBarberService } from "./interfaces/IBarberService";
-import { BarberRepository } from "../repositories/barber.repository";
 import bcrypt from "bcrypt";
 import {
   isValidEmail,
@@ -17,9 +15,17 @@ import OTPService from "../utils/OTPService";
 import { BarberMapper } from "../mappers/barber.mapper";
 import { AdminMapper } from "../mappers/admin.mapper";
 import { generateAccessToken } from "../utils/jwt.generator";
+import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
+import { IBarberUnavailabilityRepository } from "../repositories/interfaces/IBarberUnavailabilityRepository";
+import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
+import mongoose, { ObjectId } from "mongoose";
+import { MessageResponseDto } from "../dto/base.dto";
 
 export class BarberService implements IBarberService {
-  constructor(private _barberRepo: BarberRepository) {}
+  private _barberUnavailabilityRepo: IBarberUnavailabilityRepository;
+  constructor(private _barberRepo: IBarberRepository) {
+    this._barberUnavailabilityRepo = new BarberUnavailabilityRepository
+  }
 
   registerBarber = async(
     barberData: BarberRegisterRequestDto
@@ -53,11 +59,16 @@ export class BarberService implements IBarberService {
     await OTPService.sendOTP(email, otp);
     console.log(otp);
 
-    await this._barberRepo.create({
+    const newBarber = await this._barberRepo.create({
       ...barberData,
       otp,
       password: hashedPassword,
       isVerified: false,
+    });
+
+    await this._barberUnavailabilityRepo.create({
+      barber : new mongoose.Types.ObjectId( newBarber._id.toString()),
+      weeklyOff : "Sunday"
     });
 
     return {
