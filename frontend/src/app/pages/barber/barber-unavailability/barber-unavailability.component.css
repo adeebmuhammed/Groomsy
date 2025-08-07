@@ -1,0 +1,148 @@
+/* ===== GLOBAL STRUCTURE ===== */
+.barber-layout {
+  display: flex;
+  padding-top: 64px;
+  min-height: 100vh;
+  background-color: #f4f6f8;
+}
+
+.barber-sidebar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  height: calc(100vh - 64px);
+  width: 250px;
+  background-color: #fff;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+}
+
+.barber-main-content {
+  margin-left: 250px;
+  width: calc(100% - 250px);
+}
+
+/* ===== PAGE HEADER ===== */
+.admin-sign-in {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 2rem;
+}
+
+/* ===== DASHBOARD CONTENT ===== */
+.dashboard-content {
+  max-width: 1100px;
+  margin : 85px;
+  background-color: #fff;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.05);
+}
+
+.form-section label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.custom-input {
+  border-radius: 8px !important;
+  border: 1px solid #ccc !important;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+/* Buttons */
+button.submit-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+button.submit-button:hover {
+  background-color: #0056b3;
+}
+
+button.btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+}
+
+button.btn-danger:hover {
+  background-color: #a71d2a;
+}
+
+/* ===== TABLE ===== */
+.table-wrapper {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #007bff;
+  color: white;
+}
+
+thead th {
+  padding: 0.75rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+tbody td {
+  padding: 0.75rem;
+  vertical-align: middle;
+  font-size: 0.95rem;
+}
+
+tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .barber-main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .barber-sidebar {
+    display: none;
+  }
+
+  .dashboard-content {
+    padding: 1.5rem;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .form-section .row > div {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  button.submit-button,
+  button.btn-danger {
+    width: 100%;
+  }
+}

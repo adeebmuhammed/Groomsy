@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormBuilder,FormGroup,ReactiveFormsModule,Validators } from '@angular/forms';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-barber-forgot-password',
-  imports: [ BarberHeaderComponent,BarberFooterComponent,ReactiveFormsModule,CommonModule ],
+  imports: [ BarberHeaderComponent,BarberFooterComponent,ReactiveFormsModule,CommonModule,RouterModule ],
   templateUrl: './barber-forgot-password.component.html',
   styleUrl: './barber-forgot-password.component.css'
 })
