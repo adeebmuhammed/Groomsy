@@ -1,5 +1,6 @@
-import { MessageResponseDto, SlotResponseDto, SlotRuleCreateRequestDto, SlotRuleListResponseDto, SlotRuleReponseDto } from "../../dto/slot.dto";
+import {  SlotResponseDto, SlotRuleCreateRequestDto, SlotRuleListResponseDto, SlotRuleReponseDto } from "../../dto/slot.dto";
 import { ISlotRule } from "../../models/slots.model";
+import { MessageResponseDto } from "../../dto/base.dto";
 
 export interface ISlotService{
     getSlotRulesByBarber(barberId: string,page: number,limit: number): Promise<{response: SlotRuleListResponseDto; status: number}>;

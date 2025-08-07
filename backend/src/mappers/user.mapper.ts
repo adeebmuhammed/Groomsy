@@ -1,5 +1,6 @@
 import { IUser } from "../models/user.model";
-import { UserLoginResponseDto,MessageResponseDto } from "../dto/user.dto";
+import { UserLoginResponseDto } from "../dto/user.dto";
+import { MessageResponseDto } from "../dto/base.dto";
 
 export class UserMapper{
     static toLoginResponse(

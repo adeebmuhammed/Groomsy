@@ -6,10 +6,6 @@ export class BarberRegisterRequestDto {
   district!: string;
 }
 
-export class MessageResponseDto {
-  message!: string;
-}
-
 export class BarberLoginResponseDto {
   id!: string;
   name!: string;

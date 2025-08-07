@@ -1,7 +1,8 @@
 import { ListResponseDto } from "../../dto/admin.dto";
 import { BarberDto } from "../../dto/barber.dto";
 import { SlotResponseDto, SlotRuleListResponseDto } from "../../dto/slot.dto";
-import { UserRegisterRequestDto,MessageResponseDto,UserLoginResponseDto } from "../../dto/user.dto";
+import { UserRegisterRequestDto,UserLoginResponseDto } from "../../dto/user.dto";
+import { MessageResponseDto } from "../../dto/base.dto";
 
 export interface IUserService{
     registerUser( userData:UserRegisterRequestDto ): Promise<{ response:MessageResponseDto , status:number }>;

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import { CouponDto, CouponResponseDto, MessageResponseDto } from "../dto/coupon.dto";
+import { CouponDto, CouponResponseDto } from "../dto/coupon.dto";
+import { MessageResponseDto } from "../dto/base.dto";
 import { ICoupon } from "../models/coupon.model";
 
 export class Couponmapper{

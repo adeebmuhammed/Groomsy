@@ -18,9 +18,6 @@ export class SlotRuleUpdateRequestDto {
     barber!: string;
 }
 
-export class MessageResponseDto {
-  message!: string;
-}
 
 export interface SlotRuleListResponseDto {
   data: SlotRuleReponseDto[];

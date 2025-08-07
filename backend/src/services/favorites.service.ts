@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { BarberDto } from "../dto/barber.dto";
 import {
   FavoritesListResponseDto,
-  MessageResponseDto,
 } from "../dto/favorites.dto";
 import { BarberMapper } from "../mappers/barber.mapper";
 import { IBarber } from "../models/barber.model";
@@ -11,6 +10,7 @@ import { FavoritesRepository } from "../repositories/favorites.repository";
 import { UserRepository } from "../repositories/user.repository";
 import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import { IFavoritesService } from "./interfaces/IFavoritesService";
+import { MessageResponseDto } from "../dto/base.dto";
 
 export class FavoritesService implements IFavoritesService {
   private _userRepo = new UserRepository();
