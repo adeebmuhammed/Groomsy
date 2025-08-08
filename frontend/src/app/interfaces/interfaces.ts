@@ -125,12 +125,7 @@ export interface CouponResponseDto{
 export interface CouponListResponseDto {
   data: CouponResponseDto[];
   message: string;
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalItems: number;
-    itemsPerPage: number;
-  };
+  pagination: Pagination
 }
 
 export class CouponRequestDto{
@@ -206,4 +201,25 @@ export interface BarberUnavailabilityDto {
   barber: string;
   weeklyOff: string;
   specialOffDays: { date: string; reason?: string }[];
+}
+
+export interface Service {
+  id: string;
+  name: string;
+  description: string;
+  duration: string;
+  price: number;
+}
+
+export interface Pagination {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
+}
+
+export interface ServiceListResponse {
+  data: Service[];
+  message?: string;
+  pagination: Pagination;
 }

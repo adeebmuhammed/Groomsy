@@ -28,12 +28,7 @@ export class OfferRepository
     const skip = (page - 1) * limit;
 
     const condition = search
-      ? {
-          $or: [
-            { name: { $regex: search, $options: "i" } },
-            { email: { $regex: search, $options: "i" } },
-          ],
-        }
+      ? { name: { $regex: search, $options: "i" } }
       : {};
 
     const [offers, totalCount] = await Promise.all([
