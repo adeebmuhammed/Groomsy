@@ -1,0 +1,71 @@
+<div class="modal-overlay" *ngIf="visible">
+  <div class="modal-container">
+    <h3 class="modal-title">{{ serviceData ? "Edit Service" : "Add Service" }}</h3>
+
+    <form [formGroup]="serviceForm" (ngSubmit)="submitServiceForm()">
+      <!-- Name -->
+      <label>Name:</label>
+      <input type="text" formControlName="name" class="form-control" />
+      <div
+        *ngIf="serviceForm.get('name')?.touched && serviceForm.get('name')?.invalid"
+        class="text-danger"
+      >
+        Name is required and cannot be empty.
+      </div>
+
+      <!-- Description -->
+      <label>Description:</label>
+      <textarea formControlName="description" class="form-control"></textarea>
+      <div
+        *ngIf="serviceForm.get('description')?.touched && serviceForm.get('description')?.invalid"
+        class="text-danger"
+      >
+        Description is required and cannot be empty.
+      </div>
+
+      <!-- Duration -->
+      <label>Duration:</label>
+      <select formControlName="duration" class="form-control">
+        <option value="">Select duration</option>
+        <option *ngFor="let option of durationOptions" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+      <div
+        *ngIf="serviceForm.get('duration')?.touched && serviceForm.get('duration')?.invalid"
+        class="text-danger"
+      >
+        Please select a valid duration.
+      </div>
+
+      <!-- Price -->
+      <label>Price:</label>
+      <input
+        type="number"
+        formControlName="price"
+        class="form-control"
+        min="0"
+      />
+      <div
+        *ngIf="serviceForm.get('price')?.touched && serviceForm.get('price')?.invalid"
+        class="text-danger"
+      >
+        Price must be greater than 0.
+      </div>
+
+      <!-- Actions -->
+      <div class="modal-actions">
+        <button type="submit" class="submit-button">
+          {{ serviceData ? "Update" : "Add" }}
+        </button>
+        <button
+          type="button"
+          class="submit-button cancel-btn"
+          (click)="close()"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<app-admin-header></app-admin-header>
+
+<div class="admin-layout">
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <div class="admin-main-content">
+    <div class="barber-list-page">
+      <!-- Header with Add Button -->
+      <div class="barber-list-header">
+        <h1 class="barber-list-title">Service Management</h1>
+        <button class="add-coupon-button" (click)="addService()">
+          + Add Service
+        </button>
+      </div>
+
+      <app-admin-table
+        [data]="services"
+        [columns]="columns"
+        [currentPage]="currentPage"
+        [itemsPerPage]="itemsPerPage"
+        [totalPages]="totalPages"
+        (onPageChange)="changePage($event)"
+        (onSearch)="searchChanged($event)"
+        (onEdit)="editService($event)"
+        (onDelete)="deleteService($event)"
+      >
+      </app-admin-table>
+      
+
+      <ng-container *ngIf="serviceModalVisible">
+        <app-service-form
+          [serviceData]="selectedServiceData"
+          [visible]="serviceModalVisible"
+          (onClose)="onModalClose()"
+          (onSubmit)="onModalSubmit($event)"
+        >
+        </app-service-form>
+      </ng-container>
+
+      <app-admin-footer></app-admin-footer>
+    </div>
+  </div>
+</div>

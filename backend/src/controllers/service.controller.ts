@@ -1,0 +1,82 @@
+import { Request, Response } from "express";
+import { IServiceController } from "./interfaces/IServiceController";
+import { STATUS_CODES } from "../utils/constants";
+import { IServiceService } from "../services/interfaces/IServiceService";
+
+export class ServiceController implements IServiceController {
+  constructor(private _serviceService: IServiceService) {}
+
+  fetch = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const search = (req.query.search as string) || "";
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 5;
+
+      const { response, status } = await this._serviceService.fetch(
+        search,
+        page,
+        limit
+      );
+
+      res.status(status).json(response);
+    } catch (error) {
+      console.error("error fetching services:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "Service fetching failed",
+      });
+    }
+  };
+
+  create = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const data = req.body;
+
+      const { response, status } = await this._serviceService.create(data);
+
+      res.status(status).json(response);
+    } catch (error) {
+      console.error("error creating services:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "Service creation failed",
+      });
+    }
+  };
+
+  edit = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const serviceId = req.params["id"];
+      const data = req.body;
+
+      const { response, status } = await this._serviceService.edit(
+        serviceId,
+        data
+      );
+
+      res.status(status).json(response);
+    } catch (error) {
+      console.error("error editing services:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "editing service failed",
+      });
+    }
+  };
+
+  delete = async (req: Request, res: Response): Promise<void> =>{
+    try {
+      const serviceId = req.params["id"]
+
+      const { response,status} = await this._serviceService.delete(serviceId)
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error("error deleting services:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "deleting service failed",
+      });
+    }
+  }
+}
