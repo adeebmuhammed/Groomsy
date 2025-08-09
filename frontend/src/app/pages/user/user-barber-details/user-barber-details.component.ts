@@ -2,6 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user/user.service';
 import {
   BarberDto,
+  BarberUnavailabilityDto,
+  BookingCreateRequestDto,
   IBarber,
   Service,
   SlotDto,
@@ -21,6 +23,7 @@ import Swal from 'sweetalert2';
 import { BookingService } from '../../../services/booking/booking.service';
 import { ServiceCardComponent } from '../../../components/shared/service-card/service-card.component';
 import { ServiceService } from '../../../services/service/service.service';
+import { BarberUnavailabilityService } from '../../../services/barber-unavailability/barber-unavailability.service';
 
 @Component({
   selector: 'app-user-barber-details',
@@ -44,13 +47,32 @@ export class UserBarberDetailsComponent implements OnInit {
   fetchedDate: string = '';
   todayDate: string = '';
   services: Service[] = [];
+  barberUnavailability: BarberUnavailabilityDto | null = null;
 
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private bookingService = inject(BookingService);
   private activatedRoute = inject(ActivatedRoute);
   private serviceService = inject(ServiceService);
-  constructor() {}
+  private barberUnavailabilityService = inject(BarberUnavailabilityService);
+
+  selectedService: Service | null = null;
+
+  selectService(service: Service): void {
+    this.selectedService = service;
+
+    this.barberUnavailabilityService
+      .fetchBarberUnavailability(this.barberId, 'user')
+      .subscribe({
+        next: (res) => {
+          this.barberUnavailability = res;
+          this.bookSlotFromOutside();
+        },
+        error: (err) => {
+          console.error('Error fetching unavailability:', err);
+        },
+      });
+  }
 
   ngOnInit(): void {
     this.barberId = this.activatedRoute.snapshot.paramMap.get('id') || '';
@@ -93,7 +115,10 @@ export class UserBarberDetailsComponent implements OnInit {
   }
 
   submitDate(): void {
-    if (!this.selectedDate) return;
+    if (!this.selectedDate || !this.selectedService) {
+      alert('Please select a service and date.');
+      return;
+    }
 
     const today = new Date().toISOString().split('T')[0];
     if (this.selectedDate < today) {
@@ -102,27 +127,65 @@ export class UserBarberDetailsComponent implements OnInit {
     }
 
     this.userService
-      .fetchPopulatedSlots(this.selectedDate, 1, 5, this.barberId)
+      .fetchPopulatedSlots(
+        this.selectedDate,
+        1,
+        5,
+        this.barberId,
+        this.selectedService.id
+      )
       .subscribe({
         next: (res) => {
+          // Step 1: Store populated slots
           this.populatedSlots = res;
           this.fetchedDate = this.selectedDate;
 
-          // 👇 Blur focused element before hiding modal
-          if (document.activeElement instanceof HTMLElement) {
-            document.activeElement.blur();
-          }
+          // Step 2: Fetch bookings for that barber on that date
+          this.bookingService
+            .fetchBookings('barber', this.barberId, 1, 100)
+            .subscribe({
+              next: (bookingsRes) => {
+                const bookedSlots = bookingsRes.data
+                  .filter(
+                    (b) =>
+                      new Date(b.slotDetails.date)
+                        .toISOString()
+                        .split('T')[0] === this.selectedDate
+                  )
+                  .map(
+                    (b) => `${b.slotDetails.startTime}-${b.slotDetails.endTime}`
+                  );
 
-          const calendarModal = document.getElementById('bookingModal');
-          if (calendarModal) bootstrap.Modal.getInstance(calendarModal)?.hide();
+                // Step 3: Mark populated slots as booked if they match
+                for (const dateKey of Object.keys(this.populatedSlots)) {
+                  this.populatedSlots[dateKey] = this.populatedSlots[
+                    dateKey
+                  ].map((slot) => ({
+                    ...slot,
+                    isBooked: bookedSlots.includes(
+                      `${slot.startTime}-${slot.endTime}`
+                    ),
+                  }));
+                }
 
-          setTimeout(() => {
-            const slotModal = document.getElementById('slotTableModal');
-            if (slotModal) new bootstrap.Modal(slotModal).show();
-          }, 200); // 200ms delay
+                // Step 4: Open modal
+                if (document.activeElement instanceof HTMLElement) {
+                  document.activeElement.blur();
+                }
+                const calendarModal = document.getElementById('bookingModal');
+                if (calendarModal)
+                  bootstrap.Modal.getInstance(calendarModal)?.hide();
+                setTimeout(() => {
+                  const slotModal = document.getElementById('slotTableModal');
+                  if (slotModal) new bootstrap.Modal(slotModal).show();
+                }, 200);
+              },
+              error: (err) => {
+                console.error('Error fetching bookings:', err);
+              },
+            });
         },
         error: (err) => {
-          console.error('Error fetching populated slots:', err);
           Swal.fire(
             'Error!',
             err.error?.error || 'An unexpected error occurred',
@@ -138,31 +201,43 @@ export class UserBarberDetailsComponent implements OnInit {
 
   bookTimeSlot(slot: SlotTime, date: string): void {
     this.authService.userId$.subscribe((id) => {
-      if (!id) {
-        return;
-      }
+      if (!id || !this.barberId || !this.selectedService) return;
 
-      if (!this.barberId) return;
+      const bookingDate = new Date(date);
 
-      const bookingData = {
+      const startTimeDate = new Date(bookingDate);
+      startTimeDate.setHours(
+        new Date(slot.startTime).getHours(),
+        new Date(slot.startTime).getMinutes(),
+        0,
+        0
+      );
+
+      const endTimeDate = new Date(bookingDate);
+      endTimeDate.setHours(
+        new Date(slot.endTime).getHours(),
+        new Date(slot.endTime).getMinutes(),
+        0,
+        0
+      );
+
+      const bookingData: BookingCreateRequestDto = {
         barberId: this.barberId,
-        date: new Date(date),
-        startTime: slot.startTime,
-        endTime: slot.endTime,
-        price: slot.price,
+        serviceId: this.selectedService.id,
+        date: bookingDate,
+        startTime: startTimeDate,
+        endTime: endTimeDate,
+        price: this.selectedService.price,
       };
 
       this.bookingService.bookSlot(id, bookingData).subscribe({
-        next: (res) => {
-          Swal.fire('Success', res.message, 'success');
-        },
-        error: (err) => {
+        next: (res) => Swal.fire('Success', res.message, 'success'),
+        error: (err) =>
           Swal.fire(
             'Error',
             err.error?.error || 'Failed to book slot',
             'error'
-          );
-        },
+          ),
       });
     });
   }

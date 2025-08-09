@@ -138,11 +138,12 @@ export class CouponRequestDto{
     couponAmount!: number;
 }
 
-export class SlotTime {
-  startTime!: Date;
-  endTime!: Date;
-  price!: number;
+export interface SlotTime {
+  startTime: Date;
+  endTime: Date;
+  isBooked?: boolean; // ✅ new
 }
+
 
 export class SlotResponse {
   [date: string]: SlotTime[];
@@ -151,6 +152,7 @@ export class SlotResponse {
 
 export class BookingCreateRequestDto {
     barberId!: string
+    serviceId!: string
     date!: Date
     startTime!: Date
     endTime!: Date

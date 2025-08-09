@@ -21,12 +21,14 @@
   <h2>Choose a Service</h2>
   <div class="services-grid">
     <app-service-card
-      *ngFor="let service of services"
-      [title]="service.name"
-      [duration]="service.duration"
-      [price]="service.price"
-      [description]="service.description">
-    </app-service-card>
+  *ngFor="let service of services"
+  [title]="service.name"
+  [duration]="service.duration"
+  [price]="service.price"
+  [description]="service.description"
+  (click)="selectService(service)">
+</app-service-card>
+
   </div>
 </div>
 
@@ -60,6 +62,17 @@
             min="{{ todayDate }}"
           />
         </div>
+        <div *ngIf="barberUnavailability" class="alert alert-warning">
+  <strong>Weekly Off:</strong> {{ barberUnavailability.weeklyOff }} <br />
+  <strong>Special Off Days:</strong>
+  <span *ngIf="barberUnavailability.specialOffDays.length; else none">
+    <span *ngFor="let off of barberUnavailability.specialOffDays">
+      {{ off.date }} <span *ngIf="off.reason">({{ off.reason }})</span><br />
+    </span>
+  </span>
+  <ng-template #none>None</ng-template>
+</div>
+
       </div>
 
       <!-- Modal Footer -->

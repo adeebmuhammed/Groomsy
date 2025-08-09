@@ -24,7 +24,6 @@
               <th>End Time</th>
               <th>Status</th>
               <th>Price</th>
-              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -39,17 +38,6 @@
                 </span>
               </td>
               <td>₹{{ booking.totalPrice }}</td>
-              <td>
-                <button
-                  class="cancel-button"
-                  *ngIf="
-                    booking.status === 'pending'
-                  "
-                  (click)="cancelBooking(booking)"
-                >
-                  Cancel
-                </button>
-              </td>
             </tr>
           </tbody>
         </table>

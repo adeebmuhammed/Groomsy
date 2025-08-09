@@ -58,31 +58,4 @@ export class AdminBookingComponent implements OnInit {
   handlePageChange(page: number): void {
     this.fetchBookings(page);
   }
-
-  cancelBooking(booking: BookingResponseDto): void {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'You won’t be able to revert this!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, cancel it!',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.bookingService
-          .updateBookingStatus('admin', booking.id, 'cancel')
-          .subscribe({
-            next: () => {
-              Swal.fire('Cancelled!', 'Booking has been cancelled.', 'success');
-              this.fetchBookings();
-            },
-            error: (err) => {
-              console.error('Delete error:', err);
-              Swal.fire('Error!', 'Failed to cancel the booking.', 'error');
-            },
-          });
-      }
-    });
-  }
 }

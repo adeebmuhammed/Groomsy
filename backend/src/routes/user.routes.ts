@@ -17,6 +17,9 @@ import { SlotController } from "../controllers/slot.controller";
 import { ServiceRepository } from "../repositories/service.repository";
 import { ServiceService } from "../services/service.service";
 import { ServiceController } from "../controllers/service.controller";
+import { BarberUnavailabilityController } from "../controllers/barber.unavailability.controller";
+import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
+import { BarberUnavailabilityService } from "../services/barber.unavailability.service";
 
 const userRoutes = Router()
 const userAuth = authMiddleware(["user"])
@@ -40,6 +43,10 @@ const slotController = new SlotController(slotService)
 const serviceRepo = new ServiceRepository
 const serviceService = new ServiceService(serviceRepo)
 const serviceController = new ServiceController(serviceService)
+
+const barberUnavailabilityRepo = new BarberUnavailabilityRepository
+const barberUnavailabilityService = new BarberUnavailabilityService(barberUnavailabilityRepo)
+const barberUnavailabilityController = new BarberUnavailabilityController(barberUnavailabilityService)
 
 userRoutes
 .post('/signup',userController.register)
@@ -80,5 +87,8 @@ userRoutes
 
 userRoutes
 .get("/service", userAuth,serviceController.fetch)
+
+userRoutes
+.get("/unavailability/:id",userAuth,barberUnavailabilityController.fetchBarberUnavailability)
 
 export default userRoutes;

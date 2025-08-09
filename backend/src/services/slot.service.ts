@@ -13,9 +13,22 @@ import mongoose from "mongoose";
 import { ISlotRepository } from "../repositories/interfaces/ISlotRepository";
 import { generateSlotsFromRules } from "../utils/slot.generator";
 import { MessageResponseDto } from "../dto/base.dto";
+import { IServiceRepository } from "../repositories/interfaces/IServiceRepository";
+import { ServiceRepository } from "../repositories/service.repository";
+import { IBarberUnavailabilityRepository } from "../repositories/interfaces/IBarberUnavailabilityRepository";
+import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
+import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
+import { BookingRepository } from "../repositories/booking.repository";
 
 export class SlotService implements ISlotService {
-  constructor(private _slotRepo: ISlotRepository) {}
+  private _serviceRepo: IServiceRepository
+  private _barberUnavailabilityRepo: IBarberUnavailabilityRepository
+  private _bookingRepo: IBookingRepository
+  constructor(private _slotRepo: ISlotRepository) {
+    this._serviceRepo = new ServiceRepository
+    this._barberUnavailabilityRepo = new BarberUnavailabilityRepository
+    this._bookingRepo = new BookingRepository
+  }
 
   getSlotRulesByBarber = async (
     barberId: string,
@@ -164,6 +177,7 @@ export class SlotService implements ISlotService {
 
   getPopulatedSlots = async (
     barberId: string,
+    serviceId: string,
     date: string,
     page: number,
     limit: number
@@ -186,15 +200,22 @@ export class SlotService implements ISlotService {
       throw new Error("slots for the given date is not available");
     }
 
+    const service = await this._serviceRepo.findById(serviceId)
+    if (!service) {
+      throw new Error("service not found")
+    }
+
     const slots = generateSlotsFromRules(
       filteredRules,
       selectedDate,
-      selectedDate
+      selectedDate,
+      service.duration,
+      service.price
     );
 
     return {
       response: slots,
-      status: 200,
+      status: STATUS_CODES.OK,
     };
   };
 }

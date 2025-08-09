@@ -25,7 +25,7 @@ export class BookingController implements IBookingController {
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-        error: error instanceof Error ? error.message : "Failed to book slot",
+        error: error instanceof Error ? error.message : "Failed to fetch bookings",
       });
     }
   };
@@ -51,7 +51,7 @@ export class BookingController implements IBookingController {
 
   updateBookingStatus = async (req: Request, res: Response): Promise<void> => {
     try {
-      const role: "user" | "barber" | "admin" = req.query.role as "user" | "barber" | "admin";
+      const role: "user" | "barber" = req.query.role as "user" | "barber";
       const bookingId = req.params.id as string;
 
       const { bookingStatus } = req.body;
