@@ -182,12 +182,12 @@ export class AuthService {
     password: string;
     confirmPassword: string;
   }):Observable<IMessageResponse>{
-    return this.http.post<IMessageResponse>(`${this.API_URL}/barber/signup`,data)
+    return this.http.post<IMessageResponse>(`${this.API_URL}/barber/signup`,data, { withCredentials: true})
   }
 
   barberVerifyOtp(data: { email: string; otp: string; purpose: 'signup' | 'forgot' }): Observable<IVerifyOtpResponse> {
   return new Observable(observer => {
-    this.http.post<IVerifyOtpResponse>(`${this.API_URL}/barber/verify-otp`, data).subscribe({
+    this.http.post<IVerifyOtpResponse>(`${this.API_URL}/barber/verify-otp`, data, { withCredentials: true}).subscribe({
       next: (res: any) => {
         // if (data.purpose === 'signup') {
         //   const name = localStorage.getItem('barberSignupName') || '';
@@ -225,11 +225,11 @@ export class AuthService {
 
 
   barberForgotPassword(email: string): Observable<IMessageResponse> {
-    return this.http.post<IMessageResponse>(`${this.API_URL}/barber/forgot-password`, { email });
+    return this.http.post<IMessageResponse>(`${this.API_URL}/barber/forgot-password`, { email }, { withCredentials: true});
   }
 
   barberResetPassword(data: {email: string|null, password: string, confirmPassword: string}):Observable<IMessageResponse>{
-    return this.http.post<IMessageResponse>(`${this.API_URL}/barber/reset-password`,data)
+    return this.http.post<IMessageResponse>(`${this.API_URL}/barber/reset-password`,data, { withCredentials: true})
   }
 
   barberLogout():Observable<IMessageResponse>{

@@ -6,12 +6,10 @@ export class SlotMapper{
     static toSlotResponse(data: ISlotRule): SlotRuleReponseDto {
     return {
       id: (data._id as mongoose.Types.ObjectId).toString(),
-    price: data.price,
-    duration: data.duration,
     slots: data.slots.map((slot: DaySlot) => ({
       day: slot.day,
-      startTime: new Date(slot.startTime),
-      endTime: new Date(slot.endTime)
+      startTime: slot.startTime,
+      endTime: slot.endTime
     }))
     };
   }

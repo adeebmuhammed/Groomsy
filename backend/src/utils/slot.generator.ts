@@ -24,38 +24,27 @@ export const generateSlotsFromRules = (
 
       // Generate all dates in the range that match the slot day
       let current = new Date(startDate);
-      while (current <= endDate) {
-        if (current.getDay() === slotDay) {
-          const dateStr = current.toISOString().split('T')[0];
+      // while (current <= endDate) {
+      //   if (current.getDay() === slotDay) {
+      //     const dateStr = current.toISOString().split('T')[0];
 
-          // Calculate time slots between startTime and endTime using rule.duration
-          const dayStart = new Date(current);
-          dayStart.setHours(slot.startTime.getHours(), slot.startTime.getMinutes(), 0, 0);
+      //     // Calculate time slots between startTime and endTime using rule.duration
+      //     const dayStart = new Date(current);
+      //     dayStart.setHours(slot.startTime.getHours(), slot.startTime.getMinutes(), 0, 0);
 
-          const dayEnd = new Date(current);
-          dayEnd.setHours(slot.endTime.getHours(), slot.endTime.getMinutes(), 0, 0);
+      //     const dayEnd = new Date(current);
+      //     dayEnd.setHours(slot.endTime.getHours(), slot.endTime.getMinutes(), 0, 0);
+      //     const slotsForDay: { startTime: Date; endTime: Date, price: number }[] = [];
 
-          let durationMinutes = parseDuration(rule.duration); // helper to convert '1h 30m' -> 90
-          const slotsForDay: { startTime: Date; endTime: Date, price: number }[] = [];
+      //     if (!result[dateStr]) {
+      //       result[dateStr] = [];
+      //     }
+      //     result[dateStr].push(...slotsForDay);
+      //   }
 
-          let tempStart = new Date(dayStart);
-          while (tempStart < dayEnd) {
-            const tempEnd = new Date(tempStart.getTime() + durationMinutes * 60000);
-            if (tempEnd <= dayEnd) {
-              slotsForDay.push({ startTime: new Date(tempStart), endTime: tempEnd, price: rule.price, });
-            }
-            tempStart = tempEnd;
-          }
-
-          if (!result[dateStr]) {
-            result[dateStr] = [];
-          }
-          result[dateStr].push(...slotsForDay);
-        }
-
-        // Move to next day
-        current.setDate(current.getDate() + 1);
-      }
+      //   // Move to next day
+      //   current.setDate(current.getDate() + 1);
+      // }
     }
   }
 

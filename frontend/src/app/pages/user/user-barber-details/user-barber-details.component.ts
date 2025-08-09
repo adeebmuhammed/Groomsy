@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user/user.service';
 import {
   BarberDto,
   IBarber,
+  Service,
   SlotDto,
   SlotResponse,
   SlotTime,
@@ -18,16 +19,18 @@ import { FormsModule } from '@angular/forms';
 import { SlotTableModalComponent } from '../../../components/shared/slot-table-modal/slot-table-modal.component';
 import Swal from 'sweetalert2';
 import { BookingService } from '../../../services/booking/booking.service';
+import { ServiceCardComponent } from '../../../components/shared/service-card/service-card.component';
+import { ServiceService } from '../../../services/service/service.service';
 
 @Component({
   selector: 'app-user-barber-details',
   imports: [
-    DatePipe,
     CommonModule,
     UserHeaderComponent,
     UserFooterComponent,
     FormsModule,
     SlotTableModalComponent,
+    ServiceCardComponent,
   ],
   templateUrl: './user-barber-details.component.html',
   styleUrl: './user-barber-details.component.css',
@@ -40,26 +43,27 @@ export class UserBarberDetailsComponent implements OnInit {
   populatedSlots: SlotResponse = {};
   fetchedDate: string = '';
   todayDate: string = '';
+  services: Service[] = [];
 
-  constructor(
-    private userService: UserService,
-    private authService: AuthService,
-    private bookingService: BookingService,
-    private activatedRoute: ActivatedRoute
-  ) {}
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
+  private bookingService = inject(BookingService);
+  private activatedRoute = inject(ActivatedRoute);
+  private serviceService = inject(ServiceService);
+  constructor() {}
 
   ngOnInit(): void {
     this.barberId = this.activatedRoute.snapshot.paramMap.get('id') || '';
     this.todayDate = new Date().toISOString().split('T')[0];
     forkJoin({
       barbers: this.userService.fetchBarbers(),
-      slots: this.userService.fetchSlotRulesByBarber(this.barberId),
+      services: this.serviceService.fetch('user', '', 1, 100),
     }).subscribe({
-      next: ({ barbers, slots }) => {
+      next: ({ barbers, services }) => {
         const found = barbers.data.find((b) => b.id === this.barberId);
         this.barber = found || null;
 
-        this.slots = slots.data;
+        this.services = services.data;
       },
       error: (err) => {
         console.error('Error fetching data:', err);
@@ -139,7 +143,7 @@ export class UserBarberDetailsComponent implements OnInit {
       }
 
       if (!this.barberId) return;
-      
+
       const bookingData = {
         barberId: this.barberId,
         date: new Date(date),

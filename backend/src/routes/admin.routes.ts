@@ -71,9 +71,9 @@ adminRoutes
 .delete("/offers/:id", adminAuth,offerController.delete)
 
 adminRoutes
-.get("/service",serviceController.fetch)
-.post("/service",serviceController.create)
-.put("/service/:id",serviceController.edit)
-.delete("/service/:id",serviceController.delete)
+.get("/service", adminAuth,serviceController.fetch)
+.post("/service", adminAuth,serviceController.create)
+.put("/service/:id", adminAuth,serviceController.edit)
+.delete("/service/:id", adminAuth,serviceController.delete)
 
 export default adminRoutes;
