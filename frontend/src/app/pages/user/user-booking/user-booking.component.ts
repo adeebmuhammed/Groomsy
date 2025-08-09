@@ -44,21 +44,24 @@ export class UserBookingComponent implements OnInit {
     this.fetchUserBookings();
   }
 
+  pages: number[] = [];
+
+  private generatePages(): void {
+    this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
   fetchUserBookings(page: number = 1): void {
     this.authService.userId$.subscribe((id) => {
-      if (!id) {
-        return;
-      }
+      if (!id) return;
 
       this.bookingService
         .fetchBookings('user', id, page, this.itemsPerPage)
         .subscribe({
           next: (res) => {
             this.bookings = res.data;
-            console.log(this.bookings);
-
             this.totalPages = Math.ceil(res.totalCount / this.itemsPerPage);
             this.currentPage = page;
+            this.generatePages(); // ✅ build page numbers array
           },
           error: (err) => console.error('Failed to fetch bookings', err),
         });
@@ -93,6 +96,7 @@ export class UserBookingComponent implements OnInit {
   }
 
   handlePageChange(page: number): void {
+    this.currentPage = page;
     this.fetchUserBookings(page);
   }
 }

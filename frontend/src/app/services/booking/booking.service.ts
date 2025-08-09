@@ -20,11 +20,13 @@ export class BookingService {
     page: number,
     limit: number
   ): Observable<{ data: BookingResponseDto[]; totalCount: number }> {
+    console.log(page);
     const params = new HttpParams()
       .set('role', role)
       .set('id', id)
-      .set('page', page | 1)
-      .set('limit', limit | 5);
+      .set('page', page?.toString() || '1')
+      .set('limit', limit?.toString() || '5');
+
     return this.http.get<{ data: BookingResponseDto[]; totalCount: number }>(
       `${environment.apiBaseUrl}/${role}/bookings`,
       { params, withCredentials: true }
@@ -44,7 +46,7 @@ export class BookingService {
   }
 
   updateBookingStatus(
-    role: 'user' | 'barber' | "admin",
+    role: 'user' | 'barber' | 'admin',
     id: string,
     bookingStatus: string
   ): Observable<IMessageResponse> {

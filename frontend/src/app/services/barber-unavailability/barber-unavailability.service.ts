@@ -11,8 +11,8 @@ export class BarberUnavailabilityService {
 
   private http = inject(HttpClient);
 
-  fetchBarberUnavailability(barberId: string): Observable<BarberUnavailabilityDto> {
-    return this.http.get<BarberUnavailabilityDto>(`${environment.apiBaseUrl}/barber/unavailability/${barberId}`, { withCredentials: true });
+  fetchBarberUnavailability(barberId: string, role: "user" | "barber"): Observable<BarberUnavailabilityDto> {
+    return this.http.get<BarberUnavailabilityDto>(`${environment.apiBaseUrl}/${role}/unavailability/${barberId}`, { withCredentials: true });
   }
 
   editWeeklyDayOff(barberId: string, day: string): Observable<IMessageResponse> {

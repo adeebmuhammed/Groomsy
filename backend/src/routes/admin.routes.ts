@@ -62,7 +62,6 @@ adminRoutes
 
 adminRoutes
 .get('/bookings', adminAuth,bookingController.fetchBookings)
-.patch("/bookings/:id", adminAuth,bookingController.updateBookingStatus)
 
 adminRoutes
 .get("/offers", adminAuth,offerController.getAllOffers)

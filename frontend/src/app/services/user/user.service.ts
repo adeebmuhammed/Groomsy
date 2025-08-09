@@ -55,12 +55,14 @@ export class UserService {
     date: string,
     page: number,
     limit: number,
-    barberId: string
+    barberId: string,
+    serviceId: string
   ): Observable<SlotResponse> {
     let params = new HttpParams()
       .set('page', page)
       .set('limit', limit)
-      .set('date', date);
+      .set('date', date)
+      .set('serviceId', serviceId);
     return this.http.get<SlotResponse>(
       `${environment.apiBaseUrl}/user/populated-slots/${barberId}`,{ params , withCredentials: true}
     );

@@ -16,6 +16,7 @@ import { BarberUnavailabilityController } from "../controllers/barber.unavailabi
 
 const barberRoutes = Router()
 const barberAuth = authMiddleware(["barber"])
+const multiAuth = authMiddleware(["user","barber"])
 
 const barberRepo = new BarberRepository
 const barberService = new BarberService(barberRepo)
@@ -49,7 +50,7 @@ barberRoutes
 .delete('/slots/:id',barberAuth,slotController.deleteSlotRule)
 
 barberRoutes
-.get('/bookings',barberAuth,bookingController.fetchBookings)
+.get('/bookings',multiAuth,bookingController.fetchBookings)
 .patch("/bookings/:id",barberAuth,bookingController.updateBookingStatus)
 
 barberRoutes

@@ -12,13 +12,17 @@ import { UserRepository } from "../repositories/user.repository";
 import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import { IBookingService } from "./interfaces/IBookingService";
 import { MessageResponseDto } from "../dto/base.dto";
+import { IServiceRepository } from "../repositories/interfaces/IServiceRepository";
+import { ServiceRepository } from "../repositories/service.repository";
 
 export class BookingService implements IBookingService {
   private _userRepo: IUserRepository;
   private _barberRepo: IBarberRepository;
+  private _serviceRepo: IServiceRepository;
   constructor(private _bookingRepo: IBookingRepository) {
     this._userRepo = new UserRepository();
     this._barberRepo = new BarberRepository();
+    this._serviceRepo = new ServiceRepository();
   }
 
   fetchBookings = async (
@@ -26,20 +30,25 @@ export class BookingService implements IBookingService {
     id?: string,
     page: number = 1,
     limit: number = 5
-  ): Promise<{ response: {data: BookingResponseDto[],totalCount: number}; status: number }> => {
+  ): Promise<{
+    response: { data: BookingResponseDto[]; totalCount: number };
+    status: number;
+  }> => {
     const skip = (page - 1) * limit;
-    let bookings: IBooking[] = [];
-
     const filter: Partial<{ user: string; barber: string }> = {};
+
     if (role === "user") {
+      if (!id) throw new Error("User ID is required");
       filter.user = id;
     } else if (role === "barber") {
+      if (!id) throw new Error("Barber ID is required");
       filter.barber = id;
     } else if (role !== "admin") {
-      throw new Error("invalid role");
+      throw new Error("Invalid role");
     }
 
-    bookings = await this._bookingRepo.findWithPagination(filter, skip, limit);
+    const { bookings, totalCount } =
+      await this._bookingRepo.findWithPaginationAndCount(filter, skip, limit);
 
     const bookingDTOs: BookingResponseDto[] = bookings.map((booking) => ({
       id: (booking._id as mongoose.Types.ObjectId).toString(),
@@ -54,10 +63,10 @@ export class BookingService implements IBookingService {
       },
     }));
 
-    const data = bookingDTOs
-    const totalCount = bookingDTOs.length
-
-    return { response: {data,totalCount}, status: STATUS_CODES.OK };
+    return {
+      response: { data: bookingDTOs, totalCount },
+      status: STATUS_CODES.OK,
+    };
   };
 
   createBooking = async (
@@ -65,24 +74,19 @@ export class BookingService implements IBookingService {
     data: BookingCreateRequestDto
   ): Promise<{ response: MessageResponseDto; status: number }> => {
     const user = await this._userRepo.findById(userId);
-    if (!user) {
-      throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
-    }
+    if (!user) throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
 
     const barber = await this._barberRepo.findById(data.barberId);
-    if (!barber) {
-      throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
-    }
+    if (!barber) throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
+
+    const service = await this._serviceRepo.findById(data.serviceId);
+    if (!service) throw new Error("service not found");
 
     const similarBooking = await this._bookingRepo.findSimilarBooking(data);
-    if (similarBooking) {
-      throw new Error("slot is already booked");
-    }
+    if (similarBooking) throw new Error("slot is already booked");
 
     const booking = await this._bookingRepo.createBooking(userId, data);
-    if (!booking) {
-      throw new Error("booking creation failed");
-    }
+    if (!booking) throw new Error("booking creation failed");
 
     return {
       response: { message: "slot booked successfully" },
@@ -91,11 +95,11 @@ export class BookingService implements IBookingService {
   };
 
   updateBookingStatus = async (
-    role: "user" | "barber"| "admin" ,
+    role: "user" | "barber",
     bookingId: string,
     bookingStatus: string
   ): Promise<{ response: MessageResponseDto; status: number }> => {
-    if (role !== "user" && role !== "barber" && role !== "admin") {
+    if (role !== "user" && role !== "barber") {
       throw new Error("invalid role");
     }
 
@@ -125,12 +129,6 @@ export class BookingService implements IBookingService {
         booking.status = "finished";
       } else {
         throw new Error("Invalid status transition for barber");
-      }
-    }else if(role === "admin") {
-      if (booking.status === "pending" && bookingStatus === "cancel") {
-        booking.status = "cancelled_by_admin";
-      } else {
-        throw new Error("Invalid status transition for admin");
       }
     }
 

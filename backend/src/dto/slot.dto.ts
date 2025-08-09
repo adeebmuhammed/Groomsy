@@ -31,8 +31,8 @@ export interface DaySlot {
 }
 
 export interface SlotTimeDto {
-  startTime: string;
-  endTime: string;
+  startTime: Date;
+  endTime: Date;
 }
 
 export interface SlotResponseDto {

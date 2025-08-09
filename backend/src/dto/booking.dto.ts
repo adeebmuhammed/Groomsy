@@ -1,10 +1,12 @@
 export interface BookingCreateRequestDto {
-    barberId: string
-    date: Date
-    startTime: Date
-    endTime: Date
-    price: number
+  barberId: string;
+  serviceId: string;
+  date: Date;
+  startTime: Date;
+  endTime: Date;
+  price: number;
 }
+
 
 export interface BookingResponseDto {
   id: string;

@@ -25,9 +25,10 @@ export abstract class BaseRepository<T extends Document>
       new: true,
     });
   }
-  async countDocuments(filter: FilterQuery<T> = {}): Promise<number> {
-    return await this.model.countDocuments(filter).exec();
-  }
+  async countDocuments(condition: FilterQuery<T> = {}): Promise<number> {
+  return await this.model.countDocuments(condition).exec();
+}
+
   async findWithPagination(
     condition: FilterQuery<T> = {},
     skip: number,
