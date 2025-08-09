@@ -7,14 +7,6 @@ export const validateSlotData = (data: SlotRuleCreateRequestDto): string[] => {
     errors.push("At least one slot (day, startTime, endTime) is required.");
   }
 
-  if (data.price == null || data.price <= 0) {
-    errors.push("Price should be a valid number greater than zero.");
-  }
-
-  if (!data.duration || !["30m", "1h", "1h 30m", "2h"].includes(data.duration)) {
-    errors.push("Duration must be one of: 30m, 1h, 1h 30m, 2");
-  }
-
   const now = new Date();
 
   for (const slot of data.slots) {
@@ -33,3 +25,9 @@ export const validateSlotData = (data: SlotRuleCreateRequestDto): string[] => {
 
   return errors;
 };
+
+export function toUTCTimeOnly(timeString: string): Date {
+  const [hours, minutes] = timeString.split(':').map(Number);
+  const date = new Date(Date.UTC(1970, 0, 1, hours, minutes));
+  return date;
+}

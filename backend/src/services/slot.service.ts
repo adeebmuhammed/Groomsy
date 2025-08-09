@@ -6,7 +6,7 @@ import {
 } from "../dto/slot.dto";
 import { ISlotRule } from "../models/slots.model";
 import { ISlotService } from "./interfaces/ISlotService";
-import { validateSlotData } from "../utils/slotValidator";
+import { toUTCTimeOnly, validateSlotData } from "../utils/slotValidator";
 import { SlotMapper } from "../mappers/slot.mapper";
 import { STATUS_CODES } from "../utils/constants";
 import mongoose from "mongoose";
@@ -69,7 +69,9 @@ export class SlotService implements ISlotService {
     for (const slotItem of data.slots) {
       const similarSlot = await this._slotRepo.findSimilarSlot(
         barberId,
-        slotItem.day
+        slotItem.day,
+        slotItem.startTime,
+        slotItem.endTime
       );
 
       if (similarSlot) {
@@ -122,7 +124,9 @@ export class SlotService implements ISlotService {
     for (const slot of data.slots) {
       similarSlot = await this._slotRepo.findSimilarSlot(
         existingSlot.barber.toString(),
-        slot.day
+        slot.day,
+        slot.startTime,
+        slot.endTime
       );
 
       if (similarSlot) throw new Error(`slot for the given day already exists`);

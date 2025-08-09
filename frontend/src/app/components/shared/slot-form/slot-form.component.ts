@@ -41,10 +41,7 @@ export class SlotFormComponent implements OnChanges {
   slotForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
-    this.slotForm = this.fb.group({
-      price: [null, [Validators.required, Validators.min(99)]],
-      duration: ['30m', Validators.required],
-    });
+    this.slotForm = this.fb.group({});
 
     // Initialize form controls dynamically
     for (const day of this.weekDays) {
@@ -76,29 +73,17 @@ export class SlotFormComponent implements OnChanges {
 
   ngOnChanges() {
     if (this.slotData) {
-      this.slotForm.patchValue({
-        price: this.slotData.price,
-        duration: this.slotData.duration,
-      });
-
+      this.slotForm.reset();
       this.slotData.slots.forEach((slot: any) => {
         this.slotForm.patchValue({
           [slot.day]: true,
-          [`${slot.day}_startTime`]: this.formatTime(slot.startTime),
-          [`${slot.day}_endTime`]: this.formatTime(slot.endTime),
+          [`${slot.day}_startTime`]: slot.startTime, // Already in HH:mm
+          [`${slot.day}_endTime`]: slot.endTime,
         });
       });
     } else {
-      this.slotForm.reset({
-        price: 0,
-        duration: '30m',
-      });
+      this.slotForm.reset();
     }
-  }
-
-  formatTime(date: string | Date): string {
-    const d = new Date(date);
-    return d.toISOString().slice(11, 16);
   }
 
   getDayControl(day: string, field: 'startTime' | 'endTime'): FormControl {
@@ -114,24 +99,14 @@ export class SlotFormComponent implements OnChanges {
       const slots: DaySlot[] = this.weekDays
         .filter((day) => formValues[day])
         .map((day) => {
-          const [sh, sm] = formValues[`${day}_startTime`]
-            .split(':')
-            .map(Number);
-          const [eh, em] = formValues[`${day}_endTime`].split(':').map(Number);
-
           return {
             day,
-            startTime: new Date(1970, 0, 1, sh, sm), // Local time
-            endTime: new Date(1970, 0, 1, eh, em),
+            startTime: formValues[`${day}_startTime`], // string HH:mm
+            endTime: formValues[`${day}_endTime`],     // string HH:mm
           };
         });
 
-      const finalPayload = {
-        slots,
-        price: formValues.price,
-        duration: formValues.duration,
-      };
-
+      const finalPayload = { slots };
       this.onSubmit.emit(finalPayload);
     }
   }

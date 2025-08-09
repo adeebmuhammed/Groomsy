@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-barber-slots',
-  imports: [ BarberHeaderComponent,BarberFooterComponent,BarberSidebarComponent,DatePipe,CommonModule,SlotFormComponent ],
+  imports: [ BarberHeaderComponent,BarberFooterComponent,BarberSidebarComponent,CommonModule,SlotFormComponent ],
   templateUrl: './barber-slots.component.html',
   styleUrl: './barber-slots.component.css'
 })

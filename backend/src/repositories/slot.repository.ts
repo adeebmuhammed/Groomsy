@@ -30,13 +30,17 @@ export class SlotRepository
   
   async findSimilarSlot(
     barberId: string,
-    day: string
+    day: string,
+    startTime: string,
+    endTime: string
   ): Promise<ISlotRule | null> {
     return await Slots.findOne({
       barber: barberId,
       slots: {
         $elemMatch: {
-          day: day
+          day: day,
+          startTime,
+          endTime
         },
       },
     });
