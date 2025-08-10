@@ -116,19 +116,22 @@ export class UserBarberDetailsComponent implements OnInit {
 
   submitDate(): void {
     if (!this.selectedDate || !this.selectedService) {
-      alert('Please select a service and date.');
+      Swal.fire('Error!', 'Please select a service and date.', 'error');
       return;
     }
 
     const today = new Date().toISOString().split('T')[0];
     if (this.selectedDate < today) {
-      alert('Please select a future date.');
+      Swal.fire('Warning!', 'Please select a future date.', 'warning');
       return;
     }
 
+    // canonical date string: "YYYY-MM-DD"
+    const isoSelected = this.selectedDate;
+
     this.userService
       .fetchPopulatedSlots(
-        this.selectedDate,
+        isoSelected,
         1,
         5,
         this.barberId,
@@ -136,42 +139,63 @@ export class UserBarberDetailsComponent implements OnInit {
       )
       .subscribe({
         next: (res) => {
-          // Step 1: Store populated slots
           this.populatedSlots = res;
-          this.fetchedDate = this.selectedDate;
+          this.fetchedDate = isoSelected;
 
-          // Step 2: Fetch bookings for that barber on that date
           this.bookingService
             .fetchBookings('barber', this.barberId, 1, 100)
             .subscribe({
               next: (bookingsRes) => {
-                const bookedSlots = bookingsRes.data
-                  .filter(
-                    (b) =>
-                      new Date(b.slotDetails.date)
-                        .toISOString()
-                        .split('T')[0] === this.selectedDate
-                  )
-                  .map(
-                    (b) => `${b.slotDetails.startTime}-${b.slotDetails.endTime}`
+                // filter bookings for the selected date (safe because DB date has Z)
+                const bookingsForDate = bookingsRes.data.filter(
+                  (b) =>
+                    new Date(b.slotDetails.date).toISOString().split('T')[0] ===
+                    isoSelected
+                );
+
+                // ensure slots exist for this date
+                if (!this.populatedSlots[isoSelected]) {
+                  console.warn(
+                    'No populated slots for',
+                    isoSelected,
+                    this.populatedSlots
                   );
+                } else {
+                  this.populatedSlots[isoSelected] = this.populatedSlots[
+                    isoSelected
+                  ].map((slot) => {
+                    const slotStart = new Date(slot.startTime).getTime();
+                    const slotEnd = new Date(slot.endTime).getTime();
 
-                // Step 3: Mark populated slots as booked if they match
-                for (const dateKey of Object.keys(this.populatedSlots)) {
-                  this.populatedSlots[dateKey] = this.populatedSlots[
-                    dateKey
-                  ].map((slot) => ({
-                    ...slot,
-                    isBooked: bookedSlots.includes(
-                      `${slot.startTime}-${slot.endTime}`
-                    ),
-                  }));
+                    const isBooked = bookingsForDate.some((b) => {
+                      const bookedStart = new Date(
+                        b.slotDetails.startTime
+                      ).getTime();
+                      const bookedEnd = new Date(
+                        b.slotDetails.endTime
+                      ).getTime();
+
+                      if (isNaN(bookedStart) || isNaN(bookedEnd)) {
+                        console.warn('Bad booking time for booking', b);
+                        return false;
+                      }
+
+                      // If booking has zero duration (start === end), nudge it so exact-start collisions still block
+                      const adjustedBookedEnd =
+                        bookedEnd === bookedStart ? bookedStart + 1 : bookedEnd;
+
+                      const overlap =
+                        bookedStart < slotEnd && adjustedBookedEnd > slotStart;
+                      return overlap;
+                    });
+
+                    return { ...slot, isBooked };
+                  });
                 }
 
-                // Step 4: Open modal
-                if (document.activeElement instanceof HTMLElement) {
+                // UI: blur/hide/show
+                if (document.activeElement instanceof HTMLElement)
                   document.activeElement.blur();
-                }
                 const calendarModal = document.getElementById('bookingModal');
                 if (calendarModal)
                   bootstrap.Modal.getInstance(calendarModal)?.hide();

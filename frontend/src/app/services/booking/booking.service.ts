@@ -20,7 +20,6 @@ export class BookingService {
     page: number,
     limit: number
   ): Observable<{ data: BookingResponseDto[]; totalCount: number }> {
-    console.log(page);
     const params = new HttpParams()
       .set('role', role)
       .set('id', id)
