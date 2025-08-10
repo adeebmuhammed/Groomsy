@@ -115,6 +115,7 @@ export class UserBarberDetailsComponent implements OnInit {
   }
 
   submitDate(): void {
+    console.log("submit date called")
     if (!this.selectedDate || !this.selectedService) {
       Swal.fire('Error!', 'Please select a service and date.', 'error');
       return;
@@ -146,14 +147,12 @@ export class UserBarberDetailsComponent implements OnInit {
             .fetchBookings('barber', this.barberId, 1, 100)
             .subscribe({
               next: (bookingsRes) => {
-                // filter bookings for the selected date (safe because DB date has Z)
                 const bookingsForDate = bookingsRes.data.filter(
                   (b) =>
                     new Date(b.slotDetails.date).toISOString().split('T')[0] ===
                     isoSelected
                 );
 
-                // ensure slots exist for this date
                 if (!this.populatedSlots[isoSelected]) {
                   console.warn(
                     'No populated slots for',
@@ -180,7 +179,6 @@ export class UserBarberDetailsComponent implements OnInit {
                         return false;
                       }
 
-                      // If booking has zero duration (start === end), nudge it so exact-start collisions still block
                       const adjustedBookedEnd =
                         bookedEnd === bookedStart ? bookedStart + 1 : bookedEnd;
 
@@ -193,7 +191,6 @@ export class UserBarberDetailsComponent implements OnInit {
                   });
                 }
 
-                // UI: blur/hide/show
                 if (document.activeElement instanceof HTMLElement)
                   document.activeElement.blur();
                 const calendarModal = document.getElementById('bookingModal');
@@ -224,6 +221,7 @@ export class UserBarberDetailsComponent implements OnInit {
   }
 
   bookTimeSlot(slot: SlotTime, date: string): void {
+    console.log("book time slot time called")
     this.authService.userId$.subscribe((id) => {
       if (!id || !this.barberId || !this.selectedService) return;
 

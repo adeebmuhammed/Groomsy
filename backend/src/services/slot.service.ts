@@ -19,6 +19,7 @@ import { IBarberUnavailabilityRepository } from "../repositories/interfaces/IBar
 import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
 import { BookingRepository } from "../repositories/booking.repository";
+import { existsSync } from "fs";
 
 export class SlotService implements ISlotService {
   private _serviceRepo: IServiceRepository;
@@ -79,7 +80,20 @@ export class SlotService implements ISlotService {
       throw new Error(errors.join(" "));
     }
 
+    const unavailability = await this._barberUnavailabilityRepo.findOne({
+      barber: barberId,
+    });
+    if (!unavailability) {
+      throw new Error("barber unavailability not found");
+    }
+
     for (const slotItem of data.slots) {
+      if (slotItem.day === unavailability.weeklyOff) {
+        throw new Error(
+          `Cannot create slot on ${slotItem.day} as it is the barber's weekly off`
+        );
+      }
+
       const similarSlot = await this._slotRepo.findSimilarSlot(
         barberId,
         slotItem.day,
@@ -132,9 +146,22 @@ export class SlotService implements ISlotService {
       throw new Error("slot not found");
     }
 
+    const unavailability = await this._barberUnavailabilityRepo.findOne({
+      barber: existingSlot.barber,
+    });
+    if (!unavailability) {
+      throw new Error("barber unavailability not found");
+    }
+
     let similarSlot: ISlotRule | null = null;
 
     for (const slot of data.slots) {
+      if (slot.day === unavailability.weeklyOff) {
+        throw new Error(
+          `Cannot create slot on ${slot.day} as it is the barber's weekly off`
+        );
+      }
+
       similarSlot = await this._slotRepo.findSimilarSlot(
         existingSlot.barber.toString(),
         slot.day,
