@@ -14,15 +14,19 @@ import { IBookingService } from "./interfaces/IBookingService";
 import { MessageResponseDto } from "../dto/base.dto";
 import { IServiceRepository } from "../repositories/interfaces/IServiceRepository";
 import { ServiceRepository } from "../repositories/service.repository";
+import { IBarberUnavailabilityRepository } from "../repositories/interfaces/IBarberUnavailabilityRepository";
+import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
 
 export class BookingService implements IBookingService {
   private _userRepo: IUserRepository;
   private _barberRepo: IBarberRepository;
   private _serviceRepo: IServiceRepository;
+  private _barberUnavailabilityRepo: IBarberUnavailabilityRepository;
   constructor(private _bookingRepo: IBookingRepository) {
     this._userRepo = new UserRepository();
     this._barberRepo = new BarberRepository();
     this._serviceRepo = new ServiceRepository();
+    this._barberUnavailabilityRepo = new BarberUnavailabilityRepository();
   }
 
   fetchBookings = async (
@@ -79,8 +83,35 @@ export class BookingService implements IBookingService {
     const barber = await this._barberRepo.findById(data.barberId);
     if (!barber) throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
 
+    const unavailability = await this._barberUnavailabilityRepo.findOne({
+      barber: data.barberId,
+    });
+    if (!unavailability) throw new Error("barber unavailability not found");
+
     const service = await this._serviceRepo.findById(data.serviceId);
     if (!service) throw new Error("service not found");
+
+    const bookingDate = new Date(data.startTime); 
+    const bookingDayName = bookingDate.toLocaleDateString("en-US", {
+      weekday: "long",
+    });
+
+    if (bookingDayName === unavailability.weeklyOff) {
+      throw new Error(
+        `Cannot book on ${bookingDayName}, barber is unavailable (weekly off)`
+      );
+    }
+
+    const bookingDateStr = bookingDate.toISOString().split("T")[0];
+    const isSpecialOff = unavailability.specialOffDays.some(
+      (offDay) => offDay.date === bookingDateStr
+    );
+
+    if (isSpecialOff) {
+      throw new Error(
+        `Cannot book on ${bookingDateStr}, barber has a special off`
+      );
+    }
 
     const similarBooking = await this._bookingRepo.findSimilarBooking(data);
     if (similarBooking) throw new Error("slot is already booked");
