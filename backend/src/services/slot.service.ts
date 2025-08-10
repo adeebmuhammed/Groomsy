@@ -21,13 +21,13 @@ import { IBookingRepository } from "../repositories/interfaces/IBookingRepositor
 import { BookingRepository } from "../repositories/booking.repository";
 
 export class SlotService implements ISlotService {
-  private _serviceRepo: IServiceRepository
-  private _barberUnavailabilityRepo: IBarberUnavailabilityRepository
-  private _bookingRepo: IBookingRepository
+  private _serviceRepo: IServiceRepository;
+  private _barberUnavailabilityRepo: IBarberUnavailabilityRepository;
+  private _bookingRepo: IBookingRepository;
   constructor(private _slotRepo: ISlotRepository) {
-    this._serviceRepo = new ServiceRepository
-    this._barberUnavailabilityRepo = new BarberUnavailabilityRepository
-    this._bookingRepo = new BookingRepository
+    this._serviceRepo = new ServiceRepository();
+    this._barberUnavailabilityRepo = new BarberUnavailabilityRepository();
+    this._bookingRepo = new BookingRepository();
   }
 
   getSlotRulesByBarber = async (
@@ -182,7 +182,7 @@ export class SlotService implements ISlotService {
     page: number,
     limit: number
   ): Promise<{ response: SlotResponseDto; status: number }> => {
-    const selectedDate = new Date(date); // e.g. 2025-08-03
+    const selectedDate = new Date(date);
     const selectedDayName = selectedDate.toLocaleDateString("en-US", {
       weekday: "long",
     });
@@ -200,9 +200,9 @@ export class SlotService implements ISlotService {
       throw new Error("slots for the given date is not available");
     }
 
-    const service = await this._serviceRepo.findById(serviceId)
+    const service = await this._serviceRepo.findById(serviceId);
     if (!service) {
-      throw new Error("service not found")
+      throw new Error("service not found");
     }
 
     const slots = generateSlotsFromRules(
@@ -212,6 +212,37 @@ export class SlotService implements ISlotService {
       service.duration,
       service.price
     );
+
+    const startOfDayUTC = new Date(
+      Date.UTC(
+        selectedDate.getUTCFullYear(),
+        selectedDate.getUTCMonth(),
+        selectedDate.getUTCDate(),
+        0,
+        0,
+        0,
+        0
+      )
+    );
+    const endOfDayUTC = new Date(
+      Date.UTC(
+        selectedDate.getUTCFullYear(),
+        selectedDate.getUTCMonth(),
+        selectedDate.getUTCDate(),
+        23,
+        59,
+        59,
+        999
+      )
+    );
+
+    const bookings = await this._bookingRepo.find({
+      barberId,
+      "slotDetails.date": {
+        $gte: startOfDayUTC,
+        $lte: endOfDayUTC,
+      },
+    });
 
     return {
       response: slots,
