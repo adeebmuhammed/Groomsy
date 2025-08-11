@@ -327,4 +327,49 @@ export class UserBarberDetailsComponent implements OnInit {
     console.log("booking canceled");
     
   }
+
+  couponApllication(couponCode: string) {
+  if (!this.stagedBooking?.id) {
+    Swal.fire('Error', 'No booking found to apply coupon', 'error');
+    return;
+  }
+
+  this.bookingService
+    .couponApplication(this.stagedBooking.id, couponCode)
+    .subscribe({
+      next: (updatedBooking) => {
+        // 1. Update staged booking with new data
+        this.stagedBooking = updatedBooking;
+
+        // 2. Fetch updated barber and service info
+        forkJoin({
+          barberRes: this.userService.fetchBarbers('', 1, 100),
+          serviceRes: this.serviceService.fetch('user', '', 1, 100),
+        }).subscribe(({ barberRes, serviceRes }) => {
+          const barberDoc = barberRes.data.find(
+            (b) => b.id === updatedBooking.barber
+          );
+          const serviceDoc = serviceRes.data.find(
+            (s) => s.id === updatedBooking.service
+          );
+
+          // 3. Update checkout data
+          this.checkoutData = {
+            barber: barberDoc || undefined,
+            service: serviceDoc || undefined,
+          };
+
+          Swal.fire('Success', 'Coupon applied successfully!', 'success');
+        });
+      },
+      error: (err) => {
+        Swal.fire(
+          'Error',
+          err.error?.error || 'Failed to apply coupon',
+          'error'
+        );
+      },
+    });
+}
+
 }

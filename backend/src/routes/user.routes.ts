@@ -79,6 +79,7 @@ userRoutes
 userRoutes
 .get('/bookings', userAuth, isBlockedMiddleware,bookingController.fetchBookings)
 .post('/bookings/stage',userAuth,isBlockedMiddleware,bookingController.stageBooking)
+.put('/bookings/coupon',userAuth,isBlockedMiddleware,bookingController.couponApplication)
 .post('/bookings/confirm',userAuth,isBlockedMiddleware,bookingController.confirmBooking)
 .patch("/bookings/:id", userAuth, isBlockedMiddleware,bookingController.updateBookingStatus)
 

@@ -34,7 +34,10 @@ export class BookingService {
   }
 
   // Stage booking before checkout
-  stageBooking(userId: string, bookingData: BookingCreateRequestDto): Observable<BookingResponseDto> {
+  stageBooking(
+    userId: string,
+    bookingData: BookingCreateRequestDto
+  ): Observable<BookingResponseDto> {
     const params = new HttpParams().set('userId', userId);
     return this.http.post<BookingResponseDto>(
       `${environment.apiBaseUrl}/user/bookings/stage`,
@@ -46,12 +49,29 @@ export class BookingService {
     );
   }
 
-  confirmBooking(userId: string, bookingId: string, confirmData: confirmData) {
+  couponApplication(
+    bookingId: string,
+    couponCode: string
+  ): Observable<BookingResponseDto> {
+    const params = new HttpParams().set('bookingId', bookingId);
+    const body = { couponCode };
+    return this.http.put<BookingResponseDto>(
+      `${environment.apiBaseUrl}/user/bookings/coupon`,
+      { couponCode },
+      { params, withCredentials: true }
+    );
+  }
+
+  confirmBooking(
+    userId: string,
+    bookingId: string,
+    confirmData: confirmData
+  ): Observable<IMessageResponse> {
     const params = new HttpParams()
       .set('userId', userId)
       .set('bookingId', bookingId);
 
-    return this.http.post<{ message: string }>(
+    return this.http.post<IMessageResponse>(
       `${environment.apiBaseUrl}/user/bookings/confirm`,
       confirmData,
       {

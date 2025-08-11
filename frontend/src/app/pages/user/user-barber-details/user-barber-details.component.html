@@ -106,7 +106,8 @@
   [service]="checkoutData.service"
   [startTime]="stagedBooking.slotDetails.startTime"
   [endTime]="stagedBooking.slotDetails.endTime"
-  [price]="stagedBooking.totalPrice"
+  [booking]="stagedBooking"
+  (onCouponApplication)="couponApllication($event)"
   (onConfirm)="confirmBooking($event)"
   (onCancel)="cancelBooking()"
 ></app-checkout-modal>

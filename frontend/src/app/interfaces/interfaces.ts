@@ -159,14 +159,24 @@ export class BookingResponseDto {
   user!: string;
   barber!: string;
   totalPrice!: number;
+  finalPrice!: number;         // ✅ new
+  discountAmount!: number;     // ✅ new
+  couponCode?: string;         // ✅ new
   service!: string;
-  status!: 'pending' | 'cancelled_by_barber' | 'cancelled_by_user' | 'finished';
+  status!:
+    | 'staged'
+    | 'pending'
+    | 'cancelled_by_barber'
+    | 'cancelled_by_user'
+    | 'cancelled_by_admin'
+    | 'finished';
   slotDetails!: {
     startTime: Date;
     endTime: Date;
     date: Date;
   };
 }
+
 
 export interface OfferRequestDto {
   name: string;

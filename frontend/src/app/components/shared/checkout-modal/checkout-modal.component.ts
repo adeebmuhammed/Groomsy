@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { BarberDto, Service } from '../../../interfaces/interfaces';
+import { BarberDto, BookingResponseDto, Service } from '../../../interfaces/interfaces';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -12,20 +12,25 @@ import { CommonModule } from '@angular/common';
 export class CheckoutModalComponent {
   @Input() barber: BarberDto | null | undefined = null;
   @Input() service: Service | null | undefined = null;
+  @Input() booking: BookingResponseDto | null = null; // ✅ pass full booking
   @Input() startTime: Date | null = null;
   @Input() endTime: Date | null = null;
-  @Input() price: number = 0;
 
-  @Output() onConfirm = new EventEmitter<string>(); // emits coupon code if applied
+  @Output() onCouponApplication = new EventEmitter<string>();
+  @Output() onConfirm = new EventEmitter<string>();
   @Output() onCancel = new EventEmitter<void>();
 
   couponCode: string = '';
 
   confirmBooking() {
-    this.onConfirm.emit(this.couponCode.trim());
+    this.onConfirm.emit();
   }
 
   cancelBooking() {
     this.onCancel.emit();
+  }
+
+  couponApplication() {
+    this.onCouponApplication.emit(this.couponCode.trim());
   }
 }

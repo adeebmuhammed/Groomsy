@@ -11,11 +11,18 @@ export class BookingMapper {
       totalPrice: data.totalPrice,
       service: (data.service as mongoose.Types.ObjectId).toString(),
       status: data.status,
+      finalPrice: data.finalPrice,
+      discountAmount: data.discountAmount,
+      couponCode: data.couponCode,
       slotDetails: {
         startTime: data.slotDetails.startTime,
         endTime: data.slotDetails.endTime,
         date: data.slotDetails.date,
       },
     };
+  }
+
+  static toBookingResponseArray(bookings: IBooking[]): BookingResponseDto[] {
+    return bookings.map((booking) => this.toBookingResponse(booking));
   }
 }

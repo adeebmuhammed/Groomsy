@@ -1,12 +1,22 @@
-<div class="modal fade" id="bookingCheckoutModal" tabindex="-1" aria-labelledby="bookingCheckoutModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="bookingCheckoutModal"
+  tabindex="-1"
+  aria-labelledby="bookingCheckoutModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      
       <!-- Header -->
       <div class="modal-header">
         <h5 class="modal-title fw-semibold">Confirm Your Booking</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-          (click)="cancelBooking()"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+          (click)="cancelBooking()"
+        ></button>
       </div>
 
       <!-- Body -->
@@ -15,26 +25,70 @@
           <p><strong>Barber:</strong> {{ barber.name }}</p>
         </div>
         <div *ngIf="service">
-          <p><strong>Service:</strong> {{ service.name }} ({{ service.duration }} mins)</p>
+          <p>
+            <strong>Service:</strong> {{ service.name }} ({{
+              service.duration
+            }}
+            mins)
+          </p>
         </div>
-        <p><strong>Start Time:</strong> {{ startTime | date:'shortTime' }}</p>
-        <p><strong>End Time:</strong> {{ endTime | date:'shortTime' }}</p>
-        <p class="fw-bold"><strong>Total Price:</strong> ₹{{ price }}</p>
+        <p><strong>Start Time:</strong> {{ startTime | date : "shortTime" }}</p>
+        <p><strong>End Time:</strong> {{ endTime | date : "shortTime" }}</p>
+
+        <!-- Prices -->
+        <p class="fw-bold">
+          <strong>Total Price:</strong> ₹{{ booking?.totalPrice }}
+        </p>
+        <p *ngIf="booking?.discountAmount">
+          <strong>Discount:</strong> -₹{{ booking?.discountAmount }}
+        </p>
+        <p *ngIf="booking?.couponCode">
+          <strong>Coupon Applied:</strong> {{ booking?.couponCode }}
+        </p>
+        @if (booking?.finalPrice) {
+          <p>
+          <strong>Final Price:</strong> ₹{{ booking?.finalPrice }}
+        </p>
+        }
+        
 
         <!-- Coupon -->
         <div class="mt-3">
           <label class="form-label">Coupon Code</label>
           <div class="input-group">
-            <input type="text" class="form-control" [(ngModel)]="couponCode" placeholder="Enter coupon code">
-            <button class="btn btn-outline-secondary" type="button">Apply</button>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="couponCode"
+              placeholder="Enter coupon code"
+            />
+            <button
+              class="btn btn-outline-secondary"
+              (click)="couponApplication()"
+              type="button"
+            >
+              Apply
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Footer -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" (click)="cancelBooking()">Cancel</button>
-        <button type="button" class="btn btn-primary" (click)="confirmBooking()">Confirm Booking</button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          (click)="cancelBooking()"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="confirmBooking()"
+        >
+          Payment
+        </button>
       </div>
     </div>
   </div>
