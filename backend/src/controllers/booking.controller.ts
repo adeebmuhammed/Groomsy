@@ -25,17 +25,40 @@ export class BookingController implements IBookingController {
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-        error: error instanceof Error ? error.message : "Failed to fetch bookings",
+        error:
+          error instanceof Error ? error.message : "Failed to fetch bookings",
       });
     }
   };
 
-  createBooking = async (req: Request, res: Response): Promise<void> => {
+  stageBooking = async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = req.query.userId as string;
       const data = req.body;
 
-      const { response, status } = await this._bookingService.createBooking(
+      const { response, status } = await this._bookingService.stageBooking(
+        userId,
+        data
+      );
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "Failed to stage booking",
+      });
+    }
+  };
+
+  confirmBooking = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.query.userId as string;
+      const bookingId = req.query.bookingId as string; 
+      const data = req.body;
+
+      const { response, status } = await this._bookingService.confirmBooking(
+        bookingId,
         userId,
         data
       );
@@ -44,7 +67,8 @@ export class BookingController implements IBookingController {
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-        error: error instanceof Error ? error.message : "Failed to book slot",
+        error:
+          error instanceof Error ? error.message : "Failed to confirm booking",
       });
     }
   };
@@ -55,7 +79,6 @@ export class BookingController implements IBookingController {
       const bookingId = req.params.id as string;
 
       const { bookingStatus } = req.body;
-      
 
       const { response, status } =
         await this._bookingService.updateBookingStatus(

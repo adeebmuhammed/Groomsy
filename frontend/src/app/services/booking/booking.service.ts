@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import {
   BookingCreateRequestDto,
   BookingResponseDto,
+  confirmData,
   IMessageResponse,
 } from '../../interfaces/interfaces';
 import { environment } from '../../../environments/environment';
@@ -32,11 +33,27 @@ export class BookingService {
     );
   }
 
-  bookSlot(userId: string, bookingData: BookingCreateRequestDto) {
+  // Stage booking before checkout
+  stageBooking(userId: string, bookingData: BookingCreateRequestDto): Observable<BookingResponseDto> {
     const params = new HttpParams().set('userId', userId);
-    return this.http.post<{ message: string }>(
-      `${environment.apiBaseUrl}/user/bookings`,
+    return this.http.post<BookingResponseDto>(
+      `${environment.apiBaseUrl}/user/bookings/stage`,
       bookingData,
+      {
+        params,
+        withCredentials: true,
+      }
+    );
+  }
+
+  confirmBooking(userId: string, bookingId: string, confirmData: confirmData) {
+    const params = new HttpParams()
+      .set('userId', userId)
+      .set('bookingId', bookingId);
+
+    return this.http.post<{ message: string }>(
+      `${environment.apiBaseUrl}/user/bookings/confirm`,
+      confirmData,
       {
         params,
         withCredentials: true,

@@ -99,6 +99,18 @@
     [date]="fetchedDate"
     (onBookSlot)="bookTimeSlot($event.slot, $event.date)"
   ></app-slot-table-modal>
+
+  <app-checkout-modal
+  *ngIf="stagedBooking"
+  [barber]="checkoutData.barber"
+  [service]="checkoutData.service"
+  [startTime]="stagedBooking.slotDetails.startTime"
+  [endTime]="stagedBooking.slotDetails.endTime"
+  [price]="stagedBooking.totalPrice"
+  (onConfirm)="confirmBooking($event)"
+  (onCancel)="cancelBooking()"
+></app-checkout-modal>
+
 </div>
 
 <app-user-footer></app-user-footer>

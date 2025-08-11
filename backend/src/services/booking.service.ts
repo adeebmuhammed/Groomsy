@@ -16,6 +16,7 @@ import { IServiceRepository } from "../repositories/interfaces/IServiceRepositor
 import { ServiceRepository } from "../repositories/service.repository";
 import { IBarberUnavailabilityRepository } from "../repositories/interfaces/IBarberUnavailabilityRepository";
 import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
+import { BookingMapper } from "../mappers/booking.mapper";
 
 export class BookingService implements IBookingService {
   private _userRepo: IUserRepository;
@@ -58,6 +59,7 @@ export class BookingService implements IBookingService {
       id: (booking._id as mongoose.Types.ObjectId).toString(),
       user: booking.user.toString(),
       barber: booking.barber.toString(),
+      service: booking.service.toString(),
       totalPrice: booking.totalPrice,
       status: booking.status,
       slotDetails: {
@@ -73,10 +75,10 @@ export class BookingService implements IBookingService {
     };
   };
 
-  createBooking = async (
+  stageBooking = async (
     userId: string,
     data: BookingCreateRequestDto
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: BookingResponseDto; status: number }> => {
     const user = await this._userRepo.findById(userId);
     if (!user) throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
 
@@ -91,7 +93,7 @@ export class BookingService implements IBookingService {
     const service = await this._serviceRepo.findById(data.serviceId);
     if (!service) throw new Error("service not found");
 
-    const bookingDate = new Date(data.startTime); 
+    const bookingDate = new Date(data.startTime);
     const bookingDayName = bookingDate.toLocaleDateString("en-US", {
       weekday: "long",
     });
@@ -116,11 +118,49 @@ export class BookingService implements IBookingService {
     const similarBooking = await this._bookingRepo.findSimilarBooking(data);
     if (similarBooking) throw new Error("slot is already booked");
 
-    const booking = await this._bookingRepo.createBooking(userId, data);
-    if (!booking) throw new Error("booking creation failed");
+    const booking = await this._bookingRepo.createBooking(userId, {
+      ...data,
+    });
+    if (!booking) {
+      throw new Error("staging booking failed");
+    }
+
+    const response: BookingResponseDto =
+      BookingMapper.toBookingResponse(booking);
 
     return {
-      response: { message: "slot booked successfully" },
+      response,
+      status: STATUS_CODES.OK,
+    };
+  };
+
+  confirmBooking = async (
+    bookingId: string,
+    userId: string,
+    data: {
+      finalPrice?: number;
+      couponCode?: string;
+      discountAmount?: number;
+    }
+  ): Promise<{ response: MessageResponseDto; status: number }> => {
+    // Find the booking
+    const booking = await this._bookingRepo.findById(bookingId);
+
+    if (!booking) throw new Error("Booking not found");
+    if (booking.user.toString() !== userId) throw new Error("Unauthorized");
+    if (booking.status !== "staged")
+      throw new Error("Booking is not in staged state");
+
+    // Update booking details after payment
+    booking.finalPrice = data.finalPrice ?? booking.totalPrice;
+    booking.couponCode = data.couponCode ?? undefined;
+    booking.discountAmount = data.discountAmount ?? 0;
+    booking.status = "pending"; // Confirmed booking waiting for service
+
+    await booking.save();
+
+    return {
+      response: { message: "Booking confirmed successfully" },
       status: STATUS_CODES.OK,
     };
   };
