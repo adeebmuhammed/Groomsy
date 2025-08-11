@@ -73,6 +73,23 @@ export class BookingController implements IBookingController {
     }
   };
 
+  couponApplication = async (req: Request, res: Response): Promise<void> =>{
+    try {
+      const bookingId = req.query.bookingId as string
+      const couponCode = req.body.couponCode as string
+
+      const { response,status } = await this._bookingService.couponApplication(bookingId,couponCode)
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "Failed to apply coupon",
+      });
+    }
+  }
+
   updateBookingStatus = async (req: Request, res: Response): Promise<void> => {
     try {
       const role: "user" | "barber" = req.query.role as "user" | "barber";

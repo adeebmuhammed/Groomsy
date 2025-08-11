@@ -20,6 +20,7 @@ export class BookingRepository
     user: userId,
     barber: data.barberId,
     totalPrice: data.price,
+    finalPrice: data.price,
     service: data.serviceId,
     slotDetails: {
       startTime: data.startTime,

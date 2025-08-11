@@ -26,9 +26,9 @@ const BookingSchema = new Schema({
     date: { type: Date, required: true },
   },
   totalPrice: { type: Number, required: true },
-  finalPrice: { type: Number },
-  couponCode: { type: String },
-  discountAmount: { type: Number },
+  finalPrice: { type: Number, required: true },
+  couponCode: { type: String, required: false },
+  discountAmount: { type: Number, default: 0 },
   status: {
     type: String,
     enum: ["staged", "pending", "cancelled_by_barber", "cancelled_by_user", "finished"],

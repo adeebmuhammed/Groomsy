@@ -17,17 +17,21 @@ import { ServiceRepository } from "../repositories/service.repository";
 import { IBarberUnavailabilityRepository } from "../repositories/interfaces/IBarberUnavailabilityRepository";
 import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
 import { BookingMapper } from "../mappers/booking.mapper";
+import { ICouponRepository } from "../repositories/interfaces/ICouponRepository";
+import { CouponResitory } from "../repositories/coupon.repository";
 
 export class BookingService implements IBookingService {
   private _userRepo: IUserRepository;
   private _barberRepo: IBarberRepository;
   private _serviceRepo: IServiceRepository;
   private _barberUnavailabilityRepo: IBarberUnavailabilityRepository;
+  private _couponRepo: ICouponRepository;
   constructor(private _bookingRepo: IBookingRepository) {
     this._userRepo = new UserRepository();
     this._barberRepo = new BarberRepository();
     this._serviceRepo = new ServiceRepository();
     this._barberUnavailabilityRepo = new BarberUnavailabilityRepository();
+    this._couponRepo = new CouponResitory();
   }
 
   fetchBookings = async (
@@ -55,19 +59,7 @@ export class BookingService implements IBookingService {
     const { bookings, totalCount } =
       await this._bookingRepo.findWithPaginationAndCount(filter, skip, limit);
 
-    const bookingDTOs: BookingResponseDto[] = bookings.map((booking) => ({
-      id: (booking._id as mongoose.Types.ObjectId).toString(),
-      user: booking.user.toString(),
-      barber: booking.barber.toString(),
-      service: booking.service.toString(),
-      totalPrice: booking.totalPrice,
-      status: booking.status,
-      slotDetails: {
-        startTime: booking.slotDetails.startTime,
-        endTime: booking.slotDetails.endTime,
-        date: booking.slotDetails.date,
-      },
-    }));
+    const bookingDTOs: BookingResponseDto[] = BookingMapper.toBookingResponseArray(bookings)
 
     return {
       response: { data: bookingDTOs, totalCount },
@@ -133,6 +125,45 @@ export class BookingService implements IBookingService {
       status: STATUS_CODES.OK,
     };
   };
+
+  couponApplication = async (bookingId: string, couponCode: string): Promise<{ response: BookingResponseDto; status: number; }> =>{
+    const booking = await this._bookingRepo.findById(bookingId)
+    if (!booking) {
+      throw new Error("booking not found");
+    }
+
+    const coupon = await this._couponRepo.findOne({code: couponCode})
+    if (!coupon) {
+      throw new Error("invalid coupon code");
+    }
+
+    let finalPrice
+    if (booking.totalPrice >= coupon.limitAmount) {
+      if (coupon.maxCount > coupon.usedCount) {
+        finalPrice = booking.totalPrice - coupon.couponAmount
+      }else{
+        throw new Error("coupon used count exceeded")
+      }
+    }else{
+      throw new Error("total price must be greater than or equal to coupon limit amount")
+    }
+
+    const updatedBooking = await this._bookingRepo.update(bookingId,{
+      finalPrice,
+      couponCode,
+      discountAmount: booking.totalPrice - finalPrice
+    })
+    if (!updatedBooking) {
+      throw new Error("coupon application failed")
+    }
+
+    const response: BookingResponseDto = BookingMapper.toBookingResponse(updatedBooking)
+
+    return {
+      response,
+      status : STATUS_CODES.OK
+    }
+  }
 
   confirmBooking = async (
     bookingId: string,
