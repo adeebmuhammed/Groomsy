@@ -4,6 +4,7 @@ import {
   BarberDto,
   BarberUnavailabilityDto,
   BookingCreateRequestDto,
+  BookingResponseDto,
   IBarber,
   Service,
   SlotDto,
@@ -24,6 +25,7 @@ import { BookingService } from '../../../services/booking/booking.service';
 import { ServiceCardComponent } from '../../../components/shared/service-card/service-card.component';
 import { ServiceService } from '../../../services/service/service.service';
 import { BarberUnavailabilityService } from '../../../services/barber-unavailability/barber-unavailability.service';
+import { CheckoutModalComponent } from '../../../components/shared/checkout-modal/checkout-modal.component';
 
 @Component({
   selector: 'app-user-barber-details',
@@ -34,6 +36,7 @@ import { BarberUnavailabilityService } from '../../../services/barber-unavailabi
     FormsModule,
     SlotTableModalComponent,
     ServiceCardComponent,
+    CheckoutModalComponent,
   ],
   templateUrl: './user-barber-details.component.html',
   styleUrl: './user-barber-details.component.css',
@@ -48,6 +51,8 @@ export class UserBarberDetailsComponent implements OnInit {
   todayDate: string = '';
   services: Service[] = [];
   barberUnavailability: BarberUnavailabilityDto | null = null;
+  stagedBooking: BookingResponseDto | null = null;
+  checkoutData : {barber? : BarberDto, service?: Service} = { barber : undefined , service : undefined};
 
   private userService = inject(UserService);
   private authService = inject(AuthService);
@@ -115,7 +120,7 @@ export class UserBarberDetailsComponent implements OnInit {
   }
 
   submitDate(): void {
-    console.log("submit date called")
+    console.log('submit date called');
     if (!this.selectedDate || !this.selectedService) {
       Swal.fire('Error!', 'Please select a service and date.', 'error');
       return;
@@ -221,7 +226,6 @@ export class UserBarberDetailsComponent implements OnInit {
   }
 
   bookTimeSlot(slot: SlotTime, date: string): void {
-    console.log("book time slot time called")
     this.authService.userId$.subscribe((id) => {
       if (!id || !this.barberId || !this.selectedService) return;
 
@@ -252,15 +256,75 @@ export class UserBarberDetailsComponent implements OnInit {
         price: this.selectedService.price,
       };
 
-      this.bookingService.bookSlot(id, bookingData).subscribe({
-        next: (res) => Swal.fire('Success', res.message, 'success'),
+      this.bookingService.stageBooking(id, bookingData).subscribe({
+        next: (res) => {
+          // Step 1: Store staged booking
+          this.stagedBooking = res;
+
+          // Step 2: Fetch barber details
+          this.userService.fetchBarbers('', 1, 100).subscribe((barberRes) => {
+            const barberDoc = barberRes.data.find(
+              (b) => b.id === this.stagedBooking!.barber
+            );
+
+            // Step 3: Fetch service details
+            this.serviceService
+              .fetch('user', '', 1, 100)
+              .subscribe((serviceRes) => {
+                const serviceDoc = serviceRes.data.find(
+                  (s) => s.id === this.stagedBooking!.service
+                );
+
+                // Step 4: Replace IDs with full docs
+                this.checkoutData = {
+                  ...this.stagedBooking!,
+                  barber: barberDoc || undefined,
+                  service: serviceDoc || undefined,
+                };
+
+                // Step 5: Open modal
+                const modal = new bootstrap.Modal(
+                  document.getElementById('bookingCheckoutModal')!
+                );
+                modal.show();
+              });
+          });
+        },
         error: (err) =>
           Swal.fire(
             'Error',
-            err.error?.error || 'Failed to book slot',
+            err.error?.error || 'Failed to stage booking',
             'error'
           ),
       });
     });
+  }
+
+  confirmBooking(couponCode: string) {
+    if (!this.stagedBooking) return;
+
+    this.authService.userId$.subscribe((id) => {
+      if (!id) return;
+
+      if (!this.stagedBooking?.id) return;
+      this.bookingService
+        .confirmBooking(id, this.stagedBooking.id, { couponCode })
+        .subscribe({
+          next: (res) => {
+            Swal.fire('Success', res.message, 'success');
+          },
+          error: (err) =>
+            Swal.fire(
+              'Error',
+              err.error?.error || 'Failed to confirm booking',
+              'error'
+            ),
+        });
+    });
+  }
+
+  cancelBooking(){
+    console.log("booking canceled");
+    
   }
 }

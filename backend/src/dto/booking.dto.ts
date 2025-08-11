@@ -13,7 +13,8 @@ export interface BookingResponseDto {
   user: string;
   barber: string;
   totalPrice: number;
-  status: "pending" | "cancelled_by_barber" | "cancelled_by_user" | "cancelled_by_admin" | "finished";
+  service: string;
+  status: "staged" | "pending" | "cancelled_by_barber" | "cancelled_by_user" | "cancelled_by_admin" | "finished";
   slotDetails: {
     startTime: Date;
     endTime: Date;
