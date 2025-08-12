@@ -7,4 +7,5 @@ export interface IServiceService{
     create(data: CreateServiceDto):Promise<{ response: MessageResponseDto, status: number}>
     edit(serviceId:string, data: CreateServiceDto):Promise<{ response: MessageResponseDto, status: number}>
     delete(serviceId:string):Promise<{ response: MessageResponseDto, status: number}>
+    getServiceById(serviceId: string): Promise<{ response : ServiceResponseDto, status: number}>
 }

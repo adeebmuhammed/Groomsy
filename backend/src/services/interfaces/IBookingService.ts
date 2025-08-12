@@ -8,4 +8,5 @@ export interface IBookingService{
     confirmBooking(bookingId: string,userId: string,data: {finalPrice?: number;couponCode?: string;discountAmount?: number;}): Promise<{ response: confirmBookingDto; status: number }>
     verfyPayment(razorpay_payment_id: string, razorpay_order_id: string, razorpay_signature: string, bookingId: string):Promise<{response: MessageResponseDto, status: number}>;
     updateBookingStatus( role: "user" | "barber", bookingId: string, bookingStatus: string):Promise<{response: MessageResponseDto, status: number}>;
+    getBookingById(bookingId: string): Promise<{ response : BookingResponseDto, status: number}>
 }

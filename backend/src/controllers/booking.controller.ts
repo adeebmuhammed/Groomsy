@@ -131,4 +131,22 @@ export class BookingController implements IBookingController {
       });
     }
   };
+
+  getBookingById = async (req: Request, res: Response): Promise<void> =>{
+    try {
+      const bookingId = req.params["id"] as string;
+
+      const { response,status } = await this._bookingService.getBookingById(bookingId);
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch booking by id",
+      });
+    }
+  }
 }

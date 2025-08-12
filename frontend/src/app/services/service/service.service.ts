@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import {
   IMessageResponse,
+  Service,
   ServiceListResponse,
 } from '../../interfaces/interfaces';
 import { environment } from '../../../environments/environment';
@@ -57,6 +58,16 @@ export class ServiceService {
   delete(id: string): Observable<IMessageResponse> {
     return this.http.delete<IMessageResponse>(
       `${environment.apiBaseUrl}/admin/service/${id}`,
+      { withCredentials: true }
+    );
+  }
+
+  getServiceById(
+    role: 'user' | 'barber' | 'admin',
+    serviceId: string
+  ): Observable<Service> {
+    return this.http.get<Service>(
+      `${environment.apiBaseUrl}/${role}/service/${serviceId}`,
       { withCredentials: true }
     );
   }

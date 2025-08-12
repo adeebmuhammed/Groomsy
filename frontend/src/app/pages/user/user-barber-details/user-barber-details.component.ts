@@ -13,7 +13,7 @@ import {
 } from '../../../interfaces/interfaces';
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule, DatePipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
@@ -63,6 +63,7 @@ export class UserBarberDetailsComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private serviceService = inject(ServiceService);
   private barberUnavailabilityService = inject(BarberUnavailabilityService);
+  private router = inject(Router);
 
   selectedService: Service | null = null;
 
@@ -135,7 +136,6 @@ export class UserBarberDetailsComponent implements OnInit {
       return;
     }
 
-    // canonical date string: "YYYY-MM-DD"
     const isoSelected = this.selectedDate;
 
     this.userService
@@ -261,16 +261,13 @@ export class UserBarberDetailsComponent implements OnInit {
 
       this.bookingService.stageBooking(id, bookingData).subscribe({
         next: (res) => {
-          // Step 1: Store staged booking
           this.stagedBooking = res;
 
-          // Step 2: Fetch barber details
           this.userService.fetchBarbers('', 1, 100).subscribe((barberRes) => {
             const barberDoc = barberRes.data.find(
               (b) => b.id === this.stagedBooking!.barber
             );
 
-            // Step 3: Fetch service details
             this.serviceService
               .fetch('user', '', 1, 100)
               .subscribe((serviceRes) => {
@@ -278,14 +275,12 @@ export class UserBarberDetailsComponent implements OnInit {
                   (s) => s.id === this.stagedBooking!.service
                 );
 
-                // Step 4: Replace IDs with full docs
                 this.checkoutData = {
                   ...this.stagedBooking!,
                   barber: barberDoc || undefined,
                   service: serviceDoc || undefined,
                 };
 
-                // Step 5: Open modal
                 const modal = new bootstrap.Modal(
                   document.getElementById('bookingCheckoutModal')!
                 );
@@ -313,7 +308,6 @@ export class UserBarberDetailsComponent implements OnInit {
         .confirmBooking(id, this.stagedBooking.id, { couponCode })
         .subscribe({
           next: (res) => {
-            // Razorpay order details from backend
             const { keyId, amount, currency, orderId, bookingId } = res;
 
             const options: any = {
@@ -324,7 +318,6 @@ export class UserBarberDetailsComponent implements OnInit {
               description: 'Booking Payment',
               order_id: orderId,
               handler: (paymentResponse: any) => {
-                // Payment success — verify payment
                 this.bookingService
                   .verifyPayment({
                     razorpay_payment_id: paymentResponse.razorpay_payment_id,
@@ -334,7 +327,7 @@ export class UserBarberDetailsComponent implements OnInit {
                   })
                   .subscribe({
                     next: (verifyRes) => {
-                      Swal.fire('Success', verifyRes.message, 'success');
+                      this.router.navigate([`/user/booking-confirmation/${bookingId}`]);
                     },
                     error: (err) => {
                       Swal.fire(
@@ -378,10 +371,8 @@ export class UserBarberDetailsComponent implements OnInit {
       .couponApplication(this.stagedBooking.id, couponCode)
       .subscribe({
         next: (updatedBooking) => {
-          // 1. Update staged booking with new data
           this.stagedBooking = updatedBooking;
 
-          // 2. Fetch updated barber and service info
           forkJoin({
             barberRes: this.userService.fetchBarbers('', 1, 100),
             serviceRes: this.serviceService.fetch('user', '', 1, 100),
@@ -393,7 +384,6 @@ export class UserBarberDetailsComponent implements OnInit {
               (s) => s.id === updatedBooking.service
             );
 
-            // 3. Update checkout data
             this.checkoutData = {
               barber: barberDoc || undefined,
               service: serviceDoc || undefined,

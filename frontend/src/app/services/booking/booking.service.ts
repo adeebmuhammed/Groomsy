@@ -103,4 +103,11 @@ export class BookingService {
       { params, withCredentials: true }
     );
   }
+
+  getBookingById(role: 'user' | 'barber' | 'admin', bookingId: string) {
+    return this.http.get<BookingResponseDto>(
+      `${environment.apiBaseUrl}/${role}/bookings/${bookingId}`,
+      { withCredentials: true }
+    );
+  }
 }
