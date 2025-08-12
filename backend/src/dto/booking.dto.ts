@@ -7,16 +7,15 @@ export interface BookingCreateRequestDto {
   price: number;
 }
 
-
 export interface BookingResponseDto {
   id: string;
   user: string;
   barber: string;
   service: string;
   totalPrice: number;
-  finalPrice?: number; 
+  finalPrice?: number;
   discountAmount?: number;
-  couponCode?: string; 
+  couponCode?: string;
   status:
     | "staged"
     | "pending"
@@ -29,4 +28,13 @@ export interface BookingResponseDto {
     endTime: Date;
     date: Date;
   };
+}
+
+export interface confirmBookingDto {
+  message: string;
+  orderId: string;
+  amount: string | number;
+  currency: string;
+  bookingId: string;
+  keyId: string;
 }

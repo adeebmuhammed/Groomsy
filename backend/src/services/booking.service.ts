@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import {
   BookingCreateRequestDto,
   BookingResponseDto,
+  confirmBookingDto,
 } from "../dto/booking.dto";
 import { IBooking } from "../models/booking.model";
 import { BarberRepository } from "../repositories/barber.repository";
@@ -19,6 +20,8 @@ import { BarberUnavailabilityRepository } from "../repositories/barber.unavailab
 import { BookingMapper } from "../mappers/booking.mapper";
 import { ICouponRepository } from "../repositories/interfaces/ICouponRepository";
 import { CouponResitory } from "../repositories/coupon.repository";
+import razorpayInstance from "../utils/razorpay";
+import crypto from "crypto";
 
 export class BookingService implements IBookingService {
   private _userRepo: IUserRepository;
@@ -59,7 +62,8 @@ export class BookingService implements IBookingService {
     const { bookings, totalCount } =
       await this._bookingRepo.findWithPaginationAndCount(filter, skip, limit);
 
-    const bookingDTOs: BookingResponseDto[] = BookingMapper.toBookingResponseArray(bookings)
+    const bookingDTOs: BookingResponseDto[] =
+      BookingMapper.toBookingResponseArray(bookings);
 
     return {
       response: { data: bookingDTOs, totalCount },
@@ -126,44 +130,50 @@ export class BookingService implements IBookingService {
     };
   };
 
-  couponApplication = async (bookingId: string, couponCode: string): Promise<{ response: BookingResponseDto; status: number; }> =>{
-    const booking = await this._bookingRepo.findById(bookingId)
+  couponApplication = async (
+    bookingId: string,
+    couponCode: string
+  ): Promise<{ response: BookingResponseDto; status: number }> => {
+    const booking = await this._bookingRepo.findById(bookingId);
     if (!booking) {
       throw new Error("booking not found");
     }
 
-    const coupon = await this._couponRepo.findOne({code: couponCode})
+    const coupon = await this._couponRepo.findOne({ code: couponCode });
     if (!coupon) {
       throw new Error("invalid coupon code");
     }
 
-    let finalPrice
+    let finalPrice;
     if (booking.totalPrice >= coupon.limitAmount) {
       if (coupon.maxCount > coupon.usedCount) {
-        finalPrice = booking.totalPrice - coupon.couponAmount
-      }else{
-        throw new Error("coupon used count exceeded")
+        finalPrice = booking.totalPrice - coupon.couponAmount;
+      } else {
+        throw new Error("coupon used count exceeded");
       }
-    }else{
-      throw new Error("total price must be greater than or equal to coupon limit amount")
+    } else {
+      throw new Error(
+        "total price must be greater than or equal to coupon limit amount"
+      );
     }
 
-    const updatedBooking = await this._bookingRepo.update(bookingId,{
+    const updatedBooking = await this._bookingRepo.update(bookingId, {
       finalPrice,
       couponCode,
-      discountAmount: booking.totalPrice - finalPrice
-    })
+      discountAmount: booking.totalPrice - finalPrice,
+    });
     if (!updatedBooking) {
-      throw new Error("coupon application failed")
+      throw new Error("coupon application failed");
     }
 
-    const response: BookingResponseDto = BookingMapper.toBookingResponse(updatedBooking)
+    const response: BookingResponseDto =
+      BookingMapper.toBookingResponse(updatedBooking);
 
     return {
       response,
-      status : STATUS_CODES.OK
-    }
-  }
+      status: STATUS_CODES.OK,
+    };
+  };
 
   confirmBooking = async (
     bookingId: string,
@@ -173,7 +183,7 @@ export class BookingService implements IBookingService {
       couponCode?: string;
       discountAmount?: number;
     }
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: confirmBookingDto; status: number }> => {
     // Find the booking
     const booking = await this._bookingRepo.findById(bookingId);
 
@@ -182,16 +192,70 @@ export class BookingService implements IBookingService {
     if (booking.status !== "staged")
       throw new Error("Booking is not in staged state");
 
-    // Update booking details after payment
+    // Update booking details (before payment)
     booking.finalPrice = data.finalPrice ?? booking.totalPrice;
     booking.couponCode = data.couponCode ?? undefined;
     booking.discountAmount = data.discountAmount ?? 0;
-    booking.status = "pending"; // Confirmed booking waiting for service
 
-    await booking.save();
+    // Create Razorpay order
+    const razorpayOrder = await razorpayInstance.orders.create({
+      amount: Math.round(booking.finalPrice * 100), // amount in paise
+      currency: "INR",
+      receipt: bookingId,
+    });
+
+    booking.razorpayOrderId = razorpayOrder.id;
+    const updated = await this._bookingRepo.update(
+      booking._id as string,
+      booking
+    );
+    if (!updated) {
+      throw new Error("booking confirmation failed");
+    }
 
     return {
-      response: { message: "Booking confirmed successfully" },
+      response: {
+        message: "Razorpay order created successfully",
+        orderId: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        bookingId: booking._id as string,
+        keyId: process.env.RAZORPAY_KEY_ID as string,
+      },
+      status: STATUS_CODES.OK,
+    };
+  };
+
+  verfyPayment = async (
+    razorpay_payment_id: string,
+    razorpay_order_id: string,
+    razorpay_signature: string,
+    bookingId: string
+  ): Promise<{ response: MessageResponseDto; status: number }> => {
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+      .update(body.toString())
+      .digest("hex");
+
+    if (expectedSignature === razorpay_signature) {
+      const booking = await this._bookingRepo.findById(bookingId);
+      if (!booking) throw new Error("Booking not found");
+
+      booking.status = "pending";
+      const updated = await this._bookingRepo.update(
+        booking._id as string,
+        booking
+      );
+      if (!updated) {
+        throw new Error("payment verfication failed");
+      }
+    } else {
+      throw new Error("Invalid payment signature");
+    }
+
+    return {
+      response: { message: "payment verified successfully" },
       status: STATUS_CODES.OK,
     };
   };

@@ -237,3 +237,13 @@ export interface confirmData {
   couponCode?: string;
   discountAmount?: number;
 }
+
+
+export interface confirmBookingDto {
+  message: string;
+  orderId: string;
+  amount: string | number;
+  currency: string;
+  bookingId: string;
+  keyId: string;
+}

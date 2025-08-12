@@ -52,7 +52,10 @@ export class UserBarberDetailsComponent implements OnInit {
   services: Service[] = [];
   barberUnavailability: BarberUnavailabilityDto | null = null;
   stagedBooking: BookingResponseDto | null = null;
-  checkoutData : {barber? : BarberDto, service?: Service} = { barber : undefined , service : undefined};
+  checkoutData: { barber?: BarberDto; service?: Service } = {
+    barber: undefined,
+    service: undefined,
+  };
 
   private userService = inject(UserService);
   private authService = inject(AuthService);
@@ -304,72 +307,108 @@ export class UserBarberDetailsComponent implements OnInit {
     if (!this.stagedBooking) return;
 
     this.authService.userId$.subscribe((id) => {
-      if (!id) return;
+      if (!id || !this.stagedBooking?.id) return;
 
-      if (!this.stagedBooking?.id) return;
       this.bookingService
         .confirmBooking(id, this.stagedBooking.id, { couponCode })
         .subscribe({
           next: (res) => {
-            Swal.fire('Success', res.message, 'success');
+            // Razorpay order details from backend
+            const { keyId, amount, currency, orderId, bookingId } = res;
+
+            const options: any = {
+              key: keyId,
+              amount: amount.toString(),
+              currency: currency,
+              name: 'Groomsy',
+              description: 'Booking Payment',
+              order_id: orderId,
+              handler: (paymentResponse: any) => {
+                // Payment success — verify payment
+                this.bookingService
+                  .verifyPayment({
+                    razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                    razorpay_order_id: paymentResponse.razorpay_order_id,
+                    razorpay_signature: paymentResponse.razorpay_signature,
+                    bookingId: bookingId,
+                  })
+                  .subscribe({
+                    next: (verifyRes) => {
+                      Swal.fire('Success', verifyRes.message, 'success');
+                    },
+                    error: (err) => {
+                      Swal.fire(
+                        'Error',
+                        err.error?.error || 'Payment verification failed',
+                        'error'
+                      );
+                    },
+                  });
+              },
+              theme: {
+                color: '#3399cc',
+              },
+            };
+
+            const rzp = new (window as any).Razorpay(options);
+            rzp.open();
           },
-          error: (err) =>
+          error: (err) => {
             Swal.fire(
               'Error',
               err.error?.error || 'Failed to confirm booking',
               'error'
-            ),
+            );
+          },
         });
     });
   }
 
-  cancelBooking(){
-    console.log("booking canceled");
-    
+  cancelBooking() {
+    console.log('booking canceled');
   }
 
   couponApllication(couponCode: string) {
-  if (!this.stagedBooking?.id) {
-    Swal.fire('Error', 'No booking found to apply coupon', 'error');
-    return;
+    if (!this.stagedBooking?.id) {
+      Swal.fire('Error', 'No booking found to apply coupon', 'error');
+      return;
+    }
+
+    this.bookingService
+      .couponApplication(this.stagedBooking.id, couponCode)
+      .subscribe({
+        next: (updatedBooking) => {
+          // 1. Update staged booking with new data
+          this.stagedBooking = updatedBooking;
+
+          // 2. Fetch updated barber and service info
+          forkJoin({
+            barberRes: this.userService.fetchBarbers('', 1, 100),
+            serviceRes: this.serviceService.fetch('user', '', 1, 100),
+          }).subscribe(({ barberRes, serviceRes }) => {
+            const barberDoc = barberRes.data.find(
+              (b) => b.id === updatedBooking.barber
+            );
+            const serviceDoc = serviceRes.data.find(
+              (s) => s.id === updatedBooking.service
+            );
+
+            // 3. Update checkout data
+            this.checkoutData = {
+              barber: barberDoc || undefined,
+              service: serviceDoc || undefined,
+            };
+
+            Swal.fire('Success', 'Coupon applied successfully!', 'success');
+          });
+        },
+        error: (err) => {
+          Swal.fire(
+            'Error',
+            err.error?.error || 'Failed to apply coupon',
+            'error'
+          );
+        },
+      });
   }
-
-  this.bookingService
-    .couponApplication(this.stagedBooking.id, couponCode)
-    .subscribe({
-      next: (updatedBooking) => {
-        // 1. Update staged booking with new data
-        this.stagedBooking = updatedBooking;
-
-        // 2. Fetch updated barber and service info
-        forkJoin({
-          barberRes: this.userService.fetchBarbers('', 1, 100),
-          serviceRes: this.serviceService.fetch('user', '', 1, 100),
-        }).subscribe(({ barberRes, serviceRes }) => {
-          const barberDoc = barberRes.data.find(
-            (b) => b.id === updatedBooking.barber
-          );
-          const serviceDoc = serviceRes.data.find(
-            (s) => s.id === updatedBooking.service
-          );
-
-          // 3. Update checkout data
-          this.checkoutData = {
-            barber: barberDoc || undefined,
-            service: serviceDoc || undefined,
-          };
-
-          Swal.fire('Success', 'Coupon applied successfully!', 'success');
-        });
-      },
-      error: (err) => {
-        Swal.fire(
-          'Error',
-          err.error?.error || 'Failed to apply coupon',
-          'error'
-        );
-      },
-    });
-}
-
 }
