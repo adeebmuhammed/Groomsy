@@ -81,6 +81,7 @@ userRoutes
 .post('/bookings/stage',userAuth,isBlockedMiddleware,bookingController.stageBooking)
 .put('/bookings/coupon',userAuth,isBlockedMiddleware,bookingController.couponApplication)
 .post('/bookings/confirm',userAuth,isBlockedMiddleware,bookingController.confirmBooking)
+.post('/bookings/verify-payment',userAuth,isBlockedMiddleware,bookingController.verifyPayment)
 .patch("/bookings/:id", userAuth, isBlockedMiddleware,bookingController.updateBookingStatus)
 
 userRoutes

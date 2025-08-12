@@ -90,6 +90,22 @@ export class BookingController implements IBookingController {
     }
   }
 
+  verifyPayment = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { razorpay_payment_id, razorpay_order_id, razorpay_signature, bookingId } = req.body;
+
+      const { response,status } = await this._bookingService.verfyPayment( razorpay_payment_id,razorpay_order_id,razorpay_signature,bookingId )
+      
+      res.status(status).json(response)
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "Failed to verify payment",
+      });
+    }
+  }
+
   updateBookingStatus = async (req: Request, res: Response): Promise<void> => {
     try {
       const role: "user" | "barber" = req.query.role as "user" | "barber";

@@ -13,7 +13,13 @@ export interface IBooking extends Document {
   finalPrice?: number;
   couponCode?: string;
   discountAmount?: number;
-  status: "staged" | "pending" | "cancelled_by_barber" | "cancelled_by_user" | "finished";
+  status:
+    | "staged"
+    | "pending"
+    | "cancelled_by_barber"
+    | "cancelled_by_user"
+    | "finished";
+  razorpayOrderId?:string;
 }
 
 const BookingSchema = new Schema({
@@ -31,10 +37,20 @@ const BookingSchema = new Schema({
   discountAmount: { type: Number, default: 0 },
   status: {
     type: String,
-    enum: ["staged", "pending", "cancelled_by_barber", "cancelled_by_user", "finished"],
+    enum: [
+      "staged",
+      "pending",
+      "cancelled_by_barber",
+      "cancelled_by_user",
+      "finished",
+    ],
     default: "staged",
+  },
+  razorpayOrderId: {
+    type: String,
+    required: false,
   },
 });
 
-const Booking = mongoose.model<IBooking>("Bookings",BookingSchema)
+const Booking = mongoose.model<IBooking>("Bookings", BookingSchema);
 export default Booking;

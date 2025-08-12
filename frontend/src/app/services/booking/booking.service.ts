@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import {
   BookingCreateRequestDto,
   BookingResponseDto,
+  confirmBookingDto,
   confirmData,
   IMessageResponse,
 } from '../../interfaces/interfaces';
@@ -66,18 +67,26 @@ export class BookingService {
     userId: string,
     bookingId: string,
     confirmData: confirmData
-  ): Observable<IMessageResponse> {
+  ): Observable<confirmBookingDto> {
     const params = new HttpParams()
       .set('userId', userId)
       .set('bookingId', bookingId);
 
-    return this.http.post<IMessageResponse>(
+    return this.http.post<confirmBookingDto>(
       `${environment.apiBaseUrl}/user/bookings/confirm`,
       confirmData,
       {
         params,
         withCredentials: true,
       }
+    );
+  }
+
+  verifyPayment(paymentData: any): Observable<IMessageResponse> {
+    return this.http.post<IMessageResponse>(
+      `${environment.apiBaseUrl}/user/bookings/verify-payment`,
+      paymentData,
+      { withCredentials: true }
     );
   }
 
