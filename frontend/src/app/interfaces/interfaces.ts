@@ -168,7 +168,6 @@ export class BookingResponseDto {
     | 'pending'
     | 'cancelled_by_barber'
     | 'cancelled_by_user'
-    | 'cancelled_by_admin'
     | 'finished';
   slotDetails!: {
     startTime: Date;

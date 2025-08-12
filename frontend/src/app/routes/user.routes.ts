@@ -13,6 +13,7 @@ import { UserFavoritesComponent } from '../pages/user/user-favorites/user-favori
 import { UserBarberDetailsComponent } from '../pages/user/user-barber-details/user-barber-details.component';
 import { UserBookingComponent } from '../pages/user/user-booking/user-booking.component';
 import { USER_ROUTES_PATHS } from '../constants/user-route.constant';
+import { UserBookingConfirmationComponent } from '../pages/user/user-booking-confirmation/user-booking-confirmation.component';
 
 export const USER_ROUTES: Routes = [
   {
@@ -60,6 +61,11 @@ export const USER_ROUTES: Routes = [
   {
     path: USER_ROUTES_PATHS.BOOKINGS,
     component: UserBookingComponent,
+    canActivate: [userAuthGuard]
+  },
+  {
+    path: USER_ROUTES_PATHS.BOOKING_CONFIRMATION,
+    component: UserBookingConfirmationComponent,
     canActivate: [userAuthGuard]
   }
 ];

@@ -99,4 +99,14 @@ export class UserBookingComponent implements OnInit {
     this.currentPage = page;
     this.fetchUserBookings(page);
   }
+
+  formatTimeUTC(dateStr: Date): string {
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'UTC',
+    });
+  }
 }

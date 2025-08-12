@@ -83,15 +83,17 @@ userRoutes
 .post('/bookings/confirm',userAuth,isBlockedMiddleware,bookingController.confirmBooking)
 .post('/bookings/verify-payment',userAuth,isBlockedMiddleware,bookingController.verifyPayment)
 .patch("/bookings/:id", userAuth, isBlockedMiddleware,bookingController.updateBookingStatus)
+.get("/bookings/:id", userAuth, isBlockedMiddleware,bookingController.getBookingById)
 
 userRoutes
 .get("/favorites",userAuth,isBlockedMiddleware,favoritesController.getFavoritesByUser)
 .patch("/favorites",userAuth,isBlockedMiddleware,favoritesController.updateFavorites)
 
 userRoutes
-.get("/service", userAuth,serviceController.fetch)
+.get("/service", userAuth,isBlockedMiddleware,serviceController.fetch)
+.get("/service/:id",userAuth,isBlockedMiddleware,serviceController.getServiceById)
 
 userRoutes
-.get("/unavailability/:id",userAuth,barberUnavailabilityController.fetchBarberUnavailability)
+.get("/unavailability/:id",userAuth,isBlockedMiddleware,barberUnavailabilityController.fetchBarberUnavailability)
 
 export default userRoutes;

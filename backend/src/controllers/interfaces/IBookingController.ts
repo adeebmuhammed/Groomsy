@@ -7,4 +7,5 @@ export interface IBookingController {
     confirmBooking(req: Request, res: Response): Promise<void>;
     verifyPayment(req: Request, res: Response): Promise<void>;
     updateBookingStatus(req: Request, res: Response): Promise<void>;
+    getBookingById(req: Request, res: Response): Promise<void>;
 }

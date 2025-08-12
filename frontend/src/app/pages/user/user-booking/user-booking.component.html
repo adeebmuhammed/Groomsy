@@ -20,8 +20,8 @@
         <tr *ngFor="let booking of bookings; let i = index">
           <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
           <td>{{ booking.slotDetails.date | date: 'shortDate' }}</td>
-          <td>{{ booking.slotDetails.startTime | date: 'shortTime' }}</td>
-          <td>{{ booking.slotDetails.endTime | date: 'shortTime' }}</td>
+          <td>{{ formatTimeUTC(booking.slotDetails.startTime) }}</td>
+          <td>{{ formatTimeUTC(booking.slotDetails.endTime) }}</td>
           <td>
             <span class="status-badge" [ngClass]="booking.status">
               {{ booking.status }}

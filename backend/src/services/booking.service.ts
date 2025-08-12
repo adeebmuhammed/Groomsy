@@ -311,4 +311,16 @@ export class BookingService implements IBookingService {
       status: STATUS_CODES.OK,
     };
   };
+
+  getBookingById = async (bookingId: string): Promise<{ response: BookingResponseDto; status: number; }> =>{
+    const booking = await this._bookingRepo.findById(bookingId)
+    if (!booking) {
+      throw new Error("booking not found")
+    }
+
+    return{
+      response: BookingMapper.toBookingResponse(booking),
+      status: STATUS_CODES.OK
+    }
+  }
 }
