@@ -12,6 +12,21 @@ export class ReviewRepository
     super(Review);
   }
 
+  async findAllReviews(
+    page: number,
+    limit: number,
+    userId: string
+  ): Promise<{ reviews: IReview[]; totalCount: number }> {
+    const skip = (page - 1) * limit;
+
+    const [reviews, totalCount] = await Promise.all([
+      this.findWithPagination({user:userId}, skip, limit),
+      this.countDocuments({user:userId}),
+    ]);
+
+    return { reviews, totalCount };
+  }
+
   async createReview(
     userId: string,
     bookingId: string,

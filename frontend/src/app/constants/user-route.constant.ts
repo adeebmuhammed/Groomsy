@@ -13,4 +13,5 @@ export const USER_ROUTES_PATHS = {
   BARBER_DETAILS: `${USER_BASE}/barber-details/:id`,
   BOOKINGS: `${USER_BASE}/bookings`,
   BOOKING_CONFIRMATION: `${USER_BASE}/booking-confirmation/:id`,
+  REVIEW : `${USER_BASE}/reviews`
 };

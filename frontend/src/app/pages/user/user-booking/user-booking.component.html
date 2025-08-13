@@ -59,10 +59,7 @@
             </button>
 
             @if(booking.status === "staged"){
-              <button
-              class="btn-primary"
-              (click)="retryPayment()"
-            >
+            <button class="btn-primary" (click)="retryPayment(booking.id)">
               Retry Payment
             </button>
             }
@@ -81,6 +78,14 @@
       </tbody>
     </table>
   </div>
+
+  <!-- Review Modal -->
+<app-review-form
+  [visible]="reviewModalVisible"
+  (submitReview)="handleReviewSubmit($event)"
+  (closeForm)="reviewModalVisible = false"
+></app-review-form>
+
 
   <div class="pagination-controls">
     <button
@@ -107,5 +112,18 @@
     </button>
   </div>
 </div>
+
+<app-checkout-modal
+  *ngIf="stagedBooking"
+  [barber]="checkoutData.barber"
+  [service]="checkoutData.service"
+  [startTime]="stagedBooking.slotDetails.startTime"
+  [endTime]="stagedBooking.slotDetails.endTime"
+  [booking]="stagedBooking"
+  (onCouponApplication)="couponApllication($event)"
+  (onConfirm)="retryPayment(stagedBooking.id, $event)"
+  (onCancel)="stagedBooking = null"
+></app-checkout-modal>
+
 
 <app-user-footer></app-user-footer>

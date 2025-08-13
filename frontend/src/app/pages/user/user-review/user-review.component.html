@@ -1,0 +1,53 @@
+<app-user-header></app-user-header>
+
+<div class="user-reviews-wrapper">
+  <h2 class="heading">My Reviews</h2>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">
+    <span class="spinner"></span> Loading reviews...
+  </div>
+
+  <!-- No Reviews -->
+  <div *ngIf="!loading && reviews.length === 0" class="no-reviews">
+    You haven’t written any reviews yet.
+  </div>
+
+  <!-- Reviews List -->
+  <div class="reviews-list" *ngIf="!loading && reviews.length > 0">
+    <div class="review-card" *ngFor="let review of reviews">
+      <div class="review-header">
+        <div class="barber-info">
+          <div class="barber-name">
+            {{ getBarberName(review.barber) }}
+          </div>
+          <div class="rating">
+            <span *ngFor="let star of getStars(review.rating)">★</span>
+            <span class="empty" *ngFor="let star of getEmptyStars(review.rating)">☆</span>
+          </div>
+        </div>
+        <button class="delete-btn" (click)="confirmDelete(review.id)">🗑 Delete</button>
+      </div>
+      <div class="review-body">
+        <p>{{ review.reviewText }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-controls" *ngIf="totalPages > 1">
+    <button [disabled]="currentPage === 1" (click)="handlePageChange(currentPage - 1)">
+      ‹ Prev
+    </button>
+    <button *ngFor="let page of pages"
+            [class.active]="currentPage === page"
+            (click)="handlePageChange(page)">
+      {{ page }}
+    </button>
+    <button [disabled]="currentPage === totalPages" (click)="handlePageChange(currentPage + 1)">
+      Next ›
+    </button>
+  </div>
+</div>
+
+<app-user-footer></app-user-footer>

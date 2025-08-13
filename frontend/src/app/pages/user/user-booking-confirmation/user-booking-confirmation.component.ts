@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { BookingResponseDto, Service } from '../../../interfaces/interfaces';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BookingService } from '../../../services/booking/booking.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
@@ -20,7 +20,10 @@ export class UserBookingConfirmationComponent implements OnInit {
   service!: Service | null;
   error = '';
 
+  isSuccess = false;
+
   private route = inject(ActivatedRoute);
+  readonly router = inject(Router);
   private bookingService = inject(BookingService);
   private serviceService = inject(ServiceService);
 
@@ -37,14 +40,18 @@ export class UserBookingConfirmationComponent implements OnInit {
     this.bookingService.getBookingById('user', this.bookingId).subscribe({
       next: (res) => {
         this.booking = res;
-        this.serviceService.getServiceById('user',res.service).subscribe({
-          next:(res)=>{
-            this.service = res
+
+        this.isSuccess = res.status === 'pending'; 
+
+        // Fetch service
+        this.serviceService.getServiceById('user', res.service).subscribe({
+          next: (serviceRes) => {
+            this.service = serviceRes;
           },
-          error:(err)=>{
-            this.error = "failed to load service"
+          error: () => {
+            this.error = 'Failed to load service.';
           }
-        })
+        });
       },
       error: () => {
         this.error = 'Failed to load booking details.';
