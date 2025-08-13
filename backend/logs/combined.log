@@ -3459,3 +3459,8 @@
 2025-08-12 15:32:00 [INFO]: GET /user/get-barbers?search=&page=1&limit=3
 2025-08-12 15:32:00 [INFO]: GET /user/favorites?userId=68826b157451d8eb5c4d78d3&page=1&limit=100
 2025-08-12 15:32:02 [INFO]: POST /user/logout
+2025-08-13 11:01:25 [INFO]: POST /user/review?userId=68826b157451d8eb5c4d78d3&bookingId=689b094f397ef52fe20bd43b
+2025-08-13 11:16:11 [INFO]: POST /user/review?userId=68826b157451d8eb5c4d78d3&bookingId=689b094f397ef52fe20bd43b
+2025-08-13 11:17:04 [INFO]: DELETE /user/review/689c232de4b54474dea24fc6
+2025-08-13 11:17:06 [INFO]: DELETE /user/review/689c232de4b54474dea24fc6
+2025-08-13 11:17:10 [INFO]: POST /user/review?userId=68826b157451d8eb5c4d78d3&bookingId=689b094f397ef52fe20bd43b
