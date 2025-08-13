@@ -1,13 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import { AdminTableComponent } from '../../../components/shared/admin-table/admin-table.component';
 import { BookingService } from '../../../services/booking/booking.service';
-import { BookingResponseDto } from '../../../interfaces/interfaces';
+import {
+  BookingResponseDto,
+  ReviewCreateRequestDto,
+} from '../../../interfaces/interfaces';
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { ReviewService } from '../../../services/review/review.service';
+import { ReviewFormComponent } from '../../../components/shared/review-form/review-form.component';
+import { Router } from '@angular/router';
+import { CheckoutModalComponent } from '../../../components/shared/checkout-modal/checkout-modal.component';
+import { forkJoin } from 'rxjs';
+import { UserService } from '../../../services/user/user.service';
+import { ServiceService } from '../../../services/service/service.service';
+type BookingStatus = 'pending' | 'staged' | 'cancelled' | 'finished';
 
 @Component({
   selector: 'app-user-booking',
@@ -17,6 +28,8 @@ import Swal from 'sweetalert2';
     CommonModule,
     FormsModule,
     DatePipe,
+    ReviewFormComponent,
+    CheckoutModalComponent,
   ],
   templateUrl: './user-booking.component.html',
   styleUrl: './user-booking.component.css',
@@ -30,42 +43,86 @@ export class UserBookingComponent implements OnInit {
     { key: 'status', label: 'Status', isStatus: true },
     { key: 'totalPrice', label: 'Price' },
   ];
+  statuses: { label: string; value: BookingStatus }[] = [
+    { label: 'Upcoming', value: 'pending' },
+    { label: 'Completed', value: 'finished' },
+    { label: 'Cancelled', value: 'cancelled' },
+    { label: 'Staged', value: 'staged' },
+  ];
+
+  selectedStatus: BookingStatus = 'pending';
+  reviewModalVisible = false;
+  selectedBookingId: string | null = null;
 
   currentPage = 1;
   itemsPerPage = 5;
   totalPages = 1;
+  pages: number[] = [];
 
-  constructor(
-    private bookingService: BookingService,
-    private authService: AuthService
-  ) {}
+  stagedBooking: BookingResponseDto | null = null;
+  checkoutData: { barber?: any; service?: any } = {};
 
-  ngOnInit(): void {
-    this.fetchUserBookings();
+  private bookingService = inject(BookingService);
+  private authService = inject(AuthService);
+  private reviewService = inject(ReviewService);
+  private router = inject(Router);
+  private userService = inject(UserService);
+  private serviceService = inject(ServiceService);
+
+  openStagedBooking(booking: BookingResponseDto) {
+    this.stagedBooking = booking;
+
+    forkJoin({
+      barberRes: this.userService.fetchBarbers('', 1, 100),
+      serviceRes: this.serviceService.fetch('user', '', 1, 100),
+    }).subscribe(({ barberRes, serviceRes }) => {
+      this.checkoutData.barber = barberRes.data.find(
+        (b) => b.id === booking.barber
+      );
+      this.checkoutData.service = serviceRes.data.find(
+        (s) => s.id === booking.service
+      );
+    });
   }
 
-  pages: number[] = [];
+  ngOnInit(): void {
+    this.fetchBookingsByStatus(this.selectedStatus);
+  }
 
   private generatePages(): void {
     this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
-  fetchUserBookings(page: number = 1): void {
+  fetchBookingsByStatus(
+    status: 'pending' | 'staged' | 'cancelled' | 'finished',
+    page: number = 1
+  ): void {
     this.authService.userId$.subscribe((id) => {
       if (!id) return;
 
       this.bookingService
-        .fetchBookings('user', id, page, this.itemsPerPage)
+        .getBookingByStatus(id, status, page, this.itemsPerPage)
         .subscribe({
           next: (res) => {
             this.bookings = res.data;
             this.totalPages = Math.ceil(res.totalCount / this.itemsPerPage);
             this.currentPage = page;
-            this.generatePages(); // ✅ build page numbers array
+            this.generatePages();
           },
           error: (err) => console.error('Failed to fetch bookings', err),
         });
     });
+  }
+
+  changeStatus(status: BookingStatus): void {
+    this.selectedStatus = status;
+    this.currentPage = 1;
+    this.fetchBookingsByStatus(status, 1);
+  }
+
+  handlePageChange(page: number): void {
+    this.currentPage = page;
+    this.fetchBookingsByStatus(this.selectedStatus, page);
   }
 
   cancelBooking(booking: BookingResponseDto): void {
@@ -84,7 +141,7 @@ export class UserBookingComponent implements OnInit {
           .subscribe({
             next: () => {
               Swal.fire('Cancelled!', 'Booking has been cancelled.', 'success');
-              this.fetchUserBookings();
+              this.fetchBookingsByStatus(this.selectedStatus);
             },
             error: (err) => {
               console.error('Delete error:', err);
@@ -95,9 +152,131 @@ export class UserBookingComponent implements OnInit {
     });
   }
 
-  handlePageChange(page: number): void {
-    this.currentPage = page;
-    this.fetchUserBookings(page);
+  couponApllication(couponCode: string) {
+    if (!this.stagedBooking?.id) {
+      Swal.fire('Error', 'No booking found to apply coupon', 'error');
+      return;
+    }
+
+    this.bookingService
+      .couponApplication(this.stagedBooking.id, couponCode)
+      .subscribe({
+        next: (updatedBooking) => {
+          this.stagedBooking = updatedBooking;
+
+          forkJoin({
+            barberRes: this.userService.fetchBarbers('', 1, 100),
+            serviceRes: this.serviceService.fetch('user', '', 1, 100),
+          }).subscribe(({ barberRes, serviceRes }) => {
+            const barberDoc = barberRes.data.find(
+              (b) => b.id === updatedBooking.barber
+            );
+            const serviceDoc = serviceRes.data.find(
+              (s) => s.id === updatedBooking.service
+            );
+
+            this.checkoutData = {
+              barber: barberDoc || undefined,
+              service: serviceDoc || undefined,
+            };
+
+            Swal.fire('Success', 'Coupon applied successfully!', 'success');
+          });
+        },
+        error: (err) => {
+          Swal.fire(
+            'Error',
+            err.error?.error || 'Failed to apply coupon',
+            'error'
+          );
+        },
+      });
+  }
+
+  retryPayment(bookingId: string, couponCode?: string) {
+    this.authService.userId$.subscribe((id) => {
+      if (!id || !bookingId) return;
+
+      this.bookingService
+        .confirmBooking(id, bookingId, { couponCode: couponCode || '' })
+        .subscribe({
+          next: (res) => {
+            const { keyId, amount, currency, orderId, bookingId } = res;
+
+            const options: any = {
+              key: keyId,
+              amount: amount.toString(),
+              currency,
+              name: 'Groomsy',
+              description: 'Booking Payment',
+              order_id: orderId,
+              handler: (paymentResponse: any) => {
+                this.bookingService
+                  .verifyPayment({
+                    razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                    razorpay_order_id: paymentResponse.razorpay_order_id,
+                    razorpay_signature: paymentResponse.razorpay_signature,
+                    bookingId,
+                  })
+                  .subscribe({
+                    next: () => {
+                      this.router.navigate([
+                        `/user/booking-confirmation/${bookingId}`,
+                      ]);
+                    },
+                    error: (err) => {
+                      this.router.navigate([
+                        `/user/booking-confirmation/${bookingId}`,
+                      ]);
+                    },
+                  });
+              },
+              theme: { color: '#3399cc' },
+            };
+
+            const rzp = new (window as any).Razorpay(options);
+            rzp.open();
+          },
+          error: (err) => {
+            Swal.fire(
+              'Error',
+              err.error?.error || 'Failed to confirm booking',
+              'error'
+            );
+          },
+        });
+    });
+  }
+
+  leaveReview(booking: BookingResponseDto) {
+    this.selectedBookingId = booking.id;
+    this.reviewModalVisible = true;
+  }
+
+  handleReviewSubmit(review: ReviewCreateRequestDto) {
+    if (!this.selectedBookingId) return;
+
+    this.authService.userId$.subscribe((id) => {
+      if (!id || !this.selectedBookingId) {
+        return;
+      }
+      this.reviewService
+        .createReview(id, this.selectedBookingId, review)
+        .subscribe({
+          next: () => {
+            Swal.fire(
+              'Thank you!',
+              'Your review has been submitted.',
+              'success'
+            );
+            this.reviewModalVisible = false;
+            this.selectedBookingId = null;
+          },
+          error: () => {
+            Swal.fire('Error!', 'Failed to submit review.', 'error');
+          },
+        });
+    });
   }
 
   formatTimeUTC(dateStr: Date): string {

@@ -3,6 +3,17 @@
 <div class="user-booking-wrapper">
   <h2 class="heading">My Bookings</h2>
 
+  <!-- Status Tabs -->
+  <div class="status-tabs">
+    <button
+      *ngFor="let s of statuses"
+      [class.active]="selectedStatus === s.value"
+      (click)="changeStatus(s.value)"
+    >
+      {{ s.label }}
+    </button>
+  </div>
+
   <div class="table">
     <table class="user-booking-table">
       <thead>
@@ -19,7 +30,7 @@
       <tbody>
         <tr *ngFor="let booking of bookings; let i = index">
           <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-          <td>{{ booking.slotDetails.date | date: 'shortDate' }}</td>
+          <td>{{ booking.slotDetails.date | date : "shortDate" }}</td>
           <td>{{ formatTimeUTC(booking.slotDetails.startTime) }}</td>
           <td>{{ formatTimeUTC(booking.slotDetails.endTime) }}</td>
           <td>
@@ -29,6 +40,7 @@
           </td>
           <td>₹{{ booking.totalPrice }}</td>
           <td>
+            <!-- Pending bookings: Cancel -->
             <button
               class="btn-primary"
               *ngIf="booking.status === 'pending'"
@@ -36,31 +48,82 @@
             >
               Cancel
             </button>
+
+            <!-- Finished bookings: Leave Review -->
+            <button
+              class="btn btn-success"
+              *ngIf="booking.status === 'finished'"
+              (click)="leaveReview(booking)"
+            >
+              Review
+            </button>
+
+            @if(booking.status === "staged"){
+            <button class="btn-primary" (click)="retryPayment(booking.id)">
+              Retry Payment
+            </button>
+            }
+
+            <!-- Cancelled bookings: No action -->
+            <span
+              *ngIf="
+                booking.status === 'cancelled_by_user' ||
+                booking.status === 'cancelled_by_barber'
+              "
+            >
+              No action
+            </span>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
+  <!-- Review Modal -->
+<app-review-form
+  [visible]="reviewModalVisible"
+  (submitReview)="handleReviewSubmit($event)"
+  (closeForm)="reviewModalVisible = false"
+></app-review-form>
+
+
   <div class="pagination-controls">
-    <button [disabled]="currentPage === 1" (click)="handlePageChange(currentPage - 1)">
+    <button
+      [disabled]="currentPage === 1"
+      (click)="handlePageChange(currentPage - 1)"
+    >
       Previous
     </button>
 
     <ng-container *ngFor="let page of pages">
-  <button
-    [class.active]="currentPage === page"
-    (click)="handlePageChange(page)"
-  >
-    {{ page }}
-  </button>
-</ng-container>
+      <button
+        [class.active]="currentPage === page"
+        (click)="handlePageChange(page)"
+      >
+        {{ page }}
+      </button>
+    </ng-container>
 
-
-    <button [disabled]="currentPage === totalPages" (click)="handlePageChange(currentPage + 1)">
+    <button
+      [disabled]="currentPage === totalPages"
+      (click)="handlePageChange(currentPage + 1)"
+    >
       Next
     </button>
   </div>
 </div>
+
+<app-checkout-modal
+  *ngIf="stagedBooking"
+  [barber]="checkoutData.barber"
+  [service]="checkoutData.service"
+  [startTime]="stagedBooking.slotDetails.startTime"
+  [endTime]="stagedBooking.slotDetails.endTime"
+  [booking]="stagedBooking"
+  (onCouponApplication)="couponApllication($event)"
+  (onConfirm)="retryPayment(stagedBooking.id, $event)"
+  (onCancel)="stagedBooking = null"
+></app-checkout-modal>
+
 
 <app-user-footer></app-user-footer>

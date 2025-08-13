@@ -246,3 +246,22 @@ export interface confirmBookingDto {
   bookingId: string;
   keyId: string;
 }
+
+export interface ReviewCreateRequestDto{
+    reviewText : string,
+    rating : number
+}
+
+export interface ReviewResponseDto {
+  id: string;
+  booking: string;
+  barber: string;
+  rating: number;
+  reviewText: string;
+}
+
+export interface ReviewListResponse {
+  data: ReviewResponseDto[];
+  message?: string;
+  pagination: Pagination;
+}

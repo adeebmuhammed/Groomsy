@@ -327,14 +327,14 @@ export class UserBarberDetailsComponent implements OnInit {
                   })
                   .subscribe({
                     next: (verifyRes) => {
-                      this.router.navigate([`/user/booking-confirmation/${bookingId}`]);
+                      this.router.navigate([
+                        `/user/booking-confirmation/${bookingId}`,
+                      ]);
                     },
                     error: (err) => {
-                      Swal.fire(
-                        'Error',
-                        err.error?.error || 'Payment verification failed',
-                        'error'
-                      );
+                      this.router.navigate([
+                        `/user/booking-confirmation/${bookingId}`,
+                      ]);
                     },
                   });
               },
@@ -358,7 +358,10 @@ export class UserBarberDetailsComponent implements OnInit {
   }
 
   cancelBooking() {
-    console.log('booking canceled');
+    const modal = new bootstrap.Modal(
+      document.getElementById('bookingCheckoutModal')!
+    );
+    modal.hide();
   }
 
   couponApllication(couponCode: string) {

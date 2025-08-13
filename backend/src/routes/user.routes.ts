@@ -20,6 +20,9 @@ import { ServiceController } from "../controllers/service.controller";
 import { BarberUnavailabilityController } from "../controllers/barber.unavailability.controller";
 import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
 import { BarberUnavailabilityService } from "../services/barber.unavailability.service";
+import { ReviewRepository } from "../repositories/review.repository";
+import { ReviewService } from "../services/review.service";
+import { ReviewController } from "../controllers/review.controller";
 
 const userRoutes = Router()
 const userAuth = authMiddleware(["user"])
@@ -47,6 +50,10 @@ const serviceController = new ServiceController(serviceService)
 const barberUnavailabilityRepo = new BarberUnavailabilityRepository
 const barberUnavailabilityService = new BarberUnavailabilityService(barberUnavailabilityRepo)
 const barberUnavailabilityController = new BarberUnavailabilityController(barberUnavailabilityService)
+
+const reviewRepo = new ReviewRepository()
+const reviewService = new ReviewService(reviewRepo)
+const reviewController = new ReviewController(reviewService)
 
 userRoutes
 .post('/signup',userController.register)
@@ -77,13 +84,13 @@ userRoutes
 .get('/populated-slots/:id',userAuth, isBlockedMiddleware,slotController.getPopulatedSlots)
 
 userRoutes
-.get('/bookings', userAuth, isBlockedMiddleware,bookingController.fetchBookings)
+.get('/bookings/:id', userAuth, isBlockedMiddleware,bookingController.getBookingsByStatus)
 .post('/bookings/stage',userAuth,isBlockedMiddleware,bookingController.stageBooking)
 .put('/bookings/coupon',userAuth,isBlockedMiddleware,bookingController.couponApplication)
 .post('/bookings/confirm',userAuth,isBlockedMiddleware,bookingController.confirmBooking)
 .post('/bookings/verify-payment',userAuth,isBlockedMiddleware,bookingController.verifyPayment)
 .patch("/bookings/:id", userAuth, isBlockedMiddleware,bookingController.updateBookingStatus)
-.get("/bookings/:id", userAuth, isBlockedMiddleware,bookingController.getBookingById)
+.get("/bookings-by-id/:id", userAuth, isBlockedMiddleware,bookingController.getBookingById)
 
 userRoutes
 .get("/favorites",userAuth,isBlockedMiddleware,favoritesController.getFavoritesByUser)
@@ -95,5 +102,10 @@ userRoutes
 
 userRoutes
 .get("/unavailability/:id",userAuth,isBlockedMiddleware,barberUnavailabilityController.fetchBarberUnavailability)
+
+userRoutes
+.get("/review/:id",userAuth,isBlockedMiddleware,reviewController.getReviewsByUser)
+.post("/review",userAuth,isBlockedMiddleware,reviewController.create)
+.delete("/review/:id",userAuth,isBlockedMiddleware,reviewController.delete)
 
 export default userRoutes;

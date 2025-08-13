@@ -1,0 +1,39 @@
+<div class="modal-overlay" *ngIf="visible">
+  <div class="modal-container">
+    <h3 class="modal-title">Write a Review</h3>
+
+    <form [formGroup]="reviewForm" (ngSubmit)="submitForm()">
+      
+      <!-- Star Rating -->
+      <div class="star-rating">
+        <span
+          *ngFor="let star of stars"
+          class="star"
+          [class.filled]="star <= reviewForm.get('rating')?.value"
+          (click)="setRating(star)"
+        >
+          ★
+        </span>
+      </div>
+      <div class="error" *ngIf="reviewForm.get('rating')?.touched && reviewForm.get('rating')?.value === 0">
+        Please select a rating
+      </div>
+
+      <!-- Review Text -->
+      <textarea
+        class="form-control"
+        placeholder="Write your review..."
+        formControlName="reviewText"
+      ></textarea>
+      <div class="error" *ngIf="reviewForm.get('reviewText')?.touched && reviewForm.get('reviewText')?.invalid">
+        Review must be at least 5 characters long
+      </div>
+
+      <!-- Actions -->
+      <div class="modal-actions">
+        <button type="submit" class="submit-button">Submit</button>
+        <button type="button" class="submit-button cancel-btn" (click)="close()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
