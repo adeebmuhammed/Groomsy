@@ -8,6 +8,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+type BookingStatus = 'pending' | 'staged' | 'cancelled' | 'finished';
 
 @Component({
   selector: 'app-user-booking',
@@ -30,10 +31,19 @@ export class UserBookingComponent implements OnInit {
     { key: 'status', label: 'Status', isStatus: true },
     { key: 'totalPrice', label: 'Price' },
   ];
+  statuses: { label: string; value: BookingStatus }[] = [
+    { label: 'Upcoming', value: 'pending' },
+    { label: 'Completed', value: 'finished' },
+    { label: 'Cancelled', value: 'cancelled' },
+    { label: 'Staged', value: 'staged' },
+  ];
+
+  selectedStatus: BookingStatus = 'pending';
 
   currentPage = 1;
   itemsPerPage = 5;
   totalPages = 1;
+  pages: number[] = [];
 
   constructor(
     private bookingService: BookingService,
@@ -41,31 +51,43 @@ export class UserBookingComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fetchUserBookings();
+    this.fetchBookingsByStatus(this.selectedStatus);
   }
-
-  pages: number[] = [];
 
   private generatePages(): void {
     this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
-  fetchUserBookings(page: number = 1): void {
+  fetchBookingsByStatus(
+    status: 'pending' | 'staged' | 'cancelled' | 'finished',
+    page: number = 1
+  ): void {
     this.authService.userId$.subscribe((id) => {
       if (!id) return;
 
       this.bookingService
-        .fetchBookings('user', id, page, this.itemsPerPage)
+        .getBookingByStatus(id, status, page, this.itemsPerPage)
         .subscribe({
           next: (res) => {
             this.bookings = res.data;
             this.totalPages = Math.ceil(res.totalCount / this.itemsPerPage);
             this.currentPage = page;
-            this.generatePages(); // ✅ build page numbers array
+            this.generatePages();
           },
           error: (err) => console.error('Failed to fetch bookings', err),
         });
     });
+  }
+
+  changeStatus(status: BookingStatus): void {
+    this.selectedStatus = status;
+    this.currentPage = 1;
+    this.fetchBookingsByStatus(status, 1);
+  }
+
+  handlePageChange(page: number): void {
+    this.currentPage = page;
+    this.fetchBookingsByStatus(this.selectedStatus, page);
   }
 
   cancelBooking(booking: BookingResponseDto): void {
@@ -84,7 +106,7 @@ export class UserBookingComponent implements OnInit {
           .subscribe({
             next: () => {
               Swal.fire('Cancelled!', 'Booking has been cancelled.', 'success');
-              this.fetchUserBookings();
+              this.fetchBookingsByStatus(this.selectedStatus);
             },
             error: (err) => {
               console.error('Delete error:', err);
@@ -95,9 +117,12 @@ export class UserBookingComponent implements OnInit {
     });
   }
 
-  handlePageChange(page: number): void {
-    this.currentPage = page;
-    this.fetchUserBookings(page);
+  retryPayment(){
+    console.log("payment retry")
+  }
+
+  leaveReview(booking: BookingResponseDto) {
+    console.log('review soon');
   }
 
   formatTimeUTC(dateStr: Date): string {
