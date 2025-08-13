@@ -6,16 +6,30 @@ import {
 } from "../dto/slot.dto";
 import { ISlotRule } from "../models/slots.model";
 import { ISlotService } from "./interfaces/ISlotService";
-import { validateSlotData } from "../utils/slotValidator";
+import { toUTCTimeOnly, validateSlotData } from "../utils/slotValidator";
 import { SlotMapper } from "../mappers/slot.mapper";
 import { STATUS_CODES } from "../utils/constants";
 import mongoose from "mongoose";
 import { ISlotRepository } from "../repositories/interfaces/ISlotRepository";
 import { generateSlotsFromRules } from "../utils/slot.generator";
 import { MessageResponseDto } from "../dto/base.dto";
+import { IServiceRepository } from "../repositories/interfaces/IServiceRepository";
+import { ServiceRepository } from "../repositories/service.repository";
+import { IBarberUnavailabilityRepository } from "../repositories/interfaces/IBarberUnavailabilityRepository";
+import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
+import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
+import { BookingRepository } from "../repositories/booking.repository";
+import { existsSync } from "fs";
 
 export class SlotService implements ISlotService {
-  constructor(private _slotRepo: ISlotRepository) {}
+  private _serviceRepo: IServiceRepository;
+  private _barberUnavailabilityRepo: IBarberUnavailabilityRepository;
+  private _bookingRepo: IBookingRepository;
+  constructor(private _slotRepo: ISlotRepository) {
+    this._serviceRepo = new ServiceRepository();
+    this._barberUnavailabilityRepo = new BarberUnavailabilityRepository();
+    this._bookingRepo = new BookingRepository();
+  }
 
   getSlotRulesByBarber = async (
     barberId: string,
@@ -66,10 +80,25 @@ export class SlotService implements ISlotService {
       throw new Error(errors.join(" "));
     }
 
+    const unavailability = await this._barberUnavailabilityRepo.findOne({
+      barber: barberId,
+    });
+    if (!unavailability) {
+      throw new Error("barber unavailability not found");
+    }
+
     for (const slotItem of data.slots) {
+      if (slotItem.day === unavailability.weeklyOff) {
+        throw new Error(
+          `Cannot create slot on ${slotItem.day} as it is the barber's weekly off`
+        );
+      }
+
       const similarSlot = await this._slotRepo.findSimilarSlot(
         barberId,
-        slotItem.day
+        slotItem.day,
+        slotItem.startTime,
+        slotItem.endTime
       );
 
       if (similarSlot) {
@@ -117,12 +146,27 @@ export class SlotService implements ISlotService {
       throw new Error("slot not found");
     }
 
+    const unavailability = await this._barberUnavailabilityRepo.findOne({
+      barber: existingSlot.barber,
+    });
+    if (!unavailability) {
+      throw new Error("barber unavailability not found");
+    }
+
     let similarSlot: ISlotRule | null = null;
 
     for (const slot of data.slots) {
+      if (slot.day === unavailability.weeklyOff) {
+        throw new Error(
+          `Cannot create slot on ${slot.day} as it is the barber's weekly off`
+        );
+      }
+
       similarSlot = await this._slotRepo.findSimilarSlot(
         existingSlot.barber.toString(),
-        slot.day
+        slot.day,
+        slot.startTime,
+        slot.endTime
       );
 
       if (similarSlot) throw new Error(`slot for the given day already exists`);
@@ -160,11 +204,12 @@ export class SlotService implements ISlotService {
 
   getPopulatedSlots = async (
     barberId: string,
+    serviceId: string,
     date: string,
     page: number,
     limit: number
   ): Promise<{ response: SlotResponseDto; status: number }> => {
-    const selectedDate = new Date(date); // e.g. 2025-08-03
+    const selectedDate = new Date(date);
     const selectedDayName = selectedDate.toLocaleDateString("en-US", {
       weekday: "long",
     });
@@ -182,15 +227,53 @@ export class SlotService implements ISlotService {
       throw new Error("slots for the given date is not available");
     }
 
+    const service = await this._serviceRepo.findById(serviceId);
+    if (!service) {
+      throw new Error("service not found");
+    }
+
     const slots = generateSlotsFromRules(
       filteredRules,
       selectedDate,
-      selectedDate
+      selectedDate,
+      service.duration,
+      service.price
     );
+
+    const startOfDayUTC = new Date(
+      Date.UTC(
+        selectedDate.getUTCFullYear(),
+        selectedDate.getUTCMonth(),
+        selectedDate.getUTCDate(),
+        0,
+        0,
+        0,
+        0
+      )
+    );
+    const endOfDayUTC = new Date(
+      Date.UTC(
+        selectedDate.getUTCFullYear(),
+        selectedDate.getUTCMonth(),
+        selectedDate.getUTCDate(),
+        23,
+        59,
+        59,
+        999
+      )
+    );
+
+    const bookings = await this._bookingRepo.find({
+      barberId,
+      "slotDetails.date": {
+        $gte: startOfDayUTC,
+        $lte: endOfDayUTC,
+      },
+    });
 
     return {
       response: slots,
-      status: 200,
+      status: STATUS_CODES.OK,
     };
   };
 }

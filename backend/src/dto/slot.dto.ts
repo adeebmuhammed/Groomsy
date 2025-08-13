@@ -1,20 +1,14 @@
 export class SlotRuleCreateRequestDto {
     slots!: DaySlot[];
-  price!: number;
-  duration!: string;
 }
 
 export class SlotRuleReponseDto{
     id!: string;
     slots!: DaySlot[];
-  price!: number;
-  duration!: string;
 }
 
 export class SlotRuleUpdateRequestDto {
     slots!: DaySlot[];
-  price!: number;
-  duration!: string;
     barber!: string;
 }
 
@@ -32,14 +26,13 @@ export interface SlotRuleListResponseDto {
 
 export interface DaySlot {
   day: string;
-  startTime: Date;
-  endTime: Date;
+  startTime: string;
+  endTime: string;
 }
 
 export interface SlotTimeDto {
   startTime: Date;
   endTime: Date;
-  price: number;
 }
 
 export interface SlotResponseDto {

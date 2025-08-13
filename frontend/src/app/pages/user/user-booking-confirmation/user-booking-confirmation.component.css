@@ -1,0 +1,64 @@
+.booking-confirmation-wrapper {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.confirmation-card {
+  background: #f9f5ff; /* light purple background */
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.success-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.confirmation-title {
+  color: #6f42c1; /* purple */
+  font-weight: 700;
+}
+
+.confirmation-subtitle {
+  color: #5c5470;
+  font-size: 1.1rem;
+  margin-bottom: 0;
+}
+
+.divider {
+  border: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #b69de6, transparent);
+  margin: 20px 0;
+}
+
+.details-heading {
+  color: #6f42c1;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.list-group-item {
+  background: transparent;
+  border: none;
+  padding: 10px 0;
+  font-size: 0.95rem;
+  color: #3f3f3f;
+}
+
+.btn-home {
+  background-color: #6f42c1;
+  color: #fff;
+  padding: 10px 25px;
+  border-radius: 25px;
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-home:hover {
+  background-color: #5a34a1;
+  transform: translateY(-2px);
+}
+
+.loading-section p {
+  color: #6f42c1;
+}

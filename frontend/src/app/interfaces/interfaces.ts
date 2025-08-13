@@ -22,7 +22,6 @@ export interface PaginatedResponse<T> {
   pagination: Pagination;
 }
 
-
 export interface IUser {
   id: string;
   name: string;
@@ -79,11 +78,9 @@ export interface IResendOtpResponse {
   };
 }
 
-
-
 export interface SlotDto {
   id: string;
-    slots: DaySlot[];
+  slots: DaySlot[];
   price: number;
   duration: string;
 }
@@ -109,52 +106,52 @@ export interface BarberDto {
   name: string;
   email: string;
   district: string;
-  status: string
+  status: string;
 }
-export interface CouponResponseDto{
-    id:string;
-    name: string;
-    code: string;
-    startDate: Date;
-    endDate: Date;
-    maxCount: number;
-    limitAmount: number;
-    couponAmount: number;
+export interface CouponResponseDto {
+  id: string;
+  name: string;
+  code: string;
+  startDate: Date;
+  endDate: Date;
+  maxCount: number;
+  limitAmount: number;
+  couponAmount: number;
 }
 
 export interface CouponListResponseDto {
   data: CouponResponseDto[];
   message: string;
-  pagination: Pagination
+  pagination: Pagination;
 }
 
-export class CouponRequestDto{
-    name!: string;
-    code!: string;
-    startDate!: Date;
-    endDate!: Date;
-    maxCount!: number;
-    limitAmount!: number;
-    couponAmount!: number;
+export class CouponRequestDto {
+  name!: string;
+  code!: string;
+  startDate!: Date;
+  endDate!: Date;
+  maxCount!: number;
+  limitAmount!: number;
+  couponAmount!: number;
 }
 
-export class SlotTime {
-  startTime!: Date;
-  endTime!: Date;
-  price!: number;
+export interface SlotTime {
+  startTime: Date;
+  endTime: Date;
+  isBooked?: boolean; // ✅ new
 }
 
 export class SlotResponse {
   [date: string]: SlotTime[];
 }
 
-
 export class BookingCreateRequestDto {
-    barberId!: string
-    date!: Date
-    startTime!: Date
-    endTime!: Date
-    price!: number
+  barberId!: string;
+  serviceId!: string;
+  date!: Date;
+  startTime!: Date;
+  endTime!: Date;
+  price!: number;
 }
 
 export class BookingResponseDto {
@@ -162,7 +159,16 @@ export class BookingResponseDto {
   user!: string;
   barber!: string;
   totalPrice!: number;
-  status!: "pending" | "cancelled_by_barber" | "cancelled_by_user" | "finished";
+  finalPrice!: number;         // ✅ new
+  discountAmount!: number;     // ✅ new
+  couponCode?: string;         // ✅ new
+  service!: string;
+  status!:
+    | 'staged'
+    | 'pending'
+    | 'cancelled_by_barber'
+    | 'cancelled_by_user'
+    | 'finished';
   slotDetails!: {
     startTime: Date;
     endTime: Date;
@@ -170,19 +176,20 @@ export class BookingResponseDto {
   };
 }
 
-export interface OfferRequestDto{
-    name: string;
-    startDate: Date;
-    endDate: Date;
-    discount: number;
+
+export interface OfferRequestDto {
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  discount: number;
 }
 
-export interface OfferResponseDto{
-    id: string;
-    name: string;
-    startDate: Date;
-    endDate: Date;
-    discount: number;
+export interface OfferResponseDto {
+  id: string;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  discount: number;
 }
 
 export interface OfferListResponseDto {
@@ -222,4 +229,20 @@ export interface ServiceListResponse {
   data: Service[];
   message?: string;
   pagination: Pagination;
+}
+
+export interface confirmData {
+  finalPrice?: number;
+  couponCode?: string;
+  discountAmount?: number;
+}
+
+
+export interface confirmBookingDto {
+  message: string;
+  orderId: string;
+  amount: string | number;
+  currency: string;
+  bookingId: string;
+  keyId: string;
 }

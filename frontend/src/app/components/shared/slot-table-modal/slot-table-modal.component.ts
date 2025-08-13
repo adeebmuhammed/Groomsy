@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SlotResponse, SlotTime } from '../../../interfaces/interfaces';
-import * as bootstrap from 'bootstrap'
+import * as bootstrap from 'bootstrap';
 import { CommonModule, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-slot-table-modal',
-  imports: [ DatePipe,CommonModule],
+  imports: [CommonModule],
   templateUrl: './slot-table-modal.component.html',
-  styleUrl: './slot-table-modal.component.css'
+  styleUrl: './slot-table-modal.component.css',
 })
 export class SlotTableModalComponent {
   @Input() slots: SlotResponse = {};
@@ -25,5 +25,15 @@ export class SlotTableModalComponent {
     // Optional: Close modal from inside (if needed)
     const modalEl = document.getElementById('slotTableModal');
     if (modalEl) bootstrap.Modal.getInstance(modalEl)?.hide();
+  }
+
+  formatTimeUTC(dateStr: Date): string {
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'UTC',
+    });
   }
 }

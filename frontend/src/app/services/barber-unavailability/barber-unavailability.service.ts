@@ -11,20 +11,20 @@ export class BarberUnavailabilityService {
 
   private http = inject(HttpClient);
 
-  fetchBarberUnavailability(barberId: string): Observable<BarberUnavailabilityDto> {
-    return this.http.get<BarberUnavailabilityDto>(`${environment.apiBaseUrl}/barber/unavailability/${barberId}`);
+  fetchBarberUnavailability(barberId: string, role: "user" | "barber"): Observable<BarberUnavailabilityDto> {
+    return this.http.get<BarberUnavailabilityDto>(`${environment.apiBaseUrl}/${role}/unavailability/${barberId}`, { withCredentials: true });
   }
 
   editWeeklyDayOff(barberId: string, day: string): Observable<IMessageResponse> {
-    return this.http.patch<IMessageResponse>(`${environment.apiBaseUrl}/barber/unavailability/weekly/${barberId}`, { day });
+    return this.http.patch<IMessageResponse>(`${environment.apiBaseUrl}/barber/unavailability/weekly/${barberId}`, { day }, { withCredentials: true});
   }
 
   addOffDay(barberId: string, data: { date: string; reason: string }): Observable<IMessageResponse> {
-    return this.http.post<IMessageResponse>(`${environment.apiBaseUrl}/barber/unavailability/special/${barberId}`, data);
+    return this.http.post<IMessageResponse>(`${environment.apiBaseUrl}/barber/unavailability/special/${barberId}`, data, { withCredentials: true});
   }
 
   removeOffDay(barberId: string, date: string): Observable<IMessageResponse> {
     const params = new HttpParams().set('date', date);
-    return this.http.delete<IMessageResponse>(`${environment.apiBaseUrl}/barber/unavailability/special/${barberId}`, { params });
+    return this.http.delete<IMessageResponse>(`${environment.apiBaseUrl}/barber/unavailability/special/${barberId}`, { params , withCredentials: true});
   }
 }

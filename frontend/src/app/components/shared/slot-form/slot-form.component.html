@@ -45,42 +45,6 @@
         </div>
       </div>
 
-      <!-- Price Field -->
-      <label>Price (₹):</label>
-      <input
-        type="number"
-        formControlName="price"
-        class="form-control"
-        min="0"
-      />
-      <div
-        class="error"
-        *ngIf="slotForm.get('price')?.touched && slotForm.get('price')?.invalid"
-      >
-        <div *ngIf="slotForm.get('price')?.errors?.['required']">
-          Price is required
-        </div>
-        <div *ngIf="slotForm.get('price')?.errors?.['min']">
-          Minimum price should be ₹99
-        </div>
-      </div>
-
-      <label>Duration:</label>
-      <select formControlName="duration" class="form-control">
-        <option value="30m">30 minutes</option>
-        <option value="1h">1 hour</option>
-        <option value="1h 30m">1 hour 30 minutes</option>
-        <option value="2h">2 hours</option>
-      </select>
-      <div
-        class="error"
-        *ngIf="
-          slotForm.get('duration')?.touched && slotForm.get('duration')?.invalid
-        "
-      >
-        Duration is required
-      </div>
-
       <!-- Actions -->
       <div class="modal-actions">
         <button type="submit" class="submit-button">

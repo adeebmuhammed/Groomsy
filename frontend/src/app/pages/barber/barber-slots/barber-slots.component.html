@@ -23,8 +23,6 @@
                 <tr>
                   <th>#</th>
                   <th>Slots</th>
-                  <th>Duration</th>
-                  <th>Price</th>
                   <th style="width: 150px">Actions</th>
                 </tr>
               </thead>
@@ -34,12 +32,10 @@
                   <td>
                     <div *ngFor="let s of slot.slots">
                       <strong>{{ s.day }}:</strong>
-                      {{ s.startTime | date : "shortTime" }} -
-                      {{ s.endTime | date : "shortTime" }}
+                      {{ s.startTime }} -
+                      {{ s.endTime }}
                     </div>
                   </td>
-                  <td>{{ slot.duration }}</td>
-                  <td>₹{{ slot.price }}</td>
                   <td>
                     <div style="display: flex; gap: 10px">
                       <button class="submit-button" (click)="editSlot(slot.id)">

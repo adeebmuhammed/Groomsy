@@ -35,15 +35,26 @@
           <tbody *ngFor="let date of getDates()">
             <tr *ngFor="let slot of slots[date]; let i = index">
               <td>{{ i + 1 }}</td>
-              <td>{{ slot.startTime | date: 'shortTime' }}</td>
-              <td>{{ slot.endTime | date: 'shortTime' }}</td>
+              <td>{{ formatTimeUTC(slot.startTime) }}</td>
+              <td>{{ formatTimeUTC(slot.endTime) }}</td>
               <td>
-                <button
+                @if (
+                  !slot.isBooked
+                ) {
+                  <button
                   class="btn btn-success btn-sm"
                   (click)="book(slot, date)"
                 >
                   Book
                 </button>
+                }@else {
+                  <button
+                  class="btn btn-danger btn-sm"
+                >
+                  Booked
+                </button>
+                }
+                
               </td>
             </tr>
           </tbody>

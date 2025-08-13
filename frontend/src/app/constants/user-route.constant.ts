@@ -12,4 +12,5 @@ export const USER_ROUTES_PATHS = {
   FAVORITES: `${USER_BASE}/favorites`,
   BARBER_DETAILS: `${USER_BASE}/barber-details/:id`,
   BOOKINGS: `${USER_BASE}/bookings`,
+  BOOKING_CONFIRMATION: `${USER_BASE}/booking-confirmation/:id`,
 };

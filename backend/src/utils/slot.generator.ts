@@ -3,8 +3,10 @@ import { ISlotRule } from "../models/slots.model";
 
 export const generateSlotsFromRules = (
   rules: ISlotRule[],
-  startDate: Date,   // e.g., start of current week
-  endDate: Date      // e.g., end of current week
+  startDate: Date,
+  endDate: Date,
+  duration: string,
+  price?: number
 ): SlotResponseDto => {
   const dayMap: { [key: string]: number } = {
     Sunday: 0,
@@ -16,44 +18,52 @@ export const generateSlotsFromRules = (
     Saturday: 6,
   };
 
+  function combineDateAndTimeUTC(date: Date, timeStr: string): Date {
+  const [hours, minutes] = timeStr.split(":").map(Number);
+  return new Date(Date.UTC(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    hours,
+    minutes,
+    0,
+    0
+  ));
+}
+
+
   const result: { [date: string]: SlotTimeDto[] } = {};
+  const durationMinutes = parseDuration(duration); // e.g. "30m" -> 30
 
   for (const rule of rules) {
     for (const slot of rule.slots) {
       const slotDay = dayMap[slot.day];
 
-      // Generate all dates in the range that match the slot day
       let current = new Date(startDate);
       while (current <= endDate) {
         if (current.getDay() === slotDay) {
-          const dateStr = current.toISOString().split('T')[0];
+          const dateStr = current.toISOString().split("T")[0];
 
-          // Calculate time slots between startTime and endTime using rule.duration
-          const dayStart = new Date(current);
-          dayStart.setHours(slot.startTime.getHours(), slot.startTime.getMinutes(), 0, 0);
+          const dayStart = combineDateAndTimeUTC(current, slot.startTime);
+const dayEnd = combineDateAndTimeUTC(current, slot.endTime);
 
-          const dayEnd = new Date(current);
-          dayEnd.setHours(slot.endTime.getHours(), slot.endTime.getMinutes(), 0, 0);
-
-          let durationMinutes = parseDuration(rule.duration); // helper to convert '1h 30m' -> 90
-          const slotsForDay: { startTime: Date; endTime: Date, price: number }[] = [];
-
-          let tempStart = new Date(dayStart);
-          while (tempStart < dayEnd) {
-            const tempEnd = new Date(tempStart.getTime() + durationMinutes * 60000);
-            if (tempEnd <= dayEnd) {
-              slotsForDay.push({ startTime: new Date(tempStart), endTime: tempEnd, price: rule.price, });
-            }
-            tempStart = tempEnd;
-          }
 
           if (!result[dateStr]) {
             result[dateStr] = [];
           }
-          result[dateStr].push(...slotsForDay);
-        }
 
-        // Move to next day
+          let start = new Date(dayStart);
+          while (start.getTime() + durationMinutes * 60000 <= dayEnd.getTime()) {
+            const end = new Date(start.getTime() + durationMinutes * 60000);
+
+            result[dateStr].push({
+              startTime: start,
+              endTime: end,
+            });
+
+            start = end;
+          }
+        }
         current.setDate(current.getDate() + 1);
       }
     }
@@ -61,6 +71,7 @@ export const generateSlotsFromRules = (
 
   return result;
 };
+
 
 const parseDuration = (duration: string): number => {
   const parts = duration.match(/(\d+h)?\s*(\d+m)?/);

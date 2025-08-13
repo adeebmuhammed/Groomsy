@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+dotenv.config();
 import connectDB from './config/db';
 import routes from './routes/routes'
 import cookieParser from 'cookie-parser'
@@ -9,7 +10,6 @@ import { requestLogger } from './middlewares/logger.middleware';
 const app = express();
 const PORT = 5000;
 
-dotenv.config();
 connectDB()
 
 app.use(cookieParser())

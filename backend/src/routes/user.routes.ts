@@ -14,6 +14,12 @@ import { BookingController } from "../controllers/booking.controller";
 import { SlotRepository } from "../repositories/slot.repository";
 import { SlotService } from "../services/slot.service";
 import { SlotController } from "../controllers/slot.controller";
+import { ServiceRepository } from "../repositories/service.repository";
+import { ServiceService } from "../services/service.service";
+import { ServiceController } from "../controllers/service.controller";
+import { BarberUnavailabilityController } from "../controllers/barber.unavailability.controller";
+import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
+import { BarberUnavailabilityService } from "../services/barber.unavailability.service";
 
 const userRoutes = Router()
 const userAuth = authMiddleware(["user"])
@@ -33,6 +39,14 @@ const favoritesController = new FavoritesController(favoritesService)
 const slotRepo = new SlotRepository()
 const slotService = new SlotService(slotRepo)
 const slotController = new SlotController(slotService)
+
+const serviceRepo = new ServiceRepository
+const serviceService = new ServiceService(serviceRepo)
+const serviceController = new ServiceController(serviceService)
+
+const barberUnavailabilityRepo = new BarberUnavailabilityRepository
+const barberUnavailabilityService = new BarberUnavailabilityService(barberUnavailabilityRepo)
+const barberUnavailabilityController = new BarberUnavailabilityController(barberUnavailabilityService)
 
 userRoutes
 .post('/signup',userController.register)
@@ -60,17 +74,26 @@ userRoutes
 userRoutes
 .get('/get-barbers', userAuth, isBlockedMiddleware, userController.fetchAllBarbers)
 .get('/get-barber-slots/:barberId', userAuth, isBlockedMiddleware, userController.fetchBarbersAndSlotRules)
-.get('/populated-slots/:id',slotController.getPopulatedSlots)
+.get('/populated-slots/:id',userAuth, isBlockedMiddleware,slotController.getPopulatedSlots)
 
 userRoutes
-.get('/bookings',bookingController.fetchBookings)
-.post('/bookings',bookingController.createBooking)
-.patch("/bookings/:id",bookingController.updateBookingStatus)
+.get('/bookings', userAuth, isBlockedMiddleware,bookingController.fetchBookings)
+.post('/bookings/stage',userAuth,isBlockedMiddleware,bookingController.stageBooking)
+.put('/bookings/coupon',userAuth,isBlockedMiddleware,bookingController.couponApplication)
+.post('/bookings/confirm',userAuth,isBlockedMiddleware,bookingController.confirmBooking)
+.post('/bookings/verify-payment',userAuth,isBlockedMiddleware,bookingController.verifyPayment)
+.patch("/bookings/:id", userAuth, isBlockedMiddleware,bookingController.updateBookingStatus)
+.get("/bookings/:id", userAuth, isBlockedMiddleware,bookingController.getBookingById)
 
 userRoutes
 .get("/favorites",userAuth,isBlockedMiddleware,favoritesController.getFavoritesByUser)
 .patch("/favorites",userAuth,isBlockedMiddleware,favoritesController.updateFavorites)
 
+userRoutes
+.get("/service", userAuth,isBlockedMiddleware,serviceController.fetch)
+.get("/service/:id",userAuth,isBlockedMiddleware,serviceController.getServiceById)
 
+userRoutes
+.get("/unavailability/:id",userAuth,isBlockedMiddleware,barberUnavailabilityController.fetchBarberUnavailability)
 
 export default userRoutes;

@@ -57,7 +57,7 @@ export class BarberUnavailabilityComponent implements OnInit {
   fetchUnavailability(): void {
     this.loading = true;
     this.unavailabilityService
-      .fetchBarberUnavailability(this.barberId)
+      .fetchBarberUnavailability(this.barberId,"barber")
       .subscribe({
         next: (data) => {
           this.unavailabilityData = data;

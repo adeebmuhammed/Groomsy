@@ -84,8 +84,9 @@ export class SlotController implements ISlotController {
       const page = parseInt(req.query.page as string) | 1
       const limit = parseInt(req.query.limit as string) | 5
       const barberId = req.params["id"]
+      const serviceId = req.query.serviceId as string
 
-      const { response,status } = await this._slotService.getPopulatedSlots(barberId,date,page,limit)
+      const { response,status } = await this._slotService.getPopulatedSlots(barberId,serviceId,date,page,limit)
 
       res.status(status).json(response)
     } catch (error) {

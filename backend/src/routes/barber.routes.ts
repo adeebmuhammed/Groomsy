@@ -16,6 +16,7 @@ import { BarberUnavailabilityController } from "../controllers/barber.unavailabi
 
 const barberRoutes = Router()
 const barberAuth = authMiddleware(["barber"])
+const multiAuth = authMiddleware(["user","barber"])
 
 const barberRepo = new BarberRepository
 const barberService = new BarberService(barberRepo)
@@ -43,19 +44,19 @@ barberRoutes
 .post('/logout',barberController.logout)
 
 barberRoutes
-.get('/slots',slotController.getSlotRulesByBarber)
-.post('/slots',slotController.createSlotRule)
-.put('/slots/:id',slotController.updateSlotRule)
-.delete('/slots/:id',slotController.deleteSlotRule)
+.get('/slots', barberAuth,slotController.getSlotRulesByBarber)
+.post('/slots',barberAuth,slotController.createSlotRule)
+.put('/slots/:id',barberAuth,slotController.updateSlotRule)
+.delete('/slots/:id',barberAuth,slotController.deleteSlotRule)
 
 barberRoutes
-.get('/bookings',bookingController.fetchBookings)
-.patch("/bookings/:id",bookingController.updateBookingStatus)
+.get('/bookings',multiAuth,bookingController.fetchBookings)
+.patch("/bookings/:id",barberAuth,bookingController.updateBookingStatus)
 
 barberRoutes
-.get("/unavailability/:id",barberUnavailabilityController.fetchBarberUnavailability)
-.patch("/unavailability/weekly/:id",barberUnavailabilityController.editWeeklyDayOff)
-.post("/unavailability/special/:id",barberUnavailabilityController.addOffDay)
-.delete("/unavailability/special/:id",barberUnavailabilityController.removeOffDay)
+.get("/unavailability/:id",barberAuth,barberUnavailabilityController.fetchBarberUnavailability)
+.patch("/unavailability/weekly/:id",barberAuth,barberUnavailabilityController.editWeeklyDayOff)
+.post("/unavailability/special/:id",barberAuth,barberUnavailabilityController.addOffDay)
+.delete("/unavailability/special/:id",barberAuth,barberUnavailabilityController.removeOffDay)
 
 export default barberRoutes;
