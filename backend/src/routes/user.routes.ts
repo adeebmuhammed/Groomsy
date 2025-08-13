@@ -20,6 +20,9 @@ import { ServiceController } from "../controllers/service.controller";
 import { BarberUnavailabilityController } from "../controllers/barber.unavailability.controller";
 import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
 import { BarberUnavailabilityService } from "../services/barber.unavailability.service";
+import { ReviewRepository } from "../repositories/review.repository";
+import { ReviewService } from "../services/review.service";
+import { ReviewController } from "../controllers/review.controller";
 
 const userRoutes = Router()
 const userAuth = authMiddleware(["user"])
@@ -47,6 +50,10 @@ const serviceController = new ServiceController(serviceService)
 const barberUnavailabilityRepo = new BarberUnavailabilityRepository
 const barberUnavailabilityService = new BarberUnavailabilityService(barberUnavailabilityRepo)
 const barberUnavailabilityController = new BarberUnavailabilityController(barberUnavailabilityService)
+
+const reviewRepo = new ReviewRepository()
+const reviewService = new ReviewService(reviewRepo)
+const reviewController = new ReviewController(reviewService)
 
 userRoutes
 .post('/signup',userController.register)
@@ -95,5 +102,9 @@ userRoutes
 
 userRoutes
 .get("/unavailability/:id",userAuth,isBlockedMiddleware,barberUnavailabilityController.fetchBarberUnavailability)
+
+userRoutes
+.post("/review",reviewController.create)
+.delete("/review/:id",reviewController.delete)
 
 export default userRoutes;
