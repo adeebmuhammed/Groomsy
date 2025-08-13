@@ -90,7 +90,7 @@ userRoutes
 .post('/bookings/confirm',userAuth,isBlockedMiddleware,bookingController.confirmBooking)
 .post('/bookings/verify-payment',userAuth,isBlockedMiddleware,bookingController.verifyPayment)
 .patch("/bookings/:id", userAuth, isBlockedMiddleware,bookingController.updateBookingStatus)
-.get("/bookings/:id", userAuth, isBlockedMiddleware,bookingController.getBookingById)
+.get("/bookings-by-id/:id", userAuth, isBlockedMiddleware,bookingController.getBookingById)
 
 userRoutes
 .get("/favorites",userAuth,isBlockedMiddleware,favoritesController.getFavoritesByUser)
@@ -104,7 +104,8 @@ userRoutes
 .get("/unavailability/:id",userAuth,isBlockedMiddleware,barberUnavailabilityController.fetchBarberUnavailability)
 
 userRoutes
-.post("/review",reviewController.create)
-.delete("/review/:id",reviewController.delete)
+.get("/review/:id",userAuth,isBlockedMiddleware,reviewController.getReviewsByUser)
+.post("/review",userAuth,isBlockedMiddleware,reviewController.create)
+.delete("/review/:id",userAuth,isBlockedMiddleware,reviewController.delete)
 
 export default userRoutes;

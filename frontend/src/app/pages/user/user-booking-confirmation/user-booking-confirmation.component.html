@@ -1,12 +1,12 @@
 <app-user-header></app-user-header>
 
 <div class="booking-confirmation-wrapper container my-5">
-
   <div *ngIf="error" class="alert alert-danger text-center">
     {{ error }}
   </div>
 
-  <div *ngIf="booking" class="confirmation-card card shadow-lg border-0">
+  <!-- Success View -->
+  <div *ngIf="booking && isSuccess" class="confirmation-card card shadow-lg border-0">
     <div class="card-body text-center">
       <div class="success-icon">✅</div>
       <h2 class="confirmation-title">Booking Confirmed!</h2>
@@ -35,6 +35,33 @@
 
     <div class="text-center mt-4 pb-4">
       <a routerLink="/user/home" class="btn btn-home">Go to Home</a>
+    </div>
+  </div>
+
+  <!-- Failure / Non-Success View -->
+  <div *ngIf="booking && !isSuccess" class="confirmation-card card shadow-lg border-0">
+    <div class="card-body text-center">
+      <div class="error-icon">❌</div>
+      <h2 class="confirmation-title text-danger">Booking Not Completed</h2>
+      <p class="confirmation-subtitle">
+        Your booking is still in <strong>{{ booking.status | titlecase }}</strong> state.
+      </p>
+      <p>Please retry the payment or contact support.</p>
+      <hr class="divider">
+    </div>
+
+    <div class="booking-details p-4">
+      <!-- Show same booking info -->
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>Booking ID:</strong> {{ booking.id }}</li>
+        <li class="list-group-item"><strong>Service:</strong> {{ service?.name }}</li>
+        <li class="list-group-item"><strong>Status:</strong> {{ booking.status | titlecase }}</li>
+      </ul>
+    </div>
+
+    <div class="text-center mt-4 pb-4">
+      <button class="btn btn-primary" (click)="router.navigate(['/user/bookings'])">Retry Payment</button>
+      <a routerLink="/user/home" class="btn btn-secondary ms-2">Go to Home</a>
     </div>
   </div>
 </div>

@@ -106,7 +106,7 @@ export class BookingService {
 
   getBookingById(role: 'user' | 'barber' | 'admin', bookingId: string) {
     return this.http.get<BookingResponseDto>(
-      `${environment.apiBaseUrl}/${role}/bookings/${bookingId}`,
+      `${environment.apiBaseUrl}/${role}/bookings-by-id/${bookingId}`,
       { withCredentials: true }
     );
   }
