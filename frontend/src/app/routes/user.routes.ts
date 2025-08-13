@@ -14,6 +14,7 @@ import { UserBarberDetailsComponent } from '../pages/user/user-barber-details/us
 import { UserBookingComponent } from '../pages/user/user-booking/user-booking.component';
 import { USER_ROUTES_PATHS } from '../constants/user-route.constant';
 import { UserBookingConfirmationComponent } from '../pages/user/user-booking-confirmation/user-booking-confirmation.component';
+import { UserReviewComponent } from '../pages/user/user-review/user-review.component';
 
 export const USER_ROUTES: Routes = [
   {
@@ -66,6 +67,11 @@ export const USER_ROUTES: Routes = [
   {
     path: USER_ROUTES_PATHS.BOOKING_CONFIRMATION,
     component: UserBookingConfirmationComponent,
+    canActivate: [userAuthGuard]
+  },
+  {
+    path: USER_ROUTES_PATHS.REVIEW,
+    component: UserReviewComponent,
     canActivate: [userAuthGuard]
   }
 ];

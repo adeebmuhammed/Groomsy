@@ -106,8 +106,25 @@ export class BookingService {
 
   getBookingById(role: 'user' | 'barber' | 'admin', bookingId: string) {
     return this.http.get<BookingResponseDto>(
-      `${environment.apiBaseUrl}/${role}/bookings/${bookingId}`,
+      `${environment.apiBaseUrl}/${role}/bookings-by-id/${bookingId}`,
       { withCredentials: true }
+    );
+  }
+
+  getBookingByStatus(
+    userId: string,
+    status: 'pending' | 'staged' | 'cancelled' | 'finished',
+    page = 1,
+    limit = 5
+  ): Observable<{ data: BookingResponseDto[]; totalCount: number }> {
+    const params = new HttpParams()
+      .set('status', status)
+      .set('page', page?.toString() || '1')
+      .set('limit', limit?.toString() || '5');
+
+    return this.http.get<{ data: BookingResponseDto[]; totalCount: number }>(
+      `${environment.apiBaseUrl}/user/bookings/${userId}`,
+      { params, withCredentials: true }
     );
   }
 }
