@@ -79,4 +79,22 @@ export class ServiceController implements IServiceController {
       });
     }
   }
+
+  getServiceById = async (req: Request, res: Response): Promise<void> =>{
+    try {
+      const serviceId = req.params["id"] as string
+
+      const { response,status } = await this._serviceService.getServiceById(serviceId);
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch service by id",
+      });
+    }
+  }
 }

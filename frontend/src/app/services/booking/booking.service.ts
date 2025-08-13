@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import {
   BookingCreateRequestDto,
   BookingResponseDto,
+  confirmBookingDto,
+  confirmData,
   IMessageResponse,
 } from '../../interfaces/interfaces';
 import { environment } from '../../../environments/environment';
@@ -23,18 +25,23 @@ export class BookingService {
     const params = new HttpParams()
       .set('role', role)
       .set('id', id)
-      .set('page', page | 1)
-      .set('limit', limit | 5);
+      .set('page', page?.toString() || '1')
+      .set('limit', limit?.toString() || '5');
+
     return this.http.get<{ data: BookingResponseDto[]; totalCount: number }>(
       `${environment.apiBaseUrl}/${role}/bookings`,
       { params, withCredentials: true }
     );
   }
 
-  bookSlot(userId: string, bookingData: BookingCreateRequestDto) {
+  // Stage booking before checkout
+  stageBooking(
+    userId: string,
+    bookingData: BookingCreateRequestDto
+  ): Observable<BookingResponseDto> {
     const params = new HttpParams().set('userId', userId);
-    return this.http.post<{ message: string }>(
-      `${environment.apiBaseUrl}/user/bookings`,
+    return this.http.post<BookingResponseDto>(
+      `${environment.apiBaseUrl}/user/bookings/stage`,
       bookingData,
       {
         params,
@@ -43,8 +50,48 @@ export class BookingService {
     );
   }
 
+  couponApplication(
+    bookingId: string,
+    couponCode: string
+  ): Observable<BookingResponseDto> {
+    const params = new HttpParams().set('bookingId', bookingId);
+    const body = { couponCode };
+    return this.http.put<BookingResponseDto>(
+      `${environment.apiBaseUrl}/user/bookings/coupon`,
+      { couponCode },
+      { params, withCredentials: true }
+    );
+  }
+
+  confirmBooking(
+    userId: string,
+    bookingId: string,
+    confirmData: confirmData
+  ): Observable<confirmBookingDto> {
+    const params = new HttpParams()
+      .set('userId', userId)
+      .set('bookingId', bookingId);
+
+    return this.http.post<confirmBookingDto>(
+      `${environment.apiBaseUrl}/user/bookings/confirm`,
+      confirmData,
+      {
+        params,
+        withCredentials: true,
+      }
+    );
+  }
+
+  verifyPayment(paymentData: any): Observable<IMessageResponse> {
+    return this.http.post<IMessageResponse>(
+      `${environment.apiBaseUrl}/user/bookings/verify-payment`,
+      paymentData,
+      { withCredentials: true }
+    );
+  }
+
   updateBookingStatus(
-    role: 'user' | 'barber' | "admin",
+    role: 'user' | 'barber' | 'admin',
     id: string,
     bookingStatus: string
   ): Observable<IMessageResponse> {
@@ -54,6 +101,13 @@ export class BookingService {
       `${environment.apiBaseUrl}/${role}/bookings/${id}`,
       body,
       { params, withCredentials: true }
+    );
+  }
+
+  getBookingById(role: 'user' | 'barber' | 'admin', bookingId: string) {
+    return this.http.get<BookingResponseDto>(
+      `${environment.apiBaseUrl}/${role}/bookings/${bookingId}`,
+      { withCredentials: true }
     );
   }
 }

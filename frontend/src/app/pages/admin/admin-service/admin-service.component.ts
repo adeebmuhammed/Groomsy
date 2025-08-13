@@ -45,7 +45,7 @@ export class AdminServiceComponent {
   
     loadServices(): void {
       this.serviceService
-        .fetch(this.searchTerm, this.currentPage, this.itemsPerPage)
+        .fetch("admin",this.searchTerm, this.currentPage, this.itemsPerPage)
         .subscribe({
           next: (response) => {
             this.services = response.data || [];

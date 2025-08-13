@@ -1,0 +1,63 @@
+.service-card {
+  position: relative;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.05);
+}
+
+.service-card:hover {
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+.service-info h4 {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.service-info p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Info Icon Style */
+.info-icon {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  margin-top: 8px;
+  color: #a855f7;
+}
+
+.info-icon .material-icons {
+  font-size: 18px;
+}
+
+/* Tooltip Styling */
+.tooltip {
+  visibility: hidden;
+  opacity: 0;
+  width: 200px;
+  background-color: #fff;
+  color: #000;
+  text-align: left;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.15);
+  position: absolute;
+  z-index: 1;
+  top: 25px;
+  left: 0;
+  transition: opacity 0.3s ease;
+}
+
+.info-icon:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}

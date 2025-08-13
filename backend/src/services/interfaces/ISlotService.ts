@@ -7,5 +7,5 @@ export interface ISlotService{
     createSlotRule(barberId: string,data: SlotRuleCreateRequestDto): Promise<{ response: SlotRuleReponseDto; message: string; status: number }>;
     updateSlotRule(slotId: string,data: SlotRuleCreateRequestDto): Promise<{ response: SlotRuleReponseDto; message: string; status: number }>
     deleteSlotRule(slotId: string):Promise<{response: MessageResponseDto; status: number}>;
-    getPopulatedSlots(barberId:string,date: string,page: number,limit: number):Promise<{response: SlotResponseDto, status: number}>
+    getPopulatedSlots(barberId:string,serviceId: string,date: string,page: number,limit: number):Promise<{response: SlotResponseDto, status: number}>
 }

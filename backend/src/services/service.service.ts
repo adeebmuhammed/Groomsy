@@ -97,4 +97,16 @@ export class ServiceService implements IServiceService{
             status: STATUS_CODES.OK
         }
     }
+
+    getServiceById = async (serviceId: string): Promise<{ response: ServiceResponseDto; status: number; }> => {
+        const service = await this._serviceRepo.findById(serviceId)
+        if (!service) {
+            throw new Error("service not found")
+        }
+
+        return{
+            response : ServiceMapper.toServiceResponse(service),
+            status: STATUS_CODES.OK
+        }
+    }
 }

@@ -1,0 +1,42 @@
+<app-user-header></app-user-header>
+
+<div class="booking-confirmation-wrapper container my-5">
+
+  <div *ngIf="error" class="alert alert-danger text-center">
+    {{ error }}
+  </div>
+
+  <div *ngIf="booking" class="confirmation-card card shadow-lg border-0">
+    <div class="card-body text-center">
+      <div class="success-icon">✅</div>
+      <h2 class="confirmation-title">Booking Confirmed!</h2>
+      <p class="confirmation-subtitle">Thank you for your booking</p>
+      <hr class="divider">
+    </div>
+
+    <div class="booking-details p-4">
+      <h5 class="details-heading">Booking Details</h5>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>Booking ID:</strong> {{ booking.id }}</li>
+        <li class="list-group-item"><strong>Service:</strong> {{ service?.name }}</li>
+        <li class="list-group-item"><strong>Status:</strong> {{ booking.status | titlecase }}</li>
+        <li class="list-group-item">
+          <strong>Date:</strong> {{ booking.slotDetails.date | date:'fullDate' }}<br>
+          <strong>Time:</strong> {{ booking.slotDetails.startTime | date:'shortTime' }} - {{ booking.slotDetails.endTime | date:'shortTime' }}
+        </li>
+        <li class="list-group-item"><strong>Total Price:</strong> ₹{{ booking.totalPrice }}</li>
+        <li class="list-group-item" *ngIf="booking.discountAmount > 0">
+          <strong>Discount:</strong> -₹{{ booking.discountAmount }} 
+          <span *ngIf="booking.couponCode"> (Coupon: {{ booking.couponCode }})</span>
+        </li>
+        <li class="list-group-item"><strong>Final Price:</strong> ₹{{ booking.finalPrice }}</li>
+      </ul>
+    </div>
+
+    <div class="text-center mt-4 pb-4">
+      <a routerLink="/user/home" class="btn btn-home">Go to Home</a>
+    </div>
+  </div>
+</div>
+
+<app-user-footer></app-user-footer>
