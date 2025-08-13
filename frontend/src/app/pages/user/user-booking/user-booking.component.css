@@ -63,13 +63,16 @@
 }
 
 .status-badge.cancelled_by_user,
-.status-badge.cancelled_by_barber,
-.status-badge.cancelled_by_admin {
+.status-badge.cancelled_by_barber {
   background-color: #ef4444;
 }
 
 .status-badge.finished {
   background-color: #10b981;
+}
+
+.status-badge.staged {
+  background-color: #636967;
 }
 
 .btn-primary {
@@ -124,4 +127,27 @@
   background-color: #f3f4f6;
   color: #9ca3af;
   cursor: not-allowed;
+}
+.status-tabs {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.status-tabs button {
+  flex: 1;
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.status-tabs button.active {
+  background: #3b82f6; /* blue */
+  color: #fff;
+  border-color: #3b82f6;
+}
+
+.status-tabs button:not(:last-child) {
+  border-right: none;
 }

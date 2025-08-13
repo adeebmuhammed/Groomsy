@@ -9,4 +9,5 @@ export interface IBookingService{
     verfyPayment(razorpay_payment_id: string, razorpay_order_id: string, razorpay_signature: string, bookingId: string):Promise<{response: MessageResponseDto, status: number}>;
     updateBookingStatus( role: "user" | "barber", bookingId: string, bookingStatus: string):Promise<{response: MessageResponseDto, status: number}>;
     getBookingById(bookingId: string): Promise<{ response : BookingResponseDto, status: number}>
+    getBookingsByStatus(status: "pending" | "staged" | "cancelled" | "finished", userId: string, page: number, limit: number):Promise<{response: {data: BookingResponseDto[],totalCount: number}, status:number}>;
 }

@@ -149,4 +149,25 @@ export class BookingController implements IBookingController {
       });
     }
   }
+
+  getBookingsByStatus = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.params["id"]
+      const bookingStatus = req.query.status as "pending" | "staged" | "cancelled"| "finished"
+      const page = parseInt(req.query.page as string) || 1
+      const limit = parseInt(req.query.limit as string) || 5
+
+      const { response,status } = await this._bookingService.getBookingsByStatus(bookingStatus,userId,page,limit)
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch booking by status",
+      });
+    }
+  }
 }

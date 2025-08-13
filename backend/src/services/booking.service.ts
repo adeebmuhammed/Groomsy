@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import {
   BookingCreateRequestDto,
   BookingResponseDto,
@@ -312,15 +312,58 @@ export class BookingService implements IBookingService {
     };
   };
 
-  getBookingById = async (bookingId: string): Promise<{ response: BookingResponseDto; status: number; }> =>{
-    const booking = await this._bookingRepo.findById(bookingId)
+  getBookingById = async (
+    bookingId: string
+  ): Promise<{ response: BookingResponseDto; status: number }> => {
+    const booking = await this._bookingRepo.findById(bookingId);
     if (!booking) {
-      throw new Error("booking not found")
+      throw new Error("booking not found");
     }
 
-    return{
+    return {
       response: BookingMapper.toBookingResponse(booking),
-      status: STATUS_CODES.OK
+      status: STATUS_CODES.OK,
+    };
+  };
+
+  getBookingsByStatus = async (
+    status: "pending" | "staged" | "cancelled" | "finished",
+    userId: string,
+    page: number,
+    limit: number
+  ): Promise<{
+    response: { data: BookingResponseDto[]; totalCount: number };
+    status: number;
+  }> => {
+    const user = await this._userRepo.findById(userId);
+    if (!user) {
+      throw new Error("user not found");
     }
-  }
+
+    const allowedStatuses = ["pending", "staged", "cancelled", "finished"];
+    if (!allowedStatuses.includes(status)) {
+      throw new Error("invalid booking status");
+    }
+
+    const filter: FilterQuery<IBooking> = {
+      user: userId,
+      status:
+        status === "cancelled"
+          ? { $in: ["cancelled_by_user", "cancelled_by_barber"] }
+          : status,
+    };
+
+    const skip = (page - 1) * limit;
+
+    const { bookings, totalCount } =
+      await this._bookingRepo.findWithPaginationAndCount(filter, skip, limit);
+
+    return {
+      response: {
+        data: BookingMapper.toBookingResponseArray(bookings),
+        totalCount,
+      },
+      status: STATUS_CODES.OK,
+    };
+  };
 }
