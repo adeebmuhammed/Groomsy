@@ -17,6 +17,9 @@ import { OfferController } from "../controllers/offer.controller";
 import { ServiceRepository } from "../repositories/service.repository";
 import { ServiceService } from "../services/service.service";
 import { ServiceController } from "../controllers/service.controller";
+import { SubscriptionPlanController } from "../controllers/subscription.plan.controller";
+import { SubscriptionPlanRepository } from "../repositories/subscription.plan.repository";
+import { SubscriptionPlanService } from "../services/subscription.plan.service";
 
 const adminRoutes = Router()
 const adminAuth = authMiddleware(["admin"])
@@ -42,6 +45,10 @@ const offerController = new OfferController(offerService)
 const serviceRepo = new ServiceRepository
 const serviceService = new ServiceService(serviceRepo)
 const serviceController = new ServiceController(serviceService)
+
+const planRepo = new SubscriptionPlanRepository()
+const planService = new SubscriptionPlanService(planRepo)
+const planController = new SubscriptionPlanController(planService)
 
 adminRoutes.post('/login',adminController.login)
 adminRoutes.post('/logout',adminController.logout)
@@ -74,5 +81,10 @@ adminRoutes
 .post("/service", adminAuth,serviceController.create)
 .put("/service/:id", adminAuth,serviceController.edit)
 .delete("/service/:id", adminAuth,serviceController.delete)
+
+adminRoutes
+.get("/subscription",planController.getSubscriptionPlans)
+.post("/subscription",planController.create)
+.patch("/subscription/:id",planController.updateActivation)
 
 export default adminRoutes;
