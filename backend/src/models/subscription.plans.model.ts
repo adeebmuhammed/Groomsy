@@ -1,4 +1,4 @@
-import mongoose, { Schema,Document, mongo } from "mongoose";
+import mongoose, { Schema,Document } from "mongoose";
 
 export interface ISubscriptionPlan extends Document {
   name: string;
@@ -18,7 +18,7 @@ const SubscriptionPlanSchema: Schema<ISubscriptionPlan> = new Schema({
     durationUnit: { type: String, enum: [ "month" , "year" , "day" ], required: true },
     description: { type: String, required: true },
     isActive: { type: Boolean, default: true }
-})
+},{ timestamps: true });
 
 const SubscriptionPlan = mongoose.model("SubscriptionPlan",SubscriptionPlanSchema)
 export default SubscriptionPlan;
