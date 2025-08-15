@@ -83,8 +83,8 @@ adminRoutes
 .delete("/service/:id", adminAuth,serviceController.delete)
 
 adminRoutes
-.get("/subscription",planController.getSubscriptionPlans)
-.post("/subscription",planController.create)
-.patch("/subscription/:id",planController.updateActivation)
+.get("/subscription",adminAuth,planController.getSubscriptionPlans)
+.post("/subscription",adminAuth,planController.create)
+.patch("/subscription/:id",adminAuth,planController.updateActivation)
 
 export default adminRoutes;
