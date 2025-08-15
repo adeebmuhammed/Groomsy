@@ -1,0 +1,34 @@
+<app-admin-header></app-admin-header>
+
+<div class="admin-layout">
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <div class="admin-main-content">
+    <div class="subscription-page">
+        <div class="barber-list-header">
+        <h1 class="barber-list-title">Subscription Management</h1>
+        <button class="add-coupon-button" (click)="showModal()">+ Create Plan</button>
+      </div>
+
+      <app-admin-table
+        [data]="plans"
+        [columns]="columns"
+        [currentPage]="currentPage"
+        [itemsPerPage]="itemsPerPage"
+        [totalPages]="totalPages"
+        (onPageChange)="changePage($event)"
+        (onToggleStatus)="updateActivation($event)"
+        (onSearch)="searchChanged($event)"
+      >
+      </app-admin-table>
+
+      <app-subscription-form
+        [visible]="displayPlanFormModal"
+        (onSubmit)="createPlan($event)"
+        (onClose)="modalClose()"
+      ></app-subscription-form>
+
+      <app-admin-footer></app-admin-footer>
+    </div>
+  </div>
+</div>
