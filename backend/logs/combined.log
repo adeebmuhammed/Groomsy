@@ -3871,3 +3871,4 @@
 2025-08-15 10:16:30 [INFO]: POST /admin/subscription
 2025-08-15 10:16:30 [INFO]: GET /admin/subscription?search=&page=1&limit=5
 2025-08-15 10:16:38 [INFO]: POST /admin/logout
+2025-08-15 22:26:32 [INFO]: POST /barber/subscription

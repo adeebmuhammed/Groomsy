@@ -13,6 +13,9 @@ import { BookingController } from "../controllers/booking.controller";
 import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
 import { BarberUnavailabilityService } from "../services/barber.unavailability.service";
 import { BarberUnavailabilityController } from "../controllers/barber.unavailability.controller";
+import { SubscriptionRepository } from "../repositories/subscription.repository";
+import { SubscriptionService } from "../services/subscription.service";
+import { SubscriptionController } from "../controllers/subscription.controller";
 
 const barberRoutes = Router()
 const barberAuth = authMiddleware(["barber"])
@@ -33,6 +36,10 @@ const bookingController = new BookingController(bookingService)
 const barberUnavailabilityRepo = new BarberUnavailabilityRepository
 const barberUnavailabilityService = new BarberUnavailabilityService(barberUnavailabilityRepo)
 const barberUnavailabilityController = new BarberUnavailabilityController(barberUnavailabilityService)
+
+const subscriptionRepo = new SubscriptionRepository()
+const subscriptionService = new SubscriptionService(subscriptionRepo)
+const subscriptionController = new SubscriptionController(subscriptionService)
 
 barberRoutes
 .post('/signup',barberController.signup)
@@ -58,5 +65,10 @@ barberRoutes
 .patch("/unavailability/weekly/:id",barberAuth,barberUnavailabilityController.editWeeklyDayOff)
 .post("/unavailability/special/:id",barberAuth,barberUnavailabilityController.addOffDay)
 .delete("/unavailability/special/:id",barberAuth,barberUnavailabilityController.removeOffDay)
+
+barberRoutes
+.post("/subscription",subscriptionController.manageSubscription)
+.put("/subscription",subscriptionController.renewSubscription)
+.post("verify-payment",subscriptionController.verifySubscriptionPayment)
 
 export default barberRoutes;
