@@ -8,18 +8,59 @@ import razorpayInstance from "../utils/razorpay";
 import { ISubscriptionService } from "./interfaces/ISubscriptionService";
 import crypto from "crypto";
 import { calculateExpiryDate } from "../utils/expiryDateCalculator";
-import { confirmSubscription } from "../dto/subscription.dto";
+import { confirmSubscription, SubscriptionDto } from "../dto/subscription.dto";
+import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
+import { BarberRepository } from "../repositories/barber.repository";
+import { SubscriptionMapper } from "../mappers/subscription.mapper";
 
 export class SubscriptionService implements ISubscriptionService {
   private _planRepo: ISubscriptionPlanRepository;
+  private _barberRepo: IBarberRepository;
   constructor(private _subscriptionRepo: ISubscriptionRepository) {
     this._planRepo = new SubscriptionPlanRepository();
+    this._barberRepo = new BarberRepository();
   }
+
+  getSubscriptionDetailsByBarber = async (
+    barberId: string
+  ): Promise<{ response: SubscriptionDto; status: number }> => {
+    const barber = await this._barberRepo.findById(barberId);
+    if (!barber) {
+      throw new Error("barber not found");
+    }
+
+    let subscription = await this._subscriptionRepo.findOne({
+      barber: barberId,
+    });
+
+    let response: SubscriptionDto;
+    if (subscription) {
+      response = SubscriptionMapper.toSuscriptionResponse(subscription);
+    } else {
+      response = {
+        id: "",
+        plan: "No active plan",
+        barber: barberId,
+        expiryDate: new Date(0),
+        status: "pending",
+      };
+    }
+
+    return {
+      response,
+      status: STATUS_CODES.OK,
+    };
+  };
 
   manageSubscription = async (
     barberId: string,
     planId: string
   ): Promise<{ response: confirmSubscription; status: number }> => {
+    const barber = await this._barberRepo.findById(barberId);
+    if (!barber) {
+      throw new Error("barber not found");
+    }
+
     const plan = await this._planRepo.findById(planId);
     if (!plan) throw new Error("Plan not found");
 
@@ -62,7 +103,7 @@ export class SubscriptionService implements ISubscriptionService {
         orderId: razorpayOrder.id,
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
-        keyId: process.env.RAZORPAY_KEY_ID || '',
+        keyId: process.env.RAZORPAY_KEY_ID || "",
       },
       status: STATUS_CODES.OK,
     };
@@ -71,6 +112,11 @@ export class SubscriptionService implements ISubscriptionService {
   renewSubscription = async (
     barberId: string
   ): Promise<{ response: confirmSubscription; status: number }> => {
+    const barber = await this._barberRepo.findById(barberId);
+    if (!barber) {
+      throw new Error("barber not found");
+    }
+
     const subscription = await this._subscriptionRepo.findOne({
       barber: barberId,
     });
@@ -80,7 +126,7 @@ export class SubscriptionService implements ISubscriptionService {
     if (!plan) throw new Error("Plan not found");
 
     const razorpayOrder = await razorpayInstance.orders.create({
-      amount: Math.round(plan.price * 100),
+      amount: Math.round(plan.renewalPrice * 100),
       currency: "INR",
       receipt: barberId + "-" + Date.now(),
     });
@@ -98,7 +144,7 @@ export class SubscriptionService implements ISubscriptionService {
         orderId: razorpayOrder.id,
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
-        keyId: process.env.RAZORPAY_KEY_ID || '',
+        keyId: process.env.RAZORPAY_KEY_ID || "",
       },
       status: STATUS_CODES.OK,
     };

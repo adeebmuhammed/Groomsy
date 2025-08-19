@@ -1,0 +1,76 @@
+.barber-layout {
+  display: flex;
+  padding-top: 64px; /* height of header */
+  min-height: 100vh;
+}
+
+.barber-sidebar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  height: calc(100vh - 64px);
+  width: 250px;
+  z-index: 999;
+}
+
+.barber-main-content {
+  margin-left: 250px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 64px);
+}
+
+.barber-subscription-page {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.subscription-wrapper {
+  width: 100%;
+  max-width: 700px;
+}
+
+.subscription-card {
+  width: 100%;
+  border: none;
+  background: #ffffff;
+}
+
+app-barber-footer {
+  margin-top: auto;
+}
+
+@media (max-width: 768px) {
+  .barber-sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    top: 0;
+  }
+
+  .barber-main-content {
+    margin-left: 0;
+  }
+
+  .barber-layout {
+    flex-direction: column;
+    padding-top: 56px;
+  }
+
+  .subscription-wrapper {
+    padding: 0 10px;
+  }
+}
+.plan-bar {
+  background: #f9fafc;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease-in-out;
+}
+.plan-bar:hover {
+  background: #eef2ff;
+  transform: scale(1.01);
+}

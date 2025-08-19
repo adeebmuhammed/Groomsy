@@ -102,4 +102,18 @@ export class SubscriptionPlanService implements ISubscriptionPlanService {
       status: STATUS_CODES.OK,
     };
   };
+
+  getPlansForBarber = async (): Promise<{ response: SubscriptionPlanDto[]; status: number; }> => {
+    const plans = await this._planRepo.find({})
+    if (!plans) {
+      throw new Error("plans not found")
+    }
+
+    const response: SubscriptionPlanDto[] = PlanMapper.toPlanResponseArray(plans)
+
+    return{
+      response,
+      status: STATUS_CODES.OK
+    }
+  }
 }

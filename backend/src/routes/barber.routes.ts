@@ -16,6 +16,9 @@ import { BarberUnavailabilityController } from "../controllers/barber.unavailabi
 import { SubscriptionRepository } from "../repositories/subscription.repository";
 import { SubscriptionService } from "../services/subscription.service";
 import { SubscriptionController } from "../controllers/subscription.controller";
+import { SubscriptionPlanController } from "../controllers/subscription.plan.controller";
+import { SubscriptionPlanRepository } from "../repositories/subscription.plan.repository";
+import { SubscriptionPlanService } from "../services/subscription.plan.service";
 
 const barberRoutes = Router()
 const barberAuth = authMiddleware(["barber"])
@@ -40,6 +43,10 @@ const barberUnavailabilityController = new BarberUnavailabilityController(barber
 const subscriptionRepo = new SubscriptionRepository()
 const subscriptionService = new SubscriptionService(subscriptionRepo)
 const subscriptionController = new SubscriptionController(subscriptionService)
+
+const planRepo = new SubscriptionPlanRepository()
+const planService = new SubscriptionPlanService(planRepo)
+const planController = new SubscriptionPlanController(planService)
 
 barberRoutes
 .post('/signup',barberController.signup)
@@ -67,8 +74,10 @@ barberRoutes
 .delete("/unavailability/special/:id",barberAuth,barberUnavailabilityController.removeOffDay)
 
 barberRoutes
-.post("/subscription",subscriptionController.manageSubscription)
-.put("/subscription",subscriptionController.renewSubscription)
-.post("verify-payment",subscriptionController.verifySubscriptionPayment)
+.get("/subscription/plans",planController.getPlansForBarber)
+.get("/subscription/:id",barberAuth,subscriptionController.getSubscriptionDetailsByBarber)
+.post("/subscription",barberAuth,subscriptionController.manageSubscription)
+.put("/subscription",barberAuth,subscriptionController.renewSubscription)
+.post("/subscription/verify-payment",barberAuth,subscriptionController.verifySubscriptionPayment)
 
 export default barberRoutes;

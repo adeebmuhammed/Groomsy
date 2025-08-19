@@ -6,6 +6,24 @@ import { ISubscriptionService } from "../services/interfaces/ISubscriptionServic
 export class SubscriptionController implements ISubscriptionController {
   constructor(private _subscriptionService: ISubscriptionService) {}
 
+  getSubscriptionDetailsByBarber = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const barberId = req.params["id"]
+
+      const { response,status } = await this._subscriptionService.getSubscriptionDetailsByBarber(barberId)
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error("failed to fetch subscription details:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "failed to fetch subscription details",
+      });
+    }
+  }
+
   manageSubscription = async (req: Request, res: Response): Promise<void> => {
     try {
       const { barberId, planId } = req.body;
