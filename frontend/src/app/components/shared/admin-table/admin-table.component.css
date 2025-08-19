@@ -54,6 +54,11 @@
   color: #fee2e2;
 }
 
+.status-badge.inactive {
+  background-color: #dc2626;
+  color: #fee2e2;
+}
+
 /* Action button (Block/Unblock) */
 .status-toggle-button {
   padding: 6px 12px;
