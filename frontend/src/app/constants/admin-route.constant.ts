@@ -8,5 +8,6 @@ export const ADMIN_ROUTES_PATHS = {
   COUPONS: `${ADMIN_BASE}/coupons`,
   BOOKINGS: `${ADMIN_BASE}/bookings`,
   OFFERS: `${ADMIN_BASE}/offers`,
-  SERVICES: `${ADMIN_BASE}/services`
+  SERVICES: `${ADMIN_BASE}/services`,
+  SUBSCRIPTION: `${ADMIN_BASE}/subscription`
 };

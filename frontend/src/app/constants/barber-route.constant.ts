@@ -9,5 +9,6 @@ export const BARBER_ROUTES_PATHS = {
   RESET_PASSWORD: `${BARBER_BASE}/reset-password`,
   SLOTS: `${BARBER_BASE}/slots`,
   BOOKINGS: `${BARBER_BASE}/bookings`,
-  UNAVAILABILITY: `${BARBER_BASE}/unavailability`
+  UNAVAILABILITY: `${BARBER_BASE}/unavailability`,
+  SUBSCRIPTION: `${BARBER_BASE}/subscription`,
 };

@@ -1,0 +1,91 @@
+<div class="modal-overlay" *ngIf="visible">
+  <div class="modal-container">
+    <h3 class="modal-title">
+      {{ planData ? "Edit Subscription Plan" : "Add Subscription Plan" }}
+    </h3>
+
+    <form [formGroup]="planForm" (ngSubmit)="submitForm()">
+      <!-- Name -->
+      <label>Name:</label>
+      <input
+        type="text"
+        formControlName="name"
+        class="form-control"
+        placeholder="Enter plan name"
+      />
+      <div class="error" *ngIf="planForm.get('name')?.touched && planForm.get('name')?.invalid">
+        Name is required
+      </div>
+
+      <!-- Price -->
+      <label>Price:</label>
+      <input
+        type="number"
+        formControlName="price"
+        class="form-control"
+        placeholder="Enter price"
+      />
+      <div class="error" *ngIf="planForm.get('price')?.touched && planForm.get('price')?.invalid">
+        Price is required and must be greater than 0
+      </div>
+
+      <!-- Renewal Price -->
+      <label>Renewal Price:</label>
+      <input
+        type="number"
+        formControlName="renewalPrice"
+        class="form-control"
+        placeholder="Enter renewal price"
+      />
+      <div class="error" *ngIf="planForm.get('renewalPrice')?.touched && planForm.get('renewalPrice')?.invalid">
+        Renewal price is required and must be greater than 0
+      </div>
+
+      <!-- Duration -->
+      <label>Duration:</label>
+      <input
+        type="number"
+        formControlName="duration"
+        class="form-control"
+        placeholder="Enter duration"
+      />
+      <div class="error" *ngIf="planForm.get('duration')?.touched && planForm.get('duration')?.invalid">
+        Duration is required and must be greater than 0
+      </div>
+
+      <!-- Duration Unit -->
+      <label>Duration Unit:</label>
+      <select formControlName="durationUnit" class="form-control">
+        <option value="">Select unit</option>
+        <option value="day">Day</option>
+        <option value="month">Month</option>
+        <option value="year">Year</option>
+      </select>
+      <div class="error" *ngIf="planForm.get('durationUnit')?.touched && planForm.get('durationUnit')?.invalid">
+        Duration unit is required
+      </div>
+
+      <!-- Description -->
+      <label>Description:</label>
+      <textarea
+        formControlName="description"
+        class="form-control"
+        placeholder="Enter description"
+      ></textarea>
+
+      <!-- Actions -->
+      <div class="modal-actions">
+        <button type="submit" class="submit-button">
+          {{ planData ? "Update" : "Add" }}
+        </button>
+        <button
+          type="button"
+          class="submit-button cancel-btn"
+          (click)="close()"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
