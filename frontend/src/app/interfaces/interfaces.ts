@@ -292,11 +292,19 @@ export interface CreateSubscriptionPlanDto{
   description?: string;
 }
 
-export interface CreateSubscriptionPlanDto{
-    name: string;
-  price: number;
-  renewalPrice: number;
-  duration: number;
-  durationUnit: "month" | "year" | "day";
-  description?: string;
+
+export interface SubscriptionDto {
+  id: string;
+  plan: string;
+  barber: string;
+  expiryDate: Date;
+  status: "active" | "pending";
+  razorpayOrderId?: string;
+}
+export interface confirmSubscription {
+  message: string;
+  orderId: string;
+  amount: string | number;
+  currency: string;
+  keyId: string;
 }
