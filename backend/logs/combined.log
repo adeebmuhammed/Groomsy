@@ -4003,3 +4003,16 @@
 2025-08-19 09:15:01 [INFO]: GET /barber/subscription/6898ce9c6d80bc55be161c4d
 2025-08-19 09:15:06 [INFO]: GET /barber/subscription/6898ce9c6d80bc55be161c4d
 2025-08-19 09:15:10 [INFO]: GET /barber/subscription/6898ce9c6d80bc55be161c4d
+2025-08-20 10:38:04 [INFO]: GET /barber/subscription/6898ce9c6d80bc55be161c4d
+2025-08-20 10:38:04 [INFO]: POST /refresh-token
+2025-08-20 10:38:04 [INFO]: GET /barber/subscription/6898ce9c6d80bc55be161c4d
+2025-08-20 10:39:08 [INFO]: GET /barber/subscription/6898ce9c6d80bc55be161c4d
+2025-08-20 10:39:45 [INFO]: GET /barber/unavailability/6898ce9c6d80bc55be161c4d
+2025-08-20 10:39:46 [INFO]: GET /barber/subscription/6898ce9c6d80bc55be161c4d
+2025-08-20 10:40:10 [INFO]: GET /barber/unavailability/6898ce9c6d80bc55be161c4d
+2025-08-20 10:40:11 [INFO]: GET /barber/subscription/6898ce9c6d80bc55be161c4d
+2025-08-20 10:40:28 [INFO]: GET /barber/subscription/6898ce9c6d80bc55be161c4d
+2025-08-20 10:41:11 [INFO]: GET /barber/subscription/6898ce9c6d80bc55be161c4d
+2025-08-20 10:41:29 [INFO]: GET /barber/subscription/6898ce9c6d80bc55be161c4d
+2025-08-20 10:43:03 [INFO]: GET /barber/slots?barberId=6898ce9c6d80bc55be161c4d&page=1&limit=5
+2025-08-20 10:43:41 [INFO]: POST /barber/slots?barberId=6898ce9c6d80bc55be161c4d
