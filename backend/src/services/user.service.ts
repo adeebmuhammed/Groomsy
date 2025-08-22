@@ -1,9 +1,6 @@
 import bcrypt from "bcrypt";
 import { IUserService } from "./interfaces/IUserService";
-import {
-  UserRegisterRequestDto,
-  UserLoginResponseDto,
-} from "../dto/user.dto";
+import { UserRegisterRequestDto, UserLoginResponseDto } from "../dto/user.dto";
 import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import {
   isValidEmail,
@@ -22,18 +19,19 @@ import { ListResponseDto } from "../dto/admin.dto";
 import { AdminMapper } from "../mappers/admin.mapper";
 import { ISlotRepository } from "../repositories/interfaces/ISlotRepository";
 import { SlotRepository } from "../repositories/slot.repository";
-import {  SlotRuleListResponseDto } from "../dto/slot.dto";
+import { SlotRuleListResponseDto } from "../dto/slot.dto";
 import { SlotMapper } from "../mappers/slot.mapper";
 import { MessageResponseDto } from "../dto/base.dto";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class UserService implements IUserService {
-  private _barberRepo: IBarberRepository;
-  private _slotRepo: ISlotRepository;
-
-  constructor(private _userRepo: IUserRepository) {
-    this._barberRepo = new BarberRepository();
-    this._slotRepo = new SlotRepository();
-  }
+  constructor(
+    @inject(TYPES.IUserRepository) private _userRepo: IUserRepository,
+    @inject(TYPES.IBarberRepository) private _barberRepo: IBarberRepository,
+    @inject(TYPES.ISlotRepository) private _slotRepo: ISlotRepository
+  ) {}
 
   registerUser = async (
     userData: UserRegisterRequestDto

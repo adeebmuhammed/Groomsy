@@ -2,7 +2,9 @@ import mongoose, { UpdateResult } from "mongoose";
 import Favorites, { IFavorites } from "../models/favorites.model";
 import { BaseRepository } from "./base.repository";
 import { IFavoritesRepository } from "./interfaces/IFavoritesRepository";
+import { injectable } from "inversify";
 
+@injectable()
 export class FavoritesRepository
   extends BaseRepository<IFavorites>
   implements IFavoritesRepository
@@ -12,7 +14,7 @@ export class FavoritesRepository
   }
 
   async createNew(userId: string): Promise<IFavorites> {
-    return await Favorites.create({userId, barbers: []})
+    return await Favorites.create({ userId, barbers: [] });
   }
 
   async updateFavorites(

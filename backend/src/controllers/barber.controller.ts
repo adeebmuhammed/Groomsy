@@ -6,9 +6,14 @@ import {
   generateRefreshToken,
 } from "../utils/jwt.generator";
 import { IBarberService } from "../services/interfaces/IBarberService";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class BarberController implements IBarberController {
-  constructor(private _barberService: IBarberService) {}
+  constructor(
+    @inject(TYPES.IBarberService) private _barberService: IBarberService
+  ) {}
 
   signup = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -19,11 +24,9 @@ export class BarberController implements IBarberController {
       res.status(status).json(response);
     } catch (error) {
       console.error(error);
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({
-          error: error instanceof Error ? error.message : "Registration failed",
-        });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : "Registration failed",
+      });
     }
   };
 
@@ -38,12 +41,10 @@ export class BarberController implements IBarberController {
 
       res.status(status).json(response);
     } catch (error) {
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({
-          error:
-            error instanceof Error ? error.message : "OTP Verification failed",
-        });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "OTP Verification failed",
+      });
     }
   };
 
@@ -58,11 +59,9 @@ export class BarberController implements IBarberController {
       res.status(status).json(response);
     } catch (error) {
       console.error(error);
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({
-          error: error instanceof Error ? error.message : "OTP resend failed",
-        });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : "OTP resend failed",
+      });
     }
   };
 
@@ -96,11 +95,9 @@ export class BarberController implements IBarberController {
       res.status(status).json(response);
     } catch (error) {
       console.error(error);
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({
-          error: error instanceof Error ? error.message : "Login failed",
-        });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : "Login failed",
+      });
     }
   };
 
@@ -114,12 +111,10 @@ export class BarberController implements IBarberController {
       res.status(status).json(response);
     } catch (error) {
       console.error(error);
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({
-          error:
-            error instanceof Error ? error.message : "forgot password failed",
-        });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "forgot password failed",
+      });
     }
   };
 
@@ -135,12 +130,9 @@ export class BarberController implements IBarberController {
       res.status(status).json(response);
     } catch (error) {
       console.error(error);
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({
-          error:
-            error instanceof Error ? error.message : "reset password failed",
-        });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : "reset password failed",
+      });
     }
   };
 

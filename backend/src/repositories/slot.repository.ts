@@ -2,7 +2,9 @@ import { DeleteResult } from "mongoose";
 import Slots, { ISlotRule } from "../models/slots.model";
 import { BaseRepository } from "./base.repository";
 import { ISlotRepository } from "./interfaces/ISlotRepository";
+import { injectable } from "inversify";
 
+@injectable()
 export class SlotRepository
   extends BaseRepository<ISlotRule>
   implements ISlotRepository
@@ -27,7 +29,7 @@ export class SlotRepository
 
     return { slotRules, totalCount };
   }
-  
+
   async findSimilarSlot(
     barberId: string,
     day: string,
@@ -40,7 +42,7 @@ export class SlotRepository
         $elemMatch: {
           day: day,
           startTime,
-          endTime
+          endTime,
         },
       },
     });

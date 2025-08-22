@@ -2,9 +2,14 @@ import { Request, Response } from "express";
 import { IServiceController } from "./interfaces/IServiceController";
 import { STATUS_CODES } from "../utils/constants";
 import { IServiceService } from "../services/interfaces/IServiceService";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class ServiceController implements IServiceController {
-  constructor(private _serviceService: IServiceService) {}
+  constructor(
+    @inject(TYPES.IServiceService) private _serviceService: IServiceService
+  ) {}
 
   fetch = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -64,13 +69,13 @@ export class ServiceController implements IServiceController {
     }
   };
 
-  delete = async (req: Request, res: Response): Promise<void> =>{
+  delete = async (req: Request, res: Response): Promise<void> => {
     try {
-      const serviceId = req.params["id"]
+      const serviceId = req.params["id"];
 
-      const { response,status} = await this._serviceService.delete(serviceId)
+      const { response, status } = await this._serviceService.delete(serviceId);
 
-      res.status(status).json(response)
+      res.status(status).json(response);
     } catch (error) {
       console.error("error deleting services:", error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
@@ -78,15 +83,17 @@ export class ServiceController implements IServiceController {
           error instanceof Error ? error.message : "deleting service failed",
       });
     }
-  }
+  };
 
-  getServiceById = async (req: Request, res: Response): Promise<void> =>{
+  getServiceById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const serviceId = req.params["id"] as string
+      const serviceId = req.params["id"] as string;
 
-      const { response,status } = await this._serviceService.getServiceById(serviceId);
+      const { response, status } = await this._serviceService.getServiceById(
+        serviceId
+      );
 
-      res.status(status).json(response)
+      res.status(status).json(response);
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
@@ -96,5 +103,5 @@ export class ServiceController implements IServiceController {
             : "Failed to fetch service by id",
       });
     }
-  }
+  };
 }

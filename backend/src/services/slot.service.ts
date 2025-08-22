@@ -19,17 +19,18 @@ import { IBarberUnavailabilityRepository } from "../repositories/interfaces/IBar
 import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
 import { BookingRepository } from "../repositories/booking.repository";
-import { existsSync } from "fs";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class SlotService implements ISlotService {
-  private _serviceRepo: IServiceRepository;
-  private _barberUnavailabilityRepo: IBarberUnavailabilityRepository;
-  private _bookingRepo: IBookingRepository;
-  constructor(private _slotRepo: ISlotRepository) {
-    this._serviceRepo = new ServiceRepository();
-    this._barberUnavailabilityRepo = new BarberUnavailabilityRepository();
-    this._bookingRepo = new BookingRepository();
-  }
+  constructor(
+    @inject(TYPES.ISlotRepository) private _slotRepo: ISlotRepository,
+    @inject(TYPES.IServiceRepository) private _serviceRepo: IServiceRepository,
+    @inject(TYPES.IBarberUnavailabilityRepository)
+    private _barberUnavailabilityRepo: IBarberUnavailabilityRepository,
+    @inject(TYPES.IBookingRepository) private _bookingRepo: IBookingRepository
+  ) {}
 
   getSlotRulesByBarber = async (
     barberId: string,

@@ -7,16 +7,18 @@ import { IBarberUnavailabilityService } from "./interfaces/IBarberUnavailability
 import { STATUS_CODES } from "../utils/constants";
 import { BarberUnavailabilityDto } from "../dto/barber.unavailability.dto";
 import { BarberUnavailabilityMapper } from "../mappers/barber.unavailability.mapper";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class BarberUnavailabilityService
   implements IBarberUnavailabilityService
 {
-  private _barberRepo: IBarberRepository;
   constructor(
-    private _barberUnavailabilityRepo: IBarberUnavailabilityRepository
-  ) {
-    this._barberRepo = new BarberRepository();
-  }
+    @inject(TYPES.IBarberUnavailabilityRepository)
+    private _barberUnavailabilityRepo: IBarberUnavailabilityRepository,
+    @inject(TYPES.IBarberRepository) private _barberRepo: IBarberRepository
+  ) {}
 
   fetchBarberUnavailability = async (
     barberId: string
@@ -160,20 +162,23 @@ export class BarberUnavailabilityService
 
     const formattedDate = new Date(date).toISOString().split("T")[0];
     const exists = unavailability.specialOffDays.some(
-        off => off.date === formattedDate
-    )
+      (off) => off.date === formattedDate
+    );
     if (!exists) {
-        throw new Error(`${date} is not exists to remove in off days`)
+      throw new Error(`${date} is not exists to remove in off days`);
     }
 
-    const updated = await this._barberUnavailabilityRepo.removeSpecialOffDay(barberId,formattedDate)
+    const updated = await this._barberUnavailabilityRepo.removeSpecialOffDay(
+      barberId,
+      formattedDate
+    );
     if (!updated) {
-        throw new Error("failed to remove from special off day")
+      throw new Error("failed to remove from special off day");
     }
 
-    return{
-        response: { message: "successfully removed from special off day" },
-        status: STATUS_CODES.OK
-    }
+    return {
+      response: { message: "successfully removed from special off day" },
+      status: STATUS_CODES.OK,
+    };
   };
 }
