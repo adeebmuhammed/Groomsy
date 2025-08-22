@@ -2,17 +2,29 @@ import { Request, Response } from "express";
 import { ISubscriptionController } from "./interfaces/ISubscriptionController";
 import { STATUS_CODES } from "../utils/constants";
 import { ISubscriptionService } from "../services/interfaces/ISubscriptionService";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class SubscriptionController implements ISubscriptionController {
-  constructor(private _subscriptionService: ISubscriptionService) {}
+  constructor(
+    @inject(TYPES.ISubscriptionService)
+    private _subscriptionService: ISubscriptionService
+  ) {}
 
-  getSubscriptionDetailsByBarber = async (req: Request, res: Response): Promise<void> => {
+  getSubscriptionDetailsByBarber = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
-      const barberId = req.params["id"]
+      const barberId = req.params["id"];
 
-      const { response,status } = await this._subscriptionService.getSubscriptionDetailsByBarber(barberId)
+      const { response, status } =
+        await this._subscriptionService.getSubscriptionDetailsByBarber(
+          barberId
+        );
 
-      res.status(status).json(response)
+      res.status(status).json(response);
     } catch (error) {
       console.error("failed to fetch subscription details:", error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
@@ -22,16 +34,14 @@ export class SubscriptionController implements ISubscriptionController {
             : "failed to fetch subscription details",
       });
     }
-  }
+  };
 
   manageSubscription = async (req: Request, res: Response): Promise<void> => {
     try {
       const { barberId, planId } = req.body;
 
-      const { response, status } = await this._subscriptionService.manageSubscription(
-        barberId,
-        planId
-      );
+      const { response, status } =
+        await this._subscriptionService.manageSubscription(barberId, planId);
 
       res.status(status).json(response);
     } catch (error) {
@@ -45,23 +55,37 @@ export class SubscriptionController implements ISubscriptionController {
     }
   };
 
-  verifySubscriptionPayment = async (req: Request, res: Response): Promise<void> => {
+  verifySubscriptionPayment = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
-      const { razorpay_payment_id, razorpay_order_id, razorpay_signature, barberId } = req.body;
+      const {
+        razorpay_payment_id,
+        razorpay_order_id,
+        razorpay_signature,
+        barberId,
+      } = req.body;
 
-      if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature || !barberId) {
+      if (
+        !razorpay_payment_id ||
+        !razorpay_order_id ||
+        !razorpay_signature ||
+        !barberId
+      ) {
         res.status(STATUS_CODES.BAD_REQUEST).json({
           error: "All payment verification fields are required",
         });
         return;
       }
 
-      const { response, status } = await this._subscriptionService.verifySubscriptionPayment(
-        razorpay_payment_id,
-        razorpay_order_id,
-        razorpay_signature,
-        barberId
-      );
+      const { response, status } =
+        await this._subscriptionService.verifySubscriptionPayment(
+          razorpay_payment_id,
+          razorpay_order_id,
+          razorpay_signature,
+          barberId
+        );
 
       res.status(status).json(response);
     } catch (error) {
@@ -79,9 +103,8 @@ export class SubscriptionController implements ISubscriptionController {
     try {
       const { barberId } = req.body;
 
-      const { response, status } = await this._subscriptionService.renewSubscription(
-        barberId
-      );
+      const { response, status } =
+        await this._subscriptionService.renewSubscription(barberId);
 
       res.status(status).json(response);
     } catch (error) {

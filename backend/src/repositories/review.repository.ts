@@ -3,7 +3,9 @@ import { ReviewCreateRequestDto } from "../dto/review.dto";
 import Review, { IReview } from "../models/review.model";
 import { BaseRepository } from "./base.repository";
 import { IReviewRepository } from "./interfaces/IReviewRepository";
+import { injectable } from "inversify";
 
+@injectable()
 export class ReviewRepository
   extends BaseRepository<IReview>
   implements IReviewRepository
@@ -20,8 +22,8 @@ export class ReviewRepository
     const skip = (page - 1) * limit;
 
     const [reviews, totalCount] = await Promise.all([
-      this.findWithPagination({user:userId}, skip, limit),
-      this.countDocuments({user:userId}),
+      this.findWithPagination({ user: userId }, skip, limit),
+      this.countDocuments({ user: userId }),
     ]);
 
     return { reviews, totalCount };

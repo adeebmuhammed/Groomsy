@@ -11,11 +11,14 @@ import { UserRepository } from "../repositories/user.repository";
 import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import { IFavoritesService } from "./interfaces/IFavoritesService";
 import { MessageResponseDto } from "../dto/base.dto";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class FavoritesService implements IFavoritesService {
   private _userRepo = new UserRepository();
   private _barberRepo = new BarberRepository();
-  constructor(private _favoritesRepo: FavoritesRepository) {}
+  constructor(@inject(TYPES.IFavoritesRepository) private _favoritesRepo: FavoritesRepository) {}
 
   getFavoritesByUser = async (
     userId: string,

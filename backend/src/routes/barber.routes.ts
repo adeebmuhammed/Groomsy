@@ -20,35 +20,26 @@ import { SubscriptionPlanController } from "../controllers/subscription.plan.con
 import { SubscriptionPlanRepository } from "../repositories/subscription.plan.repository";
 import { SubscriptionPlanService } from "../services/subscription.plan.service";
 import { subscriptionMiddleware } from "../middlewares/subscription.middleware";
+import { container } from "../config/inversify";
+import { TYPES } from "../config/types";
+import { IBarberController } from "../controllers/interfaces/IBarberController";
+import { ISlotController } from "../controllers/interfaces/ISlotController";
+import { IBookingController } from "../controllers/interfaces/IBookingController";
+import { IBarberUnavailabilityController } from "../controllers/interfaces/IBarberUnavailabilityController";
+import { ISubscriptionController } from "../controllers/interfaces/ISubscriptionController";
+import { ISubscriptionPlanController } from "../controllers/interfaces/ISubscriptionPlanController";
 
 const barberRoutes = Router()
 const barberAuth = authMiddleware(["barber"])
 const multiAuth = authMiddleware(["user","barber"])
 const subMiddleware = subscriptionMiddleware()
 
-const barberRepo = new BarberRepository
-const barberService = new BarberService(barberRepo)
-const barberController = new BarberController(barberService)
-
-const slotRepo = new SlotRepository()
-const slotService = new SlotService(slotRepo)
-const slotController = new SlotController(slotService)
-
-const bookingRepo = new BookingRepository()
-const bookingService = new BookingService(bookingRepo)
-const bookingController = new BookingController(bookingService)
-
-const barberUnavailabilityRepo = new BarberUnavailabilityRepository
-const barberUnavailabilityService = new BarberUnavailabilityService(barberUnavailabilityRepo)
-const barberUnavailabilityController = new BarberUnavailabilityController(barberUnavailabilityService)
-
-const subscriptionRepo = new SubscriptionRepository()
-const subscriptionService = new SubscriptionService(subscriptionRepo)
-const subscriptionController = new SubscriptionController(subscriptionService)
-
-const planRepo = new SubscriptionPlanRepository()
-const planService = new SubscriptionPlanService(planRepo)
-const planController = new SubscriptionPlanController(planService)
+const barberController = container.get<IBarberController>(TYPES.IBarberController)
+const slotController = container.get<ISlotController>(TYPES.ISlotController)
+const bookingController = container.get<IBookingController>(TYPES.IBookingController)
+const barberUnavailabilityController = container.get<IBarberUnavailabilityController>(TYPES.IBarberUnavailabilityController)
+const subscriptionController = container.get<ISubscriptionController>(TYPES.ISubscriptionController)
+const planController = container.get<ISubscriptionPlanController>(TYPES.ISubscriptionPlanController)
 
 barberRoutes
 .post('/signup',barberController.signup)

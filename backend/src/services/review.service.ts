@@ -10,12 +10,16 @@ import { IReviewService } from "./interfaces/IReviewService";
 import { STATUS_CODES } from "../utils/constants";
 import { ListResponseDto } from "../dto/admin.dto";
 import { ReviewMapper } from "../mappers/review.mapper";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class ReviewService implements IReviewService {
-  private _userRepo: IUserRepository = new UserRepository();
-  private _bookingRepo: IBookingRepository = new BookingRepository();
-
-  constructor(private _reviewRepo: IReviewRepository) {}
+  constructor(
+    @inject(TYPES.IUserRepository) private _reviewRepo: IReviewRepository,
+    @inject(TYPES.IUserRepository) private _userRepo: IUserRepository,
+    @inject(TYPES.IBookingRepository) private _bookingRepo: IBookingRepository
+  ) {}
 
   getReviewsByUser = async (
     userId: string,
@@ -47,10 +51,10 @@ export class ReviewService implements IReviewService {
       },
     };
 
-    return{
-        response,
-        status: STATUS_CODES.OK
-    }
+    return {
+      response,
+      status: STATUS_CODES.OK,
+    };
   };
 
   create = async (

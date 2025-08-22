@@ -1,3 +1,4 @@
+import { inject, injectable } from "inversify";
 import { ListResponseDto } from "../dto/admin.dto";
 import { MessageResponseDto } from "../dto/base.dto";
 import {
@@ -9,9 +10,14 @@ import { ISubscriptionPlanRepository } from "../repositories/interfaces/ISubscip
 import { STATUS_CODES } from "../utils/constants";
 import { validatePlanData } from "../utils/planValidator";
 import { ISubscriptionPlanService } from "./interfaces/ISubscriptionPlanService";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class SubscriptionPlanService implements ISubscriptionPlanService {
-  constructor(private _planRepo: ISubscriptionPlanRepository) {}
+  constructor(
+    @inject(TYPES.ISubscriptionPlanRepository)
+    private _planRepo: ISubscriptionPlanRepository
+  ) {}
 
   getSubscriptionPlans = async (
     search: string,
@@ -38,10 +44,10 @@ export class SubscriptionPlanService implements ISubscriptionPlanService {
       },
     };
 
-    return{
-        response,
-        status: STATUS_CODES.OK
-    }
+    return {
+      response,
+      status: STATUS_CODES.OK,
+    };
   };
 
   create = async (
@@ -103,17 +109,21 @@ export class SubscriptionPlanService implements ISubscriptionPlanService {
     };
   };
 
-  getPlansForBarber = async (): Promise<{ response: SubscriptionPlanDto[]; status: number; }> => {
-    const plans = await this._planRepo.find({})
+  getPlansForBarber = async (): Promise<{
+    response: SubscriptionPlanDto[];
+    status: number;
+  }> => {
+    const plans = await this._planRepo.find({});
     if (!plans) {
-      throw new Error("plans not found")
+      throw new Error("plans not found");
     }
 
-    const response: SubscriptionPlanDto[] = PlanMapper.toPlanResponseArray(plans)
+    const response: SubscriptionPlanDto[] =
+      PlanMapper.toPlanResponseArray(plans);
 
-    return{
+    return {
       response,
-      status: STATUS_CODES.OK
-    }
-  }
+      status: STATUS_CODES.OK,
+    };
+  };
 }

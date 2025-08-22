@@ -2,9 +2,14 @@ import { Request, Response } from "express";
 import { IBookingService } from "../services/interfaces/IBookingService";
 import { IBookingController } from "./interfaces/IBookingController";
 import { STATUS_CODES } from "../utils/constants";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class BookingController implements IBookingController {
-  constructor(private _bookingService: IBookingService) {}
+  constructor(
+    @inject(TYPES.IBookingService) private _bookingService: IBookingService
+  ) {}
 
   fetchBookings = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -41,7 +46,7 @@ export class BookingController implements IBookingController {
         data
       );
 
-      res.status(status).json(response)
+      res.status(status).json(response);
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
@@ -54,7 +59,7 @@ export class BookingController implements IBookingController {
   confirmBooking = async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = req.query.userId as string;
-      const bookingId = req.query.bookingId as string; 
+      const bookingId = req.query.bookingId as string;
       const data = req.body;
 
       const { response, status } = await this._bookingService.confirmBooking(
@@ -73,14 +78,17 @@ export class BookingController implements IBookingController {
     }
   };
 
-  couponApplication = async (req: Request, res: Response): Promise<void> =>{
+  couponApplication = async (req: Request, res: Response): Promise<void> => {
     try {
-      const bookingId = req.query.bookingId as string
-      const couponCode = req.body.couponCode as string
+      const bookingId = req.query.bookingId as string;
+      const couponCode = req.body.couponCode as string;
 
-      const { response,status } = await this._bookingService.couponApplication(bookingId,couponCode)
+      const { response, status } = await this._bookingService.couponApplication(
+        bookingId,
+        couponCode
+      );
 
-      res.status(status).json(response)
+      res.status(status).json(response);
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
@@ -88,15 +96,25 @@ export class BookingController implements IBookingController {
           error instanceof Error ? error.message : "Failed to apply coupon",
       });
     }
-  }
+  };
 
   verifyPayment = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { razorpay_payment_id, razorpay_order_id, razorpay_signature, bookingId } = req.body;
+      const {
+        razorpay_payment_id,
+        razorpay_order_id,
+        razorpay_signature,
+        bookingId,
+      } = req.body;
 
-      const { response,status } = await this._bookingService.verfyPayment( razorpay_payment_id,razorpay_order_id,razorpay_signature,bookingId )
-      
-      res.status(status).json(response)
+      const { response, status } = await this._bookingService.verfyPayment(
+        razorpay_payment_id,
+        razorpay_order_id,
+        razorpay_signature,
+        bookingId
+      );
+
+      res.status(status).json(response);
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
@@ -104,7 +122,7 @@ export class BookingController implements IBookingController {
           error instanceof Error ? error.message : "Failed to verify payment",
       });
     }
-  }
+  };
 
   updateBookingStatus = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -132,13 +150,15 @@ export class BookingController implements IBookingController {
     }
   };
 
-  getBookingById = async (req: Request, res: Response): Promise<void> =>{
+  getBookingById = async (req: Request, res: Response): Promise<void> => {
     try {
       const bookingId = req.params["id"] as string;
 
-      const { response,status } = await this._bookingService.getBookingById(bookingId);
+      const { response, status } = await this._bookingService.getBookingById(
+        bookingId
+      );
 
-      res.status(status).json(response)
+      res.status(status).json(response);
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
@@ -148,18 +168,28 @@ export class BookingController implements IBookingController {
             : "Failed to fetch booking by id",
       });
     }
-  }
+  };
 
   getBookingsByStatus = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.params["id"]
-      const bookingStatus = req.query.status as "pending" | "staged" | "cancelled"| "finished"
-      const page = parseInt(req.query.page as string) || 1
-      const limit = parseInt(req.query.limit as string) || 5
+      const userId = req.params["id"];
+      const bookingStatus = req.query.status as
+        | "pending"
+        | "staged"
+        | "cancelled"
+        | "finished";
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 5;
 
-      const { response,status } = await this._bookingService.getBookingsByStatus(bookingStatus,userId,page,limit)
+      const { response, status } =
+        await this._bookingService.getBookingsByStatus(
+          bookingStatus,
+          userId,
+          page,
+          limit
+        );
 
-      res.status(status).json(response)
+      res.status(status).json(response);
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
@@ -169,5 +199,5 @@ export class BookingController implements IBookingController {
             : "Failed to fetch booking by status",
       });
     }
-  }
+  };
 }

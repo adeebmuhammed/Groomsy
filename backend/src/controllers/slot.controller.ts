@@ -2,9 +2,12 @@ import { Request, Response } from "express";
 import { ISlotController } from "./interfaces/ISlotController";
 import { STATUS_CODES } from "../utils/constants";
 import { ISlotService } from "../services/interfaces/ISlotService";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class SlotController implements ISlotController {
-  constructor(private _slotService: ISlotService) {}
+  constructor(@inject(TYPES.ISlotService) private _slotService: ISlotService) {}
 
   getSlotRulesByBarber = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -80,20 +83,27 @@ export class SlotController implements ISlotController {
 
   getPopulatedSlots = async (req: Request, res: Response): Promise<void> => {
     try {
-      const date = req.query.date as string
-      const page = parseInt(req.query.page as string) | 1
-      const limit = parseInt(req.query.limit as string) | 5
-      const barberId = req.params["id"]
-      const serviceId = req.query.serviceId as string
+      const date = req.query.date as string;
+      const page = parseInt(req.query.page as string) | 1;
+      const limit = parseInt(req.query.limit as string) | 5;
+      const barberId = req.params["id"];
+      const serviceId = req.query.serviceId as string;
 
-      const { response,status } = await this._slotService.getPopulatedSlots(barberId,serviceId,date,page,limit)
+      const { response, status } = await this._slotService.getPopulatedSlots(
+        barberId,
+        serviceId,
+        date,
+        page,
+        limit
+      );
 
-      res.status(status).json(response)
+      res.status(status).json(response);
     } catch (error) {
       console.error("error deleting slot:", error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-        error: error instanceof Error ? error.message : "slot population failed",
+        error:
+          error instanceof Error ? error.message : "slot population failed",
       });
     }
-  }
+  };
 }
