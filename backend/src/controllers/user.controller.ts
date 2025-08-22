@@ -6,9 +6,12 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../utils/jwt.generator";
+import { injectable, inject } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class UserController implements IUserController {
-  constructor(private _userService: IUserService) {}
+  constructor(@inject(TYPES.IUserService) private _userService: IUserService) {}
 
   register = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -204,12 +207,10 @@ export class UserController implements IUserController {
       res.status(status).json(response);
     } catch (error) {
       console.error(error);
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({
-          error:
-            error instanceof Error ? error.message : "Failed to reset password",
-        });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "Failed to reset password",
+      });
     }
   };
 
@@ -230,32 +231,34 @@ export class UserController implements IUserController {
       res.status(status).json(response);
     } catch (error) {
       console.error(error);
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({
-          error:
-            error instanceof Error ? error.message : "Failed to fetch barbers",
-        });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "Failed to fetch barbers",
+      });
     }
   };
 
-  fetchBarbersAndSlotRules = async (req: Request, res: Response): Promise<void> =>{
+  fetchBarbersAndSlotRules = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
-      const barberId = req.params["barberId"]
-      const page = parseInt(req.query.page as string) || 1
-      const limit = parseInt(req.query.limit as string) || 5
+      const barberId = req.params["barberId"];
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 5;
 
-      const { response,status } = await this._userService.fetchBarbersAndSlotRules(page,limit,barberId)
+      const { response, status } =
+        await this._userService.fetchBarbersAndSlotRules(page, limit, barberId);
 
-      res.status(status).json(response)
+      res.status(status).json(response);
     } catch (error) {
       console.error(error);
-      res
-        .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-        .json({
-          error:
-            error instanceof Error ? error.message : "Failed to fetch slots and barber",
-        });
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch slots and barber",
+      });
     }
-  }
+  };
 }

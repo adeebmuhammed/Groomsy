@@ -1,54 +1,23 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import { AdminController } from "../controllers/admin.controller";
-import { AdminService } from "../services/admin.service";
-import { AdminRepository } from "../repositories/admin.repository";
-import { UserRepository } from "../repositories/user.repository";
-import { BarberRepository } from "../repositories/barber.repository";
-import { CouponController } from "../controllers/coupon.controller";
-import { CouponResitory } from "../repositories/coupon.repository";
-import { CouponService } from "../services/coupon.service";
-import { BookingController } from "../controllers/booking.controller";
-import { BookingRepository } from "../repositories/booking.repository";
-import { BookingService } from "../services/booking.service";
-import { OfferRepository } from "../repositories/offer.repository";
-import { OfferService } from "../services/offer.service";
-import { OfferController } from "../controllers/offer.controller";
-import { ServiceRepository } from "../repositories/service.repository";
-import { ServiceService } from "../services/service.service";
-import { ServiceController } from "../controllers/service.controller";
-import { SubscriptionPlanController } from "../controllers/subscription.plan.controller";
-import { SubscriptionPlanRepository } from "../repositories/subscription.plan.repository";
-import { SubscriptionPlanService } from "../services/subscription.plan.service";
+import { container } from "../config/inversify";
+import { TYPES } from "../config/types";
+import { IAdminController } from "../controllers/interfaces/IAdminController";
+import { IBookingController } from "../controllers/interfaces/IBookingController";
+import { ICouponController } from "../controllers/interfaces/ICouponController";
+import { IOfferController } from "../controllers/interfaces/IOfferController";
+import { IServiceController } from "../controllers/interfaces/IServiceController";
+import { ISubscriptionPlanController } from "../controllers/interfaces/ISubscriptionPlanController";
 
 const adminRoutes = Router()
 const adminAuth = authMiddleware(["admin"])
 
-const adminRepo = new AdminRepository()
-const userRepo = new UserRepository()
-const barberRepo = new BarberRepository()
-const adminService = new AdminService(adminRepo,userRepo,barberRepo);
-const adminController = new AdminController(adminService)
-
-const bookingRepo = new BookingRepository()
-const bookingService = new BookingService(bookingRepo)
-const bookingController = new BookingController(bookingService)
-
-const couponRepo = new CouponResitory()
-const couponService = new CouponService(couponRepo)
-const couponController = new CouponController(couponService)
-
-const offerRepo = new OfferRepository()
-const offerService = new OfferService(offerRepo)
-const offerController = new OfferController(offerService)
-
-const serviceRepo = new ServiceRepository
-const serviceService = new ServiceService(serviceRepo)
-const serviceController = new ServiceController(serviceService)
-
-const planRepo = new SubscriptionPlanRepository()
-const planService = new SubscriptionPlanService(planRepo)
-const planController = new SubscriptionPlanController(planService)
+const adminController = container.get<IAdminController>(TYPES.IAdminController)
+const bookingController = container.get<IBookingController>(TYPES.IBookingController)
+const couponController = container.get<ICouponController>(TYPES.ICouponController)
+const offerController = container.get<IOfferController>(TYPES.IOfferController)
+const serviceController = container.get<IServiceController>(TYPES.IServiceController)
+const planController = container.get<ISubscriptionPlanController>(TYPES.ISubscriptionPlanController)
 
 adminRoutes.post('/login',adminController.login)
 adminRoutes.post('/logout',adminController.logout)

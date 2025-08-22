@@ -23,37 +23,26 @@ import { BarberUnavailabilityService } from "../services/barber.unavailability.s
 import { ReviewRepository } from "../repositories/review.repository";
 import { ReviewService } from "../services/review.service";
 import { ReviewController } from "../controllers/review.controller";
+import { container } from "../config/inversify";
+import { TYPES } from "../config/types";
+import { IUserController } from "../controllers/interfaces/IUserController";
+import { IBookingController } from "../controllers/interfaces/IBookingController";
+import { IFavoritesController } from "../controllers/interfaces/IFavoritesController";
+import { ISlotController } from "../controllers/interfaces/ISlotController";
+import { IServiceController } from "../controllers/interfaces/IServiceController";
+import { IBarberUnavailabilityController } from "../controllers/interfaces/IBarberUnavailabilityController";
+import { IReviewController } from "../controllers/interfaces/IReviewController";
 
 const userRoutes = Router()
 const userAuth = authMiddleware(["user"])
 
-const userRepo = new UserRepository()
-const userService = new UserService(userRepo)
-const userController = new UserController(userService)
-
-const bookingRepo = new BookingRepository()
-const bookingService = new BookingService(bookingRepo)
-const bookingController = new BookingController(bookingService)
-
-const favoritesRepo = new FavoritesRepository()
-const favoritesService = new FavoritesService(favoritesRepo)
-const favoritesController = new FavoritesController(favoritesService)
-
-const slotRepo = new SlotRepository()
-const slotService = new SlotService(slotRepo)
-const slotController = new SlotController(slotService)
-
-const serviceRepo = new ServiceRepository
-const serviceService = new ServiceService(serviceRepo)
-const serviceController = new ServiceController(serviceService)
-
-const barberUnavailabilityRepo = new BarberUnavailabilityRepository
-const barberUnavailabilityService = new BarberUnavailabilityService(barberUnavailabilityRepo)
-const barberUnavailabilityController = new BarberUnavailabilityController(barberUnavailabilityService)
-
-const reviewRepo = new ReviewRepository()
-const reviewService = new ReviewService(reviewRepo)
-const reviewController = new ReviewController(reviewService)
+const userController = container.get<IUserController>(TYPES.IUserController)
+const bookingController = container.get<IBookingController>(TYPES.IBookingController)
+const favoritesController = container.get<IFavoritesController>(TYPES.IFavoritesController)
+const slotController = container.get<ISlotController>(TYPES.ISlotController)
+const serviceController = container.get<IServiceController>(TYPES.IServiceController)
+const barberUnavailabilityController = container.get<IBarberUnavailabilityController>(TYPES.IBarberUnavailabilityController)
+const reviewController = container.get<IReviewController>(TYPES.IReviewController)
 
 userRoutes
 .post('/signup',userController.register)

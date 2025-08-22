@@ -6,9 +6,14 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../utils/jwt.generator";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class AdminController implements IAdminController {
-  constructor(private _adminService: IAdminService) {}
+  constructor(
+    @inject(TYPES.IAdminService) private _adminService: IAdminService
+  ) {}
 
   login = async (req: Request, res: Response): Promise<void> => {
     try {

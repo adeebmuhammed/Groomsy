@@ -1,3 +1,4 @@
+import { inject, injectable } from "inversify";
 import { ListResponseDto } from "../dto/admin.dto";
 import { MessageResponseDto } from "../dto/base.dto";
 import { CreateServiceDto, ServiceResponseDto } from "../dto/service.dto";
@@ -5,9 +6,11 @@ import { ServiceMapper } from "../mappers/service.mapper";
 import { IServiceRepository } from "../repositories/interfaces/IServiceRepository";
 import { STATUS_CODES } from "../utils/constants";
 import { IServiceService } from "./interfaces/IServiceService";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class ServiceService implements IServiceService{
-    constructor(private _serviceRepo: IServiceRepository){}
+    constructor(@inject(TYPES.IServiceRepository) private _serviceRepo: IServiceRepository){}
 
     fetch = async (search: string, page: number, limit: number): Promise<{ response: ListResponseDto<ServiceResponseDto>; status: number; }> =>{
         const { services,totalCount} = await this._serviceRepo.findAllServices(search,page,limit)

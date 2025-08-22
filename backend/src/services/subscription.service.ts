@@ -12,14 +12,18 @@ import { confirmSubscription, SubscriptionDto } from "../dto/subscription.dto";
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
 import { BarberRepository } from "../repositories/barber.repository";
 import { SubscriptionMapper } from "../mappers/subscription.mapper";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class SubscriptionService implements ISubscriptionService {
-  private _planRepo: ISubscriptionPlanRepository;
-  private _barberRepo: IBarberRepository;
-  constructor(private _subscriptionRepo: ISubscriptionRepository) {
-    this._planRepo = new SubscriptionPlanRepository();
-    this._barberRepo = new BarberRepository();
-  }
+  constructor(
+    @inject(TYPES.ISubscriptionRepository)
+    private _subscriptionRepo: ISubscriptionRepository,
+    @inject(TYPES.ISubscriptionPlanRepository)
+    private _planRepo: ISubscriptionPlanRepository,
+    @inject(TYPES.IBarberRepository) private _barberRepo: IBarberRepository
+  ) {}
 
   getSubscriptionDetailsByBarber = async (
     barberId: string
