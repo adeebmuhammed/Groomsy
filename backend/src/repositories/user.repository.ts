@@ -1,8 +1,9 @@
 import User, { IUser } from "../models/user.model";
-import bcrypt from "bcrypt";
 import { BaseRepository } from "./base.repository";
 import { IUserRepository } from "./interfaces/IUserRepository";
+import { injectable } from "inversify";
 
+@injectable()
 export class UserRepository
   extends BaseRepository<IUser>
   implements IUserRepository

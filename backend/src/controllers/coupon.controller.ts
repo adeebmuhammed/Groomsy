@@ -2,70 +2,88 @@ import { Request, Response } from "express";
 import { ICouponController } from "./interfaces/ICouponController";
 import { STATUS_CODES } from "../utils/constants";
 import { ICouponService } from "../services/interfaces/ICouponService";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
-export class CouponController implements ICouponController{
-    constructor( private _couponService: ICouponService){}
+@injectable()
+export class CouponController implements ICouponController {
+  constructor(
+    @inject(TYPES.ICouponService) private _couponService: ICouponService
+  ) {}
 
-    getAllCoupons = async (req: Request, res: Response): Promise<void> =>{
-        try {
-            const search = (req.query.search as string) || "";
-            const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 5;
+  getAllCoupons = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const search = (req.query.search as string) || "";
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 5;
 
-            const { response,status } = await this._couponService.getAllCoupons(search, page, limit)
+      const { response, status } = await this._couponService.getAllCoupons(
+        search,
+        page,
+        limit
+      );
 
-            res.status(status).json(response)
-        } catch (error) {
-            console.error("error fetching coupons:", error);
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-                error: error instanceof Error ? error.message : "coupon fetching failed",
-            });
-        }
+      res.status(status).json(response);
+    } catch (error) {
+      console.error("error fetching coupons:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "coupon fetching failed",
+      });
     }
+  };
 
-    createCoupon = async (req: Request, res: Response): Promise<void> => {
-        try {
-            const data = req.body
+  createCoupon = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const data = req.body;
 
-            const { response,status } = await this._couponService.createCoupon(data)
+      const { response, status } = await this._couponService.createCoupon(data);
 
-            res.status(status).json(response)
-        } catch (error) {
-            console.error("error creating coupon:", error);
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-                error: error instanceof Error ? error.message : "coupon creation failed",
-            });
-        }
+      res.status(status).json(response);
+    } catch (error) {
+      console.error("error creating coupon:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "coupon creation failed",
+      });
     }
+  };
 
-    updateCoupon = async (req: Request, res: Response): Promise<void> =>{
-        try {
-            const data = req.body
-            const couponId = req.params["id"]
+  updateCoupon = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const data = req.body;
+      const couponId = req.params["id"];
 
-            const { response,status } = await this._couponService.updateCoupon(couponId,data)
+      const { response, status } = await this._couponService.updateCoupon(
+        couponId,
+        data
+      );
 
-            res.status(status).json(response)
-        } catch (error) {
-            console.error("error updating coupon:", error);
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-                error: error instanceof Error ? error.message : "coupon updation failed",
-            });
-        }
+      res.status(status).json(response);
+    } catch (error) {
+      console.error("error updating coupon:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "coupon updation failed",
+      });
     }
+  };
 
-    deleteCoupon = async (req: Request, res: Response): Promise<void> => {
-        try {
-            const couponId = req.params["id"]
+  deleteCoupon = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const couponId = req.params["id"];
 
-            const { response,status } = await this._couponService.deleteCoupon(couponId)
+      const { response, status } = await this._couponService.deleteCoupon(
+        couponId
+      );
 
-            res.status(status).json(response)
-        } catch (error) {
-            console.error("error deleting coupon:", error);
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-                error: error instanceof Error ? error.message : "coupon deletion failed",
-            });
-        }
+      res.status(status).json(response);
+    } catch (error) {
+      console.error("error deleting coupon:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "coupon deletion failed",
+      });
     }
+  };
 }

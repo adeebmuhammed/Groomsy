@@ -2,7 +2,9 @@ import { DeleteResult } from "mongoose";
 import Service, { IService } from "../models/service.model";
 import { BaseRepository } from "./base.repository";
 import { IServiceRepository } from "./interfaces/IServiceRepository";
+import { injectable } from "inversify";
 
+@injectable()
 export class ServiceRepository
   extends BaseRepository<IService>
   implements IServiceRepository

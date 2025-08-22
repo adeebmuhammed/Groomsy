@@ -2,9 +2,14 @@ import { Request, Response } from "express";
 import { IOfferController } from "./interfaces/IOfferController";
 import { STATUS_CODES } from "../utils/constants";
 import { IOfferService } from "../services/interfaces/IOfferService";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class OfferController implements IOfferController {
-  constructor(private _offerService: IOfferService) {}
+  constructor(
+    @inject(TYPES.IOfferService) private _offerService: IOfferService
+  ) {}
 
   getAllOffers = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -12,9 +17,13 @@ export class OfferController implements IOfferController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;
 
-      const { response,status } = await this._offerService.getAllOffers(search,page,limit)
+      const { response, status } = await this._offerService.getAllOffers(
+        search,
+        page,
+        limit
+      );
 
-      res.status(status).json(response)
+      res.status(status).json(response);
     } catch (error) {
       console.error("error fetching offers:", error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({

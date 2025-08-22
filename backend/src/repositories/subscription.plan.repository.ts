@@ -4,7 +4,9 @@ import SubscriptionPlan, {
 } from "../models/subscription.plans.model";
 import { BaseRepository } from "./base.repository";
 import { ISubscriptionPlanRepository } from "./interfaces/ISubsciptionPlanRepository";
+import { injectable } from "inversify";
 
+@injectable()
 export class SubscriptionPlanRepository
   extends BaseRepository<ISubscriptionPlan>
   implements ISubscriptionPlanRepository

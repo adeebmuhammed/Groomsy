@@ -6,9 +6,12 @@ import { STATUS_CODES } from "../utils/constants";
 import { validateCouponData } from "../utils/couponValidator";
 import { ICouponService } from "./interfaces/ICouponService";
 import { MessageResponseDto } from "../dto/base.dto";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class CouponService implements ICouponService{
-    constructor( private _couponRepo: ICouponRepository){}
+    constructor(@inject(TYPES.ICouponRepository)  private _couponRepo: ICouponRepository){}
 
     getAllCoupons = async (search: string,page: number, limit: number): Promise<{ response: ListResponseDto<CouponDto>; status: number; }> => {
         const { totalCount,coupons } = await this._couponRepo.findAllCoupons(search,page,limit)

@@ -3,7 +3,9 @@ import { BookingCreateRequestDto } from "../dto/booking.dto";
 import Booking, { IBooking } from "../models/booking.model";
 import { BaseRepository } from "./base.repository";
 import { IBookingRepository } from "./interfaces/IBookingRepository";
+import { injectable } from "inversify";
 
+@injectable()
 export class BookingRepository
   extends BaseRepository<IBooking>
   implements IBookingRepository

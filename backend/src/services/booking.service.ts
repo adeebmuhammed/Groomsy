@@ -22,20 +22,20 @@ import { ICouponRepository } from "../repositories/interfaces/ICouponRepository"
 import { CouponResitory } from "../repositories/coupon.repository";
 import razorpayInstance from "../utils/razorpay";
 import crypto from "crypto";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class BookingService implements IBookingService {
-  private _userRepo: IUserRepository;
-  private _barberRepo: IBarberRepository;
-  private _serviceRepo: IServiceRepository;
-  private _barberUnavailabilityRepo: IBarberUnavailabilityRepository;
-  private _couponRepo: ICouponRepository;
-  constructor(private _bookingRepo: IBookingRepository) {
-    this._userRepo = new UserRepository();
-    this._barberRepo = new BarberRepository();
-    this._serviceRepo = new ServiceRepository();
-    this._barberUnavailabilityRepo = new BarberUnavailabilityRepository();
-    this._couponRepo = new CouponResitory();
-  }
+  constructor(
+    @inject(TYPES.IBookingRepository) private _bookingRepo: IBookingRepository,
+    @inject(TYPES.IUserRepository) private _userRepo: IUserRepository,
+    @inject(TYPES.IBarberRepository) private _barberRepo: IBarberRepository,
+    @inject(TYPES.IServiceService) private _serviceRepo: IServiceRepository,
+    @inject(TYPES.IBarberUnavailabilityRepository)
+    private _barberUnavailabilityRepo: IBarberUnavailabilityRepository,
+    @inject(TYPES.ICouponRepository) private _couponRepo: ICouponRepository
+  ) {}
 
   fetchBookings = async (
     role: "user" | "barber" | "admin",

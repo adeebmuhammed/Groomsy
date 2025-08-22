@@ -2,8 +2,9 @@ import { DeleteResult } from "mongoose";
 import Offers, { IOffer } from "../models/offer.model";
 import { BaseRepository } from "./base.repository";
 import { IOfferRepository } from "./interfaces/IOfferRepository";
-import { off } from "process";
+import { injectable } from "inversify";
 
+@injectable()
 export class OfferRepository
   extends BaseRepository<IOffer>
   implements IOfferRepository

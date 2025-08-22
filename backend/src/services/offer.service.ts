@@ -6,9 +6,14 @@ import { STATUS_CODES } from "../utils/constants";
 import { validateOfferData } from "../utils/offerValidator";
 import { IOfferService } from "./interfaces/IOfferService";
 import { MessageResponseDto } from "../dto/base.dto";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../config/types";
 
+@injectable()
 export class OfferService implements IOfferService {
-  constructor(private _offerRepo: IOfferRepository) {}
+  constructor(
+    @inject(TYPES.IOfferRepository) private _offerRepo: IOfferRepository
+  ) {}
 
   getAllOffers = async (
     search: string,
