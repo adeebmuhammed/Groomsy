@@ -34,7 +34,6 @@ export class UserService {
       `${environment.apiBaseUrl}/user/get-barbers`,
       {
         params,
-        withCredentials: true,
       }
     );
   }
@@ -64,7 +63,7 @@ export class UserService {
       .set('date', date)
       .set('serviceId', serviceId);
     return this.http.get<SlotResponse>(
-      `${environment.apiBaseUrl}/user/populated-slots/${barberId}`,{ params , withCredentials: true}
+      `${environment.apiBaseUrl}/user/populated-slots/${barberId}`,{ params }
     );
   }
 }

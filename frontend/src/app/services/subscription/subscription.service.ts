@@ -13,24 +13,21 @@ export class SubscriptionService {
 
   getSubscriptionDetailsByBarber(barberId: string): Observable<SubscriptionDto> {
     return this.http.get<SubscriptionDto>(
-      `${environment.apiBaseUrl}/barber/subscription/${barberId}`,
-      { withCredentials: true }
+      `${environment.apiBaseUrl}/barber/subscription/${barberId}`
     );
   }
 
   manageSubscription(barberId: string, planId: string): Observable<confirmSubscription> {
     return this.http.post<confirmSubscription>(
       `${environment.apiBaseUrl}/barber/subscription`,
-      { barberId, planId },
-      { withCredentials: true }
+      { barberId, planId }
     );
   }
 
   renewSubscription(barberId: string): Observable<confirmSubscription> {
     return this.http.put<confirmSubscription>(
       `${environment.apiBaseUrl}/barber/subscription`,
-      { barberId },
-      { withCredentials: true }
+      { barberId }
     );
   }
 
@@ -42,12 +39,11 @@ export class SubscriptionService {
   ): Observable<IMessageResponse> {
     return this.http.post<IMessageResponse>(
       `${environment.apiBaseUrl}/barber/subscription/verify-payment`,
-      { razorpay_payment_id, razorpay_order_id, razorpay_signature, barberId },
-      { withCredentials: true }
+      { razorpay_payment_id, razorpay_order_id, razorpay_signature, barberId }
     );
   }
 
   fetchPlans():Observable<SubscriptionPlanDto[]>{
-    return this.http.get<SubscriptionPlanDto[]>(`${environment.apiBaseUrl}/barber/subscription/plans`, { withCredentials: true })
+    return this.http.get<SubscriptionPlanDto[]>(`${environment.apiBaseUrl}/barber/subscription/plans`)
   }
 }

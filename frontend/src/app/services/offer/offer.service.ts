@@ -24,7 +24,7 @@ export class OfferService {
   
       return this.http.get<OfferListResponseDto>(
         `${environment.apiBaseUrl}/admin/offers`,
-        { params, withCredentials: true }
+        { params, }
       );
     }
   
@@ -34,7 +34,6 @@ export class OfferService {
       return this.http.post<{message: string}>(
         `${environment.apiBaseUrl}/admin/offers`,
         data,
-        {withCredentials: true}
       )
     }
   
@@ -45,7 +44,6 @@ export class OfferService {
       return this.http.put<{message: string}>(
         `${environment.apiBaseUrl}/admin/offers/${offerId}`,
         data,
-        {withCredentials: true}
       )
     }
   
@@ -54,7 +52,6 @@ export class OfferService {
     ):Observable<{message: string}> {
       return this.http.delete<{message: string}>(
         `${environment.apiBaseUrl}/admin/offers/${offerId}`,
-        {withCredentials: true}
       )
     }
 }
