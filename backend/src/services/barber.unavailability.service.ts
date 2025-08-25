@@ -88,6 +88,9 @@ export class BarberUnavailabilityService
       throw new Error("editing weekly off failed");
     }
 
+    console.log("success");
+    
+
     return {
       response: { message: "weekly off edited successfully" },
       status: STATUS_CODES.OK,
