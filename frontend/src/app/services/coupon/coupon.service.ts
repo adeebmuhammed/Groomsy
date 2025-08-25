@@ -23,7 +23,7 @@ export class CouponService {
 
     return this.http.get<CouponListResponseDto>(
       `${environment.apiBaseUrl}/admin/coupons`,
-      { params, withCredentials: true }
+      { params, }
     );
   }
 
@@ -33,7 +33,6 @@ export class CouponService {
     return this.http.post<{message: string}>(
       `${environment.apiBaseUrl}/admin/coupons`,
       data,
-      {withCredentials: true}
     )
   }
 
@@ -44,7 +43,6 @@ export class CouponService {
     return this.http.put<{message: string}>(
       `${environment.apiBaseUrl}/admin/coupons/${couponId}`,
       data,
-      {withCredentials: true}
     )
   }
 
@@ -53,7 +51,6 @@ export class CouponService {
   ):Observable<{message: string}> {
     return this.http.delete<{message: string}>(
       `${environment.apiBaseUrl}/admin/coupons/${couponId}`,
-      {withCredentials: true}
     )
   }
 }

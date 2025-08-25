@@ -18,8 +18,7 @@ export class AdminService {
     .set('limit', limit);
 
   return this.http.get<PaginatedResponse<IUser>>(`${environment.apiBaseUrl}/admin/users`, {
-    params,
-    withCredentials: true
+    params
   });
 }
 
@@ -31,16 +30,15 @@ export class AdminService {
     .set('limit', limit);
 
     return this.http.get<PaginatedResponse<IBarber>>(`${environment.apiBaseUrl}/admin/barbers`,{
-      params,
-      withCredentials: true 
+      params
     })
   }
 
   updateUserStatus(userId: string, status: string): Observable<{ message: string }> {
-    return this.http.patch<{ message: string }>(`${environment.apiBaseUrl}/admin/update-user-status/${userId}`,{ status },{ withCredentials: true });
+    return this.http.patch<{ message: string }>(`${environment.apiBaseUrl}/admin/update-user-status/${userId}`,{ status });
   }
 
   updateBarberStatus(barberId: string, status: string): Observable<{ message: string }> {
-    return this.http.patch<{ message: string }>(`${environment.apiBaseUrl}/admin/update-barber-status/${barberId}`,{ status },{ withCredentials: true });
+    return this.http.patch<{ message: string }>(`${environment.apiBaseUrl}/admin/update-barber-status/${barberId}`,{ status });
   }
 }

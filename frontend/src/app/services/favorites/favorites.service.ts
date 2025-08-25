@@ -26,7 +26,7 @@ export class FavoritesService {
 
     return this.http.get<PaginatedResponse<BarberDto>>(
       `${environment.apiBaseUrl}/user/favorites`,
-      { params, withCredentials: true }
+      { params, }
     );
   }
 
@@ -38,7 +38,6 @@ export class FavoritesService {
     return this.http.patch<IMessageResponse>(
       `${environment.apiBaseUrl}/user/favorites`,
       body,
-      { withCredentials: true }
     );
   }
 }
