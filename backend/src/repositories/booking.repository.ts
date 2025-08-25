@@ -14,24 +14,6 @@ export class BookingRepository
     super(Booking);
   }
 
-  async createBooking(
-    userId: string,
-    data: BookingCreateRequestDto
-  ): Promise<IBooking | null> {
-    return await Booking.create({
-      user: userId,
-      barber: data.barberId,
-      totalPrice: data.price,
-      finalPrice: data.price,
-      service: data.serviceId,
-      slotDetails: {
-        startTime: data.startTime,
-        endTime: data.endTime,
-        date: data.date,
-      },
-    });
-  }
-
   async findSimilarBooking(
     data: BookingCreateRequestDto
   ): Promise<IBooking | null> {
