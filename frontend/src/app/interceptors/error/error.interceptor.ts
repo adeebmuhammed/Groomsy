@@ -8,7 +8,7 @@ import {
 } from '@angular/common/http';
 import { catchError, throwError, switchMap } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 export const errorInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn) => {
   const snackBar = inject(MatSnackBar);

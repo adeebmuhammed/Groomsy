@@ -22,7 +22,7 @@ export class ReviewService {
     const params = new HttpParams().set('page', page).set('limit', limit);
     return this.http.get<ReviewListResponse>(
       `${environment.apiBaseUrl}/user/review/${userId}`,
-      { params, withCredentials: true }
+      { params,}
     );
   }
 
@@ -39,14 +39,13 @@ export class ReviewService {
     return this.http.post<IMessageResponse>(
       `${environment.apiBaseUrl}/user/review`,
       body,
-      { params, withCredentials: true }
+      { params, }
     );
   }
 
   deleteReview(reviewId: string): Observable<IMessageResponse> {
     return this.http.delete<IMessageResponse>(
       `${environment.apiBaseUrl}/user/review/${reviewId}`,
-      { withCredentials : true}
     );
   }
 }

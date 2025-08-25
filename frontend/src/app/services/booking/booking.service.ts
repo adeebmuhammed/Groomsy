@@ -30,11 +30,10 @@ export class BookingService {
 
     return this.http.get<{ data: BookingResponseDto[]; totalCount: number }>(
       `${environment.apiBaseUrl}/${role}/bookings`,
-      { params, withCredentials: true }
+      { params,}
     );
   }
 
-  // Stage booking before checkout
   stageBooking(
     userId: string,
     bookingData: BookingCreateRequestDto
@@ -45,7 +44,6 @@ export class BookingService {
       bookingData,
       {
         params,
-        withCredentials: true,
       }
     );
   }
@@ -59,7 +57,7 @@ export class BookingService {
     return this.http.put<BookingResponseDto>(
       `${environment.apiBaseUrl}/user/bookings/coupon`,
       { couponCode },
-      { params, withCredentials: true }
+      { params,}
     );
   }
 
@@ -77,7 +75,6 @@ export class BookingService {
       confirmData,
       {
         params,
-        withCredentials: true,
       }
     );
   }
@@ -86,7 +83,6 @@ export class BookingService {
     return this.http.post<IMessageResponse>(
       `${environment.apiBaseUrl}/user/bookings/verify-payment`,
       paymentData,
-      { withCredentials: true }
     );
   }
 
@@ -100,14 +96,13 @@ export class BookingService {
     return this.http.patch<IMessageResponse>(
       `${environment.apiBaseUrl}/${role}/bookings/${id}`,
       body,
-      { params, withCredentials: true }
+      { params, }
     );
   }
 
   getBookingById(role: 'user' | 'barber' | 'admin', bookingId: string) {
     return this.http.get<BookingResponseDto>(
       `${environment.apiBaseUrl}/${role}/bookings-by-id/${bookingId}`,
-      { withCredentials: true }
     );
   }
 
@@ -124,7 +119,7 @@ export class BookingService {
 
     return this.http.get<{ data: BookingResponseDto[]; totalCount: number }>(
       `${environment.apiBaseUrl}/user/bookings/${userId}`,
-      { params, withCredentials: true }
+      { params, }
     );
   }
 }
