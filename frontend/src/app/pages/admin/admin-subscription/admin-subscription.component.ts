@@ -3,7 +3,10 @@ import { AdminHeaderComponent } from '../../../components/admin/admin-header/adm
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
 import { AdminTableComponent } from '../../../components/shared/admin-table/admin-table.component';
-import { CreateSubscriptionPlanDto, SubscriptionPlanDto } from '../../../interfaces/interfaces';
+import {
+  CreateSubscriptionPlanDto,
+  SubscriptionPlanDto,
+} from '../../../interfaces/interfaces';
 import { SubscriptionPlanService } from '../../../services/subscription-plan/subscription-plan.service';
 import Swal from 'sweetalert2';
 import { SubscriptionFormComponent } from '../../../components/shared/subscription-form/subscription-form.component';
@@ -79,8 +82,17 @@ export class AdminSubscriptionComponent implements OnInit {
           'Updated',
           res.message || "Subscription plan's Activation Updated Successfully",
           'success'
-        );
-        this.fetchPlans();
+        ).then(() => {
+          this.plans = this.plans.map((p) =>
+            p.id === plan.id
+              ? {
+                  ...p,
+                  isActive: !plan.isActive,
+                  status: !plan.isActive ? 'active' : 'inactive',
+                }
+              : p
+          );
+        });
       },
       error: (err) => {
         Swal.fire(
@@ -92,12 +104,12 @@ export class AdminSubscriptionComponent implements OnInit {
     });
   }
 
-  createPlan(data: CreateSubscriptionPlanDto){
+  createPlan(data: CreateSubscriptionPlanDto) {
     this.planService.create(data).subscribe({
-      next:(res)=>{
+      next: (res) => {
         Swal.fire(
           'Created',
-          res.message || "Subscription plan Created Successfully",
+          res.message || 'Subscription plan Created Successfully',
           'success'
         );
         this.modalClose();
@@ -106,18 +118,18 @@ export class AdminSubscriptionComponent implements OnInit {
       error: (err) => {
         Swal.fire(
           'Error',
-          err.error.message || "Subscription plan Creation Failed",
+          err.error.message || 'Subscription plan Creation Failed',
           'error'
         );
-      }
-    })
+      },
+    });
   }
 
-  showModal(){
-    this.displayPlanFormModal = true
+  showModal() {
+    this.displayPlanFormModal = true;
   }
 
-  modalClose(){
-    this.displayPlanFormModal = false
+  modalClose() {
+    this.displayPlanFormModal = false;
   }
 }

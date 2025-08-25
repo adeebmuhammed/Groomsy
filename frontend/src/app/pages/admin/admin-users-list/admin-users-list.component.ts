@@ -10,11 +10,16 @@ import { IUser } from '../../../interfaces/interfaces';
 
 @Component({
   selector: 'app-admin-users-list',
-  imports: [ AdminHeaderComponent,AdminFooterComponent,AdminSidebarComponent,CommonModule,AdminTableComponent ],
+  imports: [
+    AdminHeaderComponent,
+    AdminFooterComponent,
+    AdminSidebarComponent,
+    CommonModule,
+    AdminTableComponent,
+  ],
   templateUrl: './admin-users-list.component.html',
-  styleUrl: './admin-users-list.component.css'
+  styleUrl: './admin-users-list.component.css',
 })
-
 export class AdminUsersListComponent implements OnInit {
   users: IUser[] = [];
   currentPage = 1;
@@ -26,7 +31,7 @@ export class AdminUsersListComponent implements OnInit {
     { key: 'name', label: 'Name' },
     { key: 'email', label: 'Email' },
     { key: 'status', label: 'Status', isStatus: true },
-    { key: 'createdAt', label: 'Created', isDate: true }
+    { key: 'createdAt', label: 'Created', isDate: true },
   ];
 
   constructor(private adminService: AdminService) {}
@@ -36,7 +41,8 @@ export class AdminUsersListComponent implements OnInit {
   }
 
   fetchUsers(): void {
-    this.adminService.listUsers(this.searchTerm, this.currentPage, this.itemsPerPage)
+    this.adminService
+      .listUsers(this.searchTerm, this.currentPage, this.itemsPerPage)
       .subscribe((res) => {
         this.users = res?.data || [];
         this.totalPages = res?.pagination?.totalPages || 1;
@@ -66,7 +72,10 @@ export class AdminUsersListComponent implements OnInit {
           timer: 2000,
           showConfirmButton: false,
         }).then(() => {
-          this.fetchUsers();
+          const newStatus = status === 'blocked' ? 'active' : 'blocked';
+          this.users = this.users.map((u) =>
+            u.id === user.id ? { ...u, status: newStatus } : u
+          );
         });
       },
       error: (err) => {
@@ -76,7 +85,7 @@ export class AdminUsersListComponent implements OnInit {
           text: 'User Status Updation Failed',
         });
         console.error('Error updating user status:', err);
-      }
+      },
     });
   }
 }
