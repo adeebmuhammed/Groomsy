@@ -24,7 +24,6 @@ export class SlotService {
       `${environment.apiBaseUrl}/barber/slots`,
       {
         params,
-        withCredentials: true,
       }
     );
   }
@@ -36,7 +35,7 @@ export class SlotService {
     return this.http.post<{ response: SlotDto; message: string }>(
       `${environment.apiBaseUrl}/barber/slots`,
       data,
-      { params, withCredentials: true }
+      { params }
     );
   }
 
@@ -47,14 +46,12 @@ export class SlotService {
     return this.http.put<{ response: SlotDto; message: string }>(
       `${environment.apiBaseUrl}/barber/slots/${slotId}`,
       data,
-      { withCredentials: true }
     );
   }
 
   deleteSlot(slotId: string): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(
       `${environment.apiBaseUrl}/barber/slots/${slotId}`,
-      { withCredentials: true }
     );
   }
 }

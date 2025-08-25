@@ -27,7 +27,7 @@ export class ServiceService {
 
     return this.http.get<ServiceListResponse>(
       `${environment.apiBaseUrl}/${role}/service`,
-      { params, withCredentials: true }
+      { params }
     );
   }
 
@@ -40,7 +40,6 @@ export class ServiceService {
     return this.http.post<IMessageResponse>(
       `${environment.apiBaseUrl}/admin/service`,
       data,
-      { withCredentials: true }
     );
   }
 
@@ -51,14 +50,12 @@ export class ServiceService {
     return this.http.put<IMessageResponse>(
       `${environment.apiBaseUrl}/admin/service/${id}`,
       data,
-      { withCredentials: true }
     );
   }
 
   delete(id: string): Observable<IMessageResponse> {
     return this.http.delete<IMessageResponse>(
       `${environment.apiBaseUrl}/admin/service/${id}`,
-      { withCredentials: true }
     );
   }
 
@@ -68,7 +65,6 @@ export class ServiceService {
   ): Observable<Service> {
     return this.http.get<Service>(
       `${environment.apiBaseUrl}/${role}/service/${serviceId}`,
-      { withCredentials: true }
     );
   }
 }
