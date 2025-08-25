@@ -61,10 +61,10 @@ barberRoutes
 .patch("/bookings/:id",barberAuth,subMiddleware,bookingController.updateBookingStatus)
 
 barberRoutes
-.get("/unavailability/:id",barberAuth,barberUnavailabilityController.fetchBarberUnavailability)
-.patch("/unavailability/weekly/:id",barberAuth,subMiddleware,barberUnavailabilityController.editWeeklyDayOff)
-.post("/unavailability/special/:id",barberAuth,subMiddleware,barberUnavailabilityController.addOffDay)
-.delete("/unavailability/special/:id",barberAuth,subMiddleware,barberUnavailabilityController.removeOffDay)
+.get("/barber-unavailability/:id",barberAuth,barberUnavailabilityController.fetchBarberUnavailability)
+.patch("/barber-unavailability/weekly/:id",barberAuth,subMiddleware,barberUnavailabilityController.editWeeklyDayOff)
+.post("/barber-unavailability/special/:id",barberAuth,subMiddleware,barberUnavailabilityController.addOffDay)
+.delete("/barber-unavailability/special/:id",barberAuth,subMiddleware,barberUnavailabilityController.removeOffDay)
 
 barberRoutes
 .get("/subscription/plans",planController.getPlansForBarber)
