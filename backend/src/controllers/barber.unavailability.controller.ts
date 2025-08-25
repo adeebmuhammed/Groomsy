@@ -39,6 +39,8 @@ export class BarberUnavailabilityController
   };
 
   editWeeklyDayOff = async (req: Request, res: Response): Promise<void> => {
+    console.log("req reached");
+    
     try {
       const barberId = req.params["id"];
       const day = req.body.day as string;
