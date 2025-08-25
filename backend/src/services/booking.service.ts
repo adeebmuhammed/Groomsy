@@ -31,7 +31,7 @@ export class BookingService implements IBookingService {
     @inject(TYPES.IBookingRepository) private _bookingRepo: IBookingRepository,
     @inject(TYPES.IUserRepository) private _userRepo: IUserRepository,
     @inject(TYPES.IBarberRepository) private _barberRepo: IBarberRepository,
-    @inject(TYPES.IServiceService) private _serviceRepo: IServiceRepository,
+    @inject(TYPES.IServiceRepository) private _serviceRepo: IServiceRepository,
     @inject(TYPES.IBarberUnavailabilityRepository)
     private _barberUnavailabilityRepo: IBarberUnavailabilityRepository,
     @inject(TYPES.ICouponRepository) private _couponRepo: ICouponRepository
@@ -114,9 +114,20 @@ export class BookingService implements IBookingService {
     const similarBooking = await this._bookingRepo.findSimilarBooking(data);
     if (similarBooking) throw new Error("slot is already booked");
 
-    const booking = await this._bookingRepo.createBooking(userId, {
-      ...data,
-    });
+    const createBooking: Partial<IBooking> = {
+      user: new mongoose.Types.ObjectId(userId),
+      barber: new mongoose.Types.ObjectId(data.barberId),
+      service: new mongoose.Types.ObjectId(data.serviceId),
+      totalPrice: data.price,
+      finalPrice: data.price,
+      slotDetails:{
+        date: data.date,
+        startTime: data.startTime,
+        endTime: data.endTime
+      }
+    }
+
+    const booking = await this._bookingRepo.create(createBooking);
     if (!booking) {
       throw new Error("staging booking failed");
     }
