@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AdminHeaderComponent } from '../../../components/admin/admin-header/admin-header.component';
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
@@ -34,7 +34,7 @@ export class AdminUsersListComponent implements OnInit {
     { key: 'createdAt', label: 'Created', isDate: true },
   ];
 
-  constructor(private adminService: AdminService) {}
+  private adminService = inject(AdminService);
 
   ngOnInit(): void {
     this.fetchUsers();

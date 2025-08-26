@@ -1,28 +1,7 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import { UserController } from "../controllers/user.controller";
-import { UserService } from "../services/user.service";
-import { UserRepository } from "../repositories/user.repository";
 import passport from '../config/passport'
-import { FavoritesController } from "../controllers/favorites.controller";
-import { FavoritesRepository } from "../repositories/favorites.repository";
-import { FavoritesService } from "../services/favorites.service";
 import { isBlockedMiddleware } from "../middlewares/isBlocked.middleware";
-import { BookingRepository } from "../repositories/booking.repository";
-import { BookingService } from "../services/booking.service";
-import { BookingController } from "../controllers/booking.controller";
-import { SlotRepository } from "../repositories/slot.repository";
-import { SlotService } from "../services/slot.service";
-import { SlotController } from "../controllers/slot.controller";
-import { ServiceRepository } from "../repositories/service.repository";
-import { ServiceService } from "../services/service.service";
-import { ServiceController } from "../controllers/service.controller";
-import { BarberUnavailabilityController } from "../controllers/barber.unavailability.controller";
-import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
-import { BarberUnavailabilityService } from "../services/barber.unavailability.service";
-import { ReviewRepository } from "../repositories/review.repository";
-import { ReviewService } from "../services/review.service";
-import { ReviewController } from "../controllers/review.controller";
 import { container } from "../config/inversify";
 import { TYPES } from "../config/types";
 import { IUserController } from "../controllers/interfaces/IUserController";
@@ -90,7 +69,7 @@ userRoutes
 .get("/service/:id",userAuth,isBlockedMiddleware,serviceController.getServiceById)
 
 userRoutes
-.get("/unavailability/:id",userAuth,isBlockedMiddleware,barberUnavailabilityController.fetchBarberUnavailability)
+.get("/barber-unavailability/:id",userAuth,isBlockedMiddleware,barberUnavailabilityController.fetchBarberUnavailability)
 
 userRoutes
 .get("/review/:id",userAuth,isBlockedMiddleware,reviewController.getReviewsByUser)
