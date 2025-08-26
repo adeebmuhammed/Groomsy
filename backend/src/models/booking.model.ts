@@ -20,6 +20,7 @@ export interface IBooking extends Document {
     | "cancelled_by_user"
     | "finished";
   razorpayOrderId?:string;
+  expiresAt?:Date;
 }
 
 const BookingSchema = new Schema({
@@ -49,6 +50,11 @@ const BookingSchema = new Schema({
   razorpayOrderId: {
     type: String,
     required: false,
+  },
+  expiresAt: {
+    type: Date,
+    default: () => new Date(Date.now() + 10 * 60 * 1000),
+    index: { expires: "0s" },
   },
 });
 
