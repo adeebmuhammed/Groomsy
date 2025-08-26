@@ -111,6 +111,15 @@ export class BookingService implements IBookingService {
       );
     }
 
+    const activeStaged = await this._bookingRepo.find({
+    user: userId,
+    status: "staged"
+  });
+
+  if (activeStaged.length >= 2) {
+    throw new Error("You already have the maximum allowed active holds");
+  }
+
     const similarBooking = await this._bookingRepo.findSimilarBooking(data);
     if (similarBooking) throw new Error("slot is already booked");
 
@@ -124,7 +133,8 @@ export class BookingService implements IBookingService {
         date: data.date,
         startTime: data.startTime,
         endTime: data.endTime
-      }
+      },
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
     }
 
     const booking = await this._bookingRepo.create(createBooking);
@@ -195,7 +205,7 @@ export class BookingService implements IBookingService {
       discountAmount?: number;
     }
   ): Promise<{ response: confirmBookingDto; status: number }> => {
-    // Find the booking
+    
     const booking = await this._bookingRepo.findById(bookingId);
 
     if (!booking) throw new Error("Booking not found");
@@ -203,12 +213,10 @@ export class BookingService implements IBookingService {
     if (booking.status !== "staged")
       throw new Error("Booking is not in staged state");
 
-    // Update booking details (before payment)
     booking.finalPrice = data.finalPrice ?? booking.totalPrice;
     booking.couponCode = data.couponCode ?? undefined;
     booking.discountAmount = data.discountAmount ?? 0;
 
-    // Create Razorpay order
     const razorpayOrder = await razorpayInstance.orders.create({
       amount: Math.round(booking.finalPrice * 100), // amount in paise
       currency: "INR",
@@ -254,6 +262,7 @@ export class BookingService implements IBookingService {
       if (!booking) throw new Error("Booking not found");
 
       booking.status = "pending";
+      booking.expiresAt = undefined;
       const updated = await this._bookingRepo.update(
         booking._id as string,
         booking
