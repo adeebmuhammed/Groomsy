@@ -124,7 +124,6 @@ export class UserBarberDetailsComponent implements OnInit {
   }
 
   submitDate(): void {
-    console.log('submit date called');
     if (!this.selectedDate || !this.selectedService) {
       Swal.fire('Error!', 'Please select a service and date.', 'error');
       return;
@@ -326,12 +325,30 @@ export class UserBarberDetailsComponent implements OnInit {
                     bookingId: bookingId,
                   })
                   .subscribe({
-                    next: (verifyRes) => {
+                    next: () => {
+                      // Close the modal
+                      const modalElement = document.getElementById(
+                        'bookingCheckoutModal'
+                      );
+                      const modalInstance = bootstrap.Modal.getInstance(
+                        modalElement!
+                      );
+                      modalInstance?.hide();
+
                       this.router.navigate([
                         `/user/booking-confirmation/${bookingId}`,
                       ]);
                     },
                     error: (err) => {
+                      // Close the modal
+                      const modalElement = document.getElementById(
+                        'bookingCheckoutModal'
+                      );
+                      const modalInstance = bootstrap.Modal.getInstance(
+                        modalElement!
+                      );
+                      modalInstance?.hide();
+
                       this.router.navigate([
                         `/user/booking-confirmation/${bookingId}`,
                       ]);
