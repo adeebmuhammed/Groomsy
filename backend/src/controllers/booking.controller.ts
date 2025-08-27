@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { IBookingService } from "../services/interfaces/IBookingService";
 import { IBookingController } from "./interfaces/IBookingController";
-import { STATUS_CODES } from "../utils/constants";
+import { ROLES, STATUS_CODES } from "../utils/constants";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
 
@@ -126,7 +126,7 @@ export class BookingController implements IBookingController {
 
   updateBookingStatus = async (req: Request, res: Response): Promise<void> => {
     try {
-      const role: "user" | "barber" = req.query.role as "user" | "barber";
+      const role = req.query.role as ROLES;
       const bookingId = req.params.id as string;
 
       const { bookingStatus } = req.body;
