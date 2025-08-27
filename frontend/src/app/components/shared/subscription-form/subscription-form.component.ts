@@ -2,6 +2,7 @@ import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { CreateSubscriptionPlanDto } from '../../../interfaces/interfaces';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { REGEX } from '../../../constants/validators';
 
 @Component({
   selector: 'app-subscription-form',
@@ -20,7 +21,7 @@ export class SubscriptionFormComponent {
 
   constructor() {
     this.planForm = this.fb.group({
-      name: ['', Validators.required],
+      name: ['', Validators.required, Validators.pattern(REGEX.LONG_NAME)],
       price: [null, [Validators.required, Validators.min(1)]],
       renewalPrice: [null, [Validators.required, Validators.min(1)]],
       duration: [null, [Validators.required, Validators.min(1)]],

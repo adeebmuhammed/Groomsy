@@ -1,7 +1,7 @@
 export enum ROLES {
   USER = "user",
   BARBER = "barber",
-  ADMIN = "admin"
+  ADMIN = "admin",
 }
 
 export const STATUS_CODES = {
@@ -47,6 +47,14 @@ export const MESSAGES = {
     INVALID_TOKEN: "Invalid or expired token",
     ALREADY_VERIFIED: "User is already verified",
     BLOCKED: "You have been blocked by the admin",
-    INVALID_EMAIL: "Invalid Email Format"
+    INVALID_EMAIL: "Invalid Email Format",
   },
+};
+
+export const REGEX = {
+  EMAIL: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+  PASSWORD:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+  LONG_NAME: /^[A-Za-z0-9 ]{1,25}$/,
+  OTP: /^\d{6}$/,
+  PHONE: /^[0-9]{10,15}$/,
 };

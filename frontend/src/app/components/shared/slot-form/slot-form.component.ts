@@ -43,7 +43,6 @@ export class SlotFormComponent implements OnChanges {
   constructor(private fb: FormBuilder) {
     this.slotForm = this.fb.group({});
 
-    // Initialize form controls dynamically
     for (const day of this.weekDays) {
       this.slotForm.addControl(day, new FormControl(false));
 
@@ -56,7 +55,6 @@ export class SlotFormComponent implements OnChanges {
         new FormControl({ value: '', disabled: true }, Validators.required)
       );
 
-      // Enable/disable time fields dynamically
       this.slotForm.get(day)?.valueChanges.subscribe((checked) => {
         const startCtrl = this.slotForm.get(`${day}_startTime`);
         const endCtrl = this.slotForm.get(`${day}_endTime`);

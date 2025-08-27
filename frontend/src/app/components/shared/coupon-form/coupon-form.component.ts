@@ -14,6 +14,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { REGEX } from '../../../constants/validators';
 
 @Component({
   selector: 'app-coupon-form',
@@ -32,7 +33,7 @@ export class CouponFormComponent implements OnChanges {
   constructor(private fb: FormBuilder) {
     this.couponForm = this.fb.group(
       {
-        name: ['', [Validators.required, Validators.pattern(/\S+/)]],
+        name: ['', [Validators.required, Validators.pattern(REGEX.LONG_NAME)]],
         code: ['', [Validators.required, Validators.pattern(/^\S+$/)]],
         startDate: ['', Validators.required],
         endDate: ['', Validators.required],
