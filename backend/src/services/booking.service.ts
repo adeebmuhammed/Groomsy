@@ -10,7 +10,7 @@ import { IBarberRepository } from "../repositories/interfaces/IBarberRepository"
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
 import { IUserRepository } from "../repositories/interfaces/IUserRepository";
 import { UserRepository } from "../repositories/user.repository";
-import { MESSAGES, STATUS_CODES } from "../utils/constants";
+import { MESSAGES, ROLES, STATUS_CODES } from "../utils/constants";
 import { IBookingService } from "./interfaces/IBookingService";
 import { MessageResponseDto } from "../dto/base.dto";
 import { IServiceRepository } from "../repositories/interfaces/IServiceRepository";
@@ -38,7 +38,7 @@ export class BookingService implements IBookingService {
   ) {}
 
   fetchBookings = async (
-    role: "user" | "barber" | "admin",
+    role: ROLES,
     id?: string,
     page: number = 1,
     limit: number = 5
@@ -49,13 +49,13 @@ export class BookingService implements IBookingService {
     const skip = (page - 1) * limit;
     const filter: Partial<{ user: string; barber: string }> = {};
 
-    if (role === "user") {
+    if (role === ROLES.USER) {
       if (!id) throw new Error("User ID is required");
       filter.user = id;
-    } else if (role === "barber") {
+    } else if (role === ROLES.BARBER) {
       if (!id) throw new Error("Barber ID is required");
       filter.barber = id;
-    } else if (role !== "admin") {
+    } else if (role !== ROLES.ADMIN) {
       throw new Error("Invalid role");
     }
 
@@ -281,7 +281,7 @@ export class BookingService implements IBookingService {
   };
 
   updateBookingStatus = async (
-    role: "user" | "barber",
+    role: ROLES.USER | ROLES.BARBER,
     bookingId: string,
     bookingStatus: string
   ): Promise<{ response: MessageResponseDto; status: number }> => {
