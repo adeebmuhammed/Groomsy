@@ -8,6 +8,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { REGEX } from '../../../constants/validators';
 
 @Component({
   selector: 'app-offer-form',
@@ -26,7 +27,7 @@ export class OfferFormComponent {
   constructor(private fb: FormBuilder) {
     this.offerForm = this.fb.group(
       {
-        name: ['', [Validators.required, Validators.pattern(/\S+/)]],
+        name: ['', [Validators.required, Validators.pattern(REGEX.LONG_NAME)]],
         startDate: ['', Validators.required],
         endDate: ['', Validators.required],
         discount: [

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { REGEX } from '../../../constants/validators';
 
 @Component({
   selector: 'app-service-form',
@@ -21,7 +22,7 @@ export class ServiceFormComponent {
 
   constructor() {
     this.serviceForm = this.fb.group({
-      name: ['', [Validators.required, Validators.pattern(/\S+/)]],
+      name: ['', [Validators.required, Validators.pattern(REGEX.LONG_NAME)]],
       description: ['', [Validators.required, Validators.pattern(/\S+/)]],
       duration: ['', Validators.required],
       price: ['', [Validators.required, Validators.min(1)]]
