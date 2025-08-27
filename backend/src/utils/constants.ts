@@ -1,8 +1,8 @@
-export const ROLES = {
-  USER: "user",
-  BARBER: "barber",
-  ADMIN: "admin",
-};
+export enum ROLES {
+  USER = "user",
+  BARBER = "barber",
+  ADMIN = "admin"
+}
 
 export const STATUS_CODES = {
   OK: 200,

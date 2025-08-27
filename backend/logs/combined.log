@@ -4346,3 +4346,17 @@
 2025-08-27 08:20:51 [INFO]: GET /api/user/service/689570c3358c1ae78f550634
 2025-08-27 08:21:04 [INFO]: GET /api/user/get-barbers?search=&page=1&limit=3
 2025-08-27 08:21:04 [INFO]: GET /api/user/favorites?userId=68826b157451d8eb5c4d78d3&page=1&limit=100
+2025-08-27 09:11:53 [INFO]: GET /api/user/get-barbers?search=&page=1&limit=3
+2025-08-27 09:11:53 [INFO]: GET /api/user/favorites?userId=68826b157451d8eb5c4d78d3&page=1&limit=100
+2025-08-27 09:11:53 [INFO]: POST /api/refresh-token
+2025-08-27 09:11:53 [INFO]: POST /api/refresh-token
+2025-08-27 09:11:53 [INFO]: GET /api/user/get-barbers?search=&page=1&limit=3
+2025-08-27 09:11:53 [INFO]: GET /api/user/favorites?userId=68826b157451d8eb5c4d78d3&page=1&limit=100
+2025-08-27 09:11:55 [INFO]: POST /api/user/logout
+2025-08-27 09:12:22 [INFO]: POST /api/barber/login
+2025-08-27 09:12:29 [INFO]: GET /api/barber/barber-unavailability/6898ce9c6d80bc55be161c4d
+2025-08-27 09:12:42 [INFO]: POST /api/barber/barber-unavailability/special/6898ce9c6d80bc55be161c4d
+2025-08-27 09:12:59 [INFO]: GET /api/barber/barber-unavailability/6898ce9c6d80bc55be161c4d
+2025-08-27 09:13:02 [INFO]: DELETE /api/barber/barber-unavailability/special/6898ce9c6d80bc55be161c4d?date=2025-08-30
+2025-08-27 09:13:05 [INFO]: GET /api/barber/barber-unavailability/6898ce9c6d80bc55be161c4d
+2025-08-27 09:13:13 [INFO]: POST /api/barber/logout
