@@ -2,6 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  Subject,
+  Subscription,
+} from 'rxjs';
 
 @Component({
   selector: 'app-admin-table',
@@ -34,6 +40,26 @@ export class AdminTableComponent {
 
   searchTerm = '';
 
+  private searchSubject = new Subject<string>();
+  private toggleSubject = new Subject<any>();
+
+  private searchSub!: Subscription;
+  private toggleSub!: Subscription;
+
+  constructor() {
+    this.searchSub = this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.onSearch.emit(term.trim());
+      });
+
+    this.toggleSub = this.toggleSubject
+      .pipe(debounceTime(300))
+      .subscribe((item) => {
+        this.onToggleStatus.emit(item);
+      });
+  }
+
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.onPageChange.emit(page);
@@ -49,11 +75,11 @@ export class AdminTableComponent {
   }
 
   toggleStatus(item: any): void {
-    this.onToggleStatus.emit(item);
+    this.toggleSubject.next(item);
   }
 
   onSearchChange(): void {
-    this.onSearch.emit(this.searchTerm.trim());
+    this.searchSubject.next(this.searchTerm);
   }
 
   editItem(item: any): void {
