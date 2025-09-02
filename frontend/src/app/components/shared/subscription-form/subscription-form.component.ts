@@ -21,7 +21,7 @@ export class SubscriptionFormComponent {
 
   constructor() {
     this.planForm = this.fb.group({
-      name: ['', Validators.required, Validators.pattern(REGEX.LONG_NAME)],
+      name: ['', [Validators.required, Validators.pattern(REGEX.LONG_NAME), Validators.maxLength(25)]],
       price: [null, [Validators.required, Validators.min(1)]],
       renewalPrice: [null, [Validators.required, Validators.min(1)]],
       duration: [null, [Validators.required, Validators.min(1)]],
@@ -39,9 +39,13 @@ export class SubscriptionFormComponent {
   }
 
   submitForm(): void {
+    console.log("submitted");
+    
     this.planForm.markAllAsTouched();
 
     if (this.planForm.valid) {
+      console.log("valid");
+      
       this.onSubmit.emit(this.planForm.value as CreateSubscriptionPlanDto);
     }
   }
