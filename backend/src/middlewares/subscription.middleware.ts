@@ -45,7 +45,7 @@ export const subscriptionMiddleware = () => {
         subscription.expiryDate >= today &&
         subscription.status === "active"
       ) {
-        next();
+        return next();
       }
 
       if (subscription.expiryDate < today) {
@@ -64,7 +64,7 @@ export const subscriptionMiddleware = () => {
         return;
       }
 
-      next();
+      return next();
     } catch (error) {
       res
         .status(STATUS_CODES.UNAUTHORIZED)
