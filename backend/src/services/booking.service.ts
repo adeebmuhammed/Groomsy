@@ -218,7 +218,7 @@ export class BookingService implements IBookingService {
     booking.discountAmount = data.discountAmount ?? 0;
 
     const razorpayOrder = await razorpayInstance.orders.create({
-      amount: Math.round(booking.finalPrice * 100), // amount in paise
+      amount: Math.round(booking.finalPrice * 100),
       currency: "INR",
       receipt: bookingId,
     });

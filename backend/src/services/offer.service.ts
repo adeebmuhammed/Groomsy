@@ -8,6 +8,8 @@ import { IOfferService } from "./interfaces/IOfferService";
 import { MessageResponseDto } from "../dto/base.dto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
+import { off } from "process";
+import mongoose from "mongoose";
 
 @injectable()
 export class OfferService implements IOfferService {
@@ -56,6 +58,26 @@ export class OfferService implements IOfferService {
       throw new Error("Offer with same name exists");
     }
 
+    const offers = await this._offerRepo.find({});
+    if (offers.length) {
+      offers.forEach((offer) => {
+        const newStart = new Date(data.startDate);
+        const newEnd = new Date(data.endDate);
+        const existingStart = new Date(offer.startDate);
+        const existingEnd = new Date(offer.endDate);
+
+        const isOverlapping =
+          (newStart >= existingStart && newStart <= existingEnd) ||
+          (newEnd >= existingStart && newEnd <= existingEnd) ||
+          (existingStart >= newStart && existingStart <= newEnd) ||
+          (existingEnd >= newStart && existingEnd <= newEnd);
+
+        if (isOverlapping) {
+          throw new Error("An offer already exists in this date range");
+        }
+      });
+    }
+
     const newOffer = await this._offerRepo.create(data);
     if (!newOffer) {
       throw new Error("offer creation failed");
@@ -77,13 +99,39 @@ export class OfferService implements IOfferService {
     }
 
     const sameName = await this._offerRepo.findByName(data.name);
-    if (sameName) {
+    if (
+      sameName &&
+      (sameName._id as mongoose.Types.ObjectId).toString() !== offerId
+    ) {
       throw new Error("Offer with same name exists");
     }
 
     const existingOffer = await this._offerRepo.findById(offerId);
     if (!existingOffer) {
-      throw new Error("offer not found");
+      throw new Error("Offer not found");
+    }
+
+    const offers = await this._offerRepo.find({});
+    if (offers.length) {
+      offers.forEach((offer) => {
+        if ((offer._id as mongoose.Types.ObjectId).toString() === offerId)
+          return;
+
+        const newStart = new Date(data.startDate);
+        const newEnd = new Date(data.endDate);
+        const existingStart = new Date(offer.startDate);
+        const existingEnd = new Date(offer.endDate);
+
+        const isOverlapping =
+          (newStart >= existingStart && newStart <= existingEnd) ||
+          (newEnd >= existingStart && newEnd <= existingEnd) ||
+          (existingStart >= newStart && existingStart <= newEnd) ||
+          (existingEnd >= newStart && existingEnd <= newEnd);
+
+        if (isOverlapping) {
+          throw new Error("An offer already exists in this date range");
+        }
+      });
     }
 
     const updatedOffer = await this._offerRepo.update(offerId, data);
