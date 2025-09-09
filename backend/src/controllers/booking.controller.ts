@@ -107,7 +107,7 @@ export class BookingController implements IBookingController {
         bookingId,
       } = req.body;
 
-      const { response, status } = await this._bookingService.verfyPayment(
+      const { response, status } = await this._bookingService.verifyPayment(
         razorpay_payment_id,
         razorpay_order_id,
         razorpay_signature,

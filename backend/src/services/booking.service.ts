@@ -24,6 +24,8 @@ import razorpayInstance from "../utils/razorpay";
 import crypto from "crypto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
+import { IOfferRepository } from "../repositories/interfaces/IOfferRepository";
+import { off } from "process";
 
 @injectable()
 export class BookingService implements IBookingService {
@@ -34,7 +36,8 @@ export class BookingService implements IBookingService {
     @inject(TYPES.IServiceRepository) private _serviceRepo: IServiceRepository,
     @inject(TYPES.IBarberUnavailabilityRepository)
     private _barberUnavailabilityRepo: IBarberUnavailabilityRepository,
-    @inject(TYPES.ICouponRepository) private _couponRepo: ICouponRepository
+    @inject(TYPES.ICouponRepository) private _couponRepo: ICouponRepository,
+    @inject(TYPES.IOfferRepository) private _offerRepo: IOfferRepository
   ) {}
 
   fetchBookings = async (
@@ -112,30 +115,44 @@ export class BookingService implements IBookingService {
     }
 
     const activeStaged = await this._bookingRepo.find({
-    user: userId,
-    status: "staged"
-  });
+      user: userId,
+      status: "staged",
+    });
 
-  if (activeStaged.length >= 2) {
-    throw new Error("You already have the maximum allowed active holds");
-  }
+    if (activeStaged.length >= 2) {
+      throw new Error("You already have the maximum allowed active holds");
+    }
 
     const similarBooking = await this._bookingRepo.findSimilarBooking(data);
     if (similarBooking) throw new Error("slot is already booked");
+
+    const today = new Date();
+    const offer = await this._offerRepo.findOne({
+      startDate: { $lte: today },
+      endDate: { $gte: today },
+    });
+
+    let finalPrice = data.price;
+    let discountAmount;
+    if (offer) {
+      discountAmount = (data.price * offer.discount) / 100;
+      finalPrice = data.price - discountAmount;
+    }
 
     const createBooking: Partial<IBooking> = {
       user: new mongoose.Types.ObjectId(userId),
       barber: new mongoose.Types.ObjectId(data.barberId),
       service: new mongoose.Types.ObjectId(data.serviceId),
       totalPrice: data.price,
-      finalPrice: data.price,
-      slotDetails:{
+      finalPrice,
+      discountAmount,
+      slotDetails: {
         date: data.date,
         startTime: data.startTime,
-        endTime: data.endTime
+        endTime: data.endTime,
       },
       expiresAt: new Date(Date.now() + 10 * 60 * 1000),
-    }
+    };
 
     const booking = await this._bookingRepo.create(createBooking);
     if (!booking) {
@@ -205,7 +222,6 @@ export class BookingService implements IBookingService {
       discountAmount?: number;
     }
   ): Promise<{ response: confirmBookingDto; status: number }> => {
-    
     const booking = await this._bookingRepo.findById(bookingId);
 
     if (!booking) throw new Error("Booking not found");
@@ -213,9 +229,17 @@ export class BookingService implements IBookingService {
     if (booking.status !== "staged")
       throw new Error("Booking is not in staged state");
 
-    booking.finalPrice = data.finalPrice ?? booking.totalPrice;
-    booking.couponCode = data.couponCode ?? undefined;
-    booking.discountAmount = data.discountAmount ?? 0;
+    booking.finalPrice =
+      data.finalPrice !== undefined
+        ? data.finalPrice
+        : booking.finalPrice ?? booking.totalPrice;
+
+    booking.discountAmount =
+      data.discountAmount !== undefined
+        ? data.discountAmount
+        : booking.discountAmount;
+
+    booking.couponCode = data.couponCode ?? booking.couponCode;
 
     const razorpayOrder = await razorpayInstance.orders.create({
       amount: Math.round(booking.finalPrice * 100),
@@ -245,7 +269,7 @@ export class BookingService implements IBookingService {
     };
   };
 
-  verfyPayment = async (
+  verifyPayment = async (
     razorpay_payment_id: string,
     razorpay_order_id: string,
     razorpay_signature: string,
@@ -261,11 +285,8 @@ export class BookingService implements IBookingService {
       const booking = await this._bookingRepo.findById(bookingId);
       if (!booking) throw new Error("Booking not found");
 
-      booking.status = "pending";
-      booking.expiresAt = undefined;
-      const updated = await this._bookingRepo.update(
-        booking._id as string,
-        booking
+      const updated = await this._bookingRepo.updateAfterVerfyPayment(
+        booking._id as string
       );
       if (!updated) {
         throw new Error("payment verfication failed");

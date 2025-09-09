@@ -22,7 +22,7 @@
         <li class="list-group-item"><strong>Status:</strong> {{ booking.status | titlecase }}</li>
         <li class="list-group-item">
           <strong>Date:</strong> {{ booking.slotDetails.date | date:'fullDate' }}<br>
-          <strong>Time:</strong> {{ booking.slotDetails.startTime | date:'shortTime' }} - {{ booking.slotDetails.endTime | date:'shortTime' }}
+          <strong>Time:</strong> {{ formatTimeUTC(booking.slotDetails.startTime) }} - {{ formatTimeUTC(booking.slotDetails.endTime) }}
         </li>
         <li class="list-group-item"><strong>Total Price:</strong> ₹{{ booking.totalPrice }}</li>
         <li class="list-group-item" *ngIf="booking.discountAmount > 0">
