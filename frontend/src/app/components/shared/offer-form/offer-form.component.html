@@ -3,21 +3,60 @@
     <h3 class="modal-title">{{ offerData ? "Edit Offer" : "Add Offer" }}</h3>
 
     <form [formGroup]="offerForm" (ngSubmit)="submitOfferForm()">
+      <!-- Name -->
       <label>Name:</label>
       <input type="text" formControlName="name" class="form-control" />
       <div
         *ngIf="offerForm.get('name')?.touched && offerForm.get('name')?.invalid"
         class="text-danger"
       >
-        Name is required and cannot be empty.
+        <div *ngIf="offerForm.get('name')?.errors?.['required']">
+          Name is required.
+        </div>
+        <div *ngIf="offerForm.get('name')?.errors?.['pattern']">
+          Invalid name format.
+        </div>
       </div>
 
+      <!-- Start Date -->
       <label>Start Date:</label>
       <input type="date" formControlName="startDate" class="form-control" />
+      <div
+        *ngIf="
+          offerForm.get('startDate')?.touched &&
+          offerForm.get('startDate')?.invalid
+        "
+        class="text-danger"
+      >
+        <div *ngIf="offerForm.get('startDate')?.errors?.['required']">
+          Start Date is required.
+        </div>
+      </div>
 
+      <!-- End Date -->
       <label>End Date:</label>
       <input type="date" formControlName="endDate" class="form-control" />
+      <div
+        *ngIf="
+          offerForm.get('endDate')?.touched &&
+          offerForm.get('endDate')?.invalid
+        "
+        class="text-danger"
+      >
+        <div *ngIf="offerForm.get('endDate')?.errors?.['required']">
+          End Date is required.
+        </div>
+      </div>
 
+      <!-- Cross-field Validation (Start < End) -->
+      <div
+        *ngIf="offerForm.errors?.['dateRangeInvalid'] && offerForm.touched"
+        class="text-danger"
+      >
+        End Date must be after Start Date.
+      </div>
+
+      <!-- Discount -->
       <label>Discount (%):</label>
       <input
         type="number"
@@ -26,9 +65,34 @@
         min="0"
         max="100"
       />
+      <div
+        *ngIf="
+          offerForm.get('discount')?.touched &&
+          offerForm.get('discount')?.invalid
+        "
+        class="text-danger"
+      >
+        <div *ngIf="offerForm.get('discount')?.errors?.['required']">
+          Discount is required.
+        </div>
+        <div *ngIf="offerForm.get('discount')?.errors?.['min']">
+          Minimum discount is 1%.
+        </div>
+        <div *ngIf="offerForm.get('discount')?.errors?.['max']">
+          Maximum discount is 100%.
+        </div>
+        <div *ngIf="offerForm.get('discount')?.errors?.['pattern']">
+          Discount must be a number.
+        </div>
+      </div>
 
+      <!-- Actions -->
       <div class="modal-actions">
-        <button type="submit" class="submit-button">
+        <button
+          type="submit"
+          class="submit-button"
+          [disabled]="offerForm.invalid"
+        >
           {{ offerData ? "Update" : "Add" }}
         </button>
         <button

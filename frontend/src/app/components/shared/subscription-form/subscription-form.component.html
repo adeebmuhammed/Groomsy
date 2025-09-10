@@ -72,6 +72,9 @@
         class="form-control"
         placeholder="Enter description"
       ></textarea>
+      <div class="error" *ngIf="planForm.get('description')?.touched && planForm.get('description')?.invalid">
+        Description is required
+      </div>
 
       <!-- Actions -->
       <div class="modal-actions">
