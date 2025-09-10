@@ -44,7 +44,6 @@ export class BarberSlotsComponent implements OnInit {
         .subscribe({
           next: (data) => {
             this.slots = data.data;
-            console.log(this.slots)
             this.totalPages = data.pagination.totalPages;
           },
           error: (err) => console.error('Error fetching slots:', err),

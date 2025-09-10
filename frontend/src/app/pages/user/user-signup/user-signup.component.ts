@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router,RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-user-signup',
@@ -75,7 +76,7 @@ export class UserSignupComponent {
 
 
   signUpWithGoogle() {
-  window.location.href = 'http://localhost:5000/user/auth/google';
+  window.location.href = `${environment.apiBaseUrl}/user/auth/google`;
 }
 
 }

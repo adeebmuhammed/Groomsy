@@ -47,7 +47,6 @@ export class BarberBookingComponent {
         .subscribe({
           next: (res) => {
             this.bookings = res.data;
-            console.log(this.bookings);
 
             this.totalPages = Math.ceil(res.totalCount / this.itemsPerPage);
             this.currentPage = page;
