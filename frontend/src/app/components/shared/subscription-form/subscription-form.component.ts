@@ -26,7 +26,7 @@ export class SubscriptionFormComponent {
       renewalPrice: [null, [Validators.required, Validators.min(1)]],
       duration: [null, [Validators.required, Validators.min(1)]],
       durationUnit: ['', Validators.required],
-      description: ['']
+      description: ['', Validators.required]
     });
   }
 
