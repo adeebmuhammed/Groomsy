@@ -16,7 +16,7 @@ import { TYPES } from "../config/types";
 @injectable()
 export class ReviewService implements IReviewService {
   constructor(
-    @inject(TYPES.IUserRepository) private _reviewRepo: IReviewRepository,
+    @inject(TYPES.IReviewRepository) private _reviewRepo: IReviewRepository,
     @inject(TYPES.IUserRepository) private _userRepo: IUserRepository,
     @inject(TYPES.IBookingRepository) private _bookingRepo: IBookingRepository
   ) {}

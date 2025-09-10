@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import Swal from 'sweetalert2';
 import { RouterModule } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-user-signin',
@@ -63,7 +64,7 @@ export class UserSigninComponent implements OnInit{
 
 
   loginWithGoogle(): void {
-    window.location.href = 'http://localhost:5000/user/auth/google';
+    window.location.href = `${environment.apiBaseUrl}/user/auth/google`;
   }
 
 }
