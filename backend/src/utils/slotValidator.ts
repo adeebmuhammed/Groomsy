@@ -31,3 +31,12 @@ export function toUTCTimeOnly(timeString: string): Date {
   const date = new Date(Date.UTC(1970, 0, 1, hours, minutes));
   return date;
 }
+
+export function isOverlapping(start1: string, end1: string, start2: string, end2: string): boolean {
+  const s1 = new Date(`1970-01-01T${start1}:00Z`).getTime();
+  const e1 = new Date(`1970-01-01T${end1}:00Z`).getTime();
+  const s2 = new Date(`1970-01-01T${start2}:00Z`).getTime();
+  const e2 = new Date(`1970-01-01T${end2}:00Z`).getTime();
+
+  return s1 < e2 && s2 < e1; // overlap if ranges intersect
+}
