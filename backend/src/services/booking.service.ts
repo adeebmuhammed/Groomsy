@@ -139,6 +139,17 @@ export class BookingService implements IBookingService {
       finalPrice = data.price - discountAmount;
     }
 
+    const end = new Date(data.endTime)
+    const start = new Date(data.startTime)
+
+    if (end.getTime() <= today.getTime()) {
+      throw new Error("Cannot create booking for an expired slot");
+    }
+
+    if (start.getTime() <= today.getTime()) {
+      throw new Error("Cannot create booking starting in the past");
+    }
+
     const createBooking: Partial<IBooking> = {
       user: new mongoose.Types.ObjectId(userId),
       barber: new mongoose.Types.ObjectId(data.barberId),

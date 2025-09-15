@@ -138,7 +138,8 @@ export class CouponRequestDto {
 export interface SlotTime {
   startTime: Date;
   endTime: Date;
-  isBooked?: boolean; // ✅ new
+  isBooked?: boolean;
+  isExpired?: boolean; // ✅ new
 }
 
 export class SlotResponse {
