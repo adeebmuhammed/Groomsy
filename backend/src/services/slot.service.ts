@@ -6,7 +6,11 @@ import {
 } from "../dto/slot.dto";
 import { ISlotRule } from "../models/slots.model";
 import { ISlotService } from "./interfaces/ISlotService";
-import { toUTCTimeOnly, validateSlotData } from "../utils/slotValidator";
+import {
+  isOverlapping,
+  toUTCTimeOnly,
+  validateSlotData,
+} from "../utils/slotValidator";
 import { SlotMapper } from "../mappers/slot.mapper";
 import { STATUS_CODES } from "../utils/constants";
 import mongoose from "mongoose";
@@ -88,24 +92,26 @@ export class SlotService implements ISlotService {
       throw new Error("barber unavailability not found");
     }
 
-    for (const slotItem of data.slots) {
-      if (slotItem.day === unavailability.weeklyOff) {
+    const { slotRules } = await this._slotRepo.findByBarber(barberId, 1, 100);
+
+    for (const slot of data.slots) {
+      if (slot.day === unavailability.weeklyOff) {
         throw new Error(
-          `Cannot create slot on ${slotItem.day} as it is the barber's weekly off`
+          `The barber is unavailable on ${slot.day} (weekly off). Please choose a different day.`
         );
       }
 
-      const similarSlot = await this._slotRepo.findSimilarSlot(
-        barberId,
-        slotItem.day,
-        slotItem.startTime,
-        slotItem.endTime
-      );
-
-      if (similarSlot) {
-        throw new Error(
-          `Slot already exists for ${slotItem.day} at the same time`
-        );
+      for (const otherSlot of slotRules) {
+        for (const s of otherSlot.slots) {
+          if (
+            s.day === slot.day &&
+            isOverlapping(slot.startTime, slot.endTime, s.startTime, s.endTime)
+          ) {
+            throw new Error(
+              `Overlap detected: A slot already exists on ${slot.day} from ${s.startTime} to ${s.endTime}. Please choose another time.`
+            );
+          }
+        }
       }
     }
 
@@ -154,23 +160,32 @@ export class SlotService implements ISlotService {
       throw new Error("barber unavailability not found");
     }
 
-    let similarSlot: ISlotRule | null = null;
+    const { slotRules } = await this._slotRepo.findByBarber(
+      (existingSlot.barber as mongoose.Types.ObjectId).toString(),
+      1,
+      100
+    );
 
     for (const slot of data.slots) {
       if (slot.day === unavailability.weeklyOff) {
         throw new Error(
-          `Cannot create slot on ${slot.day} as it is the barber's weekly off`
+          `The barber is unavailable on ${slot.day} (weekly off). Please choose a different day.`
         );
       }
 
-      similarSlot = await this._slotRepo.findSimilarSlot(
-        existingSlot.barber.toString(),
-        slot.day,
-        slot.startTime,
-        slot.endTime
-      );
-
-      if (similarSlot) throw new Error(`slot for the given day already exists`);
+      for (const otherSlot of slotRules) {
+        if (otherSlot.id === slotId) continue;
+        for (const s of otherSlot.slots) {
+          if (
+            s.day === slot.day &&
+            isOverlapping(slot.startTime, slot.endTime, s.startTime, s.endTime)
+          ) {
+            throw new Error(
+              `Overlap detected: A slot already exists on ${slot.day} from ${s.startTime} to ${s.endTime}. Please choose another time.`
+            );
+          }
+        }
+      }
     }
 
     const updatedSlot = await this._slotRepo.update(slotId, data);

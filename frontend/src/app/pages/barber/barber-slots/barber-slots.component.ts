@@ -131,7 +131,10 @@ handleSlotSubmit(data: any) {
             this.fetchSlots();
             this.closeSlotModal();
           },
-          error: (err) => console.error('Error updating slot:', err)
+          error: (err) =>{
+            console.error('Error updating slot:', err)
+            Swal.fire('Error!', err.error?.error || 'Slot Updation Failed', 'error');
+          }
         });
       } else {
         // CREATE
