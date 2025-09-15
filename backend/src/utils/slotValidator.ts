@@ -15,8 +15,8 @@ export const validateSlotData = (data: SlotRuleCreateRequestDto): string[] => {
       continue;
     }
 
-    const start = new Date(slot.startTime);
-    const end = new Date(slot.endTime);
+    const start = toUTCTimeOnly(slot.startTime);
+    const end = toUTCTimeOnly(slot.endTime);
 
     if (start >= end) {
       errors.push(`Start time must be before end time for day: ${slot.day}`);
@@ -27,12 +27,16 @@ export const validateSlotData = (data: SlotRuleCreateRequestDto): string[] => {
 };
 
 export function toUTCTimeOnly(timeString: string): Date {
-  const [hours, minutes] = timeString.split(':').map(Number);
-  const date = new Date(Date.UTC(1970, 0, 1, hours, minutes));
-  return date;
+  const [hours, minutes] = timeString.split(":").map(Number);
+  return new Date(Date.UTC(1970, 0, 1, hours, minutes));
 }
 
-export function isOverlapping(start1: string, end1: string, start2: string, end2: string): boolean {
+export function isOverlapping(
+  start1: string,
+  end1: string,
+  start2: string,
+  end2: string
+): boolean {
   const s1 = new Date(`1970-01-01T${start1}:00Z`).getTime();
   const e1 = new Date(`1970-01-01T${end1}:00Z`).getTime();
   const s2 = new Date(`1970-01-01T${start2}:00Z`).getTime();

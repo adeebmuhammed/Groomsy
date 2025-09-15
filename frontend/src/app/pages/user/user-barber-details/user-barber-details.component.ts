@@ -167,35 +167,48 @@ export class UserBarberDetailsComponent implements OnInit {
                     this.populatedSlots
                   );
                 } else {
-                  this.populatedSlots[isoSelected] = this.populatedSlots[
-                    isoSelected
-                  ].map((slot) => {
-                    const slotStart = new Date(slot.startTime).getTime();
-                    const slotEnd = new Date(slot.endTime).getTime();
+                  const today = new Date().toISOString().split("T")[0];
 
-                    const isBooked = bookingsForDate.some((b) => {
-                      const bookedStart = new Date(
-                        b.slotDetails.startTime
-                      ).getTime();
-                      const bookedEnd = new Date(
-                        b.slotDetails.endTime
-                      ).getTime();
+this.populatedSlots[isoSelected] = this.populatedSlots[isoSelected].map((slot) => {
+  const slotStart = new Date(slot.startTime as any);
+const slotEnd = new Date(slot.endTime as any);
+const now = new Date();
 
-                      if (isNaN(bookedStart) || isNaN(bookedEnd)) {
-                        console.warn('Bad booking time for booking', b);
-                        return false;
-                      }
+console.log({
+  slotStartLocal: slotStart.toLocaleString(),
+  slotEndLocal: slotEnd.toLocaleString(),
+  slotStartUTC: slotStart.toISOString(),
+  slotEndUTC: slotEnd.toISOString(),
+  nowLocal: now.toLocaleString(),
+  nowUTC: now.toISOString(),
+});
 
-                      const adjustedBookedEnd =
-                        bookedEnd === bookedStart ? bookedStart + 1 : bookedEnd;
+// Extract date only (YYYY-MM-DD) for slot and today
+const slotDate = slotStart.toLocaleDateString("en-CA"); 
+const todayDate = now.toLocaleDateString("en-CA");
 
-                      const overlap =
-                        bookedStart < slotEnd && adjustedBookedEnd > slotStart;
-                      return overlap;
-                    });
+// Expired if slot end is in the past *and* the slot date is today
+const isExpired = now.getTime() >= slotStart.getTime() && slotDate === todayDate;
 
-                    return { ...slot, isBooked };
-                  });
+console.log("Expired?", isExpired, { slotDate, todayDate });
+
+// Check if slot is booked
+const isBooked = bookingsForDate.some((b) => {
+  const bookedStart = new Date(b.slotDetails.startTime).getTime();
+  const bookedEnd = new Date(b.slotDetails.endTime).getTime();
+
+  if (isNaN(bookedStart) || isNaN(bookedEnd)) return false;
+
+  // If start and end are same, add 1 ms to avoid overlap bug
+  const adjustedBookedEnd = bookedEnd === bookedStart ? bookedStart + 1 : bookedEnd;
+
+  // Overlap check
+  return bookedStart < slotEnd.getTime() && adjustedBookedEnd > slotStart.getTime();
+});
+
+return { ...slot, isBooked, isExpired };
+
+});
                 }
 
                 if (document.activeElement instanceof HTMLElement)

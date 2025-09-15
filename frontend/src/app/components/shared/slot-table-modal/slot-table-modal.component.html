@@ -14,12 +14,11 @@
           Slots for {{ date }}
         </h5>
         <button
-  type="button"
-  class="btn-close ms-auto"
-  data-bs-dismiss="modal"
-  aria-label="Close"
-></button>
-
+          type="button"
+          class="btn-close ms-auto"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
       </div>
 
       <div class="modal-body">
@@ -38,23 +37,18 @@
               <td>{{ formatTimeUTC(slot.startTime) }}</td>
               <td>{{ formatTimeUTC(slot.endTime) }}</td>
               <td>
-                @if (
-                  !slot.isBooked
-                ) {
-                  <button
+                @if (slot.isBooked) {
+                <button class="btn btn-danger btn-sm">Booked</button>
+                } @else if (slot.isExpired) {
+                <button class="btn btn-danger btn-sm">Expired</button>
+                } @else {
+                <button
                   class="btn btn-success btn-sm"
                   (click)="book(slot, date)"
                 >
                   Book
                 </button>
-                }@else {
-                  <button
-                  class="btn btn-danger btn-sm"
-                >
-                  Booked
-                </button>
                 }
-                
               </td>
             </tr>
           </tbody>

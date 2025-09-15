@@ -18,18 +18,18 @@ export const generateSlotsFromRules = (
     Saturday: 6,
   };
 
-  function combineDateAndTimeUTC(date: Date, timeStr: string): Date {
-  const [hours, minutes] = timeStr.split(":").map(Number);
-  return new Date(Date.UTC(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-    hours,
-    minutes,
-    0,
-    0
-  ));
-}
+  function combineDateAndTimeIST(date: Date, timeStr: string): Date {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    return new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      hours,
+      minutes,
+      0,
+      0
+    );
+  }
 
 
   const result: { [date: string]: SlotTimeDto[] } = {};
@@ -44,8 +44,8 @@ export const generateSlotsFromRules = (
         if (current.getDay() === slotDay) {
           const dateStr = current.toISOString().split("T")[0];
 
-          const dayStart = combineDateAndTimeUTC(current, slot.startTime);
-const dayEnd = combineDateAndTimeUTC(current, slot.endTime);
+          const dayStart = combineDateAndTimeIST(current, slot.startTime);
+const dayEnd = combineDateAndTimeIST(current, slot.endTime);
 
 
           if (!result[dateStr]) {
