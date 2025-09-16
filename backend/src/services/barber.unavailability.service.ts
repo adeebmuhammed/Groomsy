@@ -9,6 +9,7 @@ import { BarberUnavailabilityDto } from "../dto/barber.unavailability.dto";
 import { BarberUnavailabilityMapper } from "../mappers/barber.unavailability.mapper";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
+import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
 
 @injectable()
 export class BarberUnavailabilityService
@@ -17,7 +18,8 @@ export class BarberUnavailabilityService
   constructor(
     @inject(TYPES.IBarberUnavailabilityRepository)
     private _barberUnavailabilityRepo: IBarberUnavailabilityRepository,
-    @inject(TYPES.IBarberRepository) private _barberRepo: IBarberRepository
+    @inject(TYPES.IBarberRepository) private _barberRepo: IBarberRepository,
+    @inject(TYPES.IBookingRepository) private _bookingRepo: IBookingRepository
   ) {}
 
   fetchBarberUnavailability = async (
@@ -131,6 +133,16 @@ export class BarberUnavailabilityService
 
     if (unavailability.weeklyOff === dayOfWeek) {
       throw new Error(`${dayOfWeek} is already a weekly off`);
+    }
+
+    const bookings = await this._bookingRepo.find({barber: barberId, "slotDetails.date": formattedDate})
+    for(const booking of bookings){
+      if (booking.status === "pending") {
+        const updated = await this._bookingRepo.update(booking.id,{ status: "cancelled_by_barber"})
+        if (!updated) {
+          throw new Error("Failed to update booking status on the special off day")
+        }
+      }
     }
 
     const updated = await this._barberUnavailabilityRepo.addSpecialOffDays(
