@@ -13,6 +13,7 @@ export class PlanMapper {
       duration: data.duration,
       durationUnit: data.durationUnit,
       isActive: data.isActive,
+      features: data.features
     };
   }
   static toPlanResponseArray(

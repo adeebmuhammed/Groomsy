@@ -276,6 +276,7 @@ export interface SubscriptionPlanDto{
   durationUnit: "month" | "year" | "day";
   description?: string;
   isActive: boolean;
+  features: SubscriptionFeature[]
 }
 
 export interface PlanListResponse{
@@ -291,8 +292,15 @@ export interface CreateSubscriptionPlanDto{
   duration: number;
   durationUnit: "month" | "year" | "day";
   description?: string;
+  features: SubscriptionFeature[]
 }
 
+export enum SubscriptionFeature {
+  Dashboard = 'Dashboard',
+  Slots = 'Slots',
+  Bookings = 'Bookings',
+  Unavailability = 'Unavailability',
+}
 
 export interface SubscriptionDto {
   id: string;

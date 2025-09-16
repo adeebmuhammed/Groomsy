@@ -32,7 +32,6 @@ import { ISubscriptionPlanController } from "../controllers/interfaces/ISubscrip
 const barberRoutes = Router()
 const barberAuth = authMiddleware(["barber"])
 const multiAuth = authMiddleware(["user","barber"])
-const subMiddleware = subscriptionMiddleware()
 
 const barberController = container.get<IBarberController>(TYPES.IBarberController)
 const slotController = container.get<ISlotController>(TYPES.ISlotController)
@@ -52,19 +51,19 @@ barberRoutes
 
 barberRoutes
 .get('/slots', barberAuth,slotController.getSlotRulesByBarber)
-.post('/slots',barberAuth,subMiddleware,slotController.createSlotRule)
-.put('/slots/:id',barberAuth,subMiddleware,slotController.updateSlotRule)
-.delete('/slots/:id',barberAuth,subMiddleware,slotController.deleteSlotRule)
+.post('/slots',barberAuth,subscriptionMiddleware("Slots"),slotController.createSlotRule)
+.put('/slots/:id',barberAuth,subscriptionMiddleware("Slots"),slotController.updateSlotRule)
+.delete('/slots/:id',barberAuth,subscriptionMiddleware("Slots"),slotController.deleteSlotRule)
 
 barberRoutes
 .get('/bookings',multiAuth,bookingController.fetchBookings)
-.patch("/bookings/:id",barberAuth,subMiddleware,bookingController.updateBookingStatus)
+.patch("/bookings/:id",barberAuth,subscriptionMiddleware("Bookings"),bookingController.updateBookingStatus)
 
 barberRoutes
 .get("/barber-unavailability/:id",barberAuth,barberUnavailabilityController.fetchBarberUnavailability)
-.patch("/barber-unavailability/weekly/:id",barberAuth,subMiddleware,barberUnavailabilityController.editWeeklyDayOff)
-.post("/barber-unavailability/special/:id",barberAuth,subMiddleware,barberUnavailabilityController.addOffDay)
-.delete("/barber-unavailability/special/:id",barberAuth,subMiddleware,barberUnavailabilityController.removeOffDay)
+.patch("/barber-unavailability/weekly/:id",barberAuth,subscriptionMiddleware("Unavailability"),barberUnavailabilityController.editWeeklyDayOff)
+.post("/barber-unavailability/special/:id",barberAuth,subscriptionMiddleware("Unavailability"),barberUnavailabilityController.addOffDay)
+.delete("/barber-unavailability/special/:id",barberAuth,subscriptionMiddleware("Unavailability"),barberUnavailabilityController.removeOffDay)
 
 barberRoutes
 .get("/subscription/plans",planController.getPlansForBarber)
