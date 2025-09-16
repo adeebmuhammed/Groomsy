@@ -37,15 +37,16 @@ export class BookingRepository
     return { bookings, totalCount };
   }
 
-  async updateAfterVerfyPayment(bookingId: string): Promise<UpdateResult | null> {
-  return await Booking.findByIdAndUpdate(
-    bookingId,
-    {
-      $set: { status: "pending" },
-      $unset: { expiresAt: "" }, // remove expiry so TTL won’t delete it
-    },
-    { new: true }
-  );
-}
-
+  async updateAfterVerfyPayment(
+    bookingId: string
+  ): Promise<UpdateResult | null> {
+    return await Booking.findByIdAndUpdate(
+      bookingId,
+      {
+        $set: { status: "pending" },
+        $unset: { expiresAt: "" }, // remove expiry so TTL won’t delete it
+      },
+      { new: true }
+    );
+  }
 }
