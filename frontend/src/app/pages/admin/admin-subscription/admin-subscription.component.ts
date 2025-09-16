@@ -38,6 +38,7 @@ export class AdminSubscriptionComponent implements OnInit {
     { key: 'renewalPrice', label: 'Renewal Price' },
     { key: 'duration', label: 'Duration' },
     { key: 'durationUnit', label: 'Duration Unit' },
+    { key: 'features', label: 'Features' }, // 👈 Added
     { key: 'status', label: 'Active', isStatus: true },
   ];
 
@@ -55,7 +56,9 @@ export class AdminSubscriptionComponent implements OnInit {
           this.plans = (res.data || []).map((p: SubscriptionPlanDto) => ({
             ...p,
             status: p.isActive ? 'active' : 'inactive',
+            features: p.features || [], // 👈 ensure features always exists
           }));
+
           this.totalPages = res?.pagination?.totalPages || 1;
         },
         error: (err) => {

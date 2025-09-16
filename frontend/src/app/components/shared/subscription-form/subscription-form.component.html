@@ -13,7 +13,10 @@
         class="form-control"
         placeholder="Enter plan name"
       />
-      <div class="error" *ngIf="planForm.get('name')?.touched && planForm.get('name')?.invalid">
+      <div
+        class="error"
+        *ngIf="planForm.get('name')?.touched && planForm.get('name')?.invalid"
+      >
         Name is required
       </div>
 
@@ -25,7 +28,10 @@
         class="form-control"
         placeholder="Enter price"
       />
-      <div class="error" *ngIf="planForm.get('price')?.touched && planForm.get('price')?.invalid">
+      <div
+        class="error"
+        *ngIf="planForm.get('price')?.touched && planForm.get('price')?.invalid"
+      >
         Price is required and must be greater than 0
       </div>
 
@@ -37,7 +43,13 @@
         class="form-control"
         placeholder="Enter renewal price"
       />
-      <div class="error" *ngIf="planForm.get('renewalPrice')?.touched && planForm.get('renewalPrice')?.invalid">
+      <div
+        class="error"
+        *ngIf="
+          planForm.get('renewalPrice')?.touched &&
+          planForm.get('renewalPrice')?.invalid
+        "
+      >
         Renewal price is required and must be greater than 0
       </div>
 
@@ -49,7 +61,12 @@
         class="form-control"
         placeholder="Enter duration"
       />
-      <div class="error" *ngIf="planForm.get('duration')?.touched && planForm.get('duration')?.invalid">
+      <div
+        class="error"
+        *ngIf="
+          planForm.get('duration')?.touched && planForm.get('duration')?.invalid
+        "
+      >
         Duration is required and must be greater than 0
       </div>
 
@@ -61,8 +78,41 @@
         <option value="month">Month</option>
         <option value="year">Year</option>
       </select>
-      <div class="error" *ngIf="planForm.get('durationUnit')?.touched && planForm.get('durationUnit')?.invalid">
+      <div
+        class="error"
+        *ngIf="
+          planForm.get('durationUnit')?.touched &&
+          planForm.get('durationUnit')?.invalid
+        "
+      >
         Duration unit is required
+      </div>
+
+      <!-- Features -->
+      <label>Features:</label>
+      <div class="features-container">
+        <div
+          class="form-check"
+          *ngFor="let feature of availableFeatures; let i = index"
+        >
+          <input
+            class="form-check-input"
+            type="checkbox"
+            [id]="'feature-' + i"
+            [value]="feature"
+            (change)="onFeatureChange($event, feature)"
+            [checked]="planForm.value.features?.includes(feature) || false"
+          />
+          <label class="form-check-label" [for]="'feature-' + i">
+            {{ feature }}
+          </label>
+        </div>
+      </div>
+      <div
+        class="error"
+        *ngIf="planForm.get('features')?.touched && planForm.get('features')?.errors?.['required']"
+      >
+        At least one feature must be selected
       </div>
 
       <!-- Description -->
@@ -72,7 +122,13 @@
         class="form-control"
         placeholder="Enter description"
       ></textarea>
-      <div class="error" *ngIf="planForm.get('description')?.touched && planForm.get('description')?.invalid">
+      <div
+        class="error"
+        *ngIf="
+          planForm.get('description')?.touched &&
+          planForm.get('description')?.invalid
+        "
+      >
         Description is required
       </div>
 
