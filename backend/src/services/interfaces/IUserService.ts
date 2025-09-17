@@ -1,7 +1,7 @@
 import { ListResponseDto } from "../../dto/admin.dto";
 import { BarberDto } from "../../dto/barber.dto";
 import { SlotResponseDto, SlotRuleListResponseDto } from "../../dto/slot.dto";
-import { UserRegisterRequestDto,UserLoginResponseDto } from "../../dto/user.dto";
+import { UserRegisterRequestDto,UserLoginResponseDto, UserProfileDto, UserEditProfileDto } from "../../dto/user.dto";
 import { MessageResponseDto } from "../../dto/base.dto";
 
 export interface IUserService{
@@ -15,4 +15,7 @@ export interface IUserService{
 
     fetchAllBarbers(search: string,page: number,limit: number,district: string):Promise<{ response: ListResponseDto<BarberDto>, status: number}>
     fetchBarbersAndSlotRules(page: number,limit: number,barberId: string):Promise<{ response: SlotRuleListResponseDto, status: number}>
+
+    getUserProfileById(userId: string): Promise<{ response: UserProfileDto, status: number}>
+    updateUserProfile(userId: string, data: UserEditProfileDto): Promise<{ response: MessageResponseDto, status: number}>
 }

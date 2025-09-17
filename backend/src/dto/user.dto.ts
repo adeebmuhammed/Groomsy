@@ -6,7 +6,6 @@ export class UserRegisterRequestDto {
   confirmPassword!: string;
 }
 
-
 export class UserLoginResponseDto {
   id!: string;
   name!: string;
@@ -14,4 +13,17 @@ export class UserLoginResponseDto {
   phone?: string;
   status!: string;
   message!: string;
+}
+
+export class UserProfileDto{
+  id!: string;
+  name!: string;
+  email!: string;
+  phone?: string;
+}
+
+export class UserEditProfileDto{
+  name!: string;
+  phone!: string;
+  email!: string;
 }

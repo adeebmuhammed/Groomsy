@@ -261,4 +261,45 @@ export class UserController implements IUserController {
       });
     }
   };
+
+  getUserProfileById = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.params["id"];
+
+      const { response, status } = await this._userService.getUserProfileById(
+        userId
+      );
+
+      res.status(status).json(response);
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch User Profile",
+      });
+    }
+  };
+
+  updateUserProfile = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.params["id"];
+      const data = req.body;
+
+      const { response, status } = await this._userService.updateUserProfile(
+        userId,
+        data
+      );
+
+      res.status(status).json(response);
+    } catch (error) {
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to edit User Profile",
+      });
+    }
+  };
 }

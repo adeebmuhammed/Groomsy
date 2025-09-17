@@ -4,9 +4,12 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   BarberDto,
+  EditProfile,
+  IMessageResponse,
   PaginatedResponse,
   SlotListResponseDto,
   SlotResponse,
+  UserProfileDto,
 } from '../../interfaces/interfaces';
 
 @Injectable({
@@ -63,7 +66,25 @@ export class UserService {
       .set('date', date)
       .set('serviceId', serviceId);
     return this.http.get<SlotResponse>(
-      `${environment.apiBaseUrl}/user/populated-slots/${barberId}`,{ params }
+      `${environment.apiBaseUrl}/user/populated-slots/${barberId}`,
+      { params }
+    );
+  }
+
+  fetchUserProfile(userId: string): Observable<UserProfileDto> {
+    return this.http.get<UserProfileDto>(
+      `${environment.apiBaseUrl}/user/profile/${userId}`
+    );
+  }
+
+  updateUserProfile(
+    userId: string,
+    data: EditProfile
+  ): Observable<IMessageResponse> {
+    const body = data;
+    return this.http.put<IMessageResponse>(
+      `${environment.apiBaseUrl}/user/profile/${userId}`,
+      body
     );
   }
 }

@@ -1,0 +1,82 @@
+<div class="modal-backdrop" (click)="closeModal()"></div>
+
+<div class="modal-container">
+  <h2>Edit Profile</h2>
+  <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+    <!-- Name -->
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        placeholder="{{ profile.name }}"
+      />
+      <div
+        *ngIf="editForm.get('name')?.touched && editForm.get('name')?.invalid"
+        class="error"
+      >
+        <small *ngIf="editForm.get('name')?.errors?.['required']"
+          >Name is required</small
+        >
+        <small *ngIf="editForm.get('name')?.errors?.['minlength']"
+          >Minimum 3 characters</small
+        >
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        placeholder="{{ profile.email }}"
+      />
+      <div
+        *ngIf="editForm.get('email')?.touched && editForm.get('email')?.invalid"
+        class="error"
+      >
+        <small *ngIf="editForm.get('email')?.errors?.['required']"
+          >Email is required</small
+        >
+        <small *ngIf="editForm.get('email')?.errors?.['email']"
+          >Enter a valid email</small
+        >
+      </div>
+    </div>
+
+    <!-- Phone -->
+    <div class="form-group">
+      <label for="phone">Phone</label>
+      <input
+        type="text"
+        id="phone"
+        formControlName="phone"
+        placeholder="{{ profile.phone }}"
+      />
+      <div
+        *ngIf="editForm.get('phone')?.touched && editForm.get('phone')?.invalid"
+        class="error"
+      >
+        <small *ngIf="editForm.get('phone')?.errors?.['required']"
+          >Phone is required</small
+        >
+        <small *ngIf="editForm.get('phone')?.errors?.['pattern']"
+          >Enter a valid 10-digit phone</small
+        >
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="modal-actions">
+      <button type="button" (click)="closeModal()" class="btn-cancel">
+        Cancel
+      </button>
+      <button type="submit" class="btn-save" [disabled]="editForm.invalid">
+        Save
+      </button>
+    </div>
+  </form>
+</div>
