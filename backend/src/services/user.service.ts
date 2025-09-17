@@ -1,6 +1,11 @@
 import bcrypt from "bcrypt";
 import { IUserService } from "./interfaces/IUserService";
-import { UserRegisterRequestDto, UserLoginResponseDto } from "../dto/user.dto";
+import {
+  UserRegisterRequestDto,
+  UserLoginResponseDto,
+  UserProfileDto,
+  UserEditProfileDto,
+} from "../dto/user.dto";
 import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import {
   isValidEmail,
@@ -355,6 +360,64 @@ export class UserService implements IUserService {
 
     return {
       response,
+      status: STATUS_CODES.OK,
+    };
+  };
+
+  getUserProfileById = async (
+    userId: string
+  ): Promise<{ response: UserProfileDto; status: number }> => {
+    const user = await this._userRepo.findById(userId);
+    if (!user) {
+      throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
+    }
+
+    const response = UserMapper.toProfileResponse(user);
+
+    return {
+      response,
+      status: STATUS_CODES.OK,
+    };
+  };
+
+  updateUserProfile = async (
+    userId: string,
+    data: UserEditProfileDto
+  ): Promise<{ response: MessageResponseDto; status: number }> => {
+    const user = await this._userRepo.findById(userId);
+    if (!user) {
+      throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
+    }
+
+    if (!isValidEmail(data.email)) {
+      throw new Error("inavalid email format");
+    }
+
+    if (!isValidPhone(data.phone)) {
+      throw new Error("inavalid phone format");
+    }
+
+    const existingUser = await this._userRepo.findOne({
+      email: data.email,
+      _id: { $ne: userId },
+    });
+    if (existingUser) {
+      throw new Error("email exists, try with another email");
+    }
+
+    const updated = await this._userRepo.update(userId, {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+    });
+    if (!updated) {
+      throw new Error("user profile updation failed");
+    }
+
+    return {
+      response: UserMapper.toMessageResponse(
+        "Updated User Profile Successfully"
+      ),
       status: STATUS_CODES.OK,
     };
   };

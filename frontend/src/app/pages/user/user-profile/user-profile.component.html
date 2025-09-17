@@ -1,0 +1,14 @@
+<app-user-header></app-user-header>
+
+<div class="user-profile-container">
+  <app-profile [profile]="userProfile" (click)="onEditProfile()"></app-profile>
+</div>
+
+<app-edit-profile
+  *ngIf="showEditModal"
+  [profile]="userProfile"
+  (save)="updateProfile($event)"
+  (close)="showEditModal = false"
+></app-edit-profile>
+
+<app-user-footer></app-user-footer>

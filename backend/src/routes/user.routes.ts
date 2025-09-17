@@ -76,4 +76,8 @@ userRoutes
 .post("/review",userAuth,isBlockedMiddleware,reviewController.create)
 .delete("/review/:id",userAuth,isBlockedMiddleware,reviewController.delete)
 
+userRoutes
+.get("/profile/:id",userController.getUserProfileById)
+.put("/profile/:id",userController.updateUserProfile)
+
 export default userRoutes;

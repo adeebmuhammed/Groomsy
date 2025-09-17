@@ -33,6 +33,26 @@ export interface IUser {
   updatedAt: Date;
 }
 
+export class UserProfileDto{
+  id!: string;
+  name!: string;
+  email!: string;
+  phone?: string;
+}
+
+export class Profile{
+  id!: string;
+  name!: string;
+  email!: string;
+  phone?: string;
+}
+
+export class EditProfile{
+  name!: string;
+  phone!: string;
+  email!: string;
+}
+
 export interface IAdminLoginResponse {
   id: string;
   name: string;

@@ -1,0 +1,14 @@
+<div class="profile-card">
+  <div class="profile-header">
+    <img src="default.png" alt="Profile Picture" class="profile-image" />
+    <div class="profile-info">
+      <h2>{{ profile.name }}</h2>
+      <p>{{ profile.email }}</p>
+      <p *ngIf="profile.phone">📞 {{ profile.phone }}</p>
+    </div>
+  </div>
+
+  <div class="profile-actions">
+    <button class="btn-edit" (click)="onEditClick()">Edit Profile</button>
+  </div>
+</div>
