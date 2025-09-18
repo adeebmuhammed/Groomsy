@@ -11,4 +11,5 @@ export const BARBER_ROUTES_PATHS = {
   BOOKINGS: `${BARBER_BASE}/bookings`,
   UNAVAILABILITY: `${BARBER_BASE}/unavailability`,
   SUBSCRIPTION: `${BARBER_BASE}/subscription`,
+  PROFILE: `${BARBER_BASE}/profile`,
 };

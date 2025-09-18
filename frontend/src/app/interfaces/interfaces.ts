@@ -83,6 +83,19 @@ export interface IBarberLoginResponse {
   message: string;
 }
 
+export class BarberProfileDto{
+  id!: string;
+  name!: string;
+  email!: string;
+  phone!: string;
+  address!: {
+    street?: string;
+    city?: string;
+    pincode?: string;
+    district?: string;
+  }
+}
+
 export interface IVerifyOtpResponse {
   message: string;
   barber: {
