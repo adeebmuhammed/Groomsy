@@ -24,3 +24,29 @@ export class BarberDto {
   district!: string;
   status!: string
 }
+
+export class updateAddressDto {
+    street?: string;
+    city?: string;
+    pincode?: string;
+    district?: string;
+}
+
+export class BarberProfileDto{
+  id!: string;
+  name!: string;
+  email!: string;
+  phone!: string;
+  address!: {
+    street?: string;
+    city?: string;
+    pincode?: string;
+    district?: string;
+  }
+}
+
+export class UpdateBarberProfileDto{
+  name!: string;
+  email!: string;
+  phone!: string;
+}

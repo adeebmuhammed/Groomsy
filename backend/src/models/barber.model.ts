@@ -1,4 +1,4 @@
-import mongoose, { Mongoose,Document,Schema,ObjectId } from "mongoose";
+import mongoose, { Mongoose, Document, Schema, ObjectId } from "mongoose";
 
 export interface IBarber extends Document {
   _id: ObjectId;
@@ -7,14 +7,20 @@ export interface IBarber extends Document {
   phone: string;
   password: string;
   district: string;
-  status:   "blocked" | "active" ;
+  status: "blocked" | "active";
   isVerified: boolean;
   otp?: string | null;
   createdAt: Date;
   updatedAt: Date;
+  address?: {
+    street?: string;
+    city?: string;
+    pincode?: string;
+  };
 }
 
-const BarberSchema : Schema = new Schema ({
+const BarberSchema: Schema = new Schema(
+  {
     name: { type: String, required: true, trim: true },
     email: {
       type: String,
@@ -33,9 +39,14 @@ const BarberSchema : Schema = new Schema ({
     },
     isVerified: { type: Boolean, default: false },
     otp: { type: String, default: null },
+    address: {
+      street: { type: String, trim: true },
+      city: { type: String, trim: true },
+      pincode: { type: String, trim: true },
+    },
   },
   { timestamps: true }
-)
+);
 
-const Barbers = mongoose.model<IBarber>("Barber",BarberSchema)
+const Barbers = mongoose.model<IBarber>("Barber", BarberSchema);
 export default Barbers;

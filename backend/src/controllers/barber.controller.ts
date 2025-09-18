@@ -144,4 +144,60 @@ export class BarberController implements IBarberController {
       message: "Logged out successfully",
     });
   };
+
+  getBarberProfileById = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const barberId = req.params["id"]
+
+      const { response,status } = await this._barberService.getBarberProfileById(barberId)
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch Barber Profile",
+      });
+    }
+  };
+
+  updateBarberProfile = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const barberId = req.params["id"]
+      const data = req.body
+
+      const { response,status } = await this._barberService.updateBarberProfile(barberId,data)
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to Upadte Barber Profile",
+      });
+    }
+  }
+
+  updateBarberAddress = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const barberId = req.params["id"]
+      const data = req.body
+
+      const { response,status } = await this._barberService.updateBarberAddress(barberId,data)
+
+      res.status(status).json(response)
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to Update Barber Address",
+      });
+    }
+  }
 }

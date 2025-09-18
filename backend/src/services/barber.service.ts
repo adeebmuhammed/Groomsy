@@ -1,6 +1,9 @@
 import {
   BarberLoginResponseDto,
+  BarberProfileDto,
   BarberRegisterRequestDto,
+  updateAddressDto,
+  UpdateBarberProfileDto,
 } from "../dto/barber.dto";
 import { IBarberService } from "./interfaces/IBarberService";
 import bcrypt from "bcrypt";
@@ -255,6 +258,95 @@ export class BarberService implements IBarberService {
 
     return {
       response: { message: MESSAGES.SUCCESS.PASSWORD_RESET },
+      status: STATUS_CODES.OK,
+    };
+  };
+
+  getBarberProfileById = async (
+    barberId: string
+  ): Promise<{ response: BarberProfileDto; status: number }> => {
+    const barber = await this._barberRepo.findById(barberId);
+    if (!barber) {
+      throw new Error("Barber Not Found");
+    }
+
+    const response = BarberMapper.toBarberProfileDto(barber);
+
+    return {
+      response,
+      status: STATUS_CODES.OK,
+    };
+  };
+
+  updateBarberProfile = async (
+    barberId: string,
+    data: UpdateBarberProfileDto
+  ): Promise<{ response: MessageResponseDto; status: number }> => {
+    const barber = await this._barberRepo.findById(barberId);
+    if (!barber) {
+      throw new Error("Barber Not Found");
+    }
+
+    if (!isValidEmail(data.email)) {
+      throw new Error("inavalid email format");
+    }
+
+    if (!isValidPhone(data.phone)) {
+      throw new Error("inavalid phone format");
+    }
+
+    const existingUser = await this._barberRepo.findOne({
+      email: data.email,
+      _id: { $ne: barberId },
+    });
+    if (existingUser) {
+      throw new Error("email exists, try with another email");
+    }
+
+    const updated = await this._barberRepo.update(barberId, {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+    });
+    if (!updated) {
+      throw new Error("user profile updation failed");
+    }
+
+    return {
+      response: BarberMapper.toMessageResponse(
+        "Updated Barber Profile Successfully"
+      ),
+      status: STATUS_CODES.OK,
+    };
+  };
+
+  updateBarberAddress = async (
+    barberId: string,
+    data: updateAddressDto
+  ): Promise<{ response: MessageResponseDto; status: number }> => {
+    const barber = await this._barberRepo.findById(barberId);
+    if (!barber) {
+      throw new Error("Barber Not Found");
+    }
+
+    if (!data.city || !data.district || !data.pincode || !data.street) {
+      throw new Error("Required Fields: District, City, Street and Pincode");
+    }
+
+    const updated = await this._barberRepo.update(barberId, {
+      district: data.district,
+      address: {
+        city: data.city,
+        street: data.street,
+        pincode: data.pincode,
+      },
+    });
+    if (!updated) {
+      throw new Error("Address Updation Failed");
+    }
+
+    return {
+      response: { message: "Barber Address Updated Successfully" },
       status: STATUS_CODES.OK,
     };
   };

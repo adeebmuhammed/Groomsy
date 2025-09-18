@@ -5445,3 +5445,16 @@
 2025-09-17 22:30:33 [INFO]: PUT /api/user/profile/68826b157451d8eb5c4d78d3
 2025-09-17 22:33:03 [INFO]: PUT /api/user/profile/68826b157451d8eb5c4d78d3
 2025-09-17 22:33:09 [INFO]: POST /api/user/logout
+2025-09-18 06:58:33 [INFO]: PUT /api/barber/profile/address/68826b157451d8eb5c4d78d3
+2025-09-18 06:58:52 [INFO]: PUT /api/barber/profile/address/68826b157451d8eb5c4d78d3
+2025-09-18 06:59:32 [INFO]: PUT /api/barber/profile/address/687df7da3c3d135213122fb8
+2025-09-18 07:00:17 [INFO]: PUT /api/barber/profile/address/687df7da3c3d135213122fb8
+2025-09-18 07:00:37 [INFO]: PUT /api/barber/profile/address/687df7da3c3d135213122fb8
+2025-09-18 07:00:55 [INFO]: PUT /api/barber/profile/address/687df7da3c3d135213122fb8
+2025-09-18 07:13:03 [INFO]: GET /api/barber/profile/687df7da3c3d135213122fb8
+2025-09-18 07:13:57 [INFO]: GET /api/barber/profile/6881aa3ee8c881f160fc132a
+2025-09-18 07:24:18 [INFO]: PATCH /api/barber/profile/address/687df7da3c3d135213122fb8
+2025-09-18 07:25:53 [INFO]: PUT /api/barber/profile/6881aa3ee8c881f160fc132a
+2025-09-18 07:25:59 [INFO]: PUT /api/barber/profile/6881aa3ee8c881f160fc132a
+2025-09-18 07:26:06 [INFO]: PUT /api/barber/profile/6881aa3ee8c881f160fc132a
+2025-09-18 07:26:25 [INFO]: PUT /api/barber/profile/6881aa3ee8c881f160fc132a

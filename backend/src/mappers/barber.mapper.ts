@@ -1,5 +1,6 @@
 import { IBarber } from "../models/barber.model";
-import { BarberLoginResponseDto,BarberDto } from "../dto/barber.dto";
+import { BarberLoginResponseDto,BarberDto, BarberProfileDto } from "../dto/barber.dto";
+import { MessageResponseDto } from "../dto/base.dto";
 
 export class BarberMapper{
     static toLoginResponse(
@@ -33,5 +34,26 @@ export class BarberMapper{
 
   static toBarberDtoArray(barbers: IBarber[]):BarberDto[]{
     return barbers.map(barber => this.toBarberDto(barber))
+  }
+
+  static toMessageResponse(message: string): MessageResponseDto {
+    return { message };
+  }
+
+  static toBarberProfileDto(
+    barber: IBarber,
+  ): BarberProfileDto {
+    return {
+      id: barber._id.toString(),
+      name: barber.name,
+      phone: barber.phone,
+      email: barber.email,
+      address: {
+        district: barber.district || "",
+        city: barber.address?.city || "",
+        street: barber.address?.street || "",
+        pincode: barber.address?.pincode || ""
+      }
+    };
   }
 }
