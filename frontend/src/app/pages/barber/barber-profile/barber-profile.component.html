@@ -18,16 +18,28 @@
             [profile]="barberProfile"
             (click)="onEditProfile()"
           ></app-profile>
+
+          <app-address
+            [address]="barberProfile.address || {}"
+            (editAddress)="onEditAddress()"
+          ></app-address>
         </div>
       </div>
     </div>
 
     <app-edit-profile
-  *ngIf="showEditModal"
-  [profile]="barberProfile"
-  (save)="updateProfile($event)"
-  (close)="showEditModal = false"
-></app-edit-profile>
+      *ngIf="showEditModal"
+      [profile]="barberProfile"
+      (save)="updateProfile($event)"
+      (close)="showEditModal = false"
+    ></app-edit-profile>
+
+    <app-address-form
+    *ngIf="showEditAddressModal"
+    [address]="barberProfile.address"
+    (save)="updateBarberAddress($event)"
+    (close)="showEditAddressModal = false"
+    ></app-address-form>
 
     <!-- Footer -->
     <app-barber-footer></app-barber-footer>

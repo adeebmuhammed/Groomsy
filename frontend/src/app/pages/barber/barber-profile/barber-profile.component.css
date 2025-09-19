@@ -91,4 +91,22 @@ app-barber-footer {
   app-profile {
     padding: 1.5rem;
   }
+
+  app-address {
+    padding: 1.5rem;
+  }
+}
+
+app-address {
+  display: block;
+  background: #f9fafb;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+app-address:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }

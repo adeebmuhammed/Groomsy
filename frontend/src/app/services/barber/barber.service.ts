@@ -23,4 +23,12 @@ export class BarberService {
       body
     );
   }
+
+  updateBarberAddress(barberId: string, data: BarberProfileDto["address"]): Observable<IMessageResponse>{
+    const body = data;
+    return this.http.patch<IMessageResponse>(
+      `${environment.apiBaseUrl}/barber/profile/address/${barberId}`,
+      body
+    );
+  }
 }

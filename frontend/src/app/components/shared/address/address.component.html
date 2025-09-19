@@ -1,0 +1,15 @@
+<div class="address-card">
+  <div class="address-header">
+    <div class="address-info">
+      <h3>Address</h3>
+      <p><strong>Street:</strong> {{ address?.street || 'N/A' }}</p>
+      <p><strong>City:</strong> {{ address?.city || 'N/A' }}</p>
+      <p><strong>Pincode:</strong> {{ address?.pincode || 'N/A' }}</p>
+      <p><strong>District:</strong> {{ address?.district || 'N/A' }}</p>
+    </div>
+  </div>
+
+  <div class="address-actions">
+    <button class="btn-edit" (click)="onEdit()">Edit Address</button>
+  </div>
+</div>
