@@ -56,7 +56,6 @@ export class UserProfileComponent implements OnInit {
 
   onEditProfile() {
     this.showEditModal = true;
-    console.log('clicked');
   }
 
   updateProfile(updated: EditProfile) {

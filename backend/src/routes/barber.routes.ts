@@ -72,4 +72,9 @@ barberRoutes
 .put("/subscription",barberAuth,subscriptionController.renewSubscription)
 .post("/subscription/verify-payment",barberAuth,subscriptionController.verifySubscriptionPayment)
 
+barberRoutes
+.get("/profile/:id", barberAuth,barberController.getBarberProfileById)
+.patch("/profile/address/:id", barberAuth,barberController.updateBarberAddress)
+.put("/profile/:id", barberAuth,barberController.updateBarberProfile)
+
 export default barberRoutes;

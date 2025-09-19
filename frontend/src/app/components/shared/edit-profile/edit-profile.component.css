@@ -1,3 +1,5 @@
+@import "../slot-form/slot-form.component.css";
+
 .modal-backdrop {
   position: fixed;
   top: 0;

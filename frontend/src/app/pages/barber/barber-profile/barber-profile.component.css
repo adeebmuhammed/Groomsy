@@ -1,0 +1,112 @@
+/* ===== GLOBAL STRUCTURE ===== */
+.barber-layout {
+  display: flex;
+  padding-top: 64px; /* height of header area */
+  min-height: 100vh;
+  background-color: #f4f6f8;
+}
+
+.barber-sidebar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  height: calc(100vh - 64px);
+  width: 250px;
+  background-color: #fff;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+}
+
+.barber-main-content {
+  margin-left: 250px;
+  width: calc(100% - 250px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== HEADER ===== */
+app-barber-header {
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+/* ===== DASHBOARD CONTENT ===== */
+.dashboard-content {
+  max-width: 1100px;
+  margin: 0 auto 2rem auto;
+  background-color: #fff;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.05);
+}
+
+.admin-sign-in {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 2rem;
+}
+
+/* Profile Card Inside */
+app-profile {
+  display: block;
+  background: #f9fafb;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+app-profile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== FOOTER ===== */
+app-barber-footer {
+  background: #1f2937;
+  color: white;
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: auto; /* keep footer at bottom */
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .barber-main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .barber-sidebar {
+    display: none;
+  }
+
+  .dashboard-content {
+    padding: 1.5rem;
+  }
+
+  app-profile {
+    padding: 1.5rem;
+  }
+
+  app-address {
+    padding: 1.5rem;
+  }
+}
+
+app-address {
+  display: block;
+  background: #f9fafb;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+app-address:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}

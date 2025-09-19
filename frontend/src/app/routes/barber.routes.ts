@@ -12,6 +12,7 @@ import { BarberBookingComponent } from "../pages/barber/barber-booking/barber-bo
 import { BARBER_ROUTES_PATHS } from "../constants/barber-route.constant";
 import { BarberUnavailabilityComponent } from "../pages/barber/barber-unavailability/barber-unavailability.component";
 import { BarberSubscriptionComponent } from "../pages/barber/barber-subscription/barber-subscription.component";
+import { BarberProfileComponent } from "../pages/barber/barber-profile/barber-profile.component";
 
 export const BARBER_ROUTES: Routes = [
   { path: BARBER_ROUTES_PATHS.DASHBOARD, component: BarberDashboardComponent, canActivate: [barberAuthGuard] },
@@ -25,4 +26,6 @@ export const BARBER_ROUTES: Routes = [
   { path: BARBER_ROUTES_PATHS.BOOKINGS, component: BarberBookingComponent, canActivate: [barberAuthGuard]},
   { path: BARBER_ROUTES_PATHS.UNAVAILABILITY, component: BarberUnavailabilityComponent, canActivate: [barberAuthGuard]},
   { path: BARBER_ROUTES_PATHS.SUBSCRIPTION, component: BarberSubscriptionComponent, canActivate: [barberAuthGuard]},
+
+  { path: BARBER_ROUTES_PATHS.PROFILE, component: BarberProfileComponent, canActivate: [barberAuthGuard]},
 ];

@@ -1,0 +1,47 @@
+<div class="barber-layout">
+  <!-- Sidebar -->
+  <app-barber-sidebar class="barber-sidebar"></app-barber-sidebar>
+
+  <!-- Main Content -->
+  <div class="barber-main-content">
+    <!-- Header -->
+    <app-barber-header></app-barber-header>
+
+    <!-- Page Content -->
+    <div class="barber-dashboard-page">
+      <div class="overlay">
+        <div class="dashboard-content">
+          <div class="admin-sign-in">Barber Profile</div>
+
+          <!-- Profile Component -->
+          <app-profile
+            [profile]="barberProfile"
+            (click)="onEditProfile()"
+          ></app-profile>
+
+          <app-address
+            [address]="barberProfile.address || {}"
+            (editAddress)="onEditAddress()"
+          ></app-address>
+        </div>
+      </div>
+    </div>
+
+    <app-edit-profile
+      *ngIf="showEditModal"
+      [profile]="barberProfile"
+      (save)="updateProfile($event)"
+      (close)="showEditModal = false"
+    ></app-edit-profile>
+
+    <app-address-form
+    *ngIf="showEditAddressModal"
+    [address]="barberProfile.address"
+    (save)="updateBarberAddress($event)"
+    (close)="showEditAddressModal = false"
+    ></app-address-form>
+
+    <!-- Footer -->
+    <app-barber-footer></app-barber-footer>
+  </div>
+</div>

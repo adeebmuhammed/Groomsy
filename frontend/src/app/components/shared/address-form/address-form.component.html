@@ -1,0 +1,52 @@
+<div class="modal-backdrop">
+  <div class="modal-card">
+    <h2>Edit Address</h2>
+
+    <form [formGroup]="addressForm" (ngSubmit)="onSave()">
+      <!-- District -->
+      <div class="form-group">
+        <label for="district">District</label>
+        <select id="district" formControlName="district">
+          <option value="">Select District</option>
+          <option *ngFor="let d of districts" [value]="d">{{ d }}</option>
+        </select>
+        <div *ngIf="addressForm.get('district')?.touched && addressForm.get('district')?.invalid" class="error">
+          District is required
+        </div>
+      </div>
+
+      <!-- City -->
+      <div class="form-group">
+        <label for="city">City</label>
+        <input id="city" type="text" formControlName="city" />
+        <div *ngIf="addressForm.get('city')?.touched && addressForm.get('city')?.invalid" class="error">
+          City is required
+        </div>
+      </div>
+
+      <!-- Street -->
+      <div class="form-group">
+        <label for="street">Street</label>
+        <input id="street" type="text" formControlName="street" />
+        <div *ngIf="addressForm.get('street')?.touched && addressForm.get('street')?.invalid" class="error">
+          Street is required
+        </div>
+      </div>
+
+      <!-- Pincode -->
+      <div class="form-group">
+        <label for="pincode">Pincode</label>
+        <input id="pincode" type="text" formControlName="pincode" />
+        <div *ngIf="addressForm.get('pincode')?.touched && addressForm.get('pincode')?.invalid" class="error">
+          Enter a valid 6-digit pincode
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="onClose()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
