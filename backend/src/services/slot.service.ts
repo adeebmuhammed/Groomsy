@@ -4,13 +4,8 @@ import {
   SlotRuleListResponseDto,
   SlotRuleReponseDto,
 } from "../dto/slot.dto";
-import { ISlotRule } from "../models/slots.model";
 import { ISlotService } from "./interfaces/ISlotService";
-import {
-  isOverlapping,
-  toUTCTimeOnly,
-  validateSlotData,
-} from "../utils/slotValidator";
+import { isOverlapping, validateSlotData } from "../utils/slotValidator";
 import { SlotMapper } from "../mappers/slot.mapper";
 import { STATUS_CODES } from "../utils/constants";
 import mongoose from "mongoose";
@@ -18,11 +13,8 @@ import { ISlotRepository } from "../repositories/interfaces/ISlotRepository";
 import { generateSlotsFromRules } from "../utils/slot.generator";
 import { MessageResponseDto } from "../dto/base.dto";
 import { IServiceRepository } from "../repositories/interfaces/IServiceRepository";
-import { ServiceRepository } from "../repositories/service.repository";
 import { IBarberUnavailabilityRepository } from "../repositories/interfaces/IBarberUnavailabilityRepository";
-import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
-import { BookingRepository } from "../repositories/booking.repository";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
 
@@ -40,7 +32,7 @@ export class SlotService implements ISlotService {
     barberId: string,
     page: number,
     limit: number
-  ): Promise<{ response: SlotRuleListResponseDto; status: number }> => {
+  ): Promise<{ response: SlotRuleListResponseDto }> => {
     if (!barberId) {
       throw new Error("Barber id is required");
     }
@@ -64,7 +56,6 @@ export class SlotService implements ISlotService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -74,7 +65,6 @@ export class SlotService implements ISlotService {
   ): Promise<{
     response: SlotRuleReponseDto;
     message: string;
-    status: number;
   }> => {
     if (!barberId || !data) {
       throw new Error("barber id and slot data is required");
@@ -127,7 +117,6 @@ export class SlotService implements ISlotService {
     return {
       response: SlotMapper.toSlotResponse(slot),
       message: "slot created successfully",
-      status: STATUS_CODES.CREATED,
     };
   };
 
@@ -137,7 +126,6 @@ export class SlotService implements ISlotService {
   ): Promise<{
     response: SlotRuleReponseDto;
     message: string;
-    status: number;
   }> => {
     if (!slotId || !data) {
       throw new Error("slot id and slot data is required");
@@ -196,13 +184,12 @@ export class SlotService implements ISlotService {
     return {
       response: SlotMapper.toSlotResponse(updatedSlot),
       message: "slot updated successfully",
-      status: STATUS_CODES.OK,
     };
   };
 
   deleteSlotRule = async (
     slotId: string
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto }> => {
     if (!slotId) {
       throw new Error("slot id is required");
     }
@@ -214,7 +201,6 @@ export class SlotService implements ISlotService {
 
     return {
       response: { message: "slot deleted successfully" },
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -224,7 +210,7 @@ export class SlotService implements ISlotService {
     date: string,
     page: number,
     limit: number
-  ): Promise<{ response: SlotResponseDto; status: number }> => {
+  ): Promise<{ response: SlotResponseDto }> => {
     const selectedDate = new Date(date);
     const selectedDayName = selectedDate.toLocaleDateString("en-US", {
       weekday: "long",
@@ -289,7 +275,6 @@ export class SlotService implements ISlotService {
 
     return {
       response: slots,
-      status: STATUS_CODES.OK,
     };
   };
 }

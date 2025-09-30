@@ -24,7 +24,7 @@ export class BarberUnavailabilityService
 
   fetchBarberUnavailability = async (
     barberId: string
-  ): Promise<{ response: BarberUnavailabilityDto; status: number }> => {
+  ): Promise<{ response: BarberUnavailabilityDto;}> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error("barber not found");
@@ -42,14 +42,13 @@ export class BarberUnavailabilityService
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
   editWeeklyDayOff = async (
     barberId: string,
     day: string
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto;}> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error("barber not found");
@@ -95,14 +94,13 @@ export class BarberUnavailabilityService
 
     return {
       response: { message: "weekly off edited successfully" },
-      status: STATUS_CODES.OK,
     };
   };
 
   addOffDay = async (
     barberId: string,
     data: { date: string; reason: string }
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto;}> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error("Barber not found");
@@ -155,14 +153,13 @@ export class BarberUnavailabilityService
 
     return {
       response: { message: "Off day added successfully" },
-      status: STATUS_CODES.CREATED,
     };
   };
 
   removeOffDay = async (
     barberId: string,
     date: string
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto;}> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error("Barber not found");
@@ -193,7 +190,6 @@ export class BarberUnavailabilityService
 
     return {
       response: { message: "successfully removed from special off day" },
-      status: STATUS_CODES.OK,
     };
   };
 }

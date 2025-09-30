@@ -16,12 +16,10 @@ import {
 import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import OTPService from "../utils/OTPService";
 import { BarberMapper } from "../mappers/barber.mapper";
-import { AdminMapper } from "../mappers/admin.mapper";
 import { generateAccessToken } from "../utils/jwt.generator";
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
 import { IBarberUnavailabilityRepository } from "../repositories/interfaces/IBarberUnavailabilityRepository";
-import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 import { MessageResponseDto } from "../dto/base.dto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
@@ -36,7 +34,7 @@ export class BarberService implements IBarberService {
 
   registerBarber = async (
     barberData: BarberRegisterRequestDto
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto }> => {
     const { name, email, phone, district, password } = barberData;
     if (!email || !email || !phone || !district || !password) {
       throw new Error(MESSAGES.ERROR.INVALID_INPUT);
@@ -80,7 +78,6 @@ export class BarberService implements IBarberService {
 
     return {
       response: { message: MESSAGES.SUCCESS.SIGNUP },
-      status: STATUS_CODES.CREATED,
     };
   };
 
@@ -90,7 +87,6 @@ export class BarberService implements IBarberService {
     purpose: "signup" | "forgot"
   ): Promise<{
     response: MessageResponseDto & { barber: { name: string; email: string } };
-    status: number;
   }> => {
     if (!isValidOTP(otp)) {
       throw new Error(MESSAGES.ERROR.OTP_INVALID);
@@ -121,7 +117,6 @@ export class BarberService implements IBarberService {
           email: barber.email,
         },
       },
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -130,7 +125,6 @@ export class BarberService implements IBarberService {
     purpose: "signup" | "forgot"
   ): Promise<{
     response: MessageResponseDto & { user: { name: string; email: string } };
-    status: number;
   }> => {
     const barber = await this._barberRepo.findByEmail(email);
     if (!barber) {
@@ -156,14 +150,13 @@ export class BarberService implements IBarberService {
           email: barber.email,
         },
       },
-      status: STATUS_CODES.OK,
     };
   };
 
   login = async (
     email: string,
     password: string
-  ): Promise<{ response: BarberLoginResponseDto; status: number }> => {
+  ): Promise<{ response: BarberLoginResponseDto }> => {
     if (!isValidEmail(email)) {
       throw new Error("Invalid email Format");
     }
@@ -200,13 +193,12 @@ export class BarberService implements IBarberService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
   forgotPassword = async (
     email: string
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto }> => {
     if (!isValidEmail(email)) {
       throw new Error("invalid email format");
     }
@@ -224,7 +216,6 @@ export class BarberService implements IBarberService {
 
     return {
       response: { message: MESSAGES.SUCCESS.OTP_SENT },
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -232,7 +223,7 @@ export class BarberService implements IBarberService {
     email: string,
     password: string,
     confirmPassword: string
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto }> => {
     if (!isValidEmail(email)) {
       throw new Error(MESSAGES.ERROR.INVALID_EMAIL);
     }
@@ -258,13 +249,12 @@ export class BarberService implements IBarberService {
 
     return {
       response: { message: MESSAGES.SUCCESS.PASSWORD_RESET },
-      status: STATUS_CODES.OK,
     };
   };
 
   getBarberProfileById = async (
     barberId: string
-  ): Promise<{ response: BarberProfileDto; status: number }> => {
+  ): Promise<{ response: BarberProfileDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error("Barber Not Found");
@@ -274,14 +264,13 @@ export class BarberService implements IBarberService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
   updateBarberProfile = async (
     barberId: string,
     data: UpdateBarberProfileDto
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error("Barber Not Found");
@@ -316,14 +305,13 @@ export class BarberService implements IBarberService {
       response: BarberMapper.toMessageResponse(
         "Updated Barber Profile Successfully"
       ),
-      status: STATUS_CODES.OK,
     };
   };
 
   updateBarberAddress = async (
     barberId: string,
     data: updateAddressDto
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error("Barber Not Found");
@@ -347,7 +335,6 @@ export class BarberService implements IBarberService {
 
     return {
       response: { message: "Barber Address Updated Successfully" },
-      status: STATUS_CODES.OK,
     };
   };
 }

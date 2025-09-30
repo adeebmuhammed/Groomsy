@@ -17,11 +17,18 @@ export class CouponController implements ICouponController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;
 
-      const { response, status } = await this._couponService.getAllCoupons(
+      const { response } = await this._couponService.getAllCoupons(
         search,
         page,
         limit
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -37,7 +44,14 @@ export class CouponController implements ICouponController {
     try {
       const data = req.body;
 
-      const { response, status } = await this._couponService.createCoupon(data);
+      const { response } = await this._couponService.createCoupon(data);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.CREATED;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -54,10 +68,17 @@ export class CouponController implements ICouponController {
       const data = req.body;
       const couponId = req.params["id"];
 
-      const { response, status } = await this._couponService.updateCoupon(
+      const { response } = await this._couponService.updateCoupon(
         couponId,
         data
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -73,9 +94,14 @@ export class CouponController implements ICouponController {
     try {
       const couponId = req.params["id"];
 
-      const { response, status } = await this._couponService.deleteCoupon(
-        couponId
-      );
+      const { response } = await this._couponService.deleteCoupon(couponId);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {

@@ -10,27 +10,27 @@ export interface IAdminService {
   loginAdmin(
     email: string,
     password: string
-  ): Promise<{ response: AdminLoginResponseDto; status: number }>;
+  ): Promise<{ response: AdminLoginResponseDto;}>;
   listUsers(
     search: string,
     page: number,
     limit: number
-  ): Promise<{ response: ListResponseDto<UserDto>; status: number }>;
+  ): Promise<{ response: ListResponseDto<UserDto>;}>;
   listBarbers(
     search: string,
     page: number,
     limit: number
-  ): Promise<{ response: ListResponseDto<BarberDto>; status: number }>;
+  ): Promise<{ response: ListResponseDto<BarberDto>;}>;
   blockUser(
     userId: string
-  ): Promise<{ response: UserDto; message: string; status: number }>;
+  ): Promise<{ response: UserDto; message: string;}>;
   unBlockUser(
     userId: string
-  ): Promise<{ response: UserDto; message: string; status: number }>;
+  ): Promise<{ response: UserDto; message: string;}>;
   blockBarber(
     barberId: string
-  ): Promise<{ response: BarberDto; message: string; status: number }>;
+  ): Promise<{ response: BarberDto; message: string;}>;
   unBlockBarber(
     barberId: string
-  ): Promise<{ response: BarberDto; message: string; status: number }>;
+  ): Promise<{ response: BarberDto; message: string;}>;
 }

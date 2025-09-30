@@ -21,10 +21,18 @@ export class BarberUnavailabilityController
     try {
       const barberId = req.params["id"];
 
-      const { response, status } =
+      const { response } =
         await this._barberUnavailabilityService.fetchBarberUnavailability(
           barberId
         );
+
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -40,13 +48,21 @@ export class BarberUnavailabilityController
 
   editWeeklyDayOff = async (req: Request, res: Response): Promise<void> => {
     console.log("req reached");
-    
+
     try {
       const barberId = req.params["id"];
       const day = req.body.day as string;
 
-      const { response, status } =
+      const { response } =
         await this._barberUnavailabilityService.editWeeklyDayOff(barberId, day);
+
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -63,8 +79,18 @@ export class BarberUnavailabilityController
       const barberId = req.params["id"];
       const data = req.body;
 
-      const { response, status } =
-        await this._barberUnavailabilityService.addOffDay(barberId, data);
+      const { response } = await this._barberUnavailabilityService.addOffDay(
+        barberId,
+        data
+      );
+
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -81,8 +107,18 @@ export class BarberUnavailabilityController
       const barberId = req.params["id"];
       const date = req.query.date as string;
 
-      const { response, status } =
-        await this._barberUnavailabilityService.removeOffDay(barberId, date);
+      const { response } = await this._barberUnavailabilityService.removeOffDay(
+        barberId,
+        date
+      );
+
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {

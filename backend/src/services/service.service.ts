@@ -12,7 +12,7 @@ import { TYPES } from "../config/types";
 export class ServiceService implements IServiceService{
     constructor(@inject(TYPES.IServiceRepository) private _serviceRepo: IServiceRepository){}
 
-    fetch = async (search: string, page: number, limit: number): Promise<{ response: ListResponseDto<ServiceResponseDto>; status: number; }> =>{
+    fetch = async (search: string, page: number, limit: number): Promise<{ response: ListResponseDto<ServiceResponseDto>;}> =>{
         const { services,totalCount} = await this._serviceRepo.findAllServices(search,page,limit)
 
         const response: ListResponseDto<ServiceResponseDto> = {
@@ -28,11 +28,10 @@ export class ServiceService implements IServiceService{
 
         return {
             response,
-            status: STATUS_CODES.OK
         }
     }
 
-    create = async (data: CreateServiceDto): Promise<{ response: MessageResponseDto; status: number; }> => {
+    create = async (data: CreateServiceDto): Promise<{ response: MessageResponseDto; }> => {
         if (!data.name || !data.description || !data.duration || !data.price) {
             throw new Error("Required field : Name, Description, Duration and Price")
         }
@@ -53,12 +52,11 @@ export class ServiceService implements IServiceService{
         }
 
         return{
-            response: {message: "service created successfully"},
-            status: STATUS_CODES.OK
+            response: {message: "service created successfully"}
         }
     }
 
-    edit = async (serviceId: string,data: CreateServiceDto): Promise<{ response: MessageResponseDto; status: number; }> => {
+    edit = async (serviceId: string,data: CreateServiceDto): Promise<{ response: MessageResponseDto;}> => {
         if (!data.name || !data.description || !data.duration || !data.price) {
             throw new Error("Required field : Name, Description, Duration and Price")
         }
@@ -80,11 +78,10 @@ export class ServiceService implements IServiceService{
 
         return{
             response: {message: "service edited successfully"},
-            status: STATUS_CODES.OK
         }
     }
 
-    delete = async (serviceId: string): Promise<{ response: MessageResponseDto; status: number; }>=> {
+    delete = async (serviceId: string): Promise<{ response: MessageResponseDto;}>=> {
         const service = await this._serviceRepo.findById(serviceId)
         if (!service) {
             throw new Error("service not found")
@@ -96,20 +93,18 @@ export class ServiceService implements IServiceService{
         }
 
         return{
-            response: { message: "service deleted succefully" },
-            status: STATUS_CODES.OK
+            response: { message: "service deleted succefully" }
         }
     }
 
-    getServiceById = async (serviceId: string): Promise<{ response: ServiceResponseDto; status: number; }> => {
+    getServiceById = async (serviceId: string): Promise<{ response: ServiceResponseDto;}> => {
         const service = await this._serviceRepo.findById(serviceId)
         if (!service) {
             throw new Error("service not found")
         }
 
         return{
-            response : ServiceMapper.toServiceResponse(service),
-            status: STATUS_CODES.OK
+            response : ServiceMapper.toServiceResponse(service)
         }
     }
 }

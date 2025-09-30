@@ -19,10 +19,17 @@ export class SubscriptionController implements ISubscriptionController {
     try {
       const barberId = req.params["id"];
 
-      const { response, status } =
+      const { response } =
         await this._subscriptionService.getSubscriptionDetailsByBarber(
           barberId
         );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -40,8 +47,17 @@ export class SubscriptionController implements ISubscriptionController {
     try {
       const { barberId, planId } = req.body;
 
-      const { response, status } =
-        await this._subscriptionService.manageSubscription(barberId, planId);
+      const { response } = await this._subscriptionService.manageSubscription(
+        barberId,
+        planId
+      );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -79,13 +95,20 @@ export class SubscriptionController implements ISubscriptionController {
         return;
       }
 
-      const { response, status } =
+      const { response } =
         await this._subscriptionService.verifySubscriptionPayment(
           razorpay_payment_id,
           razorpay_order_id,
           razorpay_signature,
           barberId
         );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -103,8 +126,16 @@ export class SubscriptionController implements ISubscriptionController {
     try {
       const { barberId } = req.body;
 
-      const { response, status } =
-        await this._subscriptionService.renewSubscription(barberId);
+      const { response } = await this._subscriptionService.renewSubscription(
+        barberId
+      );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {

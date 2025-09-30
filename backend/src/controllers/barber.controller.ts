@@ -17,9 +17,14 @@ export class BarberController implements IBarberController {
 
   signup = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { response, status } = await this._barberService.registerBarber(
-        req.body
-      );
+      const { response } = await this._barberService.registerBarber(req.body);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -33,11 +38,18 @@ export class BarberController implements IBarberController {
   verifyOTP = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, otp, purpose } = req.body;
-      const { response, status } = await this._barberService.verifyOTP(
+      const { response } = await this._barberService.verifyOTP(
         email,
         otp,
         purpose
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -52,10 +64,16 @@ export class BarberController implements IBarberController {
     try {
       const { email, purpose } = req.body;
 
-      const { response, status } = await this._barberService.resendOTP(
-        email,
-        purpose
-      );
+      const { response } = await this._barberService.resendOTP(email, purpose);
+
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
+
       res.status(status).json(response);
     } catch (error) {
       console.error(error);
@@ -68,10 +86,7 @@ export class BarberController implements IBarberController {
   login = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, password } = req.body;
-      let { response, status } = await this._barberService.login(
-        email,
-        password
-      );
+      let { response } = await this._barberService.login(email, password);
 
       const refreshToken = generateRefreshToken({
         userId: response.id,
@@ -92,6 +107,14 @@ export class BarberController implements IBarberController {
         maxAge: Number(process.env.REFRESH_TOKEN_MAX_AGE),
       });
 
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
+
       res.status(status).json(response);
     } catch (error) {
       console.error(error);
@@ -104,9 +127,15 @@ export class BarberController implements IBarberController {
   forgotPassword = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email } = req.body;
-      const { response, status } = await this._barberService.forgotPassword(
-        email
-      );
+      const { response } = await this._barberService.forgotPassword(email);
+
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -121,11 +150,19 @@ export class BarberController implements IBarberController {
   resetPassword = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, password, confirmPassword } = req.body;
-      const { response, status } = await this._barberService.resetPassword(
+      const { response } = await this._barberService.resetPassword(
         email,
         password,
         confirmPassword
       );
+
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -147,11 +184,20 @@ export class BarberController implements IBarberController {
 
   getBarberProfileById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const barberId = req.params["id"]
+      const barberId = req.params["id"];
 
-      const { response,status } = await this._barberService.getBarberProfileById(barberId)
+      const { response } = await this._barberService.getBarberProfileById(
+        barberId
+      );
+      let status;
 
-      res.status(status).json(response)
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
+
+      res.status(status).json(response);
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
@@ -165,12 +211,23 @@ export class BarberController implements IBarberController {
 
   updateBarberProfile = async (req: Request, res: Response): Promise<void> => {
     try {
-      const barberId = req.params["id"]
-      const data = req.body
+      const barberId = req.params["id"];
+      const data = req.body;
 
-      const { response,status } = await this._barberService.updateBarberProfile(barberId,data)
+      const { response } = await this._barberService.updateBarberProfile(
+        barberId,
+        data
+      );
 
-      res.status(status).json(response)
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
+
+      res.status(status).json(response);
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
@@ -180,16 +237,27 @@ export class BarberController implements IBarberController {
             : "Failed to Upadte Barber Profile",
       });
     }
-  }
+  };
 
   updateBarberAddress = async (req: Request, res: Response): Promise<void> => {
     try {
-      const barberId = req.params["id"]
-      const data = req.body
+      const barberId = req.params["id"];
+      const data = req.body;
 
-      const { response,status } = await this._barberService.updateBarberAddress(barberId,data)
+      const { response } = await this._barberService.updateBarberAddress(
+        barberId,
+        data
+      );
 
-      res.status(status).json(response)
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
+
+      res.status(status).json(response);
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
@@ -199,5 +267,5 @@ export class BarberController implements IBarberController {
             : "Failed to Update Barber Address",
       });
     }
-  }
+  };
 }

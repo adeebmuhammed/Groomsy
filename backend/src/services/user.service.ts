@@ -19,11 +19,9 @@ import { UserMapper } from "../mappers/user.mapper";
 import { BarberDto } from "../dto/barber.dto";
 
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
-import { BarberRepository } from "../repositories/barber.repository";
 import { ListResponseDto } from "../dto/admin.dto";
 import { AdminMapper } from "../mappers/admin.mapper";
 import { ISlotRepository } from "../repositories/interfaces/ISlotRepository";
-import { SlotRepository } from "../repositories/slot.repository";
 import { SlotRuleListResponseDto } from "../dto/slot.dto";
 import { SlotMapper } from "../mappers/slot.mapper";
 import { MessageResponseDto } from "../dto/base.dto";
@@ -40,7 +38,7 @@ export class UserService implements IUserService {
 
   registerUser = async (
     userData: UserRegisterRequestDto
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto }> => {
     const { name, email, password, confirmPassword, phone } = userData;
 
     if (!name || !email || !password || !confirmPassword) {
@@ -84,7 +82,6 @@ export class UserService implements IUserService {
 
     return {
       response: { message: MESSAGES.SUCCESS.SIGNUP },
-      status: STATUS_CODES.CREATED,
     };
   };
 
@@ -94,7 +91,6 @@ export class UserService implements IUserService {
     purpose: "signup" | "forgot"
   ): Promise<{
     response: MessageResponseDto & { user: { name: string; id: string } };
-    status: number;
   }> => {
     if (!isValidOTP(otp)) {
       throw new Error("OTP must be a 6-digit number");
@@ -125,7 +121,6 @@ export class UserService implements IUserService {
           id: user.id,
         },
       },
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -134,7 +129,6 @@ export class UserService implements IUserService {
     purpose: "signup" | "forgot"
   ): Promise<{
     response: MessageResponseDto & { user: { name: string; email: string } };
-    status: number;
   }> => {
     const user = await this._userRepo.findByEmail(email);
     if (!user) {
@@ -160,13 +154,12 @@ export class UserService implements IUserService {
           email: user.email,
         },
       },
-      status: STATUS_CODES.OK,
     };
   };
 
   async processGoogleAuth(
     profile: any
-  ): Promise<{ response: UserLoginResponseDto; status: number }> {
+  ): Promise<{ response: UserLoginResponseDto }> {
     const email = profile.email;
     let user = await this._userRepo.findByEmail(email);
 
@@ -192,14 +185,13 @@ export class UserService implements IUserService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   }
 
   async loginUser(
     email: string,
     password: string
-  ): Promise<{ response: UserLoginResponseDto; status: number }> {
+  ): Promise<{ response: UserLoginResponseDto }> {
     if (!isValidEmail(email)) {
       throw new Error("Invalid email format");
     }
@@ -238,13 +230,12 @@ export class UserService implements IUserService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   }
 
   async forgotPassword(
     email: string
-  ): Promise<{ response: MessageResponseDto; status: number }> {
+  ): Promise<{ response: MessageResponseDto }> {
     if (!isValidEmail(email)) {
       throw new Error("Invalid email format");
     }
@@ -262,7 +253,6 @@ export class UserService implements IUserService {
 
     return {
       response: { message: MESSAGES.SUCCESS.OTP_SENT },
-      status: STATUS_CODES.OK,
     };
   }
 
@@ -270,7 +260,7 @@ export class UserService implements IUserService {
     email: string,
     password: string,
     confirmPassword: string
-  ): Promise<{ response: MessageResponseDto; status: number }> {
+  ): Promise<{ response: MessageResponseDto }> {
     if (!isValidEmail(email)) {
       throw new Error("Invalid email Format");
     }
@@ -296,7 +286,6 @@ export class UserService implements IUserService {
 
     return {
       response: { message: MESSAGES.SUCCESS.PASSWORD_RESET },
-      status: STATUS_CODES.OK,
     };
   }
 
@@ -305,7 +294,7 @@ export class UserService implements IUserService {
     page: number,
     limit: number,
     district: string
-  ): Promise<{ response: ListResponseDto<BarberDto>; status: number }> => {
+  ): Promise<{ response: ListResponseDto<BarberDto> }> => {
     const { totalCount, barbers } = await this._barberRepo.findBySearchTerm(
       search,
       page,
@@ -327,7 +316,6 @@ export class UserService implements IUserService {
     };
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -335,7 +323,7 @@ export class UserService implements IUserService {
     page: number,
     limit: number,
     barberId: string
-  ): Promise<{ response: SlotRuleListResponseDto; status: number }> => {
+  ): Promise<{ response: SlotRuleListResponseDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
@@ -360,13 +348,12 @@ export class UserService implements IUserService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
   getUserProfileById = async (
     userId: string
-  ): Promise<{ response: UserProfileDto; status: number }> => {
+  ): Promise<{ response: UserProfileDto }> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
@@ -376,14 +363,13 @@ export class UserService implements IUserService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
   updateUserProfile = async (
     userId: string,
     data: UserEditProfileDto
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto }> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
@@ -418,7 +404,6 @@ export class UserService implements IUserService {
       response: UserMapper.toMessageResponse(
         "Updated User Profile Successfully"
       ),
-      status: STATUS_CODES.OK,
     };
   };
 }

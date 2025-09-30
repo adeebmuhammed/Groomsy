@@ -13,7 +13,7 @@ import { TYPES } from "../config/types";
 export class CouponService implements ICouponService{
     constructor(@inject(TYPES.ICouponRepository)  private _couponRepo: ICouponRepository){}
 
-    getAllCoupons = async (search: string,page: number, limit: number): Promise<{ response: ListResponseDto<CouponDto>; status: number; }> => {
+    getAllCoupons = async (search: string,page: number, limit: number): Promise<{ response: ListResponseDto<CouponDto>;}> => {
         const { totalCount,coupons } = await this._couponRepo.findAllCoupons(search,page,limit)
 
         const response: ListResponseDto<CouponDto> = {
@@ -29,11 +29,10 @@ export class CouponService implements ICouponService{
 
         return{
             response,
-            status:STATUS_CODES.OK
         }
     }
 
-    createCoupon = async(data: CouponDto): Promise<{ response: MessageResponseDto; status: number; }> =>{
+    createCoupon = async(data: CouponDto): Promise<{ response: MessageResponseDto;}> =>{
         const errors = validateCouponData(data)
         if (errors.length > 0) {
             throw new Error(errors.join(" "))
@@ -51,11 +50,10 @@ export class CouponService implements ICouponService{
 
         return{
             response: Couponmapper.toMessageResponse("coupon created successfully"),
-            status: STATUS_CODES.CREATED
         }
     }
 
-    updateCoupon = async (couponId: string,data: CouponDto): Promise<{ response: MessageResponseDto; status: number; }> => {
+    updateCoupon = async (couponId: string,data: CouponDto): Promise<{ response: MessageResponseDto; }> => {
         const errors = validateCouponData(data)
         if (errors.length > 0) {
             throw new Error(errors.join(" "))
@@ -73,11 +71,10 @@ export class CouponService implements ICouponService{
 
         return {
             response: Couponmapper.toMessageResponse("coupon updated successfully"),
-            status: STATUS_CODES.OK
         }
     }
 
-    deleteCoupon = async (couponId: string): Promise<{ response: MessageResponseDto; status: number; }> => {
+    deleteCoupon = async (couponId: string): Promise<{ response: MessageResponseDto;}> => {
         if (!couponId) {
             throw new Error("coupon id required")
         }
@@ -93,8 +90,7 @@ export class CouponService implements ICouponService{
         }
 
         return{
-            response: Couponmapper.toMessageResponse("coupon deleted successfully"),
-            status: STATUS_CODES.OK
+            response: Couponmapper.toMessageResponse("coupon deleted successfully")
         }
     }
 }

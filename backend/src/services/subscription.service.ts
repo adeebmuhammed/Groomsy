@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { MessageResponseDto } from "../dto/base.dto";
 import { ISubscriptionPlanRepository } from "../repositories/interfaces/ISubsciptionPlanRepository";
 import { ISubscriptionRepository } from "../repositories/interfaces/ISubscriptionRepository";
-import { SubscriptionPlanRepository } from "../repositories/subscription.plan.repository";
 import { STATUS_CODES } from "../utils/constants";
 import razorpayInstance from "../utils/razorpay";
 import { ISubscriptionService } from "./interfaces/ISubscriptionService";
@@ -10,7 +9,6 @@ import crypto from "crypto";
 import { calculateExpiryDate } from "../utils/expiryDateCalculator";
 import { confirmSubscription, SubscriptionDto } from "../dto/subscription.dto";
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
-import { BarberRepository } from "../repositories/barber.repository";
 import { SubscriptionMapper } from "../mappers/subscription.mapper";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
@@ -27,7 +25,7 @@ export class SubscriptionService implements ISubscriptionService {
 
   getSubscriptionDetailsByBarber = async (
     barberId: string
-  ): Promise<{ response: SubscriptionDto; status: number }> => {
+  ): Promise<{ response: SubscriptionDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error("barber not found");
@@ -52,14 +50,13 @@ export class SubscriptionService implements ISubscriptionService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
   manageSubscription = async (
     barberId: string,
     planId: string
-  ): Promise<{ response: confirmSubscription; status: number }> => {
+  ): Promise<{ response: confirmSubscription }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error("barber not found");
@@ -109,13 +106,12 @@ export class SubscriptionService implements ISubscriptionService {
         currency: razorpayOrder.currency,
         keyId: process.env.RAZORPAY_KEY_ID || "",
       },
-      status: STATUS_CODES.OK,
     };
   };
 
   renewSubscription = async (
     barberId: string
-  ): Promise<{ response: confirmSubscription; status: number }> => {
+  ): Promise<{ response: confirmSubscription }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error("barber not found");
@@ -150,7 +146,6 @@ export class SubscriptionService implements ISubscriptionService {
         currency: razorpayOrder.currency,
         keyId: process.env.RAZORPAY_KEY_ID || "",
       },
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -159,7 +154,7 @@ export class SubscriptionService implements ISubscriptionService {
     razorpay_order_id: string,
     razorpay_signature: string,
     barberId: string
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto }> => {
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
@@ -186,7 +181,6 @@ export class SubscriptionService implements ISubscriptionService {
 
     return {
       response: { message: "Subscription payment verified successfully" },
-      status: STATUS_CODES.OK,
     };
   };
 }
