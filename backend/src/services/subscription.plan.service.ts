@@ -25,7 +25,6 @@ export class SubscriptionPlanService implements ISubscriptionPlanService {
     limit: number
   ): Promise<{
     response: ListResponseDto<SubscriptionPlanDto>;
-    status: number;
   }> => {
     const { plans, totalCount } = await this._planRepo.findBySearchTerm(
       search,
@@ -46,13 +45,12 @@ export class SubscriptionPlanService implements ISubscriptionPlanService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
   create = async (
     data: CreateSubscriptionPlanDto
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto;}> => {
     const errors = validatePlanData(data);
     if (errors.length > 0) {
       throw new Error(errors.join(" "));
@@ -72,14 +70,13 @@ export class SubscriptionPlanService implements ISubscriptionPlanService {
     }
 
     return {
-      response: { message: "plan created successfully" },
-      status: STATUS_CODES.CREATED,
+      response: { message: "plan created successfully" }
     };
   };
 
   updateActivation = async (
     planId: string
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto; }> => {
     const plan = await this._planRepo.findById(planId);
     if (!plan) {
       throw new Error("subscription plan not found");
@@ -104,14 +101,12 @@ export class SubscriptionPlanService implements ISubscriptionPlanService {
     }
 
     return {
-      response: { message: `plan ${status} successfully` },
-      status: STATUS_CODES.OK,
+      response: { message: `plan ${status} successfully` }
     };
   };
 
   getPlansForBarber = async (): Promise<{
     response: SubscriptionPlanDto[];
-    status: number;
   }> => {
     const plans = await this._planRepo.find({});
     if (!plans) {
@@ -122,8 +117,7 @@ export class SubscriptionPlanService implements ISubscriptionPlanService {
       PlanMapper.toPlanResponseArray(plans);
 
     return {
-      response,
-      status: STATUS_CODES.OK,
+      response
     };
   };
 }

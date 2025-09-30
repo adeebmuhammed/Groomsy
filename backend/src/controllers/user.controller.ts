@@ -15,9 +15,14 @@ export class UserController implements IUserController {
 
   register = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { response, status } = await this._userService.registerUser(
-        req.body
-      );
+      const { response } = await this._userService.registerUser(req.body);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json({
         response,
@@ -33,11 +38,18 @@ export class UserController implements IUserController {
   verifyOTP = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, otp, purpose } = req.body; // get purpose from frontend
-      const { response, status } = await this._userService.verifyOTP(
+      const { response } = await this._userService.verifyOTP(
         email,
         otp,
         purpose
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -60,10 +72,15 @@ export class UserController implements IUserController {
         return;
       }
 
-      const { response, status } = await this._userService.resendOTP(
-        email,
-        purpose
-      );
+      const { response } = await this._userService.resendOTP(email, purpose);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
+
       res.status(status).json(response);
     } catch (error) {
       console.error("OTP resend error:", error);
@@ -76,9 +93,7 @@ export class UserController implements IUserController {
   googleCallback = async (req: Request, res: Response): Promise<void> => {
     try {
       const user = req.user;
-      const { response, status } = await this._userService.processGoogleAuth(
-        user
-      );
+      const { response } = await this._userService.processGoogleAuth(user);
 
       const accessToken = generateAccessToken({
         userId: response.id,
@@ -130,10 +145,7 @@ export class UserController implements IUserController {
   login = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, password } = req.body;
-      const { response, status } = await this._userService.loginUser(
-        email,
-        password
-      );
+      const { response } = await this._userService.loginUser(email, password);
 
       const accessToken = generateAccessToken({
         userId: response.id,
@@ -158,6 +170,14 @@ export class UserController implements IUserController {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
+
       res.status(status).json({
         message: response.message,
         user: {
@@ -180,9 +200,15 @@ export class UserController implements IUserController {
   forgotPassword = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email } = req.body;
-      const { response, status } = await this._userService.forgotPassword(
-        email
-      );
+      const { response } = await this._userService.forgotPassword(email);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
+
       res.status(status).json(response);
     } catch (error) {
       console.error("Forgot password error:", error);
@@ -198,11 +224,19 @@ export class UserController implements IUserController {
   resetPassword = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, password, confirmPassword } = req.body;
-      const { response, status } = await this._userService.resetPassword(
+      const { response } = await this._userService.resetPassword(
         email,
         password,
         confirmPassword
       );
+
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -221,12 +255,19 @@ export class UserController implements IUserController {
       const limit = parseInt(req.query.limit as string) || 3;
       const district = (req.query.district as string) || "";
 
-      const { response, status } = await this._userService.fetchAllBarbers(
+      const { response } = await this._userService.fetchAllBarbers(
         search,
         page,
         limit,
         district
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -247,8 +288,18 @@ export class UserController implements IUserController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;
 
-      const { response, status } =
-        await this._userService.fetchBarbersAndSlotRules(page, limit, barberId);
+      const { response } = await this._userService.fetchBarbersAndSlotRules(
+        page,
+        limit,
+        barberId
+      );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -266,9 +317,14 @@ export class UserController implements IUserController {
     try {
       const userId = req.params["id"];
 
-      const { response, status } = await this._userService.getUserProfileById(
-        userId
-      );
+      const { response } = await this._userService.getUserProfileById(userId);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -287,10 +343,17 @@ export class UserController implements IUserController {
       const userId = req.params["id"];
       const data = req.body;
 
-      const { response, status } = await this._userService.updateUserProfile(
+      const { response } = await this._userService.updateUserProfile(
         userId,
         data
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {

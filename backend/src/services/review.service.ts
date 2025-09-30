@@ -27,7 +27,6 @@ export class ReviewService implements IReviewService {
     limit: number
   ): Promise<{
     response: ListResponseDto<ReviewResponseDto>;
-    status: number;
   }> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
@@ -53,7 +52,6 @@ export class ReviewService implements IReviewService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -61,7 +59,7 @@ export class ReviewService implements IReviewService {
     userId: string,
     bookingId: string,
     reviewData: ReviewCreateRequestDto
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto;}> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
       throw new Error("user not found");
@@ -91,13 +89,12 @@ export class ReviewService implements IReviewService {
 
     return {
       response: { message: "review created successfully" },
-      status: STATUS_CODES.CREATED,
     };
   };
 
   delete = async (
     reviewId: string
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto;}> => {
     const review = await this._reviewRepo.findById(reviewId);
     if (!review) {
       throw new Error("review not found");
@@ -110,7 +107,6 @@ export class ReviewService implements IReviewService {
 
     return {
       response: { message: "review deleted successfully" },
-      status: STATUS_CODES.OK,
     };
   };
 }

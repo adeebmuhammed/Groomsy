@@ -21,7 +21,7 @@ export class OfferService implements IOfferService {
     search: string,
     page: number,
     limit: number
-  ): Promise<{ response: ListResponseDto<OfferDto>; status: number }> => {
+  ): Promise<{ response: ListResponseDto<OfferDto>;}> => {
     const { offers, totalCount } = await this._offerRepo.findAllOffers(
       search,
       page,
@@ -41,13 +41,12 @@ export class OfferService implements IOfferService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
   create = async (
     data: CreateOfferDto
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto;}> => {
     const errors = validateOfferData(data);
     if (errors.length > 0) {
       throw new Error(errors.join(" "));
@@ -85,14 +84,13 @@ export class OfferService implements IOfferService {
 
     return {
       response: { message: "offer created successfully" },
-      status: STATUS_CODES.OK,
     };
   };
 
   edit = async (
     offerId: string,
     data: CreateOfferDto
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto;}> => {
     const errors = validateOfferData(data);
     if (errors.length > 0) {
       throw new Error(errors.join(" "));
@@ -141,13 +139,12 @@ export class OfferService implements IOfferService {
 
     return {
       response: { message: "offer edited successfully" },
-      status: STATUS_CODES.OK,
     };
   };
 
   delete = async (
     offerId: string
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto;}> => {
     const offer = await this._offerRepo.findById(offerId);
     if (!offer) {
       throw new Error("offer not found");
@@ -160,7 +157,6 @@ export class OfferService implements IOfferService {
 
     return {
       response: { message: "offer deleted successfully" },
-      status: STATUS_CODES.OK,
     };
   };
 }

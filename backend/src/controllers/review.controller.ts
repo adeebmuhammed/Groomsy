@@ -17,11 +17,18 @@ export class ReviewController implements IReviewController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;
 
-      const { response, status } = await this._reviewService.getReviewsByUser(
+      const { response } = await this._reviewService.getReviewsByUser(
         userId,
         page,
         limit
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -38,11 +45,18 @@ export class ReviewController implements IReviewController {
       const bookingId = req.query.bookingId as string;
       const data = req.body;
 
-      const { response, status } = await this._reviewService.create(
+      const { response } = await this._reviewService.create(
         userId,
         bookingId,
         data
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.CREATED;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -58,7 +72,14 @@ export class ReviewController implements IReviewController {
     try {
       const reviewId = req.params["id"];
 
-      const { response, status } = await this._reviewService.delete(reviewId);
+      const { response } = await this._reviewService.delete(reviewId);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {

@@ -27,7 +27,7 @@ export class AdminService implements IAdminService {
   loginAdmin = async (
     email: string,
     password: string
-  ): Promise<{ response: AdminLoginResponseDto; status: number }> => {
+  ): Promise<{ response: AdminLoginResponseDto;}> => {
     if (!isValidEmail(email)) {
       throw new Error("invalid email format");
     }
@@ -49,7 +49,6 @@ export class AdminService implements IAdminService {
 
     return {
       response: AdminMapper.toLoginResponse(admin, MESSAGES.SUCCESS.LOGIN),
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -57,7 +56,7 @@ export class AdminService implements IAdminService {
     search: string,
     page: number,
     limit: number
-  ): Promise<{ response: ListResponseDto<UserDto>; status: number }> => {
+  ): Promise<{ response: ListResponseDto<UserDto>;}> => {
     const { users, totalCount } = await this._userRepo.findBySearchTerm(
       search,
       page,
@@ -77,7 +76,6 @@ export class AdminService implements IAdminService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -85,7 +83,7 @@ export class AdminService implements IAdminService {
     search: string,
     page: number,
     limit: number
-  ): Promise<{ response: ListResponseDto<BarberDto>; status: number }> => {
+  ): Promise<{ response: ListResponseDto<BarberDto>;}> => {
     const { barbers, totalCount } = await this._barberRepo.findBySearchTerm(
       search,
       page,
@@ -106,13 +104,12 @@ export class AdminService implements IAdminService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
   blockUser = async (
     userId: string
-  ): Promise<{ response: UserDto; message: string; status: number }> => {
+  ): Promise<{ response: UserDto; message: string;}> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
@@ -128,14 +125,13 @@ export class AdminService implements IAdminService {
 
     return {
       message: MESSAGES.SUCCESS.USER_BLOCKED,
-      status: STATUS_CODES.OK,
       response,
     };
   };
 
   unBlockUser = async (
     userId: string
-  ): Promise<{ response: UserDto; message: string; status: number }> => {
+  ): Promise<{ response: UserDto; message: string;}> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
@@ -151,14 +147,13 @@ export class AdminService implements IAdminService {
 
     return {
       message: MESSAGES.SUCCESS.USER_UNBLOCKED,
-      status: STATUS_CODES.OK,
       response,
     };
   };
 
   blockBarber = async (
     barberId: string
-  ): Promise<{ response: BarberDto; message: string; status: number }> => {
+  ): Promise<{ response: BarberDto; message: string;}> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
@@ -174,14 +169,13 @@ export class AdminService implements IAdminService {
 
     return {
       message: MESSAGES.SUCCESS.USER_BLOCKED,
-      status: STATUS_CODES.OK,
       response,
     };
   };
 
   unBlockBarber = async (
     barberId: string
-  ): Promise<{ response: BarberDto; message: string; status: number }> => {
+  ): Promise<{ response: BarberDto; message: string;}> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
@@ -197,7 +191,6 @@ export class AdminService implements IAdminService {
 
     return {
       message: MESSAGES.SUCCESS.USER_UNBLOCKED,
-      status: STATUS_CODES.OK,
       response,
     };
   };

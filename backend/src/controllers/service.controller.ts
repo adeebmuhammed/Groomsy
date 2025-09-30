@@ -17,11 +17,18 @@ export class ServiceController implements IServiceController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;
 
-      const { response, status } = await this._serviceService.fetch(
+      const { response } = await this._serviceService.fetch(
         search,
         page,
         limit
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -37,7 +44,14 @@ export class ServiceController implements IServiceController {
     try {
       const data = req.body;
 
-      const { response, status } = await this._serviceService.create(data);
+      const { response } = await this._serviceService.create(data);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.CREATED
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -54,10 +68,17 @@ export class ServiceController implements IServiceController {
       const serviceId = req.params["id"];
       const data = req.body;
 
-      const { response, status } = await this._serviceService.edit(
+      const { response } = await this._serviceService.edit(
         serviceId,
         data
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -73,7 +94,14 @@ export class ServiceController implements IServiceController {
     try {
       const serviceId = req.params["id"];
 
-      const { response, status } = await this._serviceService.delete(serviceId);
+      const { response } = await this._serviceService.delete(serviceId);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -89,9 +117,16 @@ export class ServiceController implements IServiceController {
     try {
       const serviceId = req.params["id"] as string;
 
-      const { response, status } = await this._serviceService.getServiceById(
+      const { response } = await this._serviceService.getServiceById(
         serviceId
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
 
       res.status(status).json(response);
     } catch (error) {

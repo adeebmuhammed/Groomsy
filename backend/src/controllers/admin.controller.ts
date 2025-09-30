@@ -43,7 +43,7 @@ export class AdminController implements IAdminController {
         maxAge: Number(process.env.REFRESH_TOKEN_MAX_AGE),
       });
 
-      res.status(result.status).json({
+      res.status(STATUS_CODES.OK).json({
         message: result.response.message,
         token: accessToken,
         user: {
@@ -75,12 +75,19 @@ export class AdminController implements IAdminController {
       const search = (req.query.search as string) || "";
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
+      let status;
 
-      const { response, status } = await this._adminService.listUsers(
+      const { response } = await this._adminService.listUsers(
         search,
         page,
         limit
       );
+
+      if (response) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -96,11 +103,19 @@ export class AdminController implements IAdminController {
       const search = (req.query.search as string) || "";
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const { response, status } = await this._adminService.listBarbers(
+      let status;
+
+      const { response } = await this._adminService.listBarbers(
         search,
         page,
         limit
       );
+
+      if (response) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -116,6 +131,7 @@ export class AdminController implements IAdminController {
     try {
       const { id: userId } = req.params;
       const { status } = req.body;
+      let statusCode;
 
       let result;
       if (status === "active") {
@@ -126,7 +142,13 @@ export class AdminController implements IAdminController {
         throw new Error("Invalid status");
       }
 
-      res.status(result.status).json({
+      if (result) {
+        statusCode = STATUS_CODES.OK
+      }else{
+        statusCode = STATUS_CODES.CONFLICT
+      }
+
+      res.status(statusCode).json({
         message: result.message,
         user: result.response,
       });
@@ -143,6 +165,7 @@ export class AdminController implements IAdminController {
     try {
       const { id: barberId } = req.params;
       const { status } = req.body;
+      let statusCode;
 
       let result;
       if (status === "active") {
@@ -153,7 +176,13 @@ export class AdminController implements IAdminController {
         throw new Error("Invalid status");
       }
 
-      res.status(result.status).json({
+      if (result) {
+        statusCode = STATUS_CODES.OK
+      }else{
+        statusCode = STATUS_CODES.CONFLICT
+      }
+
+      res.status(statusCode).json({
         message: result.message,
         barber: result.response,
       });

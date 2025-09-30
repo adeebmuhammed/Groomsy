@@ -18,11 +18,18 @@ export class SubscriptionPlanController implements ISubscriptionPlanController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;
 
-      const { response, status } = await this._planService.getSubscriptionPlans(
+      const { response } = await this._planService.getSubscriptionPlans(
         search,
         page,
         limit
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -40,7 +47,14 @@ export class SubscriptionPlanController implements ISubscriptionPlanController {
     try {
       const data = req.body;
 
-      const { response, status } = await this._planService.create(data);
+      const { response } = await this._planService.create(data);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.CREATED;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -58,9 +72,14 @@ export class SubscriptionPlanController implements ISubscriptionPlanController {
     try {
       const planId = req.params["id"];
 
-      const { response, status } = await this._planService.updateActivation(
-        planId
-      );
+      const { response } = await this._planService.updateActivation(planId);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -76,7 +95,14 @@ export class SubscriptionPlanController implements ISubscriptionPlanController {
 
   getPlansForBarber = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { response, status } = await this._planService.getPlansForBarber();
+      const { response } = await this._planService.getPlansForBarber();
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {

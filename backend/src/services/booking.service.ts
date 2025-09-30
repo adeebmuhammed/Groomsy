@@ -47,7 +47,6 @@ export class BookingService implements IBookingService {
     limit: number = 5
   ): Promise<{
     response: { data: BookingResponseDto[]; totalCount: number };
-    status: number;
   }> => {
     const skip = (page - 1) * limit;
     const filter: Partial<{ user: string; barber: string }> = {};
@@ -70,14 +69,13 @@ export class BookingService implements IBookingService {
 
     return {
       response: { data: bookingDTOs, totalCount },
-      status: STATUS_CODES.OK,
     };
   };
 
   stageBooking = async (
     userId: string,
     data: BookingCreateRequestDto
-  ): Promise<{ response: BookingResponseDto; status: number }> => {
+  ): Promise<{ response: BookingResponseDto }> => {
     const user = await this._userRepo.findById(userId);
     if (!user) throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
 
@@ -139,8 +137,8 @@ export class BookingService implements IBookingService {
       finalPrice = data.price - discountAmount;
     }
 
-    const end = new Date(data.endTime)
-    const start = new Date(data.startTime)
+    const end = new Date(data.endTime);
+    const start = new Date(data.startTime);
 
     if (end.getTime() <= today.getTime()) {
       throw new Error("Cannot create booking for an expired slot");
@@ -175,14 +173,13 @@ export class BookingService implements IBookingService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
   couponApplication = async (
     bookingId: string,
     couponCode: string
-  ): Promise<{ response: BookingResponseDto; status: number }> => {
+  ): Promise<{ response: BookingResponseDto }> => {
     const booking = await this._bookingRepo.findById(bookingId);
     if (!booking) {
       throw new Error("booking not found");
@@ -220,7 +217,6 @@ export class BookingService implements IBookingService {
 
     return {
       response,
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -232,7 +228,7 @@ export class BookingService implements IBookingService {
       couponCode?: string;
       discountAmount?: number;
     }
-  ): Promise<{ response: confirmBookingDto; status: number }> => {
+  ): Promise<{ response: confirmBookingDto }> => {
     const booking = await this._bookingRepo.findById(bookingId);
 
     if (!booking) throw new Error("Booking not found");
@@ -276,7 +272,6 @@ export class BookingService implements IBookingService {
         bookingId: booking._id as string,
         keyId: process.env.RAZORPAY_KEY_ID as string,
       },
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -285,7 +280,7 @@ export class BookingService implements IBookingService {
     razorpay_order_id: string,
     razorpay_signature: string,
     bookingId: string
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto }> => {
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
@@ -308,7 +303,6 @@ export class BookingService implements IBookingService {
 
     return {
       response: { message: "payment verified successfully" },
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -316,7 +310,7 @@ export class BookingService implements IBookingService {
     role: ROLES.USER | ROLES.BARBER,
     bookingId: string,
     bookingStatus: string
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto }> => {
     if (role !== "user" && role !== "barber") {
       throw new Error("invalid role");
     }
@@ -360,13 +354,12 @@ export class BookingService implements IBookingService {
 
     return {
       response: { message: "booking status updated successfully" },
-      status: STATUS_CODES.OK,
     };
   };
 
   getBookingById = async (
     bookingId: string
-  ): Promise<{ response: BookingResponseDto; status: number }> => {
+  ): Promise<{ response: BookingResponseDto }> => {
     const booking = await this._bookingRepo.findById(bookingId);
     if (!booking) {
       throw new Error("booking not found");
@@ -374,7 +367,6 @@ export class BookingService implements IBookingService {
 
     return {
       response: BookingMapper.toBookingResponse(booking),
-      status: STATUS_CODES.OK,
     };
   };
 
@@ -385,7 +377,6 @@ export class BookingService implements IBookingService {
     limit: number
   ): Promise<{
     response: { data: BookingResponseDto[]; totalCount: number };
-    status: number;
   }> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
@@ -415,7 +406,6 @@ export class BookingService implements IBookingService {
         data: BookingMapper.toBookingResponseArray(bookings),
         totalCount,
       },
-      status: STATUS_CODES.OK,
     };
   };
 }

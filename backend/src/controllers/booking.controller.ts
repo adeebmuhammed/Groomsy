@@ -19,12 +19,19 @@ export class BookingController implements IBookingController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
 
-      const { response, status } = await this._bookingService.fetchBookings(
+      const { response } = await this._bookingService.fetchBookings(
         role,
         id,
         page,
         limit
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -41,10 +48,17 @@ export class BookingController implements IBookingController {
       const userId = req.query.userId as string;
       const data = req.body;
 
-      const { response, status } = await this._bookingService.stageBooking(
+      const { response } = await this._bookingService.stageBooking(
         userId,
         data
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -62,11 +76,18 @@ export class BookingController implements IBookingController {
       const bookingId = req.query.bookingId as string;
       const data = req.body;
 
-      const { response, status } = await this._bookingService.confirmBooking(
+      const { response } = await this._bookingService.confirmBooking(
         bookingId,
         userId,
         data
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -83,10 +104,17 @@ export class BookingController implements IBookingController {
       const bookingId = req.query.bookingId as string;
       const couponCode = req.body.couponCode as string;
 
-      const { response, status } = await this._bookingService.couponApplication(
+      const { response } = await this._bookingService.couponApplication(
         bookingId,
         couponCode
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -107,12 +135,19 @@ export class BookingController implements IBookingController {
         bookingId,
       } = req.body;
 
-      const { response, status } = await this._bookingService.verifyPayment(
+      const { response } = await this._bookingService.verifyPayment(
         razorpay_payment_id,
         razorpay_order_id,
         razorpay_signature,
         bookingId
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -131,12 +166,18 @@ export class BookingController implements IBookingController {
 
       const { bookingStatus } = req.body;
 
-      const { response, status } =
-        await this._bookingService.updateBookingStatus(
-          role,
-          bookingId,
-          bookingStatus
-        );
+      const { response } = await this._bookingService.updateBookingStatus(
+        role,
+        bookingId,
+        bookingStatus
+      );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -154,9 +195,14 @@ export class BookingController implements IBookingController {
     try {
       const bookingId = req.params["id"] as string;
 
-      const { response, status } = await this._bookingService.getBookingById(
-        bookingId
-      );
+      const { response } = await this._bookingService.getBookingById(bookingId);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -181,13 +227,19 @@ export class BookingController implements IBookingController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;
 
-      const { response, status } =
-        await this._bookingService.getBookingsByStatus(
-          bookingStatus,
-          userId,
-          page,
-          limit
-        );
+      const { response } = await this._bookingService.getBookingsByStatus(
+        bookingStatus,
+        userId,
+        page,
+        limit
+      );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {

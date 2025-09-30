@@ -17,11 +17,18 @@ export class OfferController implements IOfferController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;
 
-      const { response, status } = await this._offerService.getAllOffers(
+      const { response } = await this._offerService.getAllOffers(
         search,
         page,
         limit
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -36,7 +43,14 @@ export class OfferController implements IOfferController {
     try {
       const data = req.body;
 
-      const { response, status } = await this._offerService.create(data);
+      const { response } = await this._offerService.create(data);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.CREATED
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -52,7 +66,14 @@ export class OfferController implements IOfferController {
       const offerId = req.params["id"];
       const data = req.body;
 
-      const { response, status } = await this._offerService.edit(offerId, data);
+      const { response } = await this._offerService.edit(offerId, data);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -67,7 +88,14 @@ export class OfferController implements IOfferController {
     try {
       const offerId = req.params["id"];
 
-      const { response, status } = await this._offerService.delete(offerId);
+      const { response } = await this._offerService.delete(offerId);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
 
       res.status(status).json(response);
     } catch (error) {

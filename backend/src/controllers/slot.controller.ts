@@ -15,11 +15,18 @@ export class SlotController implements ISlotController {
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;
 
-      const { response, status } = await this._slotService.getSlotRulesByBarber(
+      const { response } = await this._slotService.getSlotRulesByBarber(
         barberId,
         page,
         limit
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -35,8 +42,17 @@ export class SlotController implements ISlotController {
       const barberId = req.query.barberId as string;
       const data = req.body;
 
-      const { response, message, status } =
-        await this._slotService.createSlotRule(barberId, data);
+      const { response, message } = await this._slotService.createSlotRule(
+        barberId,
+        data
+      );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.CREATED;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json({ response, message });
     } catch (error) {
@@ -52,8 +68,17 @@ export class SlotController implements ISlotController {
       const slotId = req.params["id"];
       const data = req.body;
 
-      const { response, message, status } =
-        await this._slotService.updateSlotRule(slotId, data);
+      const { response, message } = await this._slotService.updateSlotRule(
+        slotId,
+        data
+      );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json({ response, message });
     } catch (error) {
@@ -68,9 +93,14 @@ export class SlotController implements ISlotController {
     try {
       const slotId = req.params["id"];
 
-      const { response, status } = await this._slotService.deleteSlotRule(
-        slotId
-      );
+      const { response } = await this._slotService.deleteSlotRule(slotId);
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {
@@ -89,13 +119,20 @@ export class SlotController implements ISlotController {
       const barberId = req.params["id"];
       const serviceId = req.query.serviceId as string;
 
-      const { response, status } = await this._slotService.getPopulatedSlots(
+      const { response } = await this._slotService.getPopulatedSlots(
         barberId,
         serviceId,
         date,
         page,
         limit
       );
+      let status;
+
+      if (response) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
 
       res.status(status).json(response);
     } catch (error) {

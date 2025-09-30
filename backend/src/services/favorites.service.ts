@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 import { BarberDto } from "../dto/barber.dto";
-import {
-  FavoritesListResponseDto,
-} from "../dto/favorites.dto";
+import { FavoritesListResponseDto } from "../dto/favorites.dto";
 import { BarberMapper } from "../mappers/barber.mapper";
 import { IBarber } from "../models/barber.model";
 import { BarberRepository } from "../repositories/barber.repository";
@@ -18,13 +16,16 @@ import { TYPES } from "../config/types";
 export class FavoritesService implements IFavoritesService {
   private _userRepo = new UserRepository();
   private _barberRepo = new BarberRepository();
-  constructor(@inject(TYPES.IFavoritesRepository) private _favoritesRepo: FavoritesRepository) {}
+  constructor(
+    @inject(TYPES.IFavoritesRepository)
+    private _favoritesRepo: FavoritesRepository
+  ) {}
 
   getFavoritesByUser = async (
     userId: string,
     page: number,
     limit: number
-  ): Promise<{ response: FavoritesListResponseDto; status: number }> => {
+  ): Promise<{ response: FavoritesListResponseDto }> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
@@ -46,7 +47,7 @@ export class FavoritesService implements IFavoritesService {
           currentPage: page,
         },
       };
-      return { response, status: STATUS_CODES.OK };
+      return { response };
     }
 
     const allBarbers = await Promise.all(
@@ -73,13 +74,13 @@ export class FavoritesService implements IFavoritesService {
       },
     };
 
-    return { response, status: STATUS_CODES.OK };
+    return { response };
   };
 
   updateFavorites = async (
     userId: string,
     barberId: string
-  ): Promise<{ response: MessageResponseDto; status: number }> => {
+  ): Promise<{ response: MessageResponseDto }> => {
     const user = await this._userRepo.findById(userId);
     if (!user) throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
 
@@ -94,7 +95,6 @@ export class FavoritesService implements IFavoritesService {
           ? "Barber added to favorites"
           : "Barber removed from favorites",
       },
-      status: STATUS_CODES.OK,
     };
   };
 }
