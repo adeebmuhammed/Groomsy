@@ -10,6 +10,7 @@ import {
 import { SubscriptionPlanService } from '../../../services/subscription-plan/subscription-plan.service';
 import Swal from 'sweetalert2';
 import { SubscriptionFormComponent } from '../../../components/shared/subscription-form/subscription-form.component';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-admin-subscription',
@@ -29,7 +30,7 @@ export class AdminSubscriptionComponent implements OnInit {
   itemsPerPage = 5;
   totalPages = 1;
   searchTerm = '';
-  displayPlanFormModal: boolean = false;
+  displayPlanFormModal = false;
 
   columns = [
     { key: 'name', label: 'Name' },
@@ -51,6 +52,7 @@ export class AdminSubscriptionComponent implements OnInit {
   fetchPlans() {
     this.planService
       .fetch(this.searchTerm, this.currentPage, this.itemsPerPage)
+      .pipe(take(1))
       .subscribe({
         next: (res) => {
           this.plans = (res.data || []).map((p: SubscriptionPlanDto) => ({
@@ -79,53 +81,61 @@ export class AdminSubscriptionComponent implements OnInit {
   }
 
   updateActivation(plan: SubscriptionPlanDto) {
-    this.planService.updateActivation(plan.id).subscribe({
-      next: (res) => {
-        Swal.fire(
-          'Updated',
-          res.message || "Subscription plan's Activation Updated Successfully",
-          'success'
-        ).then(() => {
-          this.plans = this.plans.map((p) =>
-            p.id === plan.id
-              ? {
-                  ...p,
-                  isActive: !plan.isActive,
-                  status: !plan.isActive ? 'active' : 'inactive',
-                }
-              : p
+    this.planService
+      .updateActivation(plan.id)
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          Swal.fire(
+            'Updated',
+            res.message ||
+              "Subscription plan's Activation Updated Successfully",
+            'success'
+          ).then(() => {
+            this.plans = this.plans.map((p) =>
+              p.id === plan.id
+                ? {
+                    ...p,
+                    isActive: !plan.isActive,
+                    status: !plan.isActive ? 'active' : 'inactive',
+                  }
+                : p
+            );
+          });
+        },
+        error: (err) => {
+          Swal.fire(
+            'Error',
+            err.error.message ||
+              "Subscription plan's Activation Updation Failed",
+            'error'
           );
-        });
-      },
-      error: (err) => {
-        Swal.fire(
-          'Error',
-          err.error.message || "Subscription plan's Activation Updation Failed",
-          'error'
-        );
-      },
-    });
+        },
+      });
   }
 
   createPlan(data: CreateSubscriptionPlanDto) {
-    this.planService.create(data).subscribe({
-      next: (res) => {
-        Swal.fire(
-          'Created',
-          res.message || 'Subscription plan Created Successfully',
-          'success'
-        );
-        this.modalClose();
-        this.fetchPlans();
-      },
-      error: (err) => {
-        Swal.fire(
-          'Error',
-          err.error.message || 'Subscription plan Creation Failed',
-          'error'
-        );
-      },
-    });
+    this.planService
+      .create(data)
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          Swal.fire(
+            'Created',
+            res.message || 'Subscription plan Created Successfully',
+            'success'
+          );
+          this.modalClose();
+          this.fetchPlans();
+        },
+        error: (err) => {
+          Swal.fire(
+            'Error',
+            err.error.message || 'Subscription plan Creation Failed',
+            'error'
+          );
+        },
+      });
   }
 
   showModal() {

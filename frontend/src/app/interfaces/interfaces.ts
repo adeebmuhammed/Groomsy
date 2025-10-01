@@ -111,6 +111,17 @@ export interface IResendOtpResponse {
   };
 }
 
+export interface OtpRequest {
+  email: string;
+  otp: string;
+  purpose: 'signup' | 'forgot';
+}
+
+export interface ResendOtpRequest {
+  email: string;
+  purpose: 'signup' | 'forgot';
+}
+
 export interface SlotDto {
   id: string;
   slots: DaySlot[];

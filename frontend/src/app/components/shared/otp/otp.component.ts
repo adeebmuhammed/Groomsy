@@ -1,20 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { REGEX } from '../../../constants/validators';
+import { OtpRequest, ResendOtpRequest } from '../../../interfaces/interfaces';
 
 @Component({
   selector: 'app-otp',
-  imports: [ ReactiveFormsModule,CommonModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './otp.component.html',
-  styleUrl: './otp.component.css'
+  styleUrl: './otp.component.css',
 })
-export class OtpComponent {
+export class OtpComponent implements OnInit {
   @Input() purpose: 'signup' | 'forgot' = 'signup';
-  @Input() userType: 'user' | 'barber' = 'user'; // to change headers/footers if needed
-  @Input() verifyOtpFn!: (data: any) => any;     // service call
-  @Input() resendOtpFn!: (data: any) => any;     // service call
+  @Input() userType: 'user' | 'barber' = 'user';
+  @Input() verifyOtpFn!: (data: OtpRequest) => any;
+  @Input() resendOtpFn!: (data: ResendOtpRequest) => any;
 
   otpForm: FormGroup;
   email: string | null = '';
@@ -22,17 +29,19 @@ export class OtpComponent {
   isResendDisabled = true;
   interval: any;
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router
-  ) {
+  private fb: FormBuilder = inject(FormBuilder);
+  private router: Router = inject(Router);
+
+  constructor() {
     this.otpForm = this.fb.group({
-      otp: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
+      otp: ['', [Validators.required, Validators.pattern(REGEX.OTP)]],
     });
   }
 
   ngOnInit(): void {
-    const key = this.userType + (this.purpose === 'signup' ? 'SignupEmail' : 'ForgotEmail');
+    const key =
+      this.userType +
+      (this.purpose === 'signup' ? 'SignupEmail' : 'ForgotEmail');
     this.email = localStorage.getItem(key);
 
     this.startResendTimer();
@@ -41,33 +50,50 @@ export class OtpComponent {
   onSubmit(): void {
     if (this.otpForm.valid && this.email) {
       const otpValue = this.otpForm.value.otp;
-      this.verifyOtpFn({ email: this.email, otp: otpValue, purpose: this.purpose }).subscribe({
+      this.verifyOtpFn({
+        email: this.email,
+        otp: otpValue,
+        purpose: this.purpose,
+      }).subscribe({
         next: (res: any) => {
           Swal.fire({
             icon: 'success',
             title: 'OTP Verified',
-            text: this.purpose === 'signup' ? (res.message || 'Account verified!') : 'OTP verified. Reset your password.',
+            text:
+              this.purpose === 'signup'
+                ? res.message || 'Account verified!'
+                : 'OTP verified. Reset your password.',
             timer: 2000,
             showConfirmButton: false,
           });
 
-          if (this.purpose === 'forgot' && this.userType === 'user'  &&this.email) {
-            localStorage.setItem("userForgotEmail", this.email);
-          }else if (this.purpose === 'forgot' && this.userType === 'barber'  &&this.email) {
-            localStorage.setItem("barberForgotEmail", this.email);
+          if (
+            this.purpose === 'forgot' &&
+            this.userType === 'user' &&
+            this.email
+          ) {
+            localStorage.setItem('userForgotEmail', this.email);
+          } else if (
+            this.purpose === 'forgot' &&
+            this.userType === 'barber' &&
+            this.email
+          ) {
+            localStorage.setItem('barberForgotEmail', this.email);
           }
-          
 
-          const redirect = this.purpose === 'signup' ? `/${this.userType}/signin` : `/${this.userType}/reset-password`;
+          const redirect =
+            this.purpose === 'signup'
+              ? `/${this.userType}/signin`
+              : `/${this.userType}/reset-password`;
           this.router.navigate([redirect]);
         },
-        error: (err: any) => {
+        error: () => {
           Swal.fire({
             icon: 'error',
             title: 'Verification Failed',
             text: 'Invalid or expired OTP.',
           });
-        }
+        },
       });
     }
   }
@@ -91,7 +117,7 @@ export class OtpComponent {
             title: 'Resend Failed',
             text: 'Unable to resend OTP.',
           });
-        }
+        },
       });
     }
   }

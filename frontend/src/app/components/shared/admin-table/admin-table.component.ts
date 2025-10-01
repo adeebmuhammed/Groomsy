@@ -7,6 +7,7 @@ import {
   distinctUntilChanged,
   Subject,
   Subscription,
+  take,
 } from 'rxjs';
 
 @Component({
@@ -28,11 +29,11 @@ export class AdminTableComponent {
   @Input() totalPages = 1;
 
   @Output() onPageChange = new EventEmitter<number>();
-  @Output() onToggleStatus = new EventEmitter<any>();
+  @Output() onToggleStatus = new EventEmitter();
   @Output() onSearch = new EventEmitter<string>();
-  @Output() onEdit = new EventEmitter<any>();
-  @Output() onDelete = new EventEmitter<any>();
-  @Output() onCancel = new EventEmitter<any>();
+  @Output() onEdit = new EventEmitter();
+  @Output() onDelete = new EventEmitter();
+  @Output() onCancel = new EventEmitter();
 
   cancelItem(item: any): void {
     this.onCancel.emit(item);
@@ -41,7 +42,7 @@ export class AdminTableComponent {
   searchTerm = '';
 
   private searchSubject = new Subject<string>();
-  private toggleSubject = new Subject<any>();
+  private toggleSubject = new Subject();
 
   private searchSub!: Subscription;
   private toggleSub!: Subscription;

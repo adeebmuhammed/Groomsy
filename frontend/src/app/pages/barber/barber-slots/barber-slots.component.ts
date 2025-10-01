@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { SlotDto } from '../../../interfaces/interfaces';
 import { CommonModule, DatePipe } from '@angular/common';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
@@ -8,6 +8,7 @@ import { SlotService } from '../../../services/slot/slot.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { SlotFormComponent } from '../../../components/shared/slot-form/slot-form.component';
 import Swal from 'sweetalert2';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-barber-slots',
@@ -27,20 +28,18 @@ export class BarberSlotsComponent implements OnInit {
   pageSize = 5;
   totalPages = 1;
 
-  selectedSlot: any = null;
+  selectedSlot: SlotDto | null = null;
   showSlotModal = false;
 
-  constructor(
-    private slotService: SlotService,
-    private authService: AuthService
-  ) {}
+  private slotService: SlotService = inject(SlotService);
+  private authService: AuthService = inject(AuthService);
 
   ngOnInit(): void {
     this.fetchSlots();
   }
 
   fetchSlots() {
-    this.authService.barberId$.subscribe({
+    this.authService.barberId$.pipe(take(1)).subscribe({
       next: (barberId) => {
         if (!barberId) {
           console.error('Barber ID not available');
@@ -49,6 +48,7 @@ export class BarberSlotsComponent implements OnInit {
 
         this.slotService
           .getSlotsByBarber(barberId, this.currentPage, this.pageSize)
+          .pipe(take(1))
           .subscribe({
             next: (data) => {
               this.slots = data.data;
@@ -78,10 +78,10 @@ export class BarberSlotsComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, delete it!',
     }).then(() => {
-      this.slotService.deleteSlot(id).subscribe({
+      this.slotService.deleteSlot(id).pipe(take(1)).subscribe({
         next: () => {
           Swal.fire('Deleted!', 'Slot has been deleted.', 'success');
-          this.fetchSlots(); // Refresh list after deletion
+          this.fetchSlots();
         },
         error: (err) => {
           Swal.fire('Error!', 'Failed to delete the Slot.', 'error');
@@ -130,7 +130,7 @@ export class BarberSlotsComponent implements OnInit {
 
         if (this.selectedSlot) {
           // UPDATE
-          this.slotService.updateSlot(this.selectedSlot.id, data).subscribe({
+          this.slotService.updateSlot(this.selectedSlot.id, data).pipe(take(1)).subscribe({
             next: (res) => {
               this.fetchSlots();
               this.closeSlotModal();
@@ -146,7 +146,7 @@ export class BarberSlotsComponent implements OnInit {
           });
         } else {
           // CREATE
-          this.slotService.createSlot(barberId, data).subscribe({
+          this.slotService.createSlot(barberId, data).pipe(take(1)).subscribe({
             next: (res) => {
               this.fetchSlots();
               this.closeSlotModal();

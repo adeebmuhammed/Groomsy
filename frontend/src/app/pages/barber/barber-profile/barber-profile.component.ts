@@ -3,11 +3,7 @@ import { BarberHeaderComponent } from '../../../components/barber/barber-header/
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { BarberSidebarComponent } from '../../../components/barber/barber-sidebar/barber-sidebar.component';
 import { ProfileComponent } from '../../../components/shared/profile/profile.component';
-import {
-  BarberProfileDto,
-  EditProfile,
-  Profile,
-} from '../../../interfaces/interfaces';
+import { BarberProfileDto, EditProfile } from '../../../interfaces/interfaces';
 import { AuthService } from '../../../services/auth/auth.service';
 import { BarberService } from '../../../services/barber/barber.service';
 import { take } from 'rxjs';
@@ -50,14 +46,17 @@ export class BarberProfileComponent implements OnInit {
       if (!id) {
         return;
       }
-      this.barberService.fetchBarberProfile(id).subscribe({
-        next: (res) => {
-          this.barberProfile = res;
-        },
-        error: (err) => {
-          console.error(err);
-        },
-      });
+      this.barberService
+        .fetchBarberProfile(id)
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            this.barberProfile = res;
+          },
+          error: (err) => {
+            console.error(err);
+          },
+        });
     });
   }
 
@@ -100,32 +99,33 @@ export class BarberProfileComponent implements OnInit {
     this.showEditAddressModal = true;
   }
 
-  updateBarberAddress(address: BarberProfileDto["address"]){
-    this.authService.barberId$
-    .pipe(take(1))
-    .subscribe((id)=>{
+  updateBarberAddress(address: BarberProfileDto['address']) {
+    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
       if (!id) {
         return;
       }
-      this.barberService.updateBarberAddress(id,address).subscribe({
-        next: (res)=>{
-          this.showEditAddressModal = false;
+      this.barberService
+        .updateBarberAddress(id, address)
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            this.showEditAddressModal = false;
             Swal.fire(
               'Updated!',
               res.message || 'Your Address has been Updated Successfully.',
               'success'
             );
             this.fetchBarberProfile();
-        },
-        error: (err)=>{
-          console.error(err);
+          },
+          error: (err) => {
+            console.error(err);
             Swal.fire(
               'Failed!',
               err.error?.error || 'Address Updation Failed',
               'error'
             );
-        }
-      })
-    })
+          },
+        });
+    });
   }
 }

@@ -16,11 +16,11 @@ export class ServiceService {
 
   fetch(
     role: 'user' | 'admin',
-    search: string = '',
-    page: number = 1,
-    limit: number = 5
+    search = '',
+    page = 1,
+    limit = 5
   ): Observable<ServiceListResponse> {
-    let params = new HttpParams()
+    const params = new HttpParams()
       .set('search', search)
       .set('page', page)
       .set('limit', limit);

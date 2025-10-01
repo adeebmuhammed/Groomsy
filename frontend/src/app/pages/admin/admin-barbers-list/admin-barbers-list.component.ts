@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AdminHeaderComponent } from '../../../components/admin/admin-header/admin-header.component';
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
@@ -7,6 +7,7 @@ import { AdminService } from '../../../services/admin/admin.service';
 import { AdminTableComponent } from '../../../components/shared/admin-table/admin-table.component';
 import Swal from 'sweetalert2';
 import { IBarber } from '../../../interfaces/interfaces';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-admin-barbers-list',
@@ -36,7 +37,9 @@ export class AdminBarbersListComponent implements OnInit {
     { key: 'createdAt', label: 'Created', isDate: true },
   ];
 
-  constructor(private adminService: AdminService) {}
+  private adminService: AdminService = inject(AdminService);
+
+  constructor() {}
 
   ngOnInit(): void {
     this.fetchBarbers();
@@ -45,6 +48,7 @@ export class AdminBarbersListComponent implements OnInit {
   fetchBarbers(): void {
     this.adminService
       .listBarbers(this.searchTerm, this.currentPage, this.itemsPerPage)
+      .pipe(take(1))
       .subscribe((res) => {
         this.barbers = res?.data || [];
         this.totalPages = res?.pagination?.totalPages || 1;
@@ -65,29 +69,32 @@ export class AdminBarbersListComponent implements OnInit {
   updateBarberStatus(barber: IBarber): void {
     const status = barber.status;
 
-    this.adminService.updateBarberStatus(barber.id, status).subscribe({
-      next: (res) => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Status Updated',
-          text: res.message || 'Barber Status Updation Successful',
-          timer: 2000,
-          showConfirmButton: false,
-        }).then(() => {
-          const newStatus = status === 'blocked' ? 'active' : 'blocked';
-          this.barbers = this.barbers.map((b) =>
-            b.id === barber.id ? { ...b, status: newStatus } : b
-          );
-        });
-      },
-      error: (err) => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Status Updation Failed',
-          text: 'Barber Status Updation Failed',
-        });
-        console.error('Error updating barber status:', err);
-      },
-    });
+    this.adminService
+      .updateBarberStatus(barber.id, status)
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Status Updated',
+            text: res.message || 'Barber Status Updation Successful',
+            timer: 2000,
+            showConfirmButton: false,
+          }).then(() => {
+            const newStatus = status === 'blocked' ? 'active' : 'blocked';
+            this.barbers = this.barbers.map((b) =>
+              b.id === barber.id ? { ...b, status: newStatus } : b
+            );
+          });
+        },
+        error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Status Updation Failed',
+            text: 'Barber Status Updation Failed',
+          });
+          console.error('Error updating barber status:', err);
+        },
+      });
   }
 }

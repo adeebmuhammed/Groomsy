@@ -1,22 +1,35 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+  OnChanges,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { REGEX } from '../../../constants/validators';
+import { Service } from '../../../interfaces/interfaces';
 
 @Component({
   selector: 'app-service-form',
-  imports: [ CommonModule,ReactiveFormsModule ],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './service-form.component.html',
-  styleUrl: './service-form.component.css'
+  styleUrl: './service-form.component.css',
 })
-export class ServiceFormComponent {
-  @Input() serviceData: any = null; 
+export class ServiceFormComponent implements OnChanges {
+  @Input() serviceData: Service | null = null;
   @Input() visible = false;
   @Output() onClose = new EventEmitter<void>();
   @Output() onSubmit = new EventEmitter<any>();
 
   serviceForm: FormGroup;
-  durationOptions = ["15m", "30m", "45m", "60m", "75m", "90m", "105m", "120m"];
+  durationOptions = ['15m', '30m', '45m', '60m', '75m', '90m', '105m', '120m'];
 
   private fb = inject(FormBuilder);
 
@@ -25,7 +38,7 @@ export class ServiceFormComponent {
       name: ['', [Validators.required, Validators.pattern(REGEX.LONG_NAME)]],
       description: ['', [Validators.required, Validators.pattern(/\S+/)]],
       duration: ['', Validators.required],
-      price: ['', [Validators.required, Validators.min(1)]]
+      price: ['', [Validators.required, Validators.min(1)]],
     });
   }
 
@@ -35,7 +48,7 @@ export class ServiceFormComponent {
         name: this.serviceData.name,
         description: this.serviceData.description,
         duration: this.serviceData.duration,
-        price: this.serviceData.price
+        price: this.serviceData.price,
       });
     } else {
       this.serviceForm.reset();

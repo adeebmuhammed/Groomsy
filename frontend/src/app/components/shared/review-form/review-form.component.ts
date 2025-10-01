@@ -1,26 +1,33 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { ReviewCreateRequestDto } from '../../../interfaces/interfaces';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-review-form',
-  imports: [ ReactiveFormsModule,CommonModule ],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './review-form.component.html',
-  styleUrl: './review-form.component.css'
+  styleUrl: './review-form.component.css',
 })
 export class ReviewFormComponent {
-  @Input() visible = false; // Controls modal visibility
+  @Input() visible = false;
   @Output() submitReview = new EventEmitter<ReviewCreateRequestDto>();
   @Output() closeForm = new EventEmitter<void>();
 
   reviewForm: FormGroup;
   stars = [1, 2, 3, 4, 5];
 
-  constructor(private fb: FormBuilder) {
+  private fb: FormBuilder = inject(FormBuilder);
+
+  constructor() {
     this.reviewForm = this.fb.group({
       reviewText: ['', [Validators.required, Validators.minLength(5)]],
-      rating: [0, Validators.required]
+      rating: [0, Validators.required],
     });
   }
 

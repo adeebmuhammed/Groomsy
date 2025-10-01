@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 export class CheckoutModalComponent {
   @Input() barber: BarberDto | null | undefined = null;
   @Input() service: Service | null | undefined = null;
-  @Input() booking: BookingResponseDto | null = null; // ✅ pass full booking
+  @Input() booking: BookingResponseDto | null = null;
   @Input() startTime: Date | null = null;
   @Input() endTime: Date | null = null;
 
@@ -20,7 +20,7 @@ export class CheckoutModalComponent {
   @Output() onConfirm = new EventEmitter<string>();
   @Output() onCancel = new EventEmitter<void>();
 
-  couponCode: string = '';
+  couponCode = '';
 
   confirmBooking() {
     this.onConfirm.emit();

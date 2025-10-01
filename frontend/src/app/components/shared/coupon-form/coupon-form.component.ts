@@ -5,6 +5,7 @@ import {
   Input,
   Output,
   OnChanges,
+  inject,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -15,6 +16,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { REGEX } from '../../../constants/validators';
+import { CouponResponseDto } from '../../../interfaces/interfaces';
 
 @Component({
   selector: 'app-coupon-form',
@@ -23,14 +25,16 @@ import { REGEX } from '../../../constants/validators';
   styleUrl: './coupon-form.component.css',
 })
 export class CouponFormComponent implements OnChanges {
-  @Input() couponData: any = null; // For edit
+  @Input() couponData: CouponResponseDto | null = null; // For edit
   @Input() visible = false;
   @Output() onClose = new EventEmitter<void>();
-  @Output() onSubmit = new EventEmitter<any>();
+  @Output() onSubmit = new EventEmitter();
 
   couponForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  private fb: FormBuilder = inject(FormBuilder);
+
+  constructor() {
     this.couponForm = this.fb.group(
       {
         name: ['', [Validators.required, Validators.pattern(REGEX.LONG_NAME)]],

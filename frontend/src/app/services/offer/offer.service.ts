@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { OfferListResponseDto, OfferRequestDto } from '../../interfaces/interfaces';
 import { environment } from '../../../environments/environment';
@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
 })
 export class OfferService {
 
-  constructor(private http: HttpClient) { }
+  private http: HttpClient = inject(HttpClient);
 
   getOffers(
       page: number,

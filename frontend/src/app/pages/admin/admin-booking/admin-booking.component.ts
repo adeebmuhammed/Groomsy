@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { BookingService } from '../../../services/booking/booking.service';
 import { BookingResponseDto } from '../../../interfaces/interfaces';
 import { AdminHeaderComponent } from '../../../components/admin/admin-header/admin-header.component';
@@ -7,6 +7,7 @@ import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/a
 import { FormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import Swal from 'sweetalert2';
+import { pipe, take } from 'rxjs';
 
 @Component({
   selector: 'app-admin-booking',
@@ -36,15 +37,16 @@ export class AdminBookingComponent implements OnInit {
   itemsPerPage = 5;
   totalPages = 1;
 
-  constructor(private bookingService: BookingService) {}
+  private bookingService: BookingService = inject(BookingService);
 
   ngOnInit(): void {
     this.fetchBookings();
   }
 
-  fetchBookings(page: number = 1): void {
+  fetchBookings(page = 1): void {
     this.bookingService
       .fetchBookings('admin', '', page, this.itemsPerPage)
+      .pipe(take(1))
       .subscribe({
         next: (res) => {
           this.bookings = res.data;

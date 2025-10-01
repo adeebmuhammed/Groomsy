@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  OnChanges,
+  inject,
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -9,6 +16,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { REGEX } from '../../../constants/validators';
+import { OfferResponseDto } from '../../../interfaces/interfaces';
 
 @Component({
   selector: 'app-offer-form',
@@ -16,15 +24,17 @@ import { REGEX } from '../../../constants/validators';
   templateUrl: './offer-form.component.html',
   styleUrl: './offer-form.component.css',
 })
-export class OfferFormComponent {
-  @Input() offerData: any = null; // For edit
+export class OfferFormComponent implements OnChanges {
+  @Input() offerData: OfferResponseDto | null = null;
   @Input() visible = false;
   @Output() onClose = new EventEmitter<void>();
-  @Output() onSubmit = new EventEmitter<any>();
+  @Output() onSubmit = new EventEmitter();
 
   offerForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  private fb: FormBuilder = inject(FormBuilder);
+
+  constructor() {
     this.offerForm = this.fb.group(
       {
         name: ['', [Validators.required, Validators.pattern(REGEX.LONG_NAME)]],

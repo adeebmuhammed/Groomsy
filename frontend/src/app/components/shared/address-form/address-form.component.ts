@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { BarberProfileDto } from '../../../interfaces/interfaces';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './address-form.component.html',
   styleUrl: './address-form.component.css'
 })
-export class AddressFormComponent {
+export class AddressFormComponent implements OnInit {
   @Input() address?: {
     street?: string;
     city?: string;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { OfferService } from '../../../services/offer/offer.service';
 import { OfferResponseDto } from '../../../interfaces/interfaces';
@@ -8,16 +8,24 @@ import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/a
 import { AdminTableComponent } from '../../../components/shared/admin-table/admin-table.component';
 import { CommonModule } from '@angular/common';
 import { OfferFormComponent } from '../../../components/shared/offer-form/offer-form.component';
+import { pipe, take } from 'rxjs';
 
 @Component({
   selector: 'app-admin-offer',
-  imports: [ AdminHeaderComponent,AdminFooterComponent,AdminSidebarComponent,AdminTableComponent,CommonModule,OfferFormComponent],
+  imports: [
+    AdminHeaderComponent,
+    AdminFooterComponent,
+    AdminSidebarComponent,
+    AdminTableComponent,
+    CommonModule,
+    OfferFormComponent,
+  ],
   templateUrl: './admin-offer.component.html',
   styleUrl: './admin-offer.component.css',
 })
-export class AdminOfferComponent {
+export class AdminOfferComponent implements OnInit {
   offerModalVisible = false;
-  selectedOfferData: any = null;
+  selectedOfferData: OfferResponseDto | null = null;
   selectedOfferId: string | null = null;
 
   columns = [
@@ -34,7 +42,7 @@ export class AdminOfferComponent {
   totalPages = 1;
   searchTerm = '';
 
-  constructor(private offerService: OfferService) {}
+  private offerService: OfferService = inject(OfferService);
 
   ngOnInit(): void {
     this.loadOffers();
@@ -43,6 +51,7 @@ export class AdminOfferComponent {
   loadOffers(): void {
     this.offerService
       .getOffers(this.currentPage, this.itemsPerPage, this.searchTerm)
+      .pipe(take(1))
       .subscribe({
         next: (response) => {
           this.offers = response.data || [];
@@ -88,16 +97,19 @@ export class AdminOfferComponent {
       confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.offerService.deleteOffer(offer.id).subscribe({
-          next: () => {
-            Swal.fire('Deleted!', 'Offer has been deleted.', 'success');
-            this.loadOffers();
-          },
-          error: (err) => {
-            console.error('Delete error:', err);
-            Swal.fire('Error!', 'Failed to delete the offer.', 'error');
-          },
-        });
+        this.offerService
+          .deleteOffer(offer.id)
+          .pipe(take(1))
+          .subscribe({
+            next: () => {
+              Swal.fire('Deleted!', 'Offer has been deleted.', 'success');
+              this.loadOffers();
+            },
+            error: (err) => {
+              console.error('Delete error:', err);
+              Swal.fire('Error!', 'Failed to delete the offer.', 'error');
+            },
+          });
       }
     });
   }
@@ -111,50 +123,56 @@ export class AdminOfferComponent {
   onModalSubmit(payload: any): void {
     if (this.selectedOfferId) {
       // Edit existing coupon
-      this.offerService.editOffer(this.selectedOfferId, payload).subscribe({
-        next: () => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Offer Updated',
-            text: 'Offer Updated Successfully',
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => {
-            this.loadOffers();
-            this.onModalClose();
-          });
-        },
-        error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Failed',
-            text: 'Offer Updation Failed',
-          });
-        },
-      });
+      this.offerService
+        .editOffer(this.selectedOfferId, payload)
+        .pipe(take(1))
+        .subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Offer Updated',
+              text: 'Offer Updated Successfully',
+              timer: 2000,
+              showConfirmButton: false,
+            }).then(() => {
+              this.loadOffers();
+              this.onModalClose();
+            });
+          },
+          error: (err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Failed',
+              text: 'Offer Updation Failed',
+            });
+          },
+        });
     } else {
       // Add new coupon
-      this.offerService.addOffer(payload).subscribe({
-        next: () => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Offer Created',
-            text: 'Offer Created Successfully',
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => {
-            this.loadOffers();
-            this.onModalClose();
-          });
-        },
-        error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Failed',
-            text: 'Offer Creation Failed',
-          });
-        },
-      });
+      this.offerService
+        .addOffer(payload)
+        .pipe(take(1))
+        .subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Offer Created',
+              text: 'Offer Created Successfully',
+              timer: 2000,
+              showConfirmButton: false,
+            }).then(() => {
+              this.loadOffers();
+              this.onModalClose();
+            });
+          },
+          error: (err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Failed',
+              text: 'Offer Creation Failed',
+            });
+          },
+        });
     }
   }
 }

@@ -1,9 +1,17 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  OnDestroy,
+  inject,
+} from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
+import { IMessageResponse } from '../../../interfaces/interfaces';
+import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
 
 @Component({
   selector: 'app-user-header',
@@ -11,19 +19,24 @@ import { CommonModule } from '@angular/common';
   templateUrl: './user-header.component.html',
   styleUrl: './user-header.component.css',
 })
-export class UserHeaderComponent implements OnInit {
+export class UserHeaderComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   userName: string | null = null;
 
   private clickListener: any;
 
-  constructor(private router: Router, private authService: AuthService, private elementRef: ElementRef) {}
+  private authService: AuthService = inject(AuthService);
+  private router: Router = inject(Router);
+  private elementRef: ElementRef = inject(ElementRef);
 
   ngOnInit(): void {
-    this.authService.isUserLoggedIn$.subscribe((status) => (this.isLoggedIn = status));
-    this.authService.userName$.subscribe((name) => (this.userName = name));
+    this.authService.isUserLoggedIn$
+      .pipe(take(1))
+      .subscribe((status) => (this.isLoggedIn = status));
+    this.authService.userName$
+      .pipe(take(1))
+      .subscribe((name) => (this.userName = name));
 
-    // Listen for outside clicks
     this.clickListener = (event: MouseEvent) => {
       if (!this.elementRef.nativeElement.contains(event.target)) {
         this.showDropdown = false;
@@ -44,19 +57,18 @@ export class UserHeaderComponent implements OnInit {
     if (this.isLoggedIn) {
       const role = localStorage.getItem('role');
 
-      let logoutObservable: Observable<any> | null = null;
+      let logoutObservable: Observable<IMessageResponse> | null = null;
 
       if (role === 'user') {
         logoutObservable = this.authService.userLogout();
       } else {
-        // Not user or unexpected role — fallback
         localStorage.clear();
         this.authService.updateLoginState('user', false, null, null);
-        this.router.navigate(['/signin']);
+        this.router.navigate([USER_ROUTES_PATHS.SIGNIN]);
         return;
       }
 
-      logoutObservable.subscribe({
+      logoutObservable.pipe(take(1)).subscribe({
         next: (res) => {
           Swal.fire({
             icon: 'success',
@@ -66,7 +78,7 @@ export class UserHeaderComponent implements OnInit {
             showConfirmButton: false,
           });
 
-          this.router.navigate(['/user/signin']);
+          this.router.navigate([USER_ROUTES_PATHS.SIGNIN]);
         },
         error: (err) => {
           Swal.fire({
@@ -77,13 +89,12 @@ export class UserHeaderComponent implements OnInit {
         },
       });
     } else {
-      this.router.navigate(['/signin']);
+      this.router.navigate([USER_ROUTES_PATHS.SIGNIN]);
     }
   }
   showDropdown = false;
 
   closeDropdown() {
-    // Delay to allow click event on dropdown items to trigger
     setTimeout(() => (this.showDropdown = false), 100);
   }
 
@@ -91,16 +102,16 @@ export class UserHeaderComponent implements OnInit {
     this.showDropdown = false;
     switch (section) {
       case 'profile':
-        this.router.navigate(['/user/profile']);
+        this.router.navigate([USER_ROUTES_PATHS.PROFILE]);
         break;
       case 'bookings':
-        this.router.navigate(['/user/bookings']);
+        this.router.navigate([USER_ROUTES_PATHS.BOOKINGS]);
         break;
       case 'favorites':
-        this.router.navigate(['/user/favorites']);
+        this.router.navigate([USER_ROUTES_PATHS.FAVORITES]);
         break;
       case 'reviews':
-        this.router.navigate(['/user/reviews']);
+        this.router.navigate([USER_ROUTES_PATHS.REVIEW]);
         break;
     }
   }

@@ -2,15 +2,20 @@ import { Component, inject, OnInit } from '@angular/core';
 import { BookingResponseDto, Service } from '../../../interfaces/interfaces';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BookingService } from '../../../services/booking/booking.service';
-import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import { ServiceService } from '../../../services/service/service.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-user-booking-confirmation',
-  imports: [ UserHeaderComponent,UserFooterComponent,CommonModule,RouterModule ],
+  imports: [
+    UserHeaderComponent,
+    UserFooterComponent,
+    CommonModule,
+    RouterModule,
+  ],
   templateUrl: './user-booking-confirmation.component.html',
   styleUrl: './user-booking-confirmation.component.css',
 })
@@ -37,26 +42,32 @@ export class UserBookingConfirmationComponent implements OnInit {
   }
 
   loadBooking() {
-    this.bookingService.getBookingById('user', this.bookingId).subscribe({
-      next: (res) => {
-        this.booking = res;
+    this.bookingService
+      .getBookingById('user', this.bookingId)
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          this.booking = res;
 
-        this.isSuccess = res.status === 'pending'; 
+          this.isSuccess = res.status === 'pending';
 
-        // Fetch service
-        this.serviceService.getServiceById('user', res.service).subscribe({
-          next: (serviceRes) => {
-            this.service = serviceRes;
-          },
-          error: () => {
-            this.error = 'Failed to load service.';
-          }
-        });
-      },
-      error: () => {
-        this.error = 'Failed to load booking details.';
-      },
-    });
+          // Fetch service
+          this.serviceService
+            .getServiceById('user', res.service)
+            .pipe(take(1))
+            .subscribe({
+              next: (serviceRes) => {
+                this.service = serviceRes;
+              },
+              error: () => {
+                this.error = 'Failed to load service.';
+              },
+            });
+        },
+        error: () => {
+          this.error = 'Failed to load booking details.';
+        },
+      });
   }
 
   formatTimeUTC(dateStr: Date): string {
