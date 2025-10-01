@@ -1,4 +1,4 @@
-import { Component, inject, NgZone } from '@angular/core';
+import { Component, inject, NgZone, OnInit } from '@angular/core';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { BarberSidebarComponent } from '../../../components/barber/barber-sidebar/barber-sidebar.component';
@@ -11,6 +11,7 @@ import { SubscriptionService } from '../../../services/subscription/subscription
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-barber-subscription',
@@ -23,17 +24,17 @@ import Swal from 'sweetalert2';
   templateUrl: './barber-subscription.component.html',
   styleUrl: './barber-subscription.component.css',
 })
-export class BarberSubscriptionComponent {
+export class BarberSubscriptionComponent implements OnInit {
   private subscriptionService = inject(SubscriptionService);
   private authService = inject(AuthService);
-  private ngZone = inject(NgZone); // ✅ inject Angular zone
+  private ngZone = inject(NgZone);
 
   subscription: SubscriptionDto | null = null;
   loading = true;
   error = '';
 
   ngOnInit(): void {
-    this.authService.barberId$.subscribe((id) => {
+    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
       if (id) {
         this.loadSubscription(id);
       }
@@ -43,6 +44,7 @@ export class BarberSubscriptionComponent {
   loadSubscription(barberId: string) {
     this.subscriptionService
       .getSubscriptionDetailsByBarber(barberId)
+      .pipe(take(1))
       .subscribe({
         next: (res) => {
           this.subscription = res;
@@ -62,10 +64,10 @@ export class BarberSubscriptionComponent {
   }
 
   subscribe(planId: string) {
-    this.authService.barberId$.subscribe((id) => {
+    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
       if (!id) return;
 
-      this.subscriptionService.manageSubscription(id, planId).subscribe({
+      this.subscriptionService.manageSubscription(id, planId).pipe(take(1)).subscribe({
         next: (res) => {
           const { keyId, amount, currency, orderId, message } = res;
 
@@ -121,7 +123,7 @@ export class BarberSubscriptionComponent {
   }
 
   renew() {
-    this.authService.barberId$.subscribe((id) => {
+    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
       if (!id) return;
 
       this.subscriptionService.renewSubscription(id).subscribe({
@@ -143,6 +145,7 @@ export class BarberSubscriptionComponent {
                   paymentResponse.razorpay_signature,
                   id // barberId
                 )
+                .pipe(take(1))
                 .subscribe({
                   next: () => {
                     Swal.fire(
@@ -180,11 +183,12 @@ export class BarberSubscriptionComponent {
   }
 
   retryPayment(planId: string) {
-    this.authService.barberId$.subscribe((id) => {
+    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
       if (!id || !planId) return;
 
       this.subscriptionService
-        .manageSubscription(id, planId) // 🔑 reuse the same endpoint
+        .manageSubscription(id, planId)
+        .pipe(take(1))
         .subscribe({
           next: (res) => {
             const { keyId, amount, currency, orderId } = res;
@@ -202,8 +206,9 @@ export class BarberSubscriptionComponent {
                     paymentResponse.razorpay_payment_id,
                     paymentResponse.razorpay_order_id,
                     paymentResponse.razorpay_signature,
-                    id // barberId
+                    id
                   )
+                  .pipe(take(1))
                   .subscribe({
                     next: () =>
                       Swal.fire(
@@ -243,7 +248,7 @@ export class BarberSubscriptionComponent {
   plans: SubscriptionPlanDto[] = [];
 
   openPlansModal() {
-    this.subscriptionService.fetchPlans().subscribe({
+    this.subscriptionService.fetchPlans().pipe(take(1)).subscribe({
       next: (res) => {
         this.plans = res;
         const modal = new (window as any).bootstrap.Modal(
@@ -256,6 +261,6 @@ export class BarberSubscriptionComponent {
   }
 
   confirmSubscription(planId: string) {
-    this.subscribe(planId); // reuse your existing subscribe logic
+    this.subscribe(planId);
   }
 }

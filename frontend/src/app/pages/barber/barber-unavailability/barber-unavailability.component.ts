@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import Swal from 'sweetalert2';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-barber-unavailability',
@@ -22,12 +23,12 @@ import Swal from 'sweetalert2';
   styleUrl: './barber-unavailability.component.css',
 })
 export class BarberUnavailabilityComponent implements OnInit {
-  barberId: string = '';
+  barberId = '';
   unavailabilityData?: BarberUnavailabilityDto;
 
-  newOffDate: string = '';
-  newOffReason: string = '';
-  newWeeklyOff: string = '';
+  newOffDate = '';
+  newOffReason = '';
+  newWeeklyOff = '';
 
   loading = false;
   error = '';
@@ -46,7 +47,7 @@ export class BarberUnavailabilityComponent implements OnInit {
   private authService = inject(AuthService);
 
   ngOnInit(): void {
-    this.authService.barberId$.subscribe((id) => {
+    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
       if (id) {
         this.barberId = id;
       }
@@ -58,6 +59,7 @@ export class BarberUnavailabilityComponent implements OnInit {
     this.loading = true;
     this.unavailabilityService
       .fetchBarberUnavailability(this.barberId,"barber")
+      .pipe(take(1))
       .subscribe({
         next: (data) => {
           this.unavailabilityData = data;
@@ -75,6 +77,7 @@ export class BarberUnavailabilityComponent implements OnInit {
     if (!this.newWeeklyOff) return;
     this.unavailabilityService
       .editWeeklyDayOff(this.barberId, this.newWeeklyOff)
+      .pipe(take(1))
       .subscribe({
         next: (res) => {
           Swal.fire({
@@ -98,6 +101,7 @@ export class BarberUnavailabilityComponent implements OnInit {
         date: this.newOffDate,
         reason: this.newOffReason,
       })
+      .pipe(take(1))
       .subscribe({
         next: (res) => {
           Swal.fire({
@@ -126,7 +130,7 @@ export class BarberUnavailabilityComponent implements OnInit {
       confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.unavailabilityService.removeOffDay(this.barberId, date).subscribe({
+        this.unavailabilityService.removeOffDay(this.barberId, date).pipe(take(1)).subscribe({
           next: (res) => {
             Swal.fire({
               icon: 'success',

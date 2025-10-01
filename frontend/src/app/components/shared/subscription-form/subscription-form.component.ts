@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, OnChanges } from '@angular/core';
 import {
   CreateSubscriptionPlanDto,
   SubscriptionFeature,
@@ -21,7 +21,7 @@ import { REGEX } from '../../../constants/validators';
   templateUrl: './subscription-form.component.html',
   styleUrl: './subscription-form.component.css',
 })
-export class SubscriptionFormComponent {
+export class SubscriptionFormComponent implements OnChanges {
   @Input() planData: CreateSubscriptionPlanDto | null = null;
   @Input() visible = false;
   @Output() onClose = new EventEmitter<void>();

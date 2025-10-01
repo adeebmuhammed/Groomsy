@@ -5,7 +5,6 @@ import {
   BarberUnavailabilityDto,
   BookingCreateRequestDto,
   BookingResponseDto,
-  IBarber,
   Service,
   SlotDto,
   SlotResponse,
@@ -14,7 +13,7 @@ import {
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, take } from 'rxjs';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import * as bootstrap from 'bootstrap';
@@ -26,6 +25,7 @@ import { ServiceCardComponent } from '../../../components/shared/service-card/se
 import { ServiceService } from '../../../services/service/service.service';
 import { BarberUnavailabilityService } from '../../../services/barber-unavailability/barber-unavailability.service';
 import { CheckoutModalComponent } from '../../../components/shared/checkout-modal/checkout-modal.component';
+import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
 
 @Component({
   selector: 'app-user-barber-details',
@@ -44,11 +44,11 @@ import { CheckoutModalComponent } from '../../../components/shared/checkout-moda
 export class UserBarberDetailsComponent implements OnInit {
   barber: BarberDto | null = null;
   slots: SlotDto[] = [];
-  barberId: string = '';
-  selectedDate: string = '';
+  barberId = '';
+  selectedDate = '';
   populatedSlots: SlotResponse = {};
-  fetchedDate: string = '';
-  todayDate: string = '';
+  fetchedDate = '';
+  todayDate = '';
   services: Service[] = [];
   barberUnavailability: BarberUnavailabilityDto | null = null;
   stagedBooking: BookingResponseDto | null = null;
@@ -72,6 +72,7 @@ export class UserBarberDetailsComponent implements OnInit {
 
     this.barberUnavailabilityService
       .fetchBarberUnavailability(this.barberId, 'user')
+      .pipe(take(1))
       .subscribe({
         next: (res) => {
           this.barberUnavailability = res;
@@ -103,16 +104,22 @@ export class UserBarberDetailsComponent implements OnInit {
   }
 
   fetchBarberDetails() {
-    this.userService.fetchBarbers().subscribe((res) => {
-      const found = res.data.find((b) => b.id === this.barberId);
-      this.barber = found || null;
-    });
+    this.userService
+      .fetchBarbers()
+      .pipe(take(1))
+      .subscribe((res) => {
+        const found = res.data.find((b) => b.id === this.barberId);
+        this.barber = found || null;
+      });
   }
 
   fetchSlots() {
-    this.userService.fetchSlotRulesByBarber(this.barberId).subscribe((res) => {
-      this.slots = res.data;
-    });
+    this.userService
+      .fetchSlotRulesByBarber(this.barberId)
+      .pipe(take(1))
+      .subscribe((res) => {
+        this.slots = res.data;
+      });
   }
 
   bookSlotFromOutside(): void {
@@ -145,6 +152,7 @@ export class UserBarberDetailsComponent implements OnInit {
         this.barberId,
         this.selectedService.id
       )
+      .pipe(take(1))
       .subscribe({
         next: (res) => {
           this.populatedSlots = res;
@@ -152,6 +160,7 @@ export class UserBarberDetailsComponent implements OnInit {
 
           this.bookingService
             .fetchBookings('barber', this.barberId, 1, 100)
+            .pipe(take(1))
             .subscribe({
               next: (bookingsRes) => {
                 const bookingsForDate = bookingsRes.data.filter(
@@ -167,48 +176,43 @@ export class UserBarberDetailsComponent implements OnInit {
                     this.populatedSlots
                   );
                 } else {
-                  const today = new Date().toISOString().split("T")[0];
+                  const today = new Date().toISOString().split('T')[0];
 
-this.populatedSlots[isoSelected] = this.populatedSlots[isoSelected].map((slot) => {
-  const slotStart = new Date(slot.startTime as any);
-const slotEnd = new Date(slot.endTime as any);
-const now = new Date();
+                  this.populatedSlots[isoSelected] = this.populatedSlots[
+                    isoSelected
+                  ].map((slot) => {
+                    const slotStart = new Date(slot.startTime as any);
+                    const slotEnd = new Date(slot.endTime as any);
+                    const now = new Date();
 
-console.log({
-  slotStartLocal: slotStart.toLocaleString(),
-  slotEndLocal: slotEnd.toLocaleString(),
-  slotStartUTC: slotStart.toISOString(),
-  slotEndUTC: slotEnd.toISOString(),
-  nowLocal: now.toLocaleString(),
-  nowUTC: now.toISOString(),
-});
+                    const slotDate = slotStart.toLocaleDateString('en-CA');
+                    const todayDate = now.toLocaleDateString('en-CA');
 
-// Extract date only (YYYY-MM-DD) for slot and today
-const slotDate = slotStart.toLocaleDateString("en-CA"); 
-const todayDate = now.toLocaleDateString("en-CA");
+                    const isExpired =
+                      now.getTime() >= slotStart.getTime() &&
+                      slotDate === todayDate;
 
-// Expired if slot end is in the past *and* the slot date is today
-const isExpired = now.getTime() >= slotStart.getTime() && slotDate === todayDate;
+                    const isBooked = bookingsForDate.some((b) => {
+                      const bookedStart = new Date(
+                        b.slotDetails.startTime
+                      ).getTime();
+                      const bookedEnd = new Date(
+                        b.slotDetails.endTime
+                      ).getTime();
 
-console.log("Expired?", isExpired, { slotDate, todayDate });
+                      if (isNaN(bookedStart) || isNaN(bookedEnd)) return false;
 
-// Check if slot is booked
-const isBooked = bookingsForDate.some((b) => {
-  const bookedStart = new Date(b.slotDetails.startTime).getTime();
-  const bookedEnd = new Date(b.slotDetails.endTime).getTime();
+                      const adjustedBookedEnd =
+                        bookedEnd === bookedStart ? bookedStart + 1 : bookedEnd;
 
-  if (isNaN(bookedStart) || isNaN(bookedEnd)) return false;
+                      return (
+                        bookedStart < slotEnd.getTime() &&
+                        adjustedBookedEnd > slotStart.getTime()
+                      );
+                    });
 
-  // If start and end are same, add 1 ms to avoid overlap bug
-  const adjustedBookedEnd = bookedEnd === bookedStart ? bookedStart + 1 : bookedEnd;
-
-  // Overlap check
-  return bookedStart < slotEnd.getTime() && adjustedBookedEnd > slotStart.getTime();
-});
-
-return { ...slot, isBooked, isExpired };
-
-});
+                    return { ...slot, isBooked, isExpired };
+                  });
                 }
 
                 if (document.activeElement instanceof HTMLElement)
@@ -241,7 +245,7 @@ return { ...slot, isBooked, isExpired };
   }
 
   bookTimeSlot(slot: SlotTime, date: string): void {
-    this.authService.userId$.subscribe((id) => {
+    this.authService.userId$.pipe(take(1)).subscribe((id) => {
       if (!id || !this.barberId || !this.selectedService) return;
 
       const bookingDate = new Date(date);
@@ -271,42 +275,49 @@ return { ...slot, isBooked, isExpired };
         price: this.selectedService.price,
       };
 
-      this.bookingService.stageBooking(id, bookingData).subscribe({
-        next: (res) => {
-          this.stagedBooking = res;
+      this.bookingService
+        .stageBooking(id, bookingData)
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            this.stagedBooking = res;
 
-          this.userService.fetchBarbers('', 1, 100).subscribe((barberRes) => {
-            const barberDoc = barberRes.data.find(
-              (b) => b.id === this.stagedBooking!.barber
-            );
-
-            this.serviceService
-              .fetch('user', '', 1, 100)
-              .subscribe((serviceRes) => {
-                const serviceDoc = serviceRes.data.find(
-                  (s) => s.id === this.stagedBooking!.service
+            this.userService
+              .fetchBarbers('', 1, 100)
+              .pipe(take(1))
+              .subscribe((barberRes) => {
+                const barberDoc = barberRes.data.find(
+                  (b) => b.id === this.stagedBooking!.barber
                 );
 
-                this.checkoutData = {
-                  ...this.stagedBooking!,
-                  barber: barberDoc || undefined,
-                  service: serviceDoc || undefined,
-                };
+                this.serviceService
+                  .fetch('user', '', 1, 100)
+                  .pipe(take(1))
+                  .subscribe((serviceRes) => {
+                    const serviceDoc = serviceRes.data.find(
+                      (s) => s.id === this.stagedBooking!.service
+                    );
 
-                const modal = new bootstrap.Modal(
-                  document.getElementById('bookingCheckoutModal')!
-                );
-                modal.show();
+                    this.checkoutData = {
+                      ...this.stagedBooking!,
+                      barber: barberDoc || undefined,
+                      service: serviceDoc || undefined,
+                    };
+
+                    const modal = new bootstrap.Modal(
+                      document.getElementById('bookingCheckoutModal')!
+                    );
+                    modal.show();
+                  });
               });
-          });
-        },
-        error: (err) =>
-          Swal.fire(
-            'Error',
-            err.error?.error || 'Failed to stage booking',
-            'error'
-          ),
-      });
+          },
+          error: (err) =>
+            Swal.fire(
+              'Error',
+              err.error?.error || 'Failed to stage booking',
+              'error'
+            ),
+        });
     });
   }
 
@@ -318,6 +329,7 @@ return { ...slot, isBooked, isExpired };
 
       this.bookingService
         .confirmBooking(id, this.stagedBooking.id, { couponCode })
+        .pipe(take(1))
         .subscribe({
           next: (res) => {
             const { keyId, amount, currency, orderId, bookingId } = res;
@@ -337,6 +349,7 @@ return { ...slot, isBooked, isExpired };
                     razorpay_signature: paymentResponse.razorpay_signature,
                     bookingId: bookingId,
                   })
+                  .pipe(take(1))
                   .subscribe({
                     next: () => {
                       // Close the modal
@@ -363,7 +376,7 @@ return { ...slot, isBooked, isExpired };
                       modalInstance?.hide();
 
                       this.router.navigate([
-                        `/user/booking-confirmation/${bookingId}`,
+                        `${USER_ROUTES_PATHS.BOOKING_CONFIRMATION}/${bookingId}`,
                       ]);
                     },
                   });
@@ -402,6 +415,7 @@ return { ...slot, isBooked, isExpired };
 
     this.bookingService
       .couponApplication(this.stagedBooking.id, couponCode)
+      .pipe(take(1))
       .subscribe({
         next: (updatedBooking) => {
           this.stagedBooking = updatedBooking;

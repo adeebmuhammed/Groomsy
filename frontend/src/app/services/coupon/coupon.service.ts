@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { CouponListResponseDto, CouponRequestDto } from '../../interfaces/interfaces';
@@ -8,7 +8,7 @@ import { CouponListResponseDto, CouponRequestDto } from '../../interfaces/interf
   providedIn: 'root',
 })
 export class CouponService {
-  constructor(private http: HttpClient) {}
+  private http: HttpClient = inject(HttpClient);
 
   getCoupons(
     page: number,

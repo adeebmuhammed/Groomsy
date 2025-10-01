@@ -11,7 +11,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 })
 export class SlotTableModalComponent {
   @Input() slots: SlotResponse = {};
-  @Input() date: string = '';
+  @Input() date = '';
 
   @Output() onBookSlot = new EventEmitter<{ slot: SlotTime; date: string }>();
 
@@ -22,7 +22,6 @@ export class SlotTableModalComponent {
   book(slot: SlotTime, date: string) {
     this.onBookSlot.emit({ slot, date });
 
-    // Optional: Close modal from inside (if needed)
     const modalEl = document.getElementById('slotTableModal');
     if (modalEl) bootstrap.Modal.getInstance(modalEl)?.hide();
   }

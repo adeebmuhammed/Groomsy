@@ -5547,3 +5547,12 @@
 2025-09-20 12:48:13 [INFO]: GET /api/admin/service?search=&page=1&limit=5
 2025-09-20 12:59:11 [INFO]: POST /api/admin/logout
 2025-09-24 08:19:15 [INFO]: GET /api/barber/subscription/6898ce9c6d80bc55be161c4d
+2025-10-01 22:34:18 [INFO]: POST /api/admin/login
+2025-10-01 22:34:22 [INFO]: GET /api/admin/bookings?role=admin&id=&page=1&limit=5
+2025-10-01 22:34:24 [INFO]: GET /api/admin/barbers?search=&page=1&limit=5
+2025-10-01 22:34:28 [INFO]: GET /api/admin/users?search=&page=1&limit=5
+2025-10-01 22:34:31 [INFO]: GET /api/admin/coupons?page=1&limit=5&search=
+2025-10-01 22:34:33 [INFO]: GET /api/admin/offers?page=1&limit=5&search=
+2025-10-01 22:34:34 [INFO]: GET /api/admin/service?search=&page=1&limit=5
+2025-10-01 22:34:35 [INFO]: GET /api/admin/subscription?search=&page=1&limit=5
+2025-10-01 22:34:38 [INFO]: POST /api/admin/logout

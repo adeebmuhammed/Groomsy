@@ -1,22 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AdminHeaderComponent } from '../../../components/admin/admin-header/admin-header.component';
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
-import { ReactiveFormsModule,FormGroup,FormBuilder,Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormBuilder,
+  Validators,
+} from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { take } from 'rxjs';
+import { ADMIN_ROUTES_PATHS } from '../../../constants/admin-route.constant';
 
 @Component({
   selector: 'app-admin-signin',
-  imports: [ AdminHeaderComponent,AdminFooterComponent,ReactiveFormsModule ],
+  imports: [AdminHeaderComponent, AdminFooterComponent, ReactiveFormsModule],
   templateUrl: './admin-signin.component.html',
-  styleUrl: './admin-signin.component.css'
+  styleUrl: './admin-signin.component.css',
 })
 export class AdminSigninComponent {
   loginForm: FormGroup;
   error = '';
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  private fb: FormBuilder = inject(FormBuilder);
+  private authService: AuthService = inject(AuthService);
+  private router: Router = inject(Router);
+
+  constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
@@ -25,7 +36,7 @@ export class AdminSigninComponent {
 
   onSubmit(): void {
     if (this.loginForm.valid) {
-      this.authService.adminLogin(this.loginForm.value).subscribe({
+      this.authService.adminLogin(this.loginForm.value).pipe(take(1)).subscribe({
         next: (res) => {
           Swal.fire({
             icon: 'success',
@@ -35,7 +46,7 @@ export class AdminSigninComponent {
             showConfirmButton: false,
           });
 
-          this.router.navigate(['/admin/dashboard']);
+          this.router.navigate([ADMIN_ROUTES_PATHS.DASHBOARD]);
         },
         error: (err) => {
           this.error = 'Invalid credentials';

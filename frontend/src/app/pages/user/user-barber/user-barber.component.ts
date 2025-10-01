@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user/user.service';
-import { BarberDto, PaginatedResponse } from '../../../interfaces/interfaces';
+import { BarberDto } from '../../../interfaces/interfaces';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import { BarberCardComponent } from '../../../components/shared/barber-card/barber-card.component';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import { FavoritesService } from '../../../services/favorites/favorites.service';
-import { first } from 'rxjs';
+import { first, take } from 'rxjs';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -29,7 +29,7 @@ export class UserBarberComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
   pageSize = 4;
-  selectedDistrict: string = '';
+  selectedDistrict = '';
   districts: string[] = [
     'Thiruvananthapuram',
     'Kollam',
@@ -47,11 +47,9 @@ export class UserBarberComponent implements OnInit {
     'Kasaragod',
   ];
 
-  constructor(
-    private userService: UserService,
-    private authService: AuthService,
-    private favoritesService: FavoritesService
-  ) {}
+  private userService: UserService = inject(UserService);
+  private authService: AuthService = inject(AuthService);
+  private favoritesService: FavoritesService = inject(FavoritesService);
 
   ngOnInit(): void {
     this.loadBarbersAndFavorites();
@@ -60,18 +58,24 @@ export class UserBarberComponent implements OnInit {
   favoriteIds: string[] = [];
 
   toggleFavorite(barberId: string) {
-    this.authService.userId$.pipe(first()).subscribe((userId) => {
-      if (!userId) return;
+    this.authService.userId$
+      .pipe(first())
+      .pipe(take(1))
+      .subscribe((userId) => {
+        if (!userId) return;
 
-      this.favoritesService.updateFavorite(userId, barberId).subscribe({
-        next: () => {
-          this.loadBarbersAndFavorites(); // 💡 updated to consistent loader
-        },
-        error: (err) => {
-          console.error('Error updating favorite:', err);
-        },
+        this.favoritesService
+          .updateFavorite(userId, barberId)
+          .pipe(take(1))
+          .subscribe({
+            next: () => {
+              this.loadBarbersAndFavorites();
+            },
+            error: (err) => {
+              console.error('Error updating favorite:', err);
+            },
+          });
       });
-    });
   }
 
   onSearch(): void {
@@ -87,7 +91,7 @@ export class UserBarberComponent implements OnInit {
   }
 
   loadBarbersAndFavorites(): void {
-    this.authService.userId$.pipe(first()).subscribe((userId) => {
+    this.authService.userId$.pipe(take(1)).subscribe((userId) => {
       if (!userId) return;
 
       forkJoin({
@@ -95,19 +99,21 @@ export class UserBarberComponent implements OnInit {
           this.searchTerm,
           this.currentPage,
           this.pageSize,
-          this.selectedDistrict // 👈 pass selected district
+          this.selectedDistrict
         ),
         favorites: this.favoritesService.getFavoriteBarbers(userId, 1, 100),
-      }).subscribe({
-        next: ({ barbers, favorites }) => {
-          this.barbers = barbers.data;
-          this.totalPages = barbers.pagination.totalPages;
-          this.favoriteIds = favorites.data.map((barber) => barber.id);
-        },
-        error: (err) => {
-          console.error('Error loading barbers and favorites:', err);
-        },
-      });
+      })
+        .pipe(take(1))
+        .subscribe({
+          next: ({ barbers, favorites }) => {
+            this.barbers = barbers.data;
+            this.totalPages = barbers.pagination.totalPages;
+            this.favoriteIds = favorites.data.map((barber) => barber.id);
+          },
+          error: (err) => {
+            console.error('Error loading barbers and favorites:', err);
+          },
+        });
     });
   }
 }

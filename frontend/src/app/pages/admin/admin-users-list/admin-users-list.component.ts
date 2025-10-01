@@ -7,6 +7,7 @@ import { AdminService } from '../../../services/admin/admin.service';
 import { AdminTableComponent } from '../../../components/shared/admin-table/admin-table.component';
 import Swal from 'sweetalert2';
 import { IUser } from '../../../interfaces/interfaces';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-admin-users-list',
@@ -43,6 +44,7 @@ export class AdminUsersListComponent implements OnInit {
   fetchUsers(): void {
     this.adminService
       .listUsers(this.searchTerm, this.currentPage, this.itemsPerPage)
+      .pipe(take(1))
       .subscribe((res) => {
         this.users = res?.data || [];
         this.totalPages = res?.pagination?.totalPages || 1;
@@ -63,7 +65,7 @@ export class AdminUsersListComponent implements OnInit {
   updateUserStatus(user: IUser): void {
     const status = user.status;
 
-    this.adminService.updateUserStatus(user.id, status).subscribe({
+    this.adminService.updateUserStatus(user.id, status).pipe(take(1)).subscribe({
       next: (res) => {
         Swal.fire({
           icon: 'success',

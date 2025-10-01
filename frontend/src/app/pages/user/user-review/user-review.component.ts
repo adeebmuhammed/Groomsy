@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { BarberDto, ReviewListResponse, ReviewResponseDto } from '../../../interfaces/interfaces';
 import { BookingService } from '../../../services/booking/booking.service';
 import { AuthService } from '../../../services/auth/auth.service';
@@ -7,7 +7,7 @@ import { UserHeaderComponent } from '../../../components/user/user-header/user-h
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user/user.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, take } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -16,7 +16,7 @@ import Swal from 'sweetalert2';
   templateUrl: './user-review.component.html',
   styleUrl: './user-review.component.css'
 })
-export class UserReviewComponent {
+export class UserReviewComponent implements OnInit {
   reviews: ReviewResponseDto[] = [];
   barbers: BarberDto[] = [];
   currentPage = 1;
@@ -30,7 +30,7 @@ export class UserReviewComponent {
   private userService = inject(UserService);
 
   ngOnInit(): void {
-    this.authService.userId$.subscribe((userId) => {
+    this.authService.userId$.pipe(take(1)).subscribe((userId) => {
       if (userId) {
         this.fetchData(userId, this.currentPage);
       }
@@ -62,7 +62,7 @@ export class UserReviewComponent {
   }
 
   handlePageChange(page: number): void {
-    this.authService.userId$.subscribe((userId) => {
+    this.authService.userId$.pipe(take(1)).subscribe((userId) => {
       if (userId) {
         this.fetchData(userId, page);
       }
@@ -93,10 +93,10 @@ export class UserReviewComponent {
       confirmButtonText: 'Yes, delete it!',
     }).then((result)=>{
       if (result.isConfirmed) {
-        this.reviewService.deleteReview(reviewId).subscribe({
+        this.reviewService.deleteReview(reviewId).pipe(take(1)).subscribe({
           next: ()=>{
             Swal.fire("Success","Review Deleted Successfully","success")
-            this.authService.userId$.subscribe((id)=>{
+            this.authService.userId$.pipe(take(1)).subscribe((id)=>{
               if (!id) {
                 return
               }

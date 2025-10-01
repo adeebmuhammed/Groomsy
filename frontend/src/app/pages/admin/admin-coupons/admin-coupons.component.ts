@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AdminHeaderComponent } from '../../../components/admin/admin-header/admin-header.component';
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
@@ -8,6 +8,7 @@ import { CouponService } from '../../../services/coupon/coupon.service';
 import { CouponFormComponent } from '../../../components/shared/coupon-form/coupon-form.component';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-admin-coupons',
@@ -24,7 +25,7 @@ import Swal from 'sweetalert2';
 })
 export class AdminCouponsComponent implements OnInit {
   couponModalVisible = false;
-  selectedCouponData: any = null;
+  selectedCouponData: CouponResponseDto | null = null;
   selectedCouponId: string | null = null;
 
   columns = [
@@ -44,7 +45,7 @@ export class AdminCouponsComponent implements OnInit {
   totalPages = 1;
   searchTerm = '';
 
-  constructor(private couponService: CouponService) {}
+  private couponService: CouponService = inject(CouponService);
 
   ngOnInit(): void {
     this.loadCoupons();
@@ -53,6 +54,7 @@ export class AdminCouponsComponent implements OnInit {
   loadCoupons(): void {
     this.couponService
       .getCoupons(this.currentPage, this.itemsPerPage, this.searchTerm)
+      .pipe(take(1))
       .subscribe({
         next: (response) => {
           this.coupons = response.data || [];
@@ -98,16 +100,19 @@ export class AdminCouponsComponent implements OnInit {
       confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.couponService.deleteCoupon(coupon.id).subscribe({
-          next: () => {
-            Swal.fire('Deleted!', 'Coupon has been deleted.', 'success');
-            this.loadCoupons();
-          },
-          error: (err) => {
-            console.error('Delete error:', err);
-            Swal.fire('Error!', 'Failed to delete the coupon.', 'error');
-          },
-        });
+        this.couponService
+          .deleteCoupon(coupon.id)
+          .pipe(take(1))
+          .subscribe({
+            next: () => {
+              Swal.fire('Deleted!', 'Coupon has been deleted.', 'success');
+              this.loadCoupons();
+            },
+            error: (err) => {
+              console.error('Delete error:', err);
+              Swal.fire('Error!', 'Failed to delete the coupon.', 'error');
+            },
+          });
       }
     });
   }
@@ -120,51 +125,55 @@ export class AdminCouponsComponent implements OnInit {
 
   onModalSubmit(payload: any): void {
     if (this.selectedCouponId) {
-      // Edit existing coupon
-      this.couponService.editCoupon(this.selectedCouponId, payload).subscribe({
-        next: () => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Coupon Updated',
-            text: 'Coupon Updated Successfully',
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => {
-            this.loadCoupons();
-            this.onModalClose();
-          });
-        },
-        error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Failed',
-            text: 'Coupon Updation Failed',
-          });
-        },
-      });
+      this.couponService
+        .editCoupon(this.selectedCouponId, payload)
+        .pipe(take(1))
+        .subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Coupon Updated',
+              text: 'Coupon Updated Successfully',
+              timer: 2000,
+              showConfirmButton: false,
+            }).then(() => {
+              this.loadCoupons();
+              this.onModalClose();
+            });
+          },
+          error: (err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Failed',
+              text: 'Coupon Updation Failed',
+            });
+          },
+        });
     } else {
-      // Add new coupon
-      this.couponService.addCoupon(payload).subscribe({
-        next: () => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Coupon Created',
-            text: 'Coupon Created Successfully',
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => {
-            this.loadCoupons();
-            this.onModalClose();
-          });
-        },
-        error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Failed',
-            text: 'Coupon Creation Failed',
-          });
-        },
-      });
+      this.couponService
+        .addCoupon(payload)
+        .pipe(take(1))
+        .subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Coupon Created',
+              text: 'Coupon Created Successfully',
+              timer: 2000,
+              showConfirmButton: false,
+            }).then(() => {
+              this.loadCoupons();
+              this.onModalClose();
+            });
+          },
+          error: (err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Failed',
+              text: 'Coupon Creation Failed',
+            });
+          },
+        });
     }
   }
 }

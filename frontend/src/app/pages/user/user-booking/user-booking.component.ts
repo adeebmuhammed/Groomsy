@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
-import { AdminTableComponent } from '../../../components/shared/admin-table/admin-table.component';
 import { BookingService } from '../../../services/booking/booking.service';
 import {
   BookingResponseDto,
@@ -15,9 +14,10 @@ import { ReviewService } from '../../../services/review/review.service';
 import { ReviewFormComponent } from '../../../components/shared/review-form/review-form.component';
 import { Router } from '@angular/router';
 import { CheckoutModalComponent } from '../../../components/shared/checkout-modal/checkout-modal.component';
-import { forkJoin } from 'rxjs';
+import { forkJoin, take } from 'rxjs';
 import { UserService } from '../../../services/user/user.service';
 import { ServiceService } from '../../../services/service/service.service';
+import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
 type BookingStatus = 'pending' | 'staged' | 'cancelled' | 'finished';
 
 @Component({
@@ -95,13 +95,14 @@ export class UserBookingComponent implements OnInit {
 
   fetchBookingsByStatus(
     status: 'pending' | 'staged' | 'cancelled' | 'finished',
-    page: number = 1
+    page = 1
   ): void {
-    this.authService.userId$.subscribe((id) => {
+    this.authService.userId$.pipe(take(1)).subscribe((id) => {
       if (!id) return;
 
       this.bookingService
         .getBookingByStatus(id, status, page, this.itemsPerPage)
+        .pipe(take(1))
         .subscribe({
           next: (res) => {
             this.bookings = res.data;
@@ -138,6 +139,7 @@ export class UserBookingComponent implements OnInit {
       if (result.isConfirmed) {
         this.bookingService
           .updateBookingStatus('user', booking.id, 'cancel')
+          .pipe(take(1))
           .subscribe({
             next: () => {
               Swal.fire('Cancelled!', 'Booking has been cancelled.', 'success');
@@ -160,6 +162,7 @@ export class UserBookingComponent implements OnInit {
 
     this.bookingService
       .couponApplication(this.stagedBooking.id, couponCode)
+      .pipe(take(1))
       .subscribe({
         next: (updatedBooking) => {
           this.stagedBooking = updatedBooking;
@@ -194,11 +197,12 @@ export class UserBookingComponent implements OnInit {
   }
 
   retryPayment(bookingId: string, couponCode?: string) {
-    this.authService.userId$.subscribe((id) => {
+    this.authService.userId$.pipe(take(1)).subscribe((id) => {
       if (!id || !bookingId) return;
 
       this.bookingService
         .confirmBooking(id, bookingId, { couponCode: couponCode || '' })
+        .pipe(take(1))
         .subscribe({
           next: (res) => {
             const { keyId, amount, currency, orderId, bookingId } = res;
@@ -218,15 +222,16 @@ export class UserBookingComponent implements OnInit {
                     razorpay_signature: paymentResponse.razorpay_signature,
                     bookingId,
                   })
+                  .pipe(take(1))
                   .subscribe({
                     next: () => {
                       this.router.navigate([
-                        `/user/booking-confirmation/${bookingId}`,
+                        `${USER_ROUTES_PATHS.BOOKING_CONFIRMATION}/${bookingId}`,
                       ]);
                     },
                     error: (err) => {
                       this.router.navigate([
-                        `/user/booking-confirmation/${bookingId}`,
+                        `${USER_ROUTES_PATHS.BOOKING_CONFIRMATION}/${bookingId}`,
                       ]);
                     },
                   });
@@ -256,12 +261,13 @@ export class UserBookingComponent implements OnInit {
   handleReviewSubmit(review: ReviewCreateRequestDto) {
     if (!this.selectedBookingId) return;
 
-    this.authService.userId$.subscribe((id) => {
+    this.authService.userId$.pipe(take(1)).subscribe((id) => {
       if (!id || !this.selectedBookingId) {
         return;
       }
       this.reviewService
         .createReview(id, this.selectedBookingId, review)
+        .pipe(take(1))
         .subscribe({
           next: () => {
             Swal.fire(

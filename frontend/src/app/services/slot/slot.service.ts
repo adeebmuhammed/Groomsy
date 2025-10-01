@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SlotDto, SlotListResponseDto } from '../../interfaces/interfaces';
@@ -8,7 +8,7 @@ import { SlotDto, SlotListResponseDto } from '../../interfaces/interfaces';
   providedIn: 'root',
 })
 export class SlotService {
-  constructor(private http: HttpClient) {}
+  private http: HttpClient = inject(HttpClient);
 
   getSlotsByBarber(
     barberId: string,

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import {
   EditProfile,
   Profile,
@@ -20,7 +20,7 @@ import { REGEX } from '../../../constants/validators';
   templateUrl: './edit-profile.component.html',
   styleUrl: './edit-profile.component.css',
 })
-export class EditProfileComponent {
+export class EditProfileComponent implements OnInit {
   @Input() profile!: Profile;
   @Output() save = new EventEmitter<EditProfile>();
   @Output() close = new EventEmitter<void>();

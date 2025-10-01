@@ -19,7 +19,6 @@ export const errorInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next:
       if (error.status === 401 && !req.url.includes('/refresh-token')) {
         return http.post(`${environment.apiBaseUrl}/refresh-token`, {}, { withCredentials: true }).pipe(
           switchMap(() => {
-            // Retry original request
             return next(req);
           }),
           catchError((refreshError) => {

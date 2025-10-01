@@ -5,17 +5,16 @@ import {
   Input,
   Output,
   OnChanges,
+  inject,
 } from '@angular/core';
 import {
-  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
-  ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { DaySlot } from '../../../interfaces/interfaces';
+import { DaySlot, SlotDto } from '../../../interfaces/interfaces';
 @Component({
   selector: 'app-slot-form',
   imports: [ReactiveFormsModule, CommonModule],
@@ -23,10 +22,10 @@ import { DaySlot } from '../../../interfaces/interfaces';
   styleUrl: './slot-form.component.css',
 })
 export class SlotFormComponent implements OnChanges {
-  @Input() slotData: any = null;
+  @Input() slotData: SlotDto | null = null;
   @Input() visible = false;
   @Output() onClose = new EventEmitter<void>();
-  @Output() onSubmit = new EventEmitter<any>();
+  @Output() onSubmit = new EventEmitter();
 
   weekDays = [
     'Monday',
@@ -40,7 +39,9 @@ export class SlotFormComponent implements OnChanges {
 
   slotForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  private fb: FormBuilder = inject(FormBuilder);
+
+  constructor() {
     this.slotForm = this.fb.group({});
 
     for (const day of this.weekDays) {
@@ -100,7 +101,7 @@ export class SlotFormComponent implements OnChanges {
           return {
             day,
             startTime: formValues[`${day}_startTime`], // string HH:mm
-            endTime: formValues[`${day}_endTime`],     // string HH:mm
+            endTime: formValues[`${day}_endTime`], // string HH:mm
           };
         });
 

@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
@@ -16,7 +16,7 @@ import {
   providedIn: 'root',
 })
 export class UserService {
-  constructor(private http: HttpClient) {}
+  private http: HttpClient = inject(HttpClient);
 
   fetchBarbers(
     search = '',
@@ -46,7 +46,7 @@ export class UserService {
     page = 1,
     limit = 5
   ): Observable<SlotListResponseDto> {
-    let params = new HttpParams().set('page', page).set('limit', limit);
+    const params = new HttpParams().set('page', page).set('limit', limit);
     return this.http.get<SlotListResponseDto>(
       `${environment.apiBaseUrl}/user/get-barber-slots/${barberId}`,
       { params, withCredentials: true }
@@ -60,7 +60,7 @@ export class UserService {
     barberId: string,
     serviceId: string
   ): Observable<SlotResponse> {
-    let params = new HttpParams()
+    const params = new HttpParams()
       .set('page', page)
       .set('limit', limit)
       .set('date', date)

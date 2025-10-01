@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject,Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -11,7 +11,7 @@ import { IAdminLoginResponse, IBarberLoginResponse, IMessageResponse, IResendOtp
 export class AuthService {
   private API_URL = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient) {}
+  private http: HttpClient = inject(HttpClient);
 
   // --- ADMIN subjects ---
   private isAdminLoggedInSubject = new BehaviorSubject<boolean>(this.hasRoleToken('admin'));
