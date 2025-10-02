@@ -2,7 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { IUser, IBarber, PaginatedResponse } from '../../interfaces/interfaces';
+import {
+  IUser,
+  IBarber,
+  PaginatedResponse,
+  AdminDashboardStatsDto,
+} from '../../interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -75,6 +80,12 @@ export class AdminService {
     return this.http.patch<{ message: string }>(
       `${environment.apiBaseUrl}/admin/update-barber-status/${barberId}`,
       { status }
+    );
+  }
+
+  getDashboardStats(): Observable<AdminDashboardStatsDto> {
+    return this.http.get<AdminDashboardStatsDto>(
+      `${environment.apiBaseUrl}/admin/dashboard-stats`
     );
   }
 }

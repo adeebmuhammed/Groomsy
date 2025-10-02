@@ -3,16 +3,34 @@
 <div class="admin-layout">
   <app-admin-sidebar></app-admin-sidebar>
 
-  <div class="admin-main-content">
-    <div class="admin-dashboard-page">
-      <div class="admin-overlay">
-        <div class="admin-content">
-          <h1 class="admin-main-title">Dashboard Under Development</h1>
-          <p class="admin-sub-title">We're working on something awesome. The admin dashboard will be available soon.</p>
-          <div class="status-button-container">
-            <button class="status-button" disabled>Coming Soon</button>
-          </div>
+  <div class="admin-main-content p-4">
+    <h2 class="dashboard-title">Admin Dashboard</h2>
+
+    <div *ngIf="stats" class="dashboard-content">
+      
+      <!-- Summary Cards -->
+      <div class="stats-container">
+        <div class="stat-card">
+          <h3>{{ stats.totalUsers }}</h3>
+          <p>Total Users</p>
         </div>
+        <div class="stat-card">
+          <h3>{{ stats.totalBarbers }}</h3>
+          <p>Total Barbers</p>
+        </div>
+        <div class="stat-card">
+          <h3>{{ stats.totalBookings }}</h3>
+          <p>Total Bookings</p>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="chart-container">
+        <app-chart 
+          [chartData]="[stats.totalUsers, stats.totalBarbers, stats.totalBookings]"
+          [chartLabels]="['Users', 'Barbers', 'Bookings']"
+          chartTitle="Overall Stats">
+        </app-chart>
       </div>
     </div>
 

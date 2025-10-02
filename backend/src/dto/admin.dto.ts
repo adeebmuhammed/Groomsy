@@ -32,3 +32,9 @@ export class BarberDto {
   district!:string;
   createdAt!: Date;
 }
+
+export class AdminDashboardStatsResponseDto {
+  totalUsers!: number;
+  totalBarbers!: number;
+  totalBookings!: number;
+}

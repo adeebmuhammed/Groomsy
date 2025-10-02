@@ -56,4 +56,7 @@ adminRoutes
 .post("/subscription",adminAuth,planController.create)
 .patch("/subscription/:id",adminAuth,planController.updateActivation)
 
+adminRoutes
+.get("/dashboard-stats",adminAuth,adminController.getAdminDashboardStats)
+
 export default adminRoutes;

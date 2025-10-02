@@ -361,3 +361,9 @@ export interface confirmSubscription {
   currency: string;
   keyId: string;
 }
+
+export interface AdminDashboardStatsDto {
+  totalUsers: number;
+  totalBarbers: number;
+  totalBookings: number;
+}

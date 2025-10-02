@@ -2,10 +2,15 @@ import { IUser } from "../models/user.model";
 import { IBarber } from "../models/barber.model";
 import { IAdmin } from "../models/admin.model";
 
-import { UserDto,BarberDto,AdminLoginResponseDto } from "../dto/admin.dto";
+import {
+  UserDto,
+  BarberDto,
+  AdminLoginResponseDto,
+  AdminDashboardStatsResponseDto,
+} from "../dto/admin.dto";
 
-export class AdminMapper{
-    static toLoginResponse(
+export class AdminMapper {
+  static toLoginResponse(
     admin: IAdmin,
     message: string
   ): AdminLoginResponseDto {
@@ -17,7 +22,7 @@ export class AdminMapper{
     };
   }
 
-    static toUserDto(user: IUser): UserDto {
+  static toUserDto(user: IUser): UserDto {
     return {
       id: user._id.toString(),
       name: user.name,
@@ -44,5 +49,17 @@ export class AdminMapper{
 
   static toBarberDtoArray(barbers: IBarber[]): BarberDto[] {
     return barbers.map((barber) => this.toBarberDto(barber));
+  }
+
+  static toDashboardStats(
+    totalUsers: number,
+    totalBarbers: number,
+    totalBookings: number
+  ): AdminDashboardStatsResponseDto {
+    return {
+      totalUsers,
+      totalBarbers,
+      totalBookings,
+    };
   }
 }
