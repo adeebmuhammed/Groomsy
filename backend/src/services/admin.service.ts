@@ -212,8 +212,6 @@ export class AdminService implements IAdminService {
       totalBarbers,
       totalBookings
     );
-
-    console.log(dashboardStats);
     
 
     return {

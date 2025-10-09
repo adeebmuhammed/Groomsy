@@ -2,6 +2,7 @@ import {
   BarberLoginResponseDto,
   BarberProfileDto,
   BarberRegisterRequestDto,
+  BookingStatsResponseDto,
   updateAddressDto,
   UpdateBarberProfileDto,
 } from "../dto/barber.dto";
@@ -13,7 +14,7 @@ import {
   isValidPhone,
   isValidOTP,
 } from "../utils/validators";
-import { MESSAGES, STATUS_CODES } from "../utils/constants";
+import { DASHBOARDFILTERS, MESSAGES, STATUS_CODES } from "../utils/constants";
 import OTPService from "../utils/OTPService";
 import { BarberMapper } from "../mappers/barber.mapper";
 import { generateAccessToken } from "../utils/jwt.generator";
@@ -23,13 +24,16 @@ import mongoose from "mongoose";
 import { MessageResponseDto } from "../dto/base.dto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
+import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
+import { BookingMapper } from "../mappers/booking.mapper";
 
 @injectable()
 export class BarberService implements IBarberService {
   constructor(
     @inject(TYPES.IBarberRepository) private _barberRepo: IBarberRepository,
     @inject(TYPES.IBarberUnavailabilityRepository)
-    private _barberUnavailabilityRepo: IBarberUnavailabilityRepository
+    private _barberUnavailabilityRepo: IBarberUnavailabilityRepository,
+    @inject(TYPES.IBookingRepository) private _bookingRepo: IBookingRepository
   ) {}
 
   registerBarber = async (
@@ -336,5 +340,28 @@ export class BarberService implements IBarberService {
     return {
       response: { message: "Barber Address Updated Successfully" },
     };
+  };
+
+  getBookingStats = async (
+    barberId: string,
+    filter: DASHBOARDFILTERS
+  ): Promise<BookingStatsResponseDto[]> => {
+    const barber = await this._barberRepo.findById(barberId);
+    if (!barber) {
+      throw new Error("Barber Not Found");
+    }
+
+    const { labels, counts } = await this._bookingRepo.getBookingStats(
+      barberId,
+      filter
+    );
+
+    console.log(labels,counts)
+
+    const response = BookingMapper.toBookingStatsResponseDto(labels, counts);
+    console.log(response);
+    
+
+    return response;
   };
 }

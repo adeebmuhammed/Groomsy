@@ -115,4 +115,30 @@ export class SubscriptionPlanController implements ISubscriptionPlanController {
       });
     }
   };
+
+  getPlanById = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const planId = req.params["id"]
+
+      const { planData } = await this._planService.getPlanById(planId)
+      let status;
+
+      if (planData) {
+        status  = STATUS_CODES.OK
+        
+      }else{
+        status = STATUS_CODES.INTERNAL_SERVER_ERROR
+      }
+
+      res.status(status).json(planData)
+    } catch (error) {
+      console.error("failed fetch subscription plan:", error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "failed to fetch of subscription plan",
+      });
+    }
+  }
 }

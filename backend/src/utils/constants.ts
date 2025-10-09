@@ -58,3 +58,9 @@ export const REGEX = {
   OTP: /^\d{6}$/,
   PHONE: /^[0-9]{10,15}$/,
 };
+
+export enum DASHBOARDFILTERS {
+  WEEK = "this-week",
+  MONTH = "this-month",
+  YEAR = "this-year"
+}

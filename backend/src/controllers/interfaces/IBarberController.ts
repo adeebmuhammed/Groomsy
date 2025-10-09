@@ -12,4 +12,6 @@ export interface IBarberController {
     getBarberProfileById(req: Request, res: Response):Promise<void>;
     updateBarberProfile(req: Request, res: Response):Promise<void>;
     updateBarberAddress(req: Request, res: Response):Promise<void>;
+
+    getBarberDashboardStats(req: Request, res: Response):Promise<void>;
 }

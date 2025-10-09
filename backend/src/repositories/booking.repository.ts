@@ -4,6 +4,7 @@ import Booking, { IBooking } from "../models/booking.model";
 import { BaseRepository } from "./base.repository";
 import { IBookingRepository } from "./interfaces/IBookingRepository";
 import { injectable } from "inversify";
+import { DASHBOARDFILTERS } from "../utils/constants";
 
 @injectable()
 export class BookingRepository
@@ -44,9 +45,56 @@ export class BookingRepository
       bookingId,
       {
         $set: { status: "pending" },
-        $unset: { expiresAt: "" }, // remove expiry so TTL won’t delete it
+        $unset: { expiresAt: "" },
       },
       { new: true }
     );
+  }
+
+  async getBookingStats(barberId: string, filter: DASHBOARDFILTERS): Promise<{labels: string[], counts: number[]}> {
+    const now = new Date();
+    let startDate: Date;
+    let groupFormat: string;
+
+    switch (filter) {
+      case DASHBOARDFILTERS.WEEK:
+        startDate = new Date(now);
+        startDate.setDate(now.getDate() - 6); // last 7 days
+        groupFormat = "%Y-%m-%d"; // group by day
+        break;
+      case DASHBOARDFILTERS.MONTH:
+        startDate = new Date(now);
+        startDate.setDate(now.getDate() - 27); // last 4 weeks
+        groupFormat = "%Y-%U"; // group by week number
+        break;
+      case DASHBOARDFILTERS.YEAR:
+        startDate = new Date(now.getFullYear(), 0, 1); // start of this year
+        groupFormat = "%Y-%m"; // group by month
+        break;
+      default:
+        throw new Error("Invalid filter");
+    }
+
+    const stats = await Booking.aggregate([
+      {
+        $match: {
+          barber: barberId,
+          "slotDetails.date": { $gte: startDate, $lte: now },
+          status: { $ne: "staged" },
+        },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: groupFormat, date: "$slotDetails.date" } },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    const labels = stats.map((s) => s._id);
+    const counts = stats.map((s) => s.count);
+
+    return { labels, counts };
   }
 }
