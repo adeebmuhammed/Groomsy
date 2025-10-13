@@ -8,6 +8,17 @@
   <div class="main-content user-booking-wrapper">
     <h2 class="heading">My Bookings</h2>
 
+    <!-- Status Tabs -->
+  <div class="status-tabs">
+    <button
+      *ngFor="let s of statuses"
+      [class.active]="selectedStatus === s.value"
+      (click)="changeStatus(s.value)"
+    >
+      {{ s.label }}
+    </button>
+  </div>
+
     <div class="table">
       <table class="user-booking-table">
         <thead>

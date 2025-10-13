@@ -5,6 +5,7 @@ import { BookingService } from '../../../services/booking/booking.service';
 import {
   BarberDto,
   BookingResponseDto,
+  BookingStatus,
   ReviewCreateRequestDto,
   Service,
 } from '../../../interfaces/interfaces';
@@ -22,7 +23,6 @@ import { ServiceService } from '../../../services/service/service.service';
 import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
 import * as bootstrap from 'bootstrap';
 import { BookingDetailsComponent } from '../../../components/shared/booking-details/booking-details.component';
-type BookingStatus = 'pending' | 'staged' | 'cancelled' | 'finished';
 
 @Component({
   selector: 'app-user-booking',
@@ -118,7 +118,7 @@ export class UserBookingComponent implements OnInit {
       if (!id) return;
 
       this.bookingService
-        .getBookingByStatus(id, status, page, this.itemsPerPage)
+        .getBookingByStatus(id, status, page, this.itemsPerPage, 'user')
         .pipe(take(1))
         .subscribe({
           next: (res) => {

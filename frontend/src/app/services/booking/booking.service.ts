@@ -30,7 +30,7 @@ export class BookingService {
 
     return this.http.get<{ data: BookingResponseDto[]; totalCount: number }>(
       `${environment.apiBaseUrl}/${role}/bookings`,
-      { params,}
+      { params }
     );
   }
 
@@ -57,7 +57,7 @@ export class BookingService {
     return this.http.put<BookingResponseDto>(
       `${environment.apiBaseUrl}/user/bookings/coupon`,
       { couponCode },
-      { params,}
+      { params }
     );
   }
 
@@ -82,7 +82,7 @@ export class BookingService {
   verifyPayment(paymentData: any): Observable<IMessageResponse> {
     return this.http.post<IMessageResponse>(
       `${environment.apiBaseUrl}/user/bookings/verify-payment`,
-      paymentData,
+      paymentData
     );
   }
 
@@ -96,30 +96,36 @@ export class BookingService {
     return this.http.patch<IMessageResponse>(
       `${environment.apiBaseUrl}/${role}/bookings/${id}`,
       body,
-      { params, }
+      { params }
     );
   }
 
   getBookingById(role: 'user' | 'barber' | 'admin', bookingId: string) {
     return this.http.get<BookingResponseDto>(
-      `${environment.apiBaseUrl}/${role}/bookings-by-id/${bookingId}`,
+      `${environment.apiBaseUrl}/${role}/bookings-by-id/${bookingId}`
     );
   }
 
   getBookingByStatus(
-    userId: string,
+    userId: string | null,
     status: 'pending' | 'staged' | 'cancelled' | 'finished',
     page = 1,
-    limit = 5
+    limit = 5,
+    role: 'user' | 'barber' | 'admin'
   ): Observable<{ data: BookingResponseDto[]; totalCount: number }> {
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set('status', status)
-      .set('page', page?.toString() || '1')
-      .set('limit', limit?.toString() || '5');
+      .set('page', page.toString())
+      .set('limit', limit.toString())
+      .set('role', role);
+
+    if (userId && role !== 'admin') {
+      params = params.set('id', userId);
+    }
 
     return this.http.get<{ data: BookingResponseDto[]; totalCount: number }>(
-      `${environment.apiBaseUrl}/user/bookings/${userId}`,
-      { params, }
+      `${environment.apiBaseUrl}/${role}/bookings`,
+      { params }
     );
   }
 }

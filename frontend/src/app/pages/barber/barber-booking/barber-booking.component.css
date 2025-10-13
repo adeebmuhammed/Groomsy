@@ -267,6 +267,30 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.status-tabs {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.status-tabs button {
+  flex: 1;
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.status-tabs button.active {
+  background: #3b82f6; /* blue */
+  color: #fff;
+  border-color: #3b82f6;
+}
+
+.status-tabs button:not(:last-child) {
+  border-right: none;
+}
+
 .modal-body {
   background-color: #f9f9f9;
   border-radius: 6px;

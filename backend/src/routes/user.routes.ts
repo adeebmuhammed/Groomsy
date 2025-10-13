@@ -52,7 +52,7 @@ userRoutes
 .get('/populated-slots/:id',userAuth, isBlockedMiddleware,slotController.getPopulatedSlots)
 
 userRoutes
-.get('/bookings/:id', userAuth, isBlockedMiddleware,bookingController.getBookingsByStatus)
+.get('/bookings', userAuth, isBlockedMiddleware,bookingController.getBookingsByStatus)
 .post('/bookings/stage',userAuth,isBlockedMiddleware,bookingController.stageBooking)
 .put('/bookings/coupon',userAuth,isBlockedMiddleware,bookingController.couponApplication)
 .post('/bookings/confirm',userAuth,isBlockedMiddleware,bookingController.confirmBooking)
