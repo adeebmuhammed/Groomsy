@@ -46,6 +46,7 @@ adminRoutes
 .delete("/offers/:id", adminAuth,offerController.delete)
 
 adminRoutes
+.get("/service/:id",adminAuth,serviceController.getServiceById)
 .get("/service", adminAuth,serviceController.fetch)
 .post("/service", adminAuth,serviceController.create)
 .put("/service/:id", adminAuth,serviceController.edit)

@@ -17,6 +17,6 @@ export class BarberCardComponent {
   private router: Router = inject(Router);
 
   getBarberDetails() {
-    this.router.navigate([USER_ROUTES_PATHS.BARBER_DETAILS, this.barber.id]);
+    this.router.navigate([`${USER_ROUTES_PATHS.BARBER_DETAILS}`, this.barber.id]);
   }
 }

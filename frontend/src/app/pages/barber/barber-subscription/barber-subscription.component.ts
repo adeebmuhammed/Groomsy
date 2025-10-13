@@ -12,6 +12,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { take } from 'rxjs';
+import { SubscriptionPlanService } from '../../../services/subscription-plan/subscription-plan.service';
 
 @Component({
   selector: 'app-barber-subscription',
@@ -27,9 +28,11 @@ import { take } from 'rxjs';
 export class BarberSubscriptionComponent implements OnInit {
   private subscriptionService = inject(SubscriptionService);
   private authService = inject(AuthService);
+  private planService = inject(SubscriptionPlanService);
   private ngZone = inject(NgZone);
 
   subscription: SubscriptionDto | null = null;
+  plan: SubscriptionPlanDto | null = null;
   loading = true;
   error = '';
 
@@ -49,6 +52,18 @@ export class BarberSubscriptionComponent implements OnInit {
         next: (res) => {
           this.subscription = res;
           this.loading = false;
+          this.planService
+            .getPlanById(this.subscription.plan)
+            .pipe(take(1))
+            .subscribe({
+              next: (res) => {
+                this.plan = res;
+              },
+              error: (err) => {
+                this.error = err.message || 'Failed to fetch subscription plan';
+                this.loading = false;
+              },
+            });
         },
         error: (err) => {
           this.error = err.message || 'Failed to fetch subscription';
@@ -67,58 +82,65 @@ export class BarberSubscriptionComponent implements OnInit {
     this.authService.barberId$.pipe(take(1)).subscribe((id) => {
       if (!id) return;
 
-      this.subscriptionService.manageSubscription(id, planId).pipe(take(1)).subscribe({
-        next: (res) => {
-          const { keyId, amount, currency, orderId, message } = res;
+      this.subscriptionService
+        .manageSubscription(id, planId)
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            const { keyId, amount, currency, orderId, message } = res;
 
-          const options: any = {
-            key: keyId,
-            amount: amount.toString(),
-            currency: currency,
-            name: 'Groomsy',
-            description: 'Subscription Payment',
-            order_id: orderId,
-            handler: (paymentResponse: any) => {
-              this.subscriptionService
-                .verifySubscriptionPayment(
-                  paymentResponse.razorpay_payment_id,
-                  paymentResponse.razorpay_order_id,
-                  paymentResponse.razorpay_signature,
-                  id // barberId
-                )
-                .subscribe({
-                  next: () => {
-                    Swal.fire(
-                      'Success',
-                      'Retry Payment Successfully',
-                      'success'
-                    ).then(() => {
-                      this.ngZone.run(() => {
-                        this.loadSubscription(id);
+            const options: any = {
+              key: keyId,
+              amount: amount.toString(),
+              currency: currency,
+              name: 'Groomsy',
+              description: 'Subscription Payment',
+              order_id: orderId,
+              handler: (paymentResponse: any) => {
+                this.subscriptionService
+                  .verifySubscriptionPayment(
+                    paymentResponse.razorpay_payment_id,
+                    paymentResponse.razorpay_order_id,
+                    paymentResponse.razorpay_signature,
+                    id // barberId
+                  )
+                  .subscribe({
+                    next: () => {
+                      Swal.fire(
+                        'Success',
+                        'Retry Payment Successfully',
+                        'success'
+                      ).then(() => {
+                        this.ngZone.run(() => {
+                          this.loadSubscription(id);
+                        });
                       });
-                    });
-                  },
-                  error: (err) => {
-                    Swal.fire('Error', 'Payment verification failed', 'error');
-                  },
-                });
-            },
-            theme: {
-              color: '#3399cc',
-            },
-          };
+                    },
+                    error: (err) => {
+                      Swal.fire(
+                        'Error',
+                        'Payment verification failed',
+                        'error'
+                      );
+                    },
+                  });
+              },
+              theme: {
+                color: '#3399cc',
+              },
+            };
 
-          const rzp = new (window as any).Razorpay(options);
-          rzp.open();
-        },
-        error: (err) => {
-          Swal.fire(
-            'Error',
-            err.error?.error || 'Subscription initiation failed',
-            'error'
-          );
-        },
-      });
+            const rzp = new (window as any).Razorpay(options);
+            rzp.open();
+          },
+          error: (err) => {
+            Swal.fire(
+              'Error',
+              err.error?.error || 'Subscription initiation failed',
+              'error'
+            );
+          },
+        });
     });
   }
 
@@ -213,7 +235,7 @@ export class BarberSubscriptionComponent implements OnInit {
                     next: () =>
                       Swal.fire(
                         'Success',
-                        'Retry Payment Successfully',
+                        'Subscription Payment Completed Successfully',
                         'success'
                       ).then(() => {
                         this.ngZone.run(() => {
@@ -248,16 +270,19 @@ export class BarberSubscriptionComponent implements OnInit {
   plans: SubscriptionPlanDto[] = [];
 
   openPlansModal() {
-    this.subscriptionService.fetchPlans().pipe(take(1)).subscribe({
-      next: (res) => {
-        this.plans = res;
-        const modal = new (window as any).bootstrap.Modal(
-          document.getElementById('plansModal')
-        );
-        modal.show();
-      },
-      error: (err) => alert(err.message || 'Failed to load plans'),
-    });
+    this.subscriptionService
+      .fetchPlans()
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          this.plans = res;
+          const modal = new (window as any).bootstrap.Modal(
+            document.getElementById('plansModal')
+          );
+          modal.show();
+        },
+        error: (err) => alert(err.message || 'Failed to load plans'),
+      });
   }
 
   confirmSubscription(planId: string) {

@@ -15,21 +15,28 @@
       <h2 class="heading">Bookings</h2>
 
       <div class="table-responsive">
+        <!-- Inside your table -->
         <table class="admin-table">
           <thead>
             <tr>
               <th>#</th>
               <th>Date</th>
+              <th>User</th>
+              <th>Barber</th>
               <th>Start Time</th>
               <th>End Time</th>
               <th>Status</th>
               <th>Price</th>
+              <th>Action</th>
+              <!-- new -->
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let booking of bookings; let i = index">
               <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
               <td>{{ booking.slotDetails.date | date : "shortDate" }}</td>
+              <td>{{ findUser(booking.user) }}</td>
+              <td>{{ findBarber(booking.barber) }}</td>
               <td>{{ booking.slotDetails.startTime | date : "shortTime" }}</td>
               <td>{{ booking.slotDetails.endTime | date : "shortTime" }}</td>
               <td>
@@ -38,9 +45,51 @@
                 </span>
               </td>
               <td>₹{{ booking.totalPrice }}</td>
+              <td>
+                <button
+                  class="btn btn-sm btn-primary"
+                  (click)="openDetailsModal(booking)"
+                >
+                  View Details
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Booking Details Modal -->
+      <div
+        class="modal fade"
+        id="bookingDetailsModal"
+        tabindex="-1"
+        aria-labelledby="bookingDetailsLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="bookingDetailsLabel">
+                Booking Details
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+
+            <div class="modal-body">
+              <app-booking-details
+                [booking]="selectedBooking"
+                [service]="selectedService"
+                [user]="findUser(selectedBooking?.user || '')"
+                [barber]="findBarber(selectedBooking?.barber || '')"
+              ></app-booking-details>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="pagination-controls">

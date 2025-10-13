@@ -33,21 +33,21 @@ export interface IUser {
   updatedAt: Date;
 }
 
-export class UserProfileDto{
+export class UserProfileDto {
   id!: string;
   name!: string;
   email!: string;
   phone?: string;
 }
 
-export class Profile{
+export class Profile {
   id!: string;
   name!: string;
   email!: string;
   phone?: string;
 }
 
-export class EditProfile{
+export class EditProfile {
   name!: string;
   phone!: string;
   email!: string;
@@ -83,7 +83,7 @@ export interface IBarberLoginResponse {
   message: string;
 }
 
-export class BarberProfileDto{
+export class BarberProfileDto {
   id!: string;
   name!: string;
   email!: string;
@@ -93,7 +93,7 @@ export class BarberProfileDto{
     city?: string;
     pincode?: string;
     district?: string;
-  }
+  };
 }
 
 export interface IVerifyOtpResponse {
@@ -204,9 +204,9 @@ export class BookingResponseDto {
   user!: string;
   barber!: string;
   totalPrice!: number;
-  finalPrice!: number;         // ✅ new
-  discountAmount!: number;     // ✅ new
-  couponCode?: string;         // ✅ new
+  finalPrice!: number; // ✅ new
+  discountAmount!: number; // ✅ new
+  couponCode?: string; // ✅ new
   service!: string;
   status!:
     | 'staged'
@@ -220,7 +220,6 @@ export class BookingResponseDto {
     date: Date;
   };
 }
-
 
 export interface OfferRequestDto {
   name: string;
@@ -282,7 +281,6 @@ export interface confirmData {
   discountAmount?: number;
 }
 
-
 export interface confirmBookingDto {
   message: string;
   orderId: string;
@@ -292,9 +290,9 @@ export interface confirmBookingDto {
   keyId: string;
 }
 
-export interface ReviewCreateRequestDto{
-    reviewText : string,
-    rating : number
+export interface ReviewCreateRequestDto {
+  reviewText: string;
+  rating: number;
 }
 
 export interface ReviewResponseDto {
@@ -311,32 +309,32 @@ export interface ReviewListResponse {
   pagination: Pagination;
 }
 
-export interface SubscriptionPlanDto{
-    id: string;
-    name: string;
+export interface SubscriptionPlanDto {
+  id: string;
+  name: string;
   price: number;
   renewalPrice: number;
   duration: number;
-  durationUnit: "month" | "year" | "day";
+  durationUnit: 'month' | 'year' | 'day';
   description?: string;
   isActive: boolean;
-  features: SubscriptionFeature[]
+  features: SubscriptionFeature[];
 }
 
-export interface PlanListResponse{
+export interface PlanListResponse {
   data: SubscriptionPlanDto[];
   message?: string;
   pagination: Pagination;
 }
 
-export interface CreateSubscriptionPlanDto{
-    name: string;
+export interface CreateSubscriptionPlanDto {
+  name: string;
   price: number;
   renewalPrice: number;
   duration: number;
-  durationUnit: "month" | "year" | "day";
+  durationUnit: 'month' | 'year' | 'day';
   description?: string;
-  features: SubscriptionFeature[]
+  features: SubscriptionFeature[];
 }
 
 export enum SubscriptionFeature {
@@ -351,7 +349,7 @@ export interface SubscriptionDto {
   plan: string;
   barber: string;
   expiryDate: Date;
-  status: "active" | "pending";
+  status: 'active' | 'pending';
   razorpayOrderId?: string;
 }
 export interface confirmSubscription {
