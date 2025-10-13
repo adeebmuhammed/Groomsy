@@ -7,7 +7,6 @@ import {
 } from "../dto/subscription.plan.dto";
 import { PlanMapper } from "../mappers/subscription.plan.mapper";
 import { ISubscriptionPlanRepository } from "../repositories/interfaces/ISubsciptionPlanRepository";
-import { STATUS_CODES } from "../utils/constants";
 import { validatePlanData } from "../utils/planValidator";
 import { ISubscriptionPlanService } from "./interfaces/ISubscriptionPlanService";
 import { TYPES } from "../config/types";

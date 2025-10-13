@@ -22,20 +22,6 @@ export class AdminMapper {
     };
   }
 
-  static toUserDto(user: IUser): UserDto {
-    return {
-      id: user._id.toString(),
-      name: user.name,
-      email: user.email,
-      status: user.status,
-      createdAt: user.createdAt,
-    };
-  }
-
-  static toUserDtoArray(users: IUser[]): UserDto[] {
-    return users.map((user) => this.toUserDto(user));
-  }
-
   static toBarberDto(barber: IBarber): BarberDto {
     return {
       id: barber._id.toString(),

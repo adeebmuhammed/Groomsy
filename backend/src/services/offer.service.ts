@@ -2,13 +2,11 @@ import { ListResponseDto } from "../dto/admin.dto";
 import { CreateOfferDto, OfferDto } from "../dto/offer.dto";
 import { OfferMapper } from "../mappers/offer.mapper";
 import { IOfferRepository } from "../repositories/interfaces/IOfferRepository";
-import { STATUS_CODES } from "../utils/constants";
 import { validateOfferData } from "../utils/offerValidator";
 import { IOfferService } from "./interfaces/IOfferService";
 import { MessageResponseDto } from "../dto/base.dto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
-import { off } from "process";
 import mongoose from "mongoose";
 
 @injectable()

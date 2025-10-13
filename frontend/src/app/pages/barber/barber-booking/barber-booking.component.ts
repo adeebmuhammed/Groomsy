@@ -5,9 +5,13 @@ import { BarberSidebarComponent } from '../../../components/barber/barber-sideba
 import { CommonModule, DatePipe } from '@angular/common';
 import { BookingService } from '../../../services/booking/booking.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { BookingResponseDto } from '../../../interfaces/interfaces';
+import { BookingResponseDto, IUser, Service } from '../../../interfaces/interfaces';
 import Swal from 'sweetalert2';
 import { take } from 'rxjs';
+import { BarberService } from '../../../services/barber/barber.service';
+import * as bootstrap from 'bootstrap';
+import { ServiceService } from '../../../services/service/service.service';
+import { BookingDetailsComponent } from '../../../components/shared/booking-details/booking-details.component';
 
 @Component({
   selector: 'app-barber-booking',
@@ -17,12 +21,16 @@ import { take } from 'rxjs';
     BarberSidebarComponent,
     CommonModule,
     DatePipe,
+    BookingDetailsComponent
   ],
   templateUrl: './barber-booking.component.html',
   styleUrl: './barber-booking.component.css',
 })
 export class BarberBookingComponent implements OnInit {
   bookings: BookingResponseDto[] = [];
+  selectedBooking: BookingResponseDto | null = null;
+    selectedService: Service | null = null;
+    users: IUser[] = [];
 
   currentPage = 1;
   itemsPerPage = 5;
@@ -30,9 +38,17 @@ export class BarberBookingComponent implements OnInit {
 
   private bookingService: BookingService = inject(BookingService);
   private authService: AuthService = inject(AuthService);
+  private barberService: BarberService = inject(BarberService);
+  private serviceService: ServiceService = inject(ServiceService);
 
   ngOnInit(): void {
     this.fetchBarberBookings();
+    this.fetchUsers();
+  }
+
+  findUser(userId: string){
+    const user = this.users.find((u)=> u.id === userId)
+    return user?.name || null;
   }
 
   fetchBarberBookings(page = 1): void {
@@ -81,7 +97,44 @@ export class BarberBookingComponent implements OnInit {
       });
   }
 
+  fetchUsers() {
+    this.barberService
+      .fetchUsers('', 1, 100)
+      .pipe(take(1))
+      .subscribe((res) => {
+        this.users = res?.data || [];
+        this.totalPages = res?.pagination?.totalPages || 1;
+      });
+  }
+
   handlePageChange(page: number): void {
     this.fetchBarberBookings(page);
+  }
+
+  openDetailsModal(booking: BookingResponseDto): void {
+    this.selectedBooking = booking;
+    this.serviceService
+      .getServiceById('barber', booking.service)
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          this.selectedService = res;
+
+          const modalElement = document.getElementById('bookingDetailsModal');
+          if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching service:', err);
+
+          const modalElement = document.getElementById('bookingDetailsModal');
+          if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+          }
+        },
+      });
   }
 }

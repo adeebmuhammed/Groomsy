@@ -17,6 +17,7 @@ import { AdminMapper } from "../mappers/admin.mapper";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
+import { UserMapper } from "../mappers/user.mapper";
 
 @injectable()
 export class AdminService implements IAdminService {
@@ -67,7 +68,7 @@ export class AdminService implements IAdminService {
     );
 
     const response: ListResponseDto<UserDto> = {
-      data: AdminMapper.toUserDtoArray(users),
+      data: UserMapper.toUserDtoArray(users),
       message: "Users fetched successfully",
       pagination: {
         currentPage: page,
@@ -124,7 +125,7 @@ export class AdminService implements IAdminService {
     });
     if (!updatedUser) throw new Error("Could not block user");
 
-    const response: UserDto = AdminMapper.toUserDto(updatedUser);
+    const response: UserDto = UserMapper.toUserDto(updatedUser);
 
     return {
       message: MESSAGES.SUCCESS.USER_BLOCKED,
@@ -146,7 +147,7 @@ export class AdminService implements IAdminService {
     });
     if (!updatedUser) throw new Error("Could not unblock user");
 
-    const response: UserDto = AdminMapper.toUserDto(updatedUser);
+    const response: UserDto = UserMapper.toUserDto(updatedUser);
 
     return {
       message: MESSAGES.SUCCESS.USER_UNBLOCKED,

@@ -60,6 +60,9 @@ barberRoutes
 .put("/profile/:id", barberAuth,barberController.updateBarberProfile)
 
 barberRoutes
+.get("/users",barberAuth,barberController.fetchUsers)
+
+barberRoutes
 .get("/dashboard-stats/:id",barberController.getBarberDashboardStats)
 
 export default barberRoutes;

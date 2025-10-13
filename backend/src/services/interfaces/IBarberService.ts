@@ -1,3 +1,4 @@
+import { ListResponseDto, UserDto } from "../../dto/admin.dto";
 import {
   BarberRegisterRequestDto,
   BarberLoginResponseDto,
@@ -48,6 +49,11 @@ export interface IBarberService {
     barberId: string,
     data: updateAddressDto
   ): Promise<{ response: MessageResponseDto }>;
+  fetchUsers(
+    search: string,
+    page: number,
+    limit: number
+  ): Promise<{ response: ListResponseDto<UserDto> }>;
   getBookingStats(
     barberId: string,
     filter: DASHBOARDFILTERS

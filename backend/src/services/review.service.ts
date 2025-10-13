@@ -1,13 +1,10 @@
 import mongoose from "mongoose";
 import { MessageResponseDto } from "../dto/base.dto";
 import { ReviewCreateRequestDto, ReviewResponseDto } from "../dto/review.dto";
-import { BookingRepository } from "../repositories/booking.repository";
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
 import { IReviewRepository } from "../repositories/interfaces/IReviewRepository";
 import { IUserRepository } from "../repositories/interfaces/IUserRepository";
-import { UserRepository } from "../repositories/user.repository";
 import { IReviewService } from "./interfaces/IReviewService";
-import { STATUS_CODES } from "../utils/constants";
 import { ListResponseDto } from "../dto/admin.dto";
 import { ReviewMapper } from "../mappers/review.mapper";
 import { inject, injectable } from "inversify";

@@ -269,6 +269,34 @@ export class BarberController implements IBarberController {
     }
   };
 
+  fetchUsers = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const search = (req.query.search as string) || "";
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      let status;
+
+      const { response } = await this._barberService.fetchUsers(
+        search,
+        page,
+        limit
+      );
+
+      if (response) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
+
+      res.status(status).json(response);
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : "Fetching Users Failed",
+      });
+    }
+  };
+
   getBarberDashboardStats = async (
     req: Request,
     res: Response

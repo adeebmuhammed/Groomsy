@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { MessageResponseDto } from "../dto/base.dto";
 import { ISubscriptionPlanRepository } from "../repositories/interfaces/ISubsciptionPlanRepository";
 import { ISubscriptionRepository } from "../repositories/interfaces/ISubscriptionRepository";
-import { STATUS_CODES } from "../utils/constants";
 import razorpayInstance from "../utils/razorpay";
 import { ISubscriptionService } from "./interfaces/ISubscriptionService";
 import crypto from "crypto";

@@ -151,3 +151,8 @@
 .status-tabs button:not(:last-child) {
   border-right: none;
 }
+
+.modal-body {
+  background-color: #f9f9f9;
+  border-radius: 6px;
+}
