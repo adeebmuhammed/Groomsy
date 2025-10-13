@@ -44,9 +44,10 @@ export interface IBookingService {
   ): Promise<{ response: BookingResponseDto;}>;
   getBookingsByStatus(
     status: "pending" | "staged" | "cancelled" | "finished",
-    userId: string,
+    userId: string | null,
     page: number,
-    limit: number
+    limit: number,
+    role: ROLES
   ): Promise<{
     response: { data: BookingResponseDto[]; totalCount: number };
   }>;

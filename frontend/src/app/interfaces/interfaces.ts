@@ -365,3 +365,5 @@ export interface AdminDashboardStatsDto {
   totalBarbers: number;
   totalBookings: number;
 }
+
+export type BookingStatus = 'pending' | 'staged' | 'cancelled' | 'finished';

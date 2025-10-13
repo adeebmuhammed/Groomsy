@@ -372,31 +372,40 @@ export class BookingService implements IBookingService {
 
   getBookingsByStatus = async (
     status: "pending" | "staged" | "cancelled" | "finished",
-    userId: string,
+    userId: string | null,
     page: number,
-    limit: number
+    limit: number,
+    role: ROLES
   ): Promise<{
     response: { data: BookingResponseDto[]; totalCount: number };
   }> => {
-    const user = await this._userRepo.findById(userId);
-    if (!user) {
-      throw new Error("user not found");
-    }
-
     const allowedStatuses = ["pending", "staged", "cancelled", "finished"];
     if (!allowedStatuses.includes(status)) {
       throw new Error("invalid booking status");
     }
 
-    const filter: FilterQuery<IBooking> = {
-      user: userId,
-      status:
-        status === "cancelled"
-          ? { $in: ["cancelled_by_user", "cancelled_by_barber"] }
-          : status,
-    };
-
     const skip = (page - 1) * limit;
+
+    let filter: FilterQuery<IBooking> = {};
+
+    if (role === ROLES.USER && userId) {
+      const user = await this._userRepo.findById(userId);
+      if (!user) throw new Error("user not found");
+
+      filter.user = userId;
+    } else if (role === ROLES.BARBER && userId) {
+      const barber = await this._barberRepo.findById(userId);
+      if (!barber) throw new Error("barber not found");
+
+      filter.barber = userId;
+    } else if (role === ROLES.ADMIN) {
+      filter = {};
+    }
+
+    filter.status =
+      status === "cancelled"
+        ? { $in: ["cancelled_by_user", "cancelled_by_barber"] }
+        : status;
 
     const { bookings, totalCount } =
       await this._bookingRepo.findWithPaginationAndCount(filter, skip, limit);

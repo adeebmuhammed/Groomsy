@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { BookingService } from '../../../services/booking/booking.service';
 import {
   BookingResponseDto,
+  BookingStatus,
   IBarber,
   IUser,
   Service,
@@ -16,6 +17,7 @@ import { BookingDetailsComponent } from '../../../components/shared/booking-deta
 import * as bootstrap from 'bootstrap';
 import { ServiceService } from '../../../services/service/service.service';
 import { AdminService } from '../../../services/admin/admin.service';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-admin-booking',
@@ -37,6 +39,36 @@ export class AdminBookingComponent implements OnInit {
   selectedService: Service | null = null;
   users: IUser[] = [];
   barbers: IBarber[] = [];
+  statuses: { label: string; value: BookingStatus }[] = [
+    { label: 'Upcoming', value: 'pending' },
+    { label: 'Completed', value: 'finished' },
+    { label: 'Cancelled', value: 'cancelled' },
+    { label: 'Staged', value: 'staged' },
+  ];
+
+  selectedStatus: BookingStatus = 'pending';
+  changeStatus(status: BookingStatus): void {
+    this.selectedStatus = status;
+    this.currentPage = 1;
+    this.fetchBookingsByStatus(status, 1);
+  }
+
+  fetchBookingsByStatus(
+    status: 'pending' | 'staged' | 'cancelled' | 'finished',
+    page = 1
+  ): void {
+    this.bookingService
+      .getBookingByStatus(null, status, page, this.itemsPerPage, 'admin')
+      .pipe(take(1))
+      .subscribe({
+        next: (res) => {
+          this.bookings = res.data;
+          this.totalPages = Math.ceil(res.totalCount / this.itemsPerPage);
+          this.currentPage = page;
+        },
+        error: (err) => console.error('Failed to fetch bookings', err),
+      });
+  }
 
   currentPage = 1;
   itemsPerPage = 5;
@@ -45,35 +77,22 @@ export class AdminBookingComponent implements OnInit {
   private bookingService: BookingService = inject(BookingService);
   private serviceService: ServiceService = inject(ServiceService);
   private adminService: AdminService = inject(AdminService);
+  private authService: AuthService = inject(AuthService);
 
   ngOnInit(): void {
-    this.fetchBookings();
+    this.fetchBookingsByStatus(this.selectedStatus);
     this.fetchUsers();
     this.fetchBarbers();
   }
 
-  findUser(userId: string){
-    const user = this.users.find((u)=> u.id === userId)
+  findUser(userId: string) {
+    const user = this.users.find((u) => u.id === userId);
     return user?.name || null;
   }
 
-  findBarber(barberId: string){
-    const barber = this.barbers.find((b)=> b.id === barberId)
+  findBarber(barberId: string) {
+    const barber = this.barbers.find((b) => b.id === barberId);
     return barber?.name || null;
-  }
-
-  fetchBookings(page = 1): void {
-    this.bookingService
-      .fetchBookings('admin', '', page, this.itemsPerPage)
-      .pipe(take(1))
-      .subscribe({
-        next: (res) => {
-          this.bookings = res.data;
-          this.totalPages = Math.ceil(res.totalCount / this.itemsPerPage);
-          this.currentPage = page;
-        },
-        error: (err) => console.error('Error fetching bookings', err),
-      });
   }
 
   fetchUsers() {
@@ -82,7 +101,6 @@ export class AdminBookingComponent implements OnInit {
       .pipe(take(1))
       .subscribe((res) => {
         this.users = res?.data || [];
-        this.totalPages = res?.pagination?.totalPages || 1;
       });
   }
 
@@ -92,12 +110,11 @@ export class AdminBookingComponent implements OnInit {
       .pipe(take(1))
       .subscribe((res) => {
         this.barbers = res?.data || [];
-        this.totalPages = res?.pagination?.totalPages || 1;
       });
   }
 
   handlePageChange(page: number): void {
-    this.fetchBookings(page);
+    this.fetchBookingsByStatus(this.selectedStatus,page);
   }
 
   openDetailsModal(booking: BookingResponseDto): void {

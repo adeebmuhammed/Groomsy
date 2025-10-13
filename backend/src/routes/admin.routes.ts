@@ -37,7 +37,7 @@ adminRoutes
 .delete("/coupons/:id", adminAuth,couponController.deleteCoupon)
 
 adminRoutes
-.get('/bookings', adminAuth,bookingController.fetchBookings)
+.get('/bookings', adminAuth,bookingController.getBookingsByStatus)
 
 adminRoutes
 .get("/offers", adminAuth,offerController.getAllOffers)

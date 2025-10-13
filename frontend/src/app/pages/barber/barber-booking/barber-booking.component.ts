@@ -5,7 +5,12 @@ import { BarberSidebarComponent } from '../../../components/barber/barber-sideba
 import { CommonModule, DatePipe } from '@angular/common';
 import { BookingService } from '../../../services/booking/booking.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { BookingResponseDto, IUser, Service } from '../../../interfaces/interfaces';
+import {
+  BookingResponseDto,
+  BookingStatus,
+  IUser,
+  Service,
+} from '../../../interfaces/interfaces';
 import Swal from 'sweetalert2';
 import { take } from 'rxjs';
 import { BarberService } from '../../../services/barber/barber.service';
@@ -21,7 +26,7 @@ import { BookingDetailsComponent } from '../../../components/shared/booking-deta
     BarberSidebarComponent,
     CommonModule,
     DatePipe,
-    BookingDetailsComponent
+    BookingDetailsComponent,
   ],
   templateUrl: './barber-booking.component.html',
   styleUrl: './barber-booking.component.css',
@@ -29,12 +34,47 @@ import { BookingDetailsComponent } from '../../../components/shared/booking-deta
 export class BarberBookingComponent implements OnInit {
   bookings: BookingResponseDto[] = [];
   selectedBooking: BookingResponseDto | null = null;
-    selectedService: Service | null = null;
-    users: IUser[] = [];
+  selectedService: Service | null = null;
+  users: IUser[] = [];
+
+  statuses: { label: string; value: BookingStatus }[] = [
+    { label: 'Upcoming', value: 'pending' },
+    { label: 'Completed', value: 'finished' },
+    { label: 'Cancelled', value: 'cancelled' },
+    { label: 'Staged', value: 'staged' },
+  ];
 
   currentPage = 1;
   itemsPerPage = 5;
   totalPages = 1;
+
+  selectedStatus: BookingStatus = 'pending';
+  changeStatus(status: BookingStatus): void {
+    this.selectedStatus = status;
+    this.currentPage = 1;
+    this.fetchBookingsByStatus(status, 1);
+  }
+
+  fetchBookingsByStatus(
+    status: 'pending' | 'staged' | 'cancelled' | 'finished',
+    page = 1
+  ): void {
+    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
+      if (!id) return;
+
+      this.bookingService
+        .getBookingByStatus(id, status, page, this.itemsPerPage, 'barber')
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            this.bookings = res.data;
+            this.totalPages = Math.ceil(res.totalCount / this.itemsPerPage);
+            this.currentPage = page;
+          },
+          error: (err) => console.error('Failed to fetch bookings', err),
+        });
+    });
+  }
 
   private bookingService: BookingService = inject(BookingService);
   private authService: AuthService = inject(AuthService);
@@ -42,34 +82,13 @@ export class BarberBookingComponent implements OnInit {
   private serviceService: ServiceService = inject(ServiceService);
 
   ngOnInit(): void {
-    this.fetchBarberBookings();
+    this.fetchBookingsByStatus(this.selectedStatus);
     this.fetchUsers();
   }
 
-  findUser(userId: string){
-    const user = this.users.find((u)=> u.id === userId)
+  findUser(userId: string) {
+    const user = this.users.find((u) => u.id === userId);
     return user?.name || null;
-  }
-
-  fetchBarberBookings(page = 1): void {
-    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
-      if (!id) {
-        return;
-      }
-
-      this.bookingService
-        .fetchBookings('barber', id, page, this.itemsPerPage)
-        .pipe(take(1))
-        .subscribe({
-          next: (res) => {
-            this.bookings = res.data;
-
-            this.totalPages = Math.ceil(res.totalCount / this.itemsPerPage);
-            this.currentPage = page;
-          },
-          error: (err) => console.error('Failed to fetch bookings', err),
-        });
-    });
   }
 
   onStatusChange(event: Event, booking: BookingResponseDto): void {
@@ -88,7 +107,7 @@ export class BarberBookingComponent implements OnInit {
       .subscribe({
         next: () => {
           Swal.fire('Updated!', 'Booking status has been updated.', 'success');
-          this.fetchBarberBookings(this.currentPage);
+          this.fetchBookingsByStatus(this.selectedStatus);
         },
         error: (err) => {
           console.error(err);
@@ -108,7 +127,7 @@ export class BarberBookingComponent implements OnInit {
   }
 
   handlePageChange(page: number): void {
-    this.fetchBarberBookings(page);
+    this.fetchBookingsByStatus(this.selectedStatus);
   }
 
   openDetailsModal(booking: BookingResponseDto): void {

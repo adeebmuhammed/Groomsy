@@ -14,6 +14,17 @@
     <div class="content">
       <h2 class="heading">Bookings</h2>
 
+      <!-- Status Tabs -->
+  <div class="status-tabs">
+    <button
+      *ngFor="let s of statuses"
+      [class.active]="selectedStatus === s.value"
+      (click)="changeStatus(s.value)"
+    >
+      {{ s.label }}
+    </button>
+  </div>
+
       <div class="table-responsive">
         <!-- Inside your table -->
         <table class="admin-table">

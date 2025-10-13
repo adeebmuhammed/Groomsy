@@ -9,6 +9,7 @@ import { IBookingController } from "../controllers/interfaces/IBookingController
 import { IBarberUnavailabilityController } from "../controllers/interfaces/IBarberUnavailabilityController";
 import { ISubscriptionController } from "../controllers/interfaces/ISubscriptionController";
 import { ISubscriptionPlanController } from "../controllers/interfaces/ISubscriptionPlanController";
+import { IServiceController } from "../controllers/interfaces/IServiceController";
 
 const barberRoutes = Router()
 const barberAuth = authMiddleware(["barber"])
@@ -20,6 +21,7 @@ const bookingController = container.get<IBookingController>(TYPES.IBookingContro
 const barberUnavailabilityController = container.get<IBarberUnavailabilityController>(TYPES.IBarberUnavailabilityController)
 const subscriptionController = container.get<ISubscriptionController>(TYPES.ISubscriptionController)
 const planController = container.get<ISubscriptionPlanController>(TYPES.ISubscriptionPlanController)
+const serviceController = container.get<IServiceController>(TYPES.IServiceController)
 
 barberRoutes
 .post('/signup',barberController.signup)
@@ -61,6 +63,12 @@ barberRoutes
 
 barberRoutes
 .get("/users",barberAuth,barberController.fetchUsers)
+
+barberRoutes
+.get("/service/:id",barberAuth,serviceController.getServiceById)
+
+barberRoutes
+.get('/bookings', barberAuth,bookingController.getBookingsByStatus)
 
 barberRoutes
 .get("/dashboard-stats/:id",barberController.getBarberDashboardStats)

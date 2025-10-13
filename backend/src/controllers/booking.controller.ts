@@ -218,7 +218,8 @@ export class BookingController implements IBookingController {
 
   getBookingsByStatus = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.params["id"];
+      const role = req.query.role as ROLES;
+      const userId = req.query["id"] as string | undefined; // optional now
       const bookingStatus = req.query.status as
         | "pending"
         | "staged"
@@ -229,18 +230,13 @@ export class BookingController implements IBookingController {
 
       const { response } = await this._bookingService.getBookingsByStatus(
         bookingStatus,
-        userId,
+        userId || null, // pass null if no id
         page,
-        limit
+        limit,
+        role
       );
-      let status;
 
-      if (response) {
-        status = STATUS_CODES.OK;
-      } else {
-        status = STATUS_CODES.CONFLICT;
-      }
-
+      const status = response ? STATUS_CODES.OK : STATUS_CODES.CONFLICT;
       res.status(status).json(response);
     } catch (error) {
       console.error(error);
@@ -248,7 +244,7 @@ export class BookingController implements IBookingController {
         error:
           error instanceof Error
             ? error.message
-            : "Failed to fetch booking by status",
+            : "Failed to fetch bookings by status",
       });
     }
   };
