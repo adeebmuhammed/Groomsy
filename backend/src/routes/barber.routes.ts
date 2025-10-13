@@ -1,24 +1,5 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/auth.middleware";
-import { BarberController } from "../controllers/barber.controller";
-import { BarberService } from "../services/barber.service";
-import { BarberRepository } from "../repositories/barber.repository";
-import { SlotRepository } from "../repositories/slot.repository";
-import { SlotService } from "../services/slot.service";
-import { SlotController } from "../controllers/slot.controller";
-import { isBlockedMiddleware } from "../middlewares/isBlocked.middleware";
-import { BookingRepository } from "../repositories/booking.repository";
-import { BookingService } from "../services/booking.service";
-import { BookingController } from "../controllers/booking.controller";
-import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
-import { BarberUnavailabilityService } from "../services/barber.unavailability.service";
-import { BarberUnavailabilityController } from "../controllers/barber.unavailability.controller";
-import { SubscriptionRepository } from "../repositories/subscription.repository";
-import { SubscriptionService } from "../services/subscription.service";
-import { SubscriptionController } from "../controllers/subscription.controller";
-import { SubscriptionPlanController } from "../controllers/subscription.plan.controller";
-import { SubscriptionPlanRepository } from "../repositories/subscription.plan.repository";
-import { SubscriptionPlanService } from "../services/subscription.plan.service";
 import { subscriptionMiddleware } from "../middlewares/subscription.middleware";
 import { container } from "../config/inversify";
 import { TYPES } from "../config/types";
@@ -67,6 +48,7 @@ barberRoutes
 
 barberRoutes
 .get("/subscription/plans",planController.getPlansForBarber)
+.get("/subscription/plan/:id",planController.getPlanById)
 .get("/subscription/:id",barberAuth,subscriptionController.getSubscriptionDetailsByBarber)
 .post("/subscription",barberAuth,subscriptionController.manageSubscription)
 .put("/subscription",barberAuth,subscriptionController.renewSubscription)
@@ -76,5 +58,11 @@ barberRoutes
 .get("/profile/:id", barberAuth,barberController.getBarberProfileById)
 .patch("/profile/address/:id", barberAuth,barberController.updateBarberAddress)
 .put("/profile/:id", barberAuth,barberController.updateBarberProfile)
+
+barberRoutes
+.get("/users",barberAuth,barberController.fetchUsers)
+
+barberRoutes
+.get("/dashboard-stats/:id",barberController.getBarberDashboardStats)
 
 export default barberRoutes;

@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CreateSubscriptionPlanDto, IMessageResponse, PlanListResponse } from '../../interfaces/interfaces';
+import { CreateSubscriptionPlanDto, IMessageResponse, PlanListResponse, SubscriptionPlanDto } from '../../interfaces/interfaces';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -26,5 +26,9 @@ export class SubscriptionPlanService {
 
   updateActivation(planId: string): Observable<IMessageResponse>{
     return this.http.patch<IMessageResponse>(`${environment.apiBaseUrl}/admin/subscription/${planId}`,{})
+  }
+
+  getPlanById(planId: string):Observable<SubscriptionPlanDto>{
+    return this.http.get<SubscriptionPlanDto>(`${environment.apiBaseUrl}/barber/subscription/plan/${planId}`)
   }
 }

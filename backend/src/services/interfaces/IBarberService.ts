@@ -1,16 +1,19 @@
+import { ListResponseDto, UserDto } from "../../dto/admin.dto";
 import {
   BarberRegisterRequestDto,
   BarberLoginResponseDto,
   updateAddressDto,
   BarberProfileDto,
   UpdateBarberProfileDto,
+  BookingStatsResponseDto,
 } from "../../dto/barber.dto";
 import { MessageResponseDto } from "../../dto/base.dto";
+import { DASHBOARDFILTERS } from "../../utils/constants";
 
 export interface IBarberService {
   registerBarber(
     barberData: BarberRegisterRequestDto
-  ): Promise<{ response: MessageResponseDto;}>;
+  ): Promise<{ response: MessageResponseDto }>;
   verifyOTP(
     email: string,
     otp: string,
@@ -27,25 +30,32 @@ export interface IBarberService {
   login(
     email: string,
     password: string
-  ): Promise<{ response: BarberLoginResponseDto;}>;
-  forgotPassword(
-    email: string
-  ): Promise<{ response: MessageResponseDto;}>;
+  ): Promise<{ response: BarberLoginResponseDto }>;
+  forgotPassword(email: string): Promise<{ response: MessageResponseDto }>;
   resetPassword(
     email: string,
     password: string,
     confirmPassword: string
-  ): Promise<{ response: MessageResponseDto;}>;
+  ): Promise<{ response: MessageResponseDto }>;
 
   getBarberProfileById(
     barberId: string
-  ): Promise<{ response: BarberProfileDto;}>;
+  ): Promise<{ response: BarberProfileDto }>;
   updateBarberProfile(
     barberId: string,
     data: UpdateBarberProfileDto
-  ): Promise<{ response: MessageResponseDto;}>;
+  ): Promise<{ response: MessageResponseDto }>;
   updateBarberAddress(
     barberId: string,
     data: updateAddressDto
-  ): Promise<{ response: MessageResponseDto;}>;
+  ): Promise<{ response: MessageResponseDto }>;
+  fetchUsers(
+    search: string,
+    page: number,
+    limit: number
+  ): Promise<{ response: ListResponseDto<UserDto> }>;
+  getBookingStats(
+    barberId: string,
+    filter: DASHBOARDFILTERS
+  ): Promise<BookingStatsResponseDto[]>;
 }

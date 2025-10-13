@@ -1,7 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BarberProfileDto, EditProfile, IMessageResponse } from '../../interfaces/interfaces';
+import {
+  BarberProfileDto,
+  EditProfile,
+  IMessageResponse,
+  IUser,
+  PaginatedResponse,
+} from '../../interfaces/interfaces';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -16,7 +22,10 @@ export class BarberService {
     );
   }
 
-  updateBarberProfile(barberId: string, data: EditProfile): Observable<IMessageResponse>{
+  updateBarberProfile(
+    barberId: string,
+    data: EditProfile
+  ): Observable<IMessageResponse> {
     const body = data;
     return this.http.put<IMessageResponse>(
       `${environment.apiBaseUrl}/barber/profile/${barberId}`,
@@ -24,11 +33,32 @@ export class BarberService {
     );
   }
 
-  updateBarberAddress(barberId: string, data: BarberProfileDto["address"]): Observable<IMessageResponse>{
+  updateBarberAddress(
+    barberId: string,
+    data: BarberProfileDto['address']
+  ): Observable<IMessageResponse> {
     const body = data;
     return this.http.patch<IMessageResponse>(
       `${environment.apiBaseUrl}/barber/profile/address/${barberId}`,
       body
+    );
+  }
+
+  fetchUsers(
+    search = '',
+    page = 1,
+    limit = 5
+  ): Observable<PaginatedResponse<IUser>> {
+    const params = new HttpParams()
+      .set('search', search)
+      .set('page', page)
+      .set('limit', limit);
+
+    return this.http.get<PaginatedResponse<IUser>>(
+      `${environment.apiBaseUrl}/barber/users`,
+      {
+        params,
+      }
     );
   }
 }

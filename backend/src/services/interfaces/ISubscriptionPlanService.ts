@@ -7,4 +7,5 @@ export interface ISubscriptionPlanService{
     create ( data: CreateSubscriptionPlanDto): Promise<{ response: MessageResponseDto }>
     updateActivation( planId: string): Promise<{ response: MessageResponseDto }>
     getPlansForBarber():Promise<{ response: SubscriptionPlanDto[] }>
+    getPlanById(planId: string) :Promise<{ planData: SubscriptionPlanDto}>
 }

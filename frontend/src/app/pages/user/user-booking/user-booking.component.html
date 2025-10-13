@@ -20,10 +20,12 @@
         <tr>
           <th>#</th>
           <th>Date</th>
+          <th>Barber</th>
           <th>Start Time</th>
           <th>End Time</th>
           <th>Status</th>
           <th>Price</th>
+          <th>Details</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -31,6 +33,7 @@
         <tr *ngFor="let booking of bookings; let i = index">
           <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
           <td>{{ booking.slotDetails.date | date : "shortDate" }}</td>
+          <td>{{ findBarber(booking.barber) }}</td>
           <td>{{ formatTimeUTC(booking.slotDetails.startTime) }}</td>
           <td>{{ formatTimeUTC(booking.slotDetails.endTime) }}</td>
           <td>
@@ -39,6 +42,14 @@
             </span>
           </td>
           <td>₹{{ booking.totalPrice }}</td>
+          <td>
+                <button
+                  class="btn btn-sm btn-primary"
+                  (click)="openDetailsModal(booking)"
+                >
+                  View Details
+                </button>
+              </td>
           <td>
             <!-- Pending bookings: Cancel -->
             <button
@@ -78,6 +89,39 @@
       </tbody>
     </table>
   </div>
+
+  <!-- Booking Details Modal -->
+      <div
+        class="modal fade"
+        id="bookingDetailsModal"
+        tabindex="-1"
+        aria-labelledby="bookingDetailsLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="bookingDetailsLabel">
+                Booking Details
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+
+            <div class="modal-body">
+              <app-booking-details
+                [booking]="selectedBooking"
+                [service]="selectedService"
+                [barber]="findBarber(selectedBooking?.barber || '')"
+              ></app-booking-details>
+            </div>
+          </div>
+        </div>
+      </div>
 
   <!-- Review Modal -->
 <app-review-form

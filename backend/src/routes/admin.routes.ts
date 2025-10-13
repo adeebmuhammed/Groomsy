@@ -46,6 +46,7 @@ adminRoutes
 .delete("/offers/:id", adminAuth,offerController.delete)
 
 adminRoutes
+.get("/service/:id",adminAuth,serviceController.getServiceById)
 .get("/service", adminAuth,serviceController.fetch)
 .post("/service", adminAuth,serviceController.create)
 .put("/service/:id", adminAuth,serviceController.edit)
@@ -55,5 +56,8 @@ adminRoutes
 .get("/subscription",adminAuth,planController.getSubscriptionPlans)
 .post("/subscription",adminAuth,planController.create)
 .patch("/subscription/:id",adminAuth,planController.updateActivation)
+
+adminRoutes
+.get("/dashboard-stats",adminAuth,adminController.getAdminDashboardStats)
 
 export default adminRoutes;

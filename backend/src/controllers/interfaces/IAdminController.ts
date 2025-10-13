@@ -7,4 +7,5 @@ export interface IAdminController{
     updateUserStatus(req: Request, res: Response):Promise<void>;
     listBarbers(req: Request, res: Response):Promise<void>;
     updateBarberStatus(req: Request, res: Response):Promise<void>;
+    getAdminDashboardStats(req: Request, res: Response):Promise<void>;
 }

@@ -56,7 +56,7 @@ export const USER_ROUTES: Routes = [
     canActivate: [userAuthGuard]
   },
   {
-    path: USER_ROUTES_PATHS.BARBER_DETAILS,
+    path: `${USER_ROUTES_PATHS.BARBER_DETAILS}/:id`,
     component: UserBarberDetailsComponent,
     canActivate: [userAuthGuard]
   },

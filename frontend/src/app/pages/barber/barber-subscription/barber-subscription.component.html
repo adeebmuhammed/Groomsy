@@ -36,7 +36,10 @@
               <h3 class="card-title mb-3 text-warning">Payment Pending</h3>
               <ul class="list-group list-group-flush text-start mb-4">
                 <li class="list-group-item">
-                  <strong>Plan:</strong> {{ subscription.plan }}
+                  <strong>Plan:</strong> {{ plan?.name }}
+                </li>
+                <li class="list-group-item">
+                  <strong>Features:</strong> {{ plan?.features }}
                 </li>
                 <li class="list-group-item">
                   <strong>Status:</strong>
@@ -61,7 +64,14 @@
               <h3 class="card-title mb-3">Active Subscription</h3>
               <ul class="list-group list-group-flush text-start mb-4">
                 <li class="list-group-item">
-                  <strong>Plan:</strong> {{ subscription.plan }}
+                  <strong>Plan:</strong> {{ plan?.name }}
+                </li>
+                <li class="list-group-item">
+                  @if(plan?.features?.length){
+                    <strong>Features:</strong> {{ plan?.features }}
+                  }@else {
+                    <strong>Features:</strong> No Features
+                  }
                 </li>
                 <li class="list-group-item">
                   <strong>Status:</strong>

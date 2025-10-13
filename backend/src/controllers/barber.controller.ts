@@ -1,6 +1,6 @@
 import { Request, response, Response } from "express";
 import { IBarberController } from "./interfaces/IBarberController";
-import { MESSAGES, STATUS_CODES } from "../utils/constants";
+import { DASHBOARDFILTERS, MESSAGES, STATUS_CODES } from "../utils/constants";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -265,6 +265,73 @@ export class BarberController implements IBarberController {
           error instanceof Error
             ? error.message
             : "Failed to Update Barber Address",
+      });
+    }
+  };
+
+  fetchUsers = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const search = (req.query.search as string) || "";
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      let status;
+
+      const { response } = await this._barberService.fetchUsers(
+        search,
+        page,
+        limit
+      );
+
+      if (response) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
+
+      res.status(status).json(response);
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : "Fetching Users Failed",
+      });
+    }
+  };
+
+  getBarberDashboardStats = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const barberId = req.params["id"];
+      const filterParam = req.query.filter as string | undefined;
+      let status;
+
+      const filter: DASHBOARDFILTERS =
+        filterParam === DASHBOARDFILTERS.WEEK ||
+        filterParam === DASHBOARDFILTERS.MONTH ||
+        filterParam === DASHBOARDFILTERS.YEAR
+          ? (filterParam as DASHBOARDFILTERS)
+          : DASHBOARDFILTERS.WEEK;
+
+      const bookingStats = await this._barberService.getBookingStats(
+        barberId,
+        filter
+      );
+
+      if (bookingStats) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.INTERNAL_SERVER_ERROR;
+      }
+
+      res.status(status).json(bookingStats);
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch Barber Dashboard stats",
       });
     }
   };

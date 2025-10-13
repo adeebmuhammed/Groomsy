@@ -3,8 +3,10 @@ import { UserHeaderComponent } from '../../../components/user/user-header/user-h
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import { BookingService } from '../../../services/booking/booking.service';
 import {
+  BarberDto,
   BookingResponseDto,
   ReviewCreateRequestDto,
+  Service,
 } from '../../../interfaces/interfaces';
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -18,6 +20,8 @@ import { forkJoin, take } from 'rxjs';
 import { UserService } from '../../../services/user/user.service';
 import { ServiceService } from '../../../services/service/service.service';
 import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
+import * as bootstrap from 'bootstrap';
+import { BookingDetailsComponent } from '../../../components/shared/booking-details/booking-details.component';
 type BookingStatus = 'pending' | 'staged' | 'cancelled' | 'finished';
 
 @Component({
@@ -30,19 +34,16 @@ type BookingStatus = 'pending' | 'staged' | 'cancelled' | 'finished';
     DatePipe,
     ReviewFormComponent,
     CheckoutModalComponent,
+    BookingDetailsComponent
   ],
   templateUrl: './user-booking.component.html',
   styleUrl: './user-booking.component.css',
 })
 export class UserBookingComponent implements OnInit {
   bookings: BookingResponseDto[] = [];
-  columns = [
-    { key: 'slotDetails.date', label: 'Date', isDate: true },
-    { key: 'slotDetails.startTime', label: 'Start Time', isDate: true },
-    { key: 'slotDetails.endTime', label: 'End Time', isDate: true },
-    { key: 'status', label: 'Status', isStatus: true },
-    { key: 'totalPrice', label: 'Price' },
-  ];
+  selectedBooking: BookingResponseDto | null = null;
+  selectedService: Service | null = null;
+  barbers: BarberDto[] = [];
   statuses: { label: string; value: BookingStatus }[] = [
     { label: 'Upcoming', value: 'pending' },
     { label: 'Completed', value: 'finished' },
@@ -87,6 +88,22 @@ export class UserBookingComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchBookingsByStatus(this.selectedStatus);
+    this.fetchBarbers()
+  }
+
+  fetchBarbers(): void {
+    this.userService
+      .fetchBarbers('', 1, 100)
+      .pipe(take(1))
+      .subscribe((res) => {
+        this.barbers = res?.data || [];
+        this.totalPages = res?.pagination?.totalPages || 1;
+      });
+  }
+
+  findBarber(barberId: string) {
+    const barber = this.barbers.find((b) => b.id === barberId);
+    return barber?.name || null;
   }
 
   private generatePages(): void {
@@ -284,6 +301,35 @@ export class UserBookingComponent implements OnInit {
         });
     });
   }
+
+  openDetailsModal(booking: BookingResponseDto): void {
+      this.selectedBooking = booking;
+      this.serviceService
+        .getServiceById('admin', booking.service)
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            this.selectedService = res;
+  
+            // Only show modal after data is fetched
+            const modalElement = document.getElementById('bookingDetailsModal');
+            if (modalElement) {
+              const modal = new bootstrap.Modal(modalElement);
+              modal.show();
+            }
+          },
+          error: (err) => {
+            console.error('Error fetching service:', err);
+  
+            // Even if service fails, still show modal with booking info
+            const modalElement = document.getElementById('bookingDetailsModal');
+            if (modalElement) {
+              const modal = new bootstrap.Modal(modalElement);
+              modal.show();
+            }
+          },
+        });
+    }
 
   formatTimeUTC(dateStr: Date): string {
     const date = new Date(dateStr);

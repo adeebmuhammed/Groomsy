@@ -50,3 +50,10 @@ export class UpdateBarberProfileDto{
   email!: string;
   phone!: string;
 }
+
+export class BookingStatsResponseDto {
+  constructor(
+    public readonly label: string,
+    public readonly count: number
+  ) {}
+}

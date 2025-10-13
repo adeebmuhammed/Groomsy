@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { IAdminController } from "./interfaces/IAdminController";
 import { IAdminService } from "../services/interfaces/IAdminService";
 import { STATUS_CODES } from "../utils/constants";
@@ -196,4 +196,27 @@ export class AdminController implements IAdminController {
       });
     }
   };
+
+  getAdminDashboardStats = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { dashboardStats } = await this._adminService.getAdminDashboardStats()
+      let status;
+
+      if (dashboardStats) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.CONFLICT
+      }
+
+      res.status(status).json(dashboardStats)
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "barber status update Failed",
+      });
+    }
+  }
 }

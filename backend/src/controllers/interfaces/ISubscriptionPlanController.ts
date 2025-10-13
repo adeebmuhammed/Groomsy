@@ -5,4 +5,5 @@ export interface ISubscriptionPlanController {
     create( req: Request, res: Response ): Promise<void>;
     updateActivation( req: Request, res: Response ): Promise<void>;
     getPlansForBarber( req: Request, res: Response ): Promise<void>;
+    getPlanById(req: Request, res: Response):Promise<void>;
 }

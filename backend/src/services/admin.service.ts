@@ -5,6 +5,7 @@ import { IAdminRepository } from "../repositories/interfaces/IAdminRepository";
 import { MESSAGES, STATUS_CODES } from "../utils/constants";
 import { isValidEmail } from "../utils/validators";
 import {
+  AdminDashboardStatsResponseDto,
   AdminLoginResponseDto,
   BarberDto,
   ListResponseDto,
@@ -15,19 +16,22 @@ import { IBarberRepository } from "../repositories/interfaces/IBarberRepository"
 import { AdminMapper } from "../mappers/admin.mapper";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
+import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
+import { UserMapper } from "../mappers/user.mapper";
 
 @injectable()
 export class AdminService implements IAdminService {
   constructor(
     @inject(TYPES.IAdminRepository) private _adminRepo: IAdminRepository,
     @inject(TYPES.IUserRepository) private _userRepo: IUserRepository,
-    @inject(TYPES.IBarberRepository) private _barberRepo: IBarberRepository
+    @inject(TYPES.IBarberRepository) private _barberRepo: IBarberRepository,
+    @inject(TYPES.IBookingRepository) private _bookingRepo: IBookingRepository
   ) {}
 
   loginAdmin = async (
     email: string,
     password: string
-  ): Promise<{ response: AdminLoginResponseDto;}> => {
+  ): Promise<{ response: AdminLoginResponseDto }> => {
     if (!isValidEmail(email)) {
       throw new Error("invalid email format");
     }
@@ -56,7 +60,7 @@ export class AdminService implements IAdminService {
     search: string,
     page: number,
     limit: number
-  ): Promise<{ response: ListResponseDto<UserDto>;}> => {
+  ): Promise<{ response: ListResponseDto<UserDto> }> => {
     const { users, totalCount } = await this._userRepo.findBySearchTerm(
       search,
       page,
@@ -64,7 +68,7 @@ export class AdminService implements IAdminService {
     );
 
     const response: ListResponseDto<UserDto> = {
-      data: AdminMapper.toUserDtoArray(users),
+      data: UserMapper.toUserDtoArray(users),
       message: "Users fetched successfully",
       pagination: {
         currentPage: page,
@@ -83,7 +87,7 @@ export class AdminService implements IAdminService {
     search: string,
     page: number,
     limit: number
-  ): Promise<{ response: ListResponseDto<BarberDto>;}> => {
+  ): Promise<{ response: ListResponseDto<BarberDto> }> => {
     const { barbers, totalCount } = await this._barberRepo.findBySearchTerm(
       search,
       page,
@@ -109,7 +113,7 @@ export class AdminService implements IAdminService {
 
   blockUser = async (
     userId: string
-  ): Promise<{ response: UserDto; message: string;}> => {
+  ): Promise<{ response: UserDto; message: string }> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
@@ -121,7 +125,7 @@ export class AdminService implements IAdminService {
     });
     if (!updatedUser) throw new Error("Could not block user");
 
-    const response: UserDto = AdminMapper.toUserDto(updatedUser);
+    const response: UserDto = UserMapper.toUserDto(updatedUser);
 
     return {
       message: MESSAGES.SUCCESS.USER_BLOCKED,
@@ -131,7 +135,7 @@ export class AdminService implements IAdminService {
 
   unBlockUser = async (
     userId: string
-  ): Promise<{ response: UserDto; message: string;}> => {
+  ): Promise<{ response: UserDto; message: string }> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
@@ -143,7 +147,7 @@ export class AdminService implements IAdminService {
     });
     if (!updatedUser) throw new Error("Could not unblock user");
 
-    const response: UserDto = AdminMapper.toUserDto(updatedUser);
+    const response: UserDto = UserMapper.toUserDto(updatedUser);
 
     return {
       message: MESSAGES.SUCCESS.USER_UNBLOCKED,
@@ -153,7 +157,7 @@ export class AdminService implements IAdminService {
 
   blockBarber = async (
     barberId: string
-  ): Promise<{ response: BarberDto; message: string;}> => {
+  ): Promise<{ response: BarberDto; message: string }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
@@ -175,7 +179,7 @@ export class AdminService implements IAdminService {
 
   unBlockBarber = async (
     barberId: string
-  ): Promise<{ response: BarberDto; message: string;}> => {
+  ): Promise<{ response: BarberDto; message: string }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
@@ -192,6 +196,27 @@ export class AdminService implements IAdminService {
     return {
       message: MESSAGES.SUCCESS.USER_UNBLOCKED,
       response,
+    };
+  };
+
+  getAdminDashboardStats = async (): Promise<{
+    dashboardStats: AdminDashboardStatsResponseDto;
+  }> => {
+    const [totalUsers, totalBarbers, totalBookings] = await Promise.all([
+      this._userRepo.countDocuments({}),
+      this._barberRepo.countDocuments({}),
+      this._bookingRepo.countDocuments({}),
+    ]);
+
+    const dashboardStats = AdminMapper.toDashboardStats(
+      totalUsers,
+      totalBarbers,
+      totalBookings
+    );
+    
+
+    return {
+      dashboardStats,
     };
   };
 }

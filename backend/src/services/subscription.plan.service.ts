@@ -7,7 +7,6 @@ import {
 } from "../dto/subscription.plan.dto";
 import { PlanMapper } from "../mappers/subscription.plan.mapper";
 import { ISubscriptionPlanRepository } from "../repositories/interfaces/ISubsciptionPlanRepository";
-import { STATUS_CODES } from "../utils/constants";
 import { validatePlanData } from "../utils/planValidator";
 import { ISubscriptionPlanService } from "./interfaces/ISubscriptionPlanService";
 import { TYPES } from "../config/types";
@@ -120,4 +119,17 @@ export class SubscriptionPlanService implements ISubscriptionPlanService {
       response
     };
   };
+
+  getPlanById = async (planId: string): Promise<{ planData: SubscriptionPlanDto; }> => {
+    const plan = await this._planRepo.findById(planId)
+    if (!plan) {
+      throw new Error("Subscription plan not found")
+    }
+
+    const planData = PlanMapper.toPlanResponse(plan)
+
+    return{
+      planData
+    }
+  }
 }

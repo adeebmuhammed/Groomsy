@@ -7,7 +7,6 @@ import {
 import { ISlotService } from "./interfaces/ISlotService";
 import { isOverlapping, validateSlotData } from "../utils/slotValidator";
 import { SlotMapper } from "../mappers/slot.mapper";
-import { STATUS_CODES } from "../utils/constants";
 import mongoose from "mongoose";
 import { ISlotRepository } from "../repositories/interfaces/ISlotRepository";
 import { generateSlotsFromRules } from "../utils/slot.generator";

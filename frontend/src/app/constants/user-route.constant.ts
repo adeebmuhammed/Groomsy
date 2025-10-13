@@ -10,7 +10,7 @@ export const USER_ROUTES_PATHS = {
   RESET_PASSWORD: `${USER_BASE}/reset-password`,
   BARBERS: `${USER_BASE}/barbers`,
   FAVORITES: `${USER_BASE}/favorites`,
-  BARBER_DETAILS: `${USER_BASE}/barber-details/:id`,
+  BARBER_DETAILS: `${USER_BASE}/barber-details`,
   BOOKINGS: `${USER_BASE}/bookings`,
   BOOKING_CONFIRMATION: `${USER_BASE}/booking-confirmation/:id`,
   REVIEW : `${USER_BASE}/reviews`,
