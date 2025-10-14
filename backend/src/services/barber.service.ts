@@ -1,8 +1,8 @@
 import {
+  BarberDashboardStatsDto,
   BarberLoginResponseDto,
   BarberProfileDto,
   BarberRegisterRequestDto,
-  BookingStatsResponseDto,
   updateAddressDto,
   UpdateBarberProfileDto,
 } from "../dto/barber.dto";
@@ -373,26 +373,21 @@ export class BarberService implements IBarberService {
       };
     };
 
-  // getBookingStats = async (
-  //   barberId: string,
-  //   filter: DASHBOARDFILTERS
-  // ): Promise<BookingStatsResponseDto[]> => {
-  //   const barber = await this._barberRepo.findById(barberId);
-  //   if (!barber) {
-  //     throw new Error("Barber Not Found");
-  //   }
+  getBookingStats = async (
+    barberId: string,
+    filter: DASHBOARDFILTERS,
+    type: "bookings" | "revenue"
+  ): Promise<{dashboardStats: BarberDashboardStatsDto}> => {
+    const barber = await this._barberRepo.findById(barberId);
+    if (!barber) {
+      throw new Error("Barber Not Found");
+    }
 
-  //   // const { labels, counts } = await this._bookingRepo.getDashboardStats(
-  //   //   barberId,
-  //   //   filter
-  //   // );
+    const dashboardStats = await this._bookingRepo.getDashboardStats(
+      filter,
+      type
+    );
 
-  //   console.log(labels,counts)
-
-  //   const response = BookingMapper.toBookingStatsResponseDto(labels, counts);
-  //   console.log(response);
-    
-
-  //   return response;
-  // };
+    return { dashboardStats };
+  };
 }

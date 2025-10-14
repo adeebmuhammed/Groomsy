@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { BookingResponseDto } from "../dto/booking.dto";
 import { IBooking } from "../models/booking.model";
-import { BookingStatsResponseDto } from "../dto/barber.dto";
 
 export class BookingMapper {
   static toBookingResponse(data: IBooking): BookingResponseDto {
@@ -25,9 +24,5 @@ export class BookingMapper {
 
   static toBookingResponseArray(bookings: IBooking[]): BookingResponseDto[] {
     return bookings.map((booking) => this.toBookingResponse(booking));
-  }
-
-  static toBookingStatsResponseDto(labels: string[], counts: number[]): BookingStatsResponseDto[] {
-    return labels.map((label, index) => new BookingStatsResponseDto(label, counts[index] || 0));
   }
 }

@@ -53,31 +53,32 @@ export class BookingRepository
 
   async getDashboardStats(
     filter: string,
-    type: "bookings" | "revenue"
+    type: "bookings" | "revenue",
+    barberId?: string
   ): Promise<{
     labels: string[];
     data: number[];
     type: "bookings" | "revenue";
-    filter: string;
+    filter: DASHBOARDFILTERS;
     total?: number;
   }> {
     const now = new Date();
     let filterDate: Date;
 
     switch (filter) {
-      case "1 Day":
+      case DASHBOARDFILTERS.DAY:
         filterDate = new Date(now);
         filterDate.setDate(now.getDate() - 1);
         break;
-      case "1 Week":
+      case DASHBOARDFILTERS.WEEK:
         filterDate = new Date(now);
         filterDate.setDate(now.getDate() - 7);
         break;
-      case "1 Month":
+      case DASHBOARDFILTERS.MONTH:
         filterDate = new Date(now);
         filterDate.setMonth(now.getMonth() - 1);
         break;
-      case "1 Year":
+      case DASHBOARDFILTERS.YEAR:
         filterDate = new Date(now);
         filterDate.setFullYear(now.getFullYear() - 1);
         break;
@@ -85,10 +86,15 @@ export class BookingRepository
         throw new Error("Invalid filter");
     }
 
-    const matchStage = {
+    const matchStage: {
+      createdAt: { $gte: Date; $lte: Date };
+      status: { $ne: string };
+      barber?: string;
+    } = {
       createdAt: { $gte: filterDate, $lte: now },
       status: { $ne: "cancelled" },
     };
+    if (barberId) matchStage.barber = barberId;
 
     const groupFormat =
       filter === "1 Year"

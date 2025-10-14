@@ -3,7 +3,7 @@ import { AdminHeaderComponent } from '../../../components/admin/admin-header/adm
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
 import { AdminService } from '../../../services/admin/admin.service';
-import { AdminDashboardStatsDto } from '../../../interfaces/interfaces';
+import { DashboardStatsDto } from '../../../interfaces/interfaces';
 import { take } from 'rxjs';
 import { ChartComponent } from '../../../components/shared/chart/chart.component';
 import { CommonModule } from '@angular/common';
@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './admin-dashboard.component.css',
 })
 export class AdminDashboardComponent implements OnInit {
-  stats: AdminDashboardStatsDto | null = null;
+  stats: DashboardStatsDto | null = null;
   selectedType: 'bookings' | 'revenue' = 'bookings';
   selectedFilter: string = '1 Month';
 

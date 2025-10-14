@@ -360,7 +360,7 @@ export interface confirmSubscription {
   keyId: string;
 }
 
-export interface AdminDashboardStatsDto {
+export interface DashboardStatsDto {
   labels: string[];
   data: number[];
   type: 'bookings' | 'revenue';

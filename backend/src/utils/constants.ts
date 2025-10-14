@@ -60,7 +60,8 @@ export const REGEX = {
 };
 
 export enum DASHBOARDFILTERS {
-  WEEK = "this-week",
-  MONTH = "this-month",
-  YEAR = "this-year"
+  DAY = "1 Day",
+  WEEK = "1 Week",
+  MONTH = "1 Month",
+  YEAR = "1 Year"
 }

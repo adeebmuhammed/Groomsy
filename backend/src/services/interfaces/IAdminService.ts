@@ -6,6 +6,7 @@ import {
   AdminDashboardStatsDto,
 } from "../../dto/admin.dto";
 import { IAdmin } from "../../models/admin.model";
+import { DASHBOARDFILTERS } from "../../utils/constants";
 
 export interface IAdminService {
   loginAdmin(
@@ -31,7 +32,7 @@ export interface IAdminService {
     barberId: string
   ): Promise<{ response: BarberDto; message: string }>;
   getAdminDashboardStats(
-    filter: string,
+    filter: DASHBOARDFILTERS,
     type: "bookings" | "revenue"
   ): Promise<{ dashboardStats: AdminDashboardStatsDto }>
 }

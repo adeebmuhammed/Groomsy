@@ -1,7 +1,7 @@
 import { Request, response, Response } from "express";
 import { IAdminController } from "./interfaces/IAdminController";
 import { IAdminService } from "../services/interfaces/IAdminService";
-import { STATUS_CODES } from "../utils/constants";
+import { DASHBOARDFILTERS, STATUS_CODES } from "../utils/constants";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -199,8 +199,14 @@ export class AdminController implements IAdminController {
 
   getAdminDashboardStats = async (req: Request, res: Response): Promise<void> => {
     try {
-      const filter = (req.query.filter as string) || "1 Month";
+      const filterParam = req.query.filter as string | DASHBOARDFILTERS.MONTH;
       const type = (req.query.type as "bookings" | "revenue") || "bookings";
+      const filter: DASHBOARDFILTERS =
+        filterParam === DASHBOARDFILTERS.WEEK ||
+        filterParam === DASHBOARDFILTERS.MONTH ||
+        filterParam === DASHBOARDFILTERS.YEAR
+          ? (filterParam as DASHBOARDFILTERS)
+          : DASHBOARDFILTERS.WEEK;
 
       const { dashboardStats } =
         await this._adminService.getAdminDashboardStats(filter, type);

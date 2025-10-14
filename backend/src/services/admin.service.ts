@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { IAdmin } from "../models/admin.model";
 import { IAdminService } from "./interfaces/IAdminService";
 import { IAdminRepository } from "../repositories/interfaces/IAdminRepository";
-import { MESSAGES, STATUS_CODES } from "../utils/constants";
+import { DASHBOARDFILTERS, MESSAGES, STATUS_CODES } from "../utils/constants";
 import { isValidEmail } from "../utils/validators";
 import {
   AdminDashboardStatsDto,
@@ -200,7 +200,7 @@ export class AdminService implements IAdminService {
   };
 
   getAdminDashboardStats = async (
-    filter: string,
+    filter: DASHBOARDFILTERS,
     type: "bookings" | "revenue"
   ): Promise<{ dashboardStats: AdminDashboardStatsDto }> => {
     const dashboardStats = await this._bookingRepo.getDashboardStats(
