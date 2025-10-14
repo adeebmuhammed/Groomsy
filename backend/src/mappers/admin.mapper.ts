@@ -6,7 +6,7 @@ import {
   UserDto,
   BarberDto,
   AdminLoginResponseDto,
-  AdminDashboardStatsResponseDto,
+  AdminDashboardStatsDto,
 } from "../dto/admin.dto";
 
 export class AdminMapper {
@@ -37,15 +37,15 @@ export class AdminMapper {
     return barbers.map((barber) => this.toBarberDto(barber));
   }
 
-  static toDashboardStats(
-    totalUsers: number,
-    totalBarbers: number,
-    totalBookings: number
-  ): AdminDashboardStatsResponseDto {
-    return {
-      totalUsers,
-      totalBarbers,
-      totalBookings,
-    };
-  }
+  // static toDashboardStats(
+  //   totalUsers: number,
+  //   totalBarbers: number,
+  //   totalBookings: number
+  // ): AdminDashboardStatsResponseDto {
+  //   return {
+  //     totalUsers,
+  //     totalBarbers,
+  //     totalBookings,
+  //   };
+  // }
 }

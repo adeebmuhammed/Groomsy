@@ -33,8 +33,10 @@ export class BarberDto {
   createdAt!: Date;
 }
 
-export class AdminDashboardStatsResponseDto {
-  totalUsers!: number;
-  totalBarbers!: number;
-  totalBookings!: number;
+export interface AdminDashboardStatsDto {
+  labels: string[];
+  data: number[];
+  type: 'bookings' | 'revenue';
+  filter: string;
+  total?: number;
 }

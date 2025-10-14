@@ -373,26 +373,26 @@ export class BarberService implements IBarberService {
       };
     };
 
-  getBookingStats = async (
-    barberId: string,
-    filter: DASHBOARDFILTERS
-  ): Promise<BookingStatsResponseDto[]> => {
-    const barber = await this._barberRepo.findById(barberId);
-    if (!barber) {
-      throw new Error("Barber Not Found");
-    }
+  // getBookingStats = async (
+  //   barberId: string,
+  //   filter: DASHBOARDFILTERS
+  // ): Promise<BookingStatsResponseDto[]> => {
+  //   const barber = await this._barberRepo.findById(barberId);
+  //   if (!barber) {
+  //     throw new Error("Barber Not Found");
+  //   }
 
-    const { labels, counts } = await this._bookingRepo.getBookingStats(
-      barberId,
-      filter
-    );
+  //   // const { labels, counts } = await this._bookingRepo.getDashboardStats(
+  //   //   barberId,
+  //   //   filter
+  //   // );
 
-    console.log(labels,counts)
+  //   console.log(labels,counts)
 
-    const response = BookingMapper.toBookingStatsResponseDto(labels, counts);
-    console.log(response);
+  //   const response = BookingMapper.toBookingStatsResponseDto(labels, counts);
+  //   console.log(response);
     
 
-    return response;
-  };
+  //   return response;
+  // };
 }

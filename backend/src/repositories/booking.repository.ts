@@ -51,50 +51,86 @@ export class BookingRepository
     );
   }
 
-  async getBookingStats(barberId: string, filter: DASHBOARDFILTERS): Promise<{labels: string[], counts: number[]}> {
+  async getDashboardStats(
+    filter: string,
+    type: "bookings" | "revenue"
+  ): Promise<{
+    labels: string[];
+    data: number[];
+    type: "bookings" | "revenue";
+    filter: string;
+    total?: number;
+  }> {
     const now = new Date();
-    let startDate: Date;
-    let groupFormat: string;
+    let filterDate: Date;
 
     switch (filter) {
-      case DASHBOARDFILTERS.WEEK:
-        startDate = new Date(now);
-        startDate.setDate(now.getDate() - 6); // last 7 days
-        groupFormat = "%Y-%m-%d"; // group by day
+      case "1 Day":
+        filterDate = new Date(now);
+        filterDate.setDate(now.getDate() - 1);
         break;
-      case DASHBOARDFILTERS.MONTH:
-        startDate = new Date(now);
-        startDate.setDate(now.getDate() - 27); // last 4 weeks
-        groupFormat = "%Y-%U"; // group by week number
+      case "1 Week":
+        filterDate = new Date(now);
+        filterDate.setDate(now.getDate() - 7);
         break;
-      case DASHBOARDFILTERS.YEAR:
-        startDate = new Date(now.getFullYear(), 0, 1); // start of this year
-        groupFormat = "%Y-%m"; // group by month
+      case "1 Month":
+        filterDate = new Date(now);
+        filterDate.setMonth(now.getMonth() - 1);
+        break;
+      case "1 Year":
+        filterDate = new Date(now);
+        filterDate.setFullYear(now.getFullYear() - 1);
         break;
       default:
         throw new Error("Invalid filter");
     }
 
-    const stats = await Booking.aggregate([
-      {
-        $match: {
-          barber: barberId,
-          "slotDetails.date": { $gte: startDate, $lte: now },
-          status: { $ne: "staged" },
-        },
-      },
-      {
-        $group: {
-          _id: { $dateToString: { format: groupFormat, date: "$slotDetails.date" } },
-          count: { $sum: 1 },
-        },
-      },
-      { $sort: { _id: 1 } },
-    ]);
+    const matchStage = {
+      createdAt: { $gte: filterDate, $lte: now },
+      status: { $ne: "cancelled" },
+    };
 
-    const labels = stats.map((s) => s._id);
-    const counts = stats.map((s) => s.count);
+    const groupFormat =
+      filter === "1 Year"
+        ? { $dateToString: { format: "%Y-%m", date: "$createdAt" } }
+        : { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } };
 
-    return { labels, counts };
+    let aggregation: any[];
+
+    if (type === "bookings") {
+      aggregation = [
+        { $match: matchStage },
+        { $group: { _id: groupFormat, count: { $sum: 1 } } },
+        { $sort: { _id: 1 } },
+      ];
+    } else {
+      aggregation = [
+        { $match: matchStage },
+        { $group: { _id: groupFormat, totalRevenue: { $sum: "$totalPrice" } } },
+        { $sort: { _id: 1 } },
+      ];
+    }
+
+    const result = await Booking.aggregate(aggregation);
+
+    let labels: string[] = result.map((r) => r._id);
+    let data: number[] =
+      type === "bookings"
+        ? result.map((r) => r.count)
+        : result.map((r) => r.totalRevenue);
+
+    if (labels.length === 0 || data.length === 0) {
+      const formattedDate =
+        filter === "1 Year"
+          ? now.toISOString().slice(0, 7)
+          : now.toISOString().slice(0, 10);
+
+      labels = [formattedDate];
+      data = [0];
+    }
+
+    const total = data.reduce((sum, val) => sum + val, 0);
+
+    return { labels, data, type, filter, total };
   }
 }

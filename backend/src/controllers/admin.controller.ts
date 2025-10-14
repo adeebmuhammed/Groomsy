@@ -199,24 +199,25 @@ export class AdminController implements IAdminController {
 
   getAdminDashboardStats = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { dashboardStats } = await this._adminService.getAdminDashboardStats()
-      let status;
+      const filter = (req.query.filter as string) || "1 Month";
+      const type = (req.query.type as "bookings" | "revenue") || "bookings";
 
+      const { dashboardStats } =
+        await this._adminService.getAdminDashboardStats(filter, type);
+
+      let status;
       if (dashboardStats) {
         status = STATUS_CODES.OK
       }else{
-        status = STATUS_CODES.CONFLICT
+        status = STATUS_CODES.INTERNAL_SERVER_ERROR
       }
 
-      res.status(status).json(dashboardStats)
+      res.status(status).json(dashboardStats);
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-        error:
-          error instanceof Error
-            ? error.message
-            : "barber status update Failed",
+        error: error instanceof Error ? error.message : "Failed to load dashboard stats",
       });
     }
-  }
+  };
 }

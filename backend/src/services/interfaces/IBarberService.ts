@@ -54,8 +54,8 @@ export interface IBarberService {
     page: number,
     limit: number
   ): Promise<{ response: ListResponseDto<UserDto> }>;
-  getBookingStats(
-    barberId: string,
-    filter: DASHBOARDFILTERS
-  ): Promise<BookingStatsResponseDto[]>;
+  // getBookingStats(
+  //   barberId: string,
+  //   filter: DASHBOARDFILTERS
+  // ): Promise<BookingStatsResponseDto[]>;
 }

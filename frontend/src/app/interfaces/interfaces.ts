@@ -361,9 +361,11 @@ export interface confirmSubscription {
 }
 
 export interface AdminDashboardStatsDto {
-  totalUsers: number;
-  totalBarbers: number;
-  totalBookings: number;
+  labels: string[];
+  data: number[];
+  type: 'bookings' | 'revenue';
+  filter: string;
+  total?: number;
 }
 
 export type BookingStatus = 'pending' | 'staged' | 'cancelled' | 'finished';

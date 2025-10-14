@@ -7,21 +7,28 @@ import { AdminDashboardStatsDto } from '../../../interfaces/interfaces';
 import { take } from 'rxjs';
 import { ChartComponent } from '../../../components/shared/chart/chart.component';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [AdminHeaderComponent, AdminFooterComponent, AdminSidebarComponent, ChartComponent, CommonModule],
+  imports: [AdminHeaderComponent, AdminFooterComponent, AdminSidebarComponent, ChartComponent, CommonModule, FormsModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css',
 })
-export class AdminDashboardComponent implements OnInit{
+export class AdminDashboardComponent implements OnInit {
   stats: AdminDashboardStatsDto | null = null;
+  selectedType: 'bookings' | 'revenue' = 'bookings';
+  selectedFilter: string = '1 Month';
 
   private adminService: AdminService = inject(AdminService);
 
   ngOnInit(): void {
+    this.loadStats();
+  }
+
+  loadStats(): void {
     this.adminService
-      .getDashboardStats()
+      .getDashboardStats(this.selectedFilter, this.selectedType)
       .pipe(take(1))
       .subscribe((res) => {
         this.stats = res;

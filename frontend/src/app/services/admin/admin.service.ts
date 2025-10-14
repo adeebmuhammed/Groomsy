@@ -83,9 +83,14 @@ export class AdminService {
     );
   }
 
-  getDashboardStats(): Observable<AdminDashboardStatsDto> {
+  getDashboardStats(
+    filter: string,
+    type: string
+  ): Observable<AdminDashboardStatsDto> {
+    const params = new HttpParams().set('filter', filter).set('type', type);
     return this.http.get<AdminDashboardStatsDto>(
-      `${environment.apiBaseUrl}/admin/dashboard-stats`
+      `${environment.apiBaseUrl}/admin/dashboard-stats`,
+      { params }
     );
   }
 }

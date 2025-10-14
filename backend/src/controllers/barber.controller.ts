@@ -313,18 +313,18 @@ export class BarberController implements IBarberController {
           ? (filterParam as DASHBOARDFILTERS)
           : DASHBOARDFILTERS.WEEK;
 
-      const bookingStats = await this._barberService.getBookingStats(
-        barberId,
-        filter
-      );
+      // const bookingStats = await this._barberService.getBookingStats(
+      //   barberId,
+      //   filter
+      // );
 
-      if (bookingStats) {
-        status = STATUS_CODES.OK;
-      } else {
-        status = STATUS_CODES.INTERNAL_SERVER_ERROR;
-      }
+      // if (bookingStats) {
+      //   status = STATUS_CODES.OK;
+      // } else {
+      //   status = STATUS_CODES.INTERNAL_SERVER_ERROR;
+      // }
 
-      res.status(status).json(bookingStats);
+      // res.status(status).json(bookingStats);
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({

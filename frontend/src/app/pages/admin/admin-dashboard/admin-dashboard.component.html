@@ -4,36 +4,37 @@
   <app-admin-sidebar></app-admin-sidebar>
 
   <div class="admin-main-content p-4">
-    <h2 class="dashboard-title">Admin Dashboard</h2>
+  <h2 class="dashboard-title">Admin Dashboard</h2>
 
-    <div *ngIf="stats" class="dashboard-content">
-      
-      <!-- Summary Cards -->
-      <div class="stats-container">
-        <div class="stat-card">
-          <h3>{{ stats.totalUsers }}</h3>
-          <p>Total Users</p>
-        </div>
-        <div class="stat-card">
-          <h3>{{ stats.totalBarbers }}</h3>
-          <p>Total Barbers</p>
-        </div>
-        <div class="stat-card">
-          <h3>{{ stats.totalBookings }}</h3>
-          <p>Total Bookings</p>
-        </div>
-      </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <select class="form-select w-auto" [(ngModel)]="selectedType" (change)="loadStats()">
+      <option value="bookings">Bookings</option>
+      <option value="revenue">Revenue</option>
+    </select>
 
-      <!-- Chart -->
-      <div class="chart-container">
-        <app-chart 
-          [chartData]="[stats.totalUsers, stats.totalBarbers, stats.totalBookings]"
-          [chartLabels]="['Users', 'Barbers', 'Bookings']"
-          chartTitle="Overall Stats">
-        </app-chart>
+    <select class="form-select w-auto" [(ngModel)]="selectedFilter" (change)="loadStats()">
+      <option>1 Day</option>
+      <option>1 Week</option>
+      <option>1 Month</option>
+      <option>1 Year</option>
+    </select>
+  </div>
+
+  <div *ngIf="stats">
+    <div class="summary mb-4">
+      <div class="stat-card">
+        <h3>{{ stats.total }}</h3>
+        <p>{{ selectedType === 'bookings' ? 'Total Bookings' : 'Total Revenue' }}</p>
       </div>
     </div>
 
-    <app-admin-footer></app-admin-footer>
+    <app-chart
+      [chartData]="stats.data"
+      [chartLabels]="stats.labels"
+      [chartTitle]="selectedType === 'bookings' ? 'Bookings Overview' : 'Revenue Overview'">
+    </app-chart>
   </div>
+  <app-admin-footer></app-admin-footer>
+</div>
+
 </div>
