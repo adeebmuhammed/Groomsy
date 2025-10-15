@@ -51,9 +51,10 @@ export class UpdateBarberProfileDto{
   phone!: string;
 }
 
-export class BookingStatsResponseDto {
-  constructor(
-    public readonly label: string,
-    public readonly count: number
-  ) {}
+export interface BarberDashboardStatsDto {
+  labels: string[];
+  data: number[];
+  type: 'bookings' | 'revenue';
+  filter: string;
+  total?: number;
 }

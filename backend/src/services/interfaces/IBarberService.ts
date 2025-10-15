@@ -5,7 +5,7 @@ import {
   updateAddressDto,
   BarberProfileDto,
   UpdateBarberProfileDto,
-  BookingStatsResponseDto,
+  BarberDashboardStatsDto,
 } from "../../dto/barber.dto";
 import { MessageResponseDto } from "../../dto/base.dto";
 import { DASHBOARDFILTERS } from "../../utils/constants";
@@ -56,6 +56,7 @@ export interface IBarberService {
   ): Promise<{ response: ListResponseDto<UserDto> }>;
   getBookingStats(
     barberId: string,
-    filter: DASHBOARDFILTERS
-  ): Promise<BookingStatsResponseDto[]>;
+    filter: DASHBOARDFILTERS,
+    type: "bookings" | "revenue"
+  ): Promise<{dashboardStats: BarberDashboardStatsDto}>
 }

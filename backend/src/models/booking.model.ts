@@ -56,7 +56,7 @@ const BookingSchema = new Schema({
     default: () => new Date(Date.now() + 10 * 60 * 1000),
     index: { expires: "0s" },
   },
-});
+}, { timestamps: true});
 
 const Booking = mongoose.model<IBooking>("Bookings", BookingSchema);
 export default Booking;

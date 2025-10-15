@@ -2,10 +2,10 @@ import bcrypt from "bcrypt";
 import { IAdmin } from "../models/admin.model";
 import { IAdminService } from "./interfaces/IAdminService";
 import { IAdminRepository } from "../repositories/interfaces/IAdminRepository";
-import { MESSAGES, STATUS_CODES } from "../utils/constants";
+import { DASHBOARDFILTERS, MESSAGES, STATUS_CODES } from "../utils/constants";
 import { isValidEmail } from "../utils/validators";
 import {
-  AdminDashboardStatsResponseDto,
+  AdminDashboardStatsDto,
   AdminLoginResponseDto,
   BarberDto,
   ListResponseDto,
@@ -199,24 +199,15 @@ export class AdminService implements IAdminService {
     };
   };
 
-  getAdminDashboardStats = async (): Promise<{
-    dashboardStats: AdminDashboardStatsResponseDto;
-  }> => {
-    const [totalUsers, totalBarbers, totalBookings] = await Promise.all([
-      this._userRepo.countDocuments({}),
-      this._barberRepo.countDocuments({}),
-      this._bookingRepo.countDocuments({}),
-    ]);
-
-    const dashboardStats = AdminMapper.toDashboardStats(
-      totalUsers,
-      totalBarbers,
-      totalBookings
+  getAdminDashboardStats = async (
+    filter: DASHBOARDFILTERS,
+    type: "bookings" | "revenue"
+  ): Promise<{ dashboardStats: AdminDashboardStatsDto }> => {
+    const dashboardStats = await this._bookingRepo.getDashboardStats(
+      filter,
+      type
     );
     
-
-    return {
-      dashboardStats,
-    };
+    return { dashboardStats };
   };
 }

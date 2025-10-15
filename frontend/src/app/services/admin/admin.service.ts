@@ -6,7 +6,7 @@ import {
   IUser,
   IBarber,
   PaginatedResponse,
-  AdminDashboardStatsDto,
+  DashboardStatsDto,
 } from '../../interfaces/interfaces';
 
 @Injectable({
@@ -83,9 +83,14 @@ export class AdminService {
     );
   }
 
-  getDashboardStats(): Observable<AdminDashboardStatsDto> {
-    return this.http.get<AdminDashboardStatsDto>(
-      `${environment.apiBaseUrl}/admin/dashboard-stats`
+  getDashboardStats(
+    filter: string,
+    type: string
+  ): Observable<DashboardStatsDto> {
+    const params = new HttpParams().set('filter', filter).set('type', type);
+    return this.http.get<DashboardStatsDto>(
+      `${environment.apiBaseUrl}/admin/dashboard-stats`,
+      { params }
     );
   }
 }

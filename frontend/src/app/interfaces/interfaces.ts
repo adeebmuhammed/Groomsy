@@ -360,10 +360,12 @@ export interface confirmSubscription {
   keyId: string;
 }
 
-export interface AdminDashboardStatsDto {
-  totalUsers: number;
-  totalBarbers: number;
-  totalBookings: number;
+export interface DashboardStatsDto {
+  labels: string[];
+  data: number[];
+  type: 'bookings' | 'revenue';
+  filter: string;
+  total?: number;
 }
 
 export type BookingStatus = 'pending' | 'staged' | 'cancelled' | 'finished';

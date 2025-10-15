@@ -3,9 +3,10 @@ import {
   ListResponseDto,
   UserDto,
   AdminLoginResponseDto,
-  AdminDashboardStatsResponseDto,
+  AdminDashboardStatsDto,
 } from "../../dto/admin.dto";
 import { IAdmin } from "../../models/admin.model";
+import { DASHBOARDFILTERS } from "../../utils/constants";
 
 export interface IAdminService {
   loginAdmin(
@@ -30,7 +31,8 @@ export interface IAdminService {
   unBlockBarber(
     barberId: string
   ): Promise<{ response: BarberDto; message: string }>;
-  getAdminDashboardStats(): Promise<{
-    dashboardStats: AdminDashboardStatsResponseDto;
-  }>;
+  getAdminDashboardStats(
+    filter: DASHBOARDFILTERS,
+    type: "bookings" | "revenue"
+  ): Promise<{ dashboardStats: AdminDashboardStatsDto }>
 }
