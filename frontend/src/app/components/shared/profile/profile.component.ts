@@ -1,11 +1,18 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { Profile } from '../../../interfaces/interfaces';
 import { CommonModule } from '@angular/common';
 import * as bootstrap from 'bootstrap';
+import { FileUploadComponent } from '../file-upload/file-upload.component';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule],
+  imports: [CommonModule, FileUploadComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })
@@ -15,43 +22,26 @@ export class ProfileComponent {
   @Output() uploadOrUpdate = new EventEmitter<File>();
   @Output() deletePic = new EventEmitter<void>();
 
-  selectedFile?: File;
-  previewUrl: string | ArrayBuffer | null = null;
   modalMode: 'upload' | 'update' = 'upload';
-
-  private modalRef: any;
 
   onEditClick() {
     this.edit.emit();
   }
 
-  openUploadModal(mode: 'upload' | 'update') {
-    this.modalMode = mode;
-    this.selectedFile = undefined;
-    this.previewUrl = null;
+  @ViewChild(FileUploadComponent) fileUploadComponent!: FileUploadComponent;
 
-    const modalElement = document.getElementById('uploadModal');
-    if (!modalElement) return;
-    this.modalRef = new bootstrap.Modal(modalElement);
-    this.modalRef.show();
-  }
+  openUpload(mode: 'upload' | 'update') {
+  this.modalMode = mode;
 
-  onFileSelected(event: any) {
-    const file: File = event.target.files[0];
-    if (file) {
-      this.selectedFile = file;
+  // Add a small delay to let Angular render modal component
+  setTimeout(() => {
+    this.fileUploadComponent.open();
+  });
+}
 
-      const reader = new FileReader();
-      reader.onload = () => (this.previewUrl = reader.result);
-      reader.readAsDataURL(file);
-    }
-  }
 
-  onSubmitUpload() {
-    if (this.selectedFile) {
-      this.uploadOrUpdate.emit(this.selectedFile);
-      this.modalRef.hide();
-    }
+  onUploadFile(file: File) {
+    this.uploadOrUpdate.emit(file);
   }
 
   onDeleteClick() {

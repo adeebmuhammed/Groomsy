@@ -243,12 +243,12 @@ export class UserBookingComponent implements OnInit {
                   .subscribe({
                     next: () => {
                       this.router.navigate([
-                        `${USER_ROUTES_PATHS.BOOKING_CONFIRMATION}/${bookingId}`,
+                        `/user/booking-confirmation/${bookingId}`,
                       ]);
                     },
                     error: (err) => {
                       this.router.navigate([
-                        `${USER_ROUTES_PATHS.BOOKING_CONFIRMATION}/${bookingId}`,
+                        `/user/booking-confirmation/${bookingId}`,
                       ]);
                     },
                   });
