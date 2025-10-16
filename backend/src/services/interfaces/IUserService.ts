@@ -20,4 +20,5 @@ export interface IUserService{
     getUserProfileById(userId: string): Promise<{ response: UserProfileDto}>
     updateUserProfile(userId: string, data: UserEditProfileDto): Promise<{ response: MessageResponseDto}>
     updateUserProfilePicture(userId: string, file: fileUpload.UploadedFile): Promise<{ profilePictureUpdation: MessageResponseDto}>
+    deleteUserProfilePicture(userId: string): Promise<{ profilePictureDeletion: MessageResponseDto}>
 }

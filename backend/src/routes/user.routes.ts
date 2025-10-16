@@ -81,5 +81,6 @@ userRoutes
 .get("/profile/:id",userAuth,userController.getUserProfileById)
 .put("/profile/:id",userAuth,userController.updateUserProfile)
 .patch("/profile/update-profile-picture/:id",fileUpload(),userController.updateProfilePicture)
+.delete("/profile/delete-profile-picture/:id",userController.deleteProfilePicture)
 
 export default userRoutes;

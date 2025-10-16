@@ -100,4 +100,13 @@ export class UserService {
       formData
     );
   }
+
+  deleteProfilePicture(
+    userId: string,
+  ): Observable<IMessageResponse> {
+
+    return this.http.delete<IMessageResponse>(
+      `${environment.apiBaseUrl}/user/profile/delete-profile-picture/${userId}`
+    );
+  }
 }

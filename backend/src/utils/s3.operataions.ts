@@ -1,4 +1,6 @@
 import {
+  DeleteObjectCommand,
+  DeleteObjectCommandInput,
   PutObjectCommand,
   PutObjectCommandInput,
 } from "@aws-sdk/client-s3";
@@ -30,3 +32,24 @@ export const putObject = async (file: any, fileName: string) => {
     throw new Error("s3 putObject operation failed");
   }
 };
+
+export const deleteObject = async (key: string) => {
+  try {
+    const params: DeleteObjectCommandInput = {
+      Bucket: process.env.AWS_S3_BUCKET,
+      Key: key
+    }
+
+    const command = new DeleteObjectCommand(params)
+    const data = await s3Client.send(command)
+
+    if (data.$metadata.httpStatusCode !== 204) {
+      throw new Error("profile picture deletion failed");
+    }
+
+    return "success";
+  } catch (error) {
+    console.error(error);
+    throw new Error("s3 deleteObject operation failed");
+  }
+}
