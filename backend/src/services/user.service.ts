@@ -16,7 +16,7 @@ import {
 import { IUserRepository } from "../repositories/interfaces/IUserRepository";
 import OTPService from "../utils/OTPService";
 import { UserMapper } from "../mappers/user.mapper";
-import { BarberDto } from "../dto/barber.dto";
+import { BarberDto, BarberProfileDto } from "../dto/barber.dto";
 
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
 import { ListResponseDto } from "../dto/admin.dto";
@@ -352,6 +352,21 @@ export class UserService implements IUserService {
 
     return {
       response,
+    };
+  };
+
+  fetchBarberDetailsById = async (
+    barberId: string
+  ): Promise<{ barberDetailsData: BarberProfileDto }> => {
+    const barber = await this._barberRepo.findById(barberId);
+    if (!barber) {
+      throw new Error("barber not found");
+    }
+
+    const barberDetailsData = BarberMapper.toBarberProfileDto(barber);
+
+    return {
+      barberDetailsData,
     };
   };
 

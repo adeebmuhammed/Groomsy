@@ -12,6 +12,7 @@ export interface IUserController{
 
     fetchAllBarbers(req: Request, res: Response): Promise<void>;
     fetchBarbersAndSlotRules(req: Request, res: Response): Promise<void>;
+    fetchBarberDetailsById(req: Request, res: Response): Promise<void>;
 
     getUserProfileById(req: Request, res: Response): Promise<void>;
     updateUserProfile(req: Request, res: Response): Promise<void>;

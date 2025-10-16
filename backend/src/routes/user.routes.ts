@@ -49,6 +49,7 @@ userRoutes
 
 userRoutes
 .get('/get-barbers', userAuth, isBlockedMiddleware, userController.fetchAllBarbers)
+.get('/get-barber/:id', userAuth, isBlockedMiddleware, userController.fetchBarberDetailsById)
 .get('/get-barber-slots/:barberId', userAuth, isBlockedMiddleware, userController.fetchBarbersAndSlotRules)
 .get('/populated-slots/:id',userAuth, isBlockedMiddleware,slotController.getPopulatedSlots)
 

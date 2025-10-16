@@ -1,21 +1,24 @@
 <app-user-header></app-user-header>
 
 <div class="barber-details-container">
-  <div class="barber-info">
-    <h2>{{ barber?.name }}</h2>
-    <p>Contact: {{ barber?.email }}</p>
-    <p>District: {{ barber?.district }}</p>
-    <p>
-      Status:
-      <span
-        [ngClass]="
-          barber?.status === 'active' ? 'active-status' : 'blocked-status'
-        "
-      >
-        {{ barber?.status }}
-      </span>
-    </p>
-  </div>
+  <div class="barber-info text-center">
+  <!-- Profile Picture -->
+  <img
+    [src]="barber?.profilePicUrl || 'default.png'"
+    alt="{{ barber?.name }}"
+    class="barber-profile-pic mb-3"
+  />
+
+  <h2>{{ barber?.name }}</h2>
+  <p>Contact: {{ barber?.email }}</p>
+    <h5>Address: </h5>
+  
+  <p>District: {{ barber?.address?.district }}</p>
+  <p>City: {{ barber?.address?.city }}</p>
+  <p>Street: {{ barber?.address?.street }}</p>
+  <p>Pincode: {{ barber?.address?.pincode }}</p>
+</div>
+
 
   <div class="services-section">
     <h2>Choose a Service</h2>

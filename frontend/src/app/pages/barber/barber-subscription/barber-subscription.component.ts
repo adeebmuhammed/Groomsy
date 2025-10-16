@@ -108,7 +108,7 @@ export class BarberSubscriptionComponent implements OnInit {
                     next: () => {
                       Swal.fire(
                         'Success',
-                        'Retry Payment Successfully',
+                        'Payment Completed Successfully',
                         'success'
                       ).then(() => {
                         this.ngZone.run(() => {
@@ -172,7 +172,7 @@ export class BarberSubscriptionComponent implements OnInit {
                   next: () => {
                     Swal.fire(
                       'Success',
-                      'Retry Payment Successfully',
+                      'Payment Completed Successfully',
                       'success'
                     ).then(() => {
                       this.ngZone.run(() => {

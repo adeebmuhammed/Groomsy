@@ -1,5 +1,5 @@
 import { ListResponseDto } from "../../dto/admin.dto";
-import { BarberDto } from "../../dto/barber.dto";
+import { BarberDto, BarberProfileDto } from "../../dto/barber.dto";
 import { SlotResponseDto, SlotRuleListResponseDto } from "../../dto/slot.dto";
 import {
   UserRegisterRequestDto,
@@ -48,6 +48,9 @@ export interface IUserService {
     limit: number,
     barberId: string
   ): Promise<{ response: SlotRuleListResponseDto }>;
+  fetchBarberDetailsById(
+    barberId: string
+  ): Promise<{ barberDetailsData: BarberProfileDto }>;
 
   getUserProfileById(userId: string): Promise<{ response: UserProfileDto }>;
   updateUserProfile(
