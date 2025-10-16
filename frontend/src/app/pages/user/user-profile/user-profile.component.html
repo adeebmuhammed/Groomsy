@@ -1,7 +1,12 @@
 <app-user-header></app-user-header>
 
 <div class="user-profile-container">
-  <app-profile [profile]="userProfile" (click)="onEditProfile()"></app-profile>
+  <app-profile
+  [profile]="userProfile"
+  (edit)="onEditProfile()"
+  (uploadOrUpdate)="updateProfilePicture($event)"
+></app-profile>
+
 </div>
 
 <app-edit-profile

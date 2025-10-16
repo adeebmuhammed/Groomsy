@@ -27,6 +27,9 @@ import { SlotMapper } from "../mappers/slot.mapper";
 import { MessageResponseDto } from "../dto/base.dto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
+import { UploadedFile } from "express-fileupload";
+import { putObject } from "../utils/s3.operataions";
+import { v4 } from "uuid";
 
 @injectable()
 export class UserService implements IUserService {
@@ -406,4 +409,34 @@ export class UserService implements IUserService {
       ),
     };
   };
+
+  updateUserProfilePicture = async (userId: string, file: UploadedFile): Promise<{ profilePictureUpdation: MessageResponseDto; }> => {
+    const fileName = "images/"+v4();
+    const user = await this._userRepo.findById(userId)
+    if (!user) {
+      throw new Error("uesr not found")
+    }
+
+    const { url,key } = await putObject(file,fileName)
+
+    if (!url || !key) {
+      throw new Error("profile picture is not uploaded")
+    }
+
+    const updated = await this._userRepo.update(userId,{
+      profilePicUrl: url,
+      profilePicKey: key
+    });
+    if (!updated) {
+      throw new Error("profile picture updation failed")
+    }
+
+    const profilePictureUpdation = UserMapper.toMessageResponse(
+      "Profile Picture Updated successfully"
+    );
+
+    return {
+      profilePictureUpdation
+    };
+  }
 }

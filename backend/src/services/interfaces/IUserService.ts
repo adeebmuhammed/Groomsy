@@ -3,6 +3,7 @@ import { BarberDto } from "../../dto/barber.dto";
 import { SlotResponseDto, SlotRuleListResponseDto } from "../../dto/slot.dto";
 import { UserRegisterRequestDto,UserLoginResponseDto, UserProfileDto, UserEditProfileDto } from "../../dto/user.dto";
 import { MessageResponseDto } from "../../dto/base.dto";
+import fileUpload from "express-fileupload";
 
 export interface IUserService{
     registerUser( userData:UserRegisterRequestDto ): Promise<{ response:MessageResponseDto }>;
@@ -18,4 +19,5 @@ export interface IUserService{
 
     getUserProfileById(userId: string): Promise<{ response: UserProfileDto}>
     updateUserProfile(userId: string, data: UserEditProfileDto): Promise<{ response: MessageResponseDto}>
+    updateUserProfilePicture(userId: string, file: fileUpload.UploadedFile): Promise<{ profilePictureUpdation: MessageResponseDto}>
 }

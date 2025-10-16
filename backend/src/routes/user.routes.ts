@@ -11,6 +11,7 @@ import { ISlotController } from "../controllers/interfaces/ISlotController";
 import { IServiceController } from "../controllers/interfaces/IServiceController";
 import { IBarberUnavailabilityController } from "../controllers/interfaces/IBarberUnavailabilityController";
 import { IReviewController } from "../controllers/interfaces/IReviewController";
+import fileUpload from "express-fileupload";
 
 const userRoutes = Router()
 const userAuth = authMiddleware(["user"])
@@ -77,7 +78,8 @@ userRoutes
 .delete("/review/:id",userAuth,isBlockedMiddleware,reviewController.delete)
 
 userRoutes
-.get("/profile/:id",userController.getUserProfileById)
-.put("/profile/:id",userController.updateUserProfile)
+.get("/profile/:id",userAuth,userController.getUserProfileById)
+.put("/profile/:id",userAuth,userController.updateUserProfile)
+.patch("/profile/update-profile-picture/:id",fileUpload(),userController.updateProfilePicture)
 
 export default userRoutes;

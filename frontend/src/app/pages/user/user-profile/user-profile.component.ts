@@ -87,4 +87,22 @@ export class UserProfileComponent implements OnInit {
         });
     });
   }
+
+  updateProfilePicture(file: File){
+    this.authService.userId$.pipe(take(1)).subscribe((id)=>{
+      if (!id) {
+        return;
+      }
+
+      this.userService.updateProfilePicture(id,file).pipe(take(1)).subscribe({
+        next: (res)=>{
+          Swal.fire("Success", res.message || "Profile Picture Updated Successfully", "success")
+        },
+        error: (err)=>{
+          console.error(err)
+          Swal.fire("Error", err.error.message || "Profile Picture Updation Failed", "error")
+        }
+      })
+    })
+  }
 }

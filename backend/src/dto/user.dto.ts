@@ -20,6 +20,8 @@ export class UserProfileDto{
   name!: string;
   email!: string;
   phone?: string;
+  profilePicUrl?: string | null;
+  profilePicKey?: string | null;
 }
 
 export class UserEditProfileDto{

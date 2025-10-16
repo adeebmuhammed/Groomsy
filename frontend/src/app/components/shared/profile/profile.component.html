@@ -1,6 +1,11 @@
 <div class="profile-card">
   <div class="profile-header">
-    <img src="default.png" alt="Profile Picture" class="profile-image" />
+    <img
+      [src]="profile.profilePicUrl || 'default.png'"
+      alt="Profile Picture"
+      class="profile-image"
+    />
+
     <div class="profile-info">
       <h2>{{ profile.name }}</h2>
       <p>{{ profile.email }}</p>
@@ -8,7 +13,64 @@
     </div>
   </div>
 
-  <div class="profile-actions">
-    <button class="btn-edit" (click)="onEditClick()">Edit Profile</button>
+  <div class="profile-actions mt-3 d-flex justify-content-center flex-wrap gap-2">
+    <button class="btn btn-primary" (click)="onEditClick()">Edit Profile</button>
+
+    <!-- Upload / Update Buttons -->
+    <button
+      *ngIf="!profile.profilePicUrl"
+      class="btn btn-success"
+      (click)="openUploadModal('upload')"
+    >
+      Upload Profile Picture
+    </button>
+
+    <div *ngIf="profile.profilePicUrl" class="d-flex gap-2">
+      <button class="btn btn-warning" (click)="openUploadModal('update')">
+        Update Profile Picture
+      </button>
+      <button class="btn btn-danger" (click)="onDeleteClick()">Delete Picture</button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload / Update Modal -->
+<div
+  class="modal fade"
+  id="uploadModal"
+  tabindex="-1"
+  aria-labelledby="uploadModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadModalLabel">
+          {{ modalMode === 'upload' ? 'Upload' : 'Update' }} Profile Picture
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <input
+          type="file"
+          class="form-control mb-3"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+        />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="!selectedFile"
+          (click)="onSubmitUpload()"
+        >
+          {{ modalMode === 'upload' ? 'Upload' : 'Update' }}
+        </button>
+      </div>
+    </div>
   </div>
 </div>

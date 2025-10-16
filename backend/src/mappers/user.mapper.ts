@@ -45,6 +45,8 @@ export class UserMapper{
       name: user.name,
       email: user.email,
       phone: user.phone,
+      profilePicUrl: user.profilePicUrl,
+      profilePicKey: user.profilePicKey
     };
   }
 }
