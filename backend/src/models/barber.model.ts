@@ -17,6 +17,8 @@ export interface IBarber extends Document {
     city?: string;
     pincode?: string;
   };
+  profilePicUrl?: string | null;
+  profilePicKey?: string | null;
 }
 
 const BarberSchema: Schema = new Schema(
@@ -44,6 +46,8 @@ const BarberSchema: Schema = new Schema(
       city: { type: String, trim: true },
       pincode: { type: String, trim: true },
     },
+    profilePicUrl: { type: String, default: null },
+    profilePicKey: { type: String, default: null }
   },
   { timestamps: true }
 );

@@ -8,6 +8,8 @@ import {
 } from "../utils/jwt.generator";
 import { injectable, inject } from "inversify";
 import { TYPES } from "../config/types";
+import fileUpload from "express-fileupload";
+import { use } from "passport";
 
 @injectable()
 export class UserController implements IUserController {
@@ -365,4 +367,56 @@ export class UserController implements IUserController {
       });
     }
   };
+
+  updateProfilePicture = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.params["id"]
+      if (!req.files || !req.files.file) {
+        res.status(STATUS_CODES.BAD_REQUEST).json({ error: "No file uploaded" });
+        return;
+      }
+      const file = req.files.file as fileUpload.UploadedFile;
+
+      const { profilePictureUpdation } = await this._userService.updateUserProfilePicture(userId,file)
+      let status;
+      if (profilePictureUpdation) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.INTERNAL_SERVER_ERROR
+      }
+
+      res.status(status).json(profilePictureUpdation)
+    } catch (error) {
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to Update User Profile Picture",
+      });
+    }
+  };
+
+  deleteProfilePicture = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = req.params["id"]
+
+      const { profilePictureDeletion } = await this._userService.deleteUserProfilePicture(userId)
+
+      let status;
+      if (profilePictureDeletion) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.INTERNAL_SERVER_ERROR
+      }
+
+      res.status(status).json(profilePictureDeletion)
+    } catch (error) {
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to Delete User Profile Picture",
+      });
+    }
+  }
 }

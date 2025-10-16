@@ -13,16 +13,19 @@
         <div class="dashboard-content">
           <div class="admin-sign-in">Barber Profile</div>
 
-          <!-- Profile Component -->
-          <app-profile
-            [profile]="barberProfile"
-            (click)="onEditProfile()"
-          ></app-profile>
+          <div class="user-profile-container">
+            <app-profile
+              [profile]="barberProfile"
+              (edit)="onEditProfile()"
+              (uploadOrUpdate)="updateProfilePicture($event)"
+              (deletePic)="deleteProfilePicture()"
+            ></app-profile>
 
-          <app-address
-            [address]="barberProfile.address || {}"
-            (editAddress)="onEditAddress()"
-          ></app-address>
+            <app-address
+              [address]="barberProfile.address || {}"
+              (editAddress)="onEditAddress()"
+            ></app-address>
+          </div>
         </div>
       </div>
     </div>
@@ -35,10 +38,10 @@
     ></app-edit-profile>
 
     <app-address-form
-    *ngIf="showEditAddressModal"
-    [address]="barberProfile.address"
-    (save)="updateBarberAddress($event)"
-    (close)="showEditAddressModal = false"
+      *ngIf="showEditAddressModal"
+      [address]="barberProfile.address"
+      (save)="updateBarberAddress($event)"
+      (close)="showEditAddressModal = false"
     ></app-address-form>
 
     <!-- Footer -->

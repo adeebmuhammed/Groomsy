@@ -15,4 +15,6 @@ export interface IUserController{
 
     getUserProfileById(req: Request, res: Response): Promise<void>;
     updateUserProfile(req: Request, res: Response): Promise<void>;
+    updateProfilePicture(req: Request, res: Response): Promise<void>;
+    deleteProfilePicture(req: Request, res: Response): Promise<void>;
 }

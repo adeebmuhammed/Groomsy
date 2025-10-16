@@ -1,3 +1,4 @@
+import fileUpload from "express-fileupload";
 import { ListResponseDto, UserDto } from "../../dto/admin.dto";
 import {
   BarberRegisterRequestDto,
@@ -58,5 +59,12 @@ export interface IBarberService {
     barberId: string,
     filter: DASHBOARDFILTERS,
     type: "bookings" | "revenue"
-  ): Promise<{dashboardStats: BarberDashboardStatsDto}>
+  ): Promise<{ dashboardStats: BarberDashboardStatsDto }>;
+  updateBarberProfilePicture(
+    barberId: string,
+    file: fileUpload.UploadedFile
+  ): Promise<{ profilePictureUpdation: MessageResponseDto }>;
+  deleteBarberProfilePicture(
+    barberId: string
+  ): Promise<{ profilePictureDeletion: MessageResponseDto }>;
 }

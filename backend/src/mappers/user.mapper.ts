@@ -1,8 +1,7 @@
 import { IUser } from "../models/user.model";
 import { UserLoginResponseDto, UserProfileDto } from "../dto/user.dto";
 import { MessageResponseDto } from "../dto/base.dto";
-import { BarberDto, UserDto } from "../dto/admin.dto";
-import { IBarber } from "../models/barber.model";
+import { UserDto } from "../dto/admin.dto";
 
 export class UserMapper{
     static toLoginResponse(
@@ -45,6 +44,8 @@ export class UserMapper{
       name: user.name,
       email: user.email,
       phone: user.phone,
+      profilePicUrl: user.profilePicUrl,
+      profilePicKey: user.profilePicKey
     };
   }
 }

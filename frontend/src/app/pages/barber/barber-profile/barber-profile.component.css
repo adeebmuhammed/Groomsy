@@ -72,6 +72,14 @@ app-barber-footer {
   margin-top: auto; /* keep footer at bottom */
 }
 
+.user-profile-container {
+  flex: 1; /* pushes footer to bottom */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .barber-main-content {

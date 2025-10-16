@@ -23,6 +23,8 @@ export class BarberDto {
   phone?: string;
   district!: string;
   status!: string
+  profilePicUrl?: string | null;
+  profilePicKey?: string | null;
 }
 
 export class updateAddressDto {
@@ -43,6 +45,8 @@ export class BarberProfileDto{
     pincode?: string;
     district?: string;
   }
+  profilePicUrl?: string | null;
+  profilePicKey?: string | null;
 }
 
 export class UpdateBarberProfileDto{

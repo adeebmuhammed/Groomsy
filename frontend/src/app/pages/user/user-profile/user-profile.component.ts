@@ -87,4 +87,63 @@ export class UserProfileComponent implements OnInit {
         });
     });
   }
+
+  updateProfilePicture(file: File) {
+    this.authService.userId$.pipe(take(1)).subscribe((id) => {
+      if (!id) {
+        return;
+      }
+
+      this.userService
+        .updateProfilePicture(id, file)
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            Swal.fire(
+              'Success',
+              res.message || 'Profile Picture Updated Successfully',
+              'success'
+            );
+            this.fetchProfile();
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire(
+              'Error',
+              err.error.message || 'Profile Picture Updation Failed',
+              'error'
+            );
+          },
+        });
+    });
+  }
+
+  deleteProfilePicture() {
+    this.authService.userId$.pipe(take(1)).subscribe((id) => {
+      if (!id) return;
+
+      this.userService
+        .deleteProfilePicture(id)
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            this.userProfile.profilePicUrl = null;
+            this.userProfile.profilePicKey = null;
+            Swal.fire(
+              'Success',
+              res.message || 'Profile Picture Deleted Successfully',
+              'success'
+            );
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire(
+              'Error',
+              err.error.message || 'Profile Picture Deletion Failed',
+              'error'
+            );
+          },
+        });
+    });
+  }
 }

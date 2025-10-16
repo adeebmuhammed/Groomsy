@@ -87,4 +87,26 @@ export class UserService {
       body
     );
   }
+
+  updateProfilePicture(
+    userId: string,
+    file: File
+  ): Observable<IMessageResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.patch<IMessageResponse>(
+      `${environment.apiBaseUrl}/user/profile/update-profile-picture/${userId}`,
+      formData
+    );
+  }
+
+  deleteProfilePicture(
+    userId: string,
+  ): Observable<IMessageResponse> {
+
+    return this.http.delete<IMessageResponse>(
+      `${environment.apiBaseUrl}/user/profile/delete-profile-picture/${userId}`
+    );
+  }
 }

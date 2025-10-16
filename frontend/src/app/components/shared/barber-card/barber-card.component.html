@@ -1,7 +1,7 @@
 
 <div class="barber-card">
   <!-- Barber Image -->
-  <img src="default.png" alt="Barber Photo" class="barber-image" />
+  <img [src]="barber.profilePicUrl || 'default.png'" alt="Barber Photo" class="barber-image" />
 
   <!-- Heart Icon (Favorite Button) -->
   <button class="favorite-btn" (click)="favoriteToggle.emit()">

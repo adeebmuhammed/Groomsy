@@ -38,6 +38,8 @@ export class UserProfileDto {
   name!: string;
   email!: string;
   phone?: string;
+  profilePicUrl?: string | null;
+  profilePicKey?: string | null;
 }
 
 export class Profile {
@@ -45,6 +47,8 @@ export class Profile {
   name!: string;
   email!: string;
   phone?: string;
+  profilePicUrl?: string | null;
+  profilePicKey?: string | null;
 }
 
 export class EditProfile {
@@ -94,6 +98,8 @@ export class BarberProfileDto {
     pincode?: string;
     district?: string;
   };
+  profilePicUrl?: string | null;
+  profilePicKey?: string | null;
 }
 
 export interface IVerifyOtpResponse {
@@ -151,6 +157,8 @@ export interface BarberDto {
   email: string;
   district: string;
   status: string;
+  profilePicUrl?: string | null;
+  profilePicKey?: string | null;
 }
 export interface CouponResponseDto {
   id: string;

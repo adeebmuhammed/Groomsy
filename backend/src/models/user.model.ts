@@ -12,6 +12,8 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
   isVerified: boolean;
+  profilePicUrl?: string | null;
+  profilePicKey?: string | null;
 }
 
 const UserSchema: Schema = new Schema(
@@ -35,6 +37,8 @@ const UserSchema: Schema = new Schema(
     googleId: { type: String, default: null },
     otp: { type: String, default: null },
     isVerified: { type: Boolean, default: false },
+    profilePicUrl: { type: String, default: null },
+    profilePicKey: { type: String, default: null }
   },
   { timestamps: true }
 );

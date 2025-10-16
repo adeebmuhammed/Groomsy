@@ -27,6 +27,10 @@ import { SlotMapper } from "../mappers/slot.mapper";
 import { MessageResponseDto } from "../dto/base.dto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
+import { UploadedFile } from "express-fileupload";
+import { deleteObject, putObject } from "../utils/s3.operataions";
+import { v4 } from "uuid";
+import { BarberMapper } from "../mappers/barber.mapper";
 
 @injectable()
 export class UserService implements IUserService {
@@ -305,7 +309,7 @@ export class UserService implements IUserService {
       throw new Error("barbers not found");
     }
     const response: ListResponseDto<BarberDto> = {
-      data: AdminMapper.toBarberDtoArray(barbers),
+      data: BarberMapper.toBarberDtoArray(barbers),
       message: "Barbers fetched successfully",
       pagination: {
         currentPage: page,
@@ -404,6 +408,73 @@ export class UserService implements IUserService {
       response: UserMapper.toMessageResponse(
         "Updated User Profile Successfully"
       ),
+    };
+  };
+
+  updateUserProfilePicture = async (
+    userId: string,
+    file: UploadedFile
+  ): Promise<{ profilePictureUpdation: MessageResponseDto }> => {
+    const fileName = "images/" + v4();
+    const user = await this._userRepo.findById(userId);
+    if (!user) {
+      throw new Error("uesr not found");
+    }
+
+    const { url, key } = await putObject(file, fileName);
+
+    if (!url || !key) {
+      throw new Error("profile picture is not uploaded");
+    }
+
+    const updated = await this._userRepo.update(userId, {
+      profilePicUrl: url,
+      profilePicKey: key,
+    });
+    if (!updated) {
+      throw new Error("profile picture updation failed");
+    }
+
+    const profilePictureUpdation = UserMapper.toMessageResponse(
+      "Profile Picture Updated successfully"
+    );
+
+    return {
+      profilePictureUpdation,
+    };
+  };
+
+  deleteUserProfilePicture = async (
+    userId: string
+  ): Promise<{ profilePictureDeletion: MessageResponseDto }> => {
+    const user = await this._userRepo.findById(userId);
+    if (!user) {
+      throw new Error("user not found");
+    }
+
+    if (!user.profilePicKey) {
+      throw new Error("profile picture doesn't exists");
+    }
+
+    const result = await deleteObject(user.profilePicKey);
+    if (result !== "success") {
+      throw new Error("profile picture deletion failed");
+    }
+
+    const updated = await this._userRepo.update(userId, {
+      profilePicUrl: null,
+      profilePicKey: null,
+    });
+    if (!updated) {
+      throw new Error("profile picture deletion failed");
+    }
+
+    const profilePictureDeletion = UserMapper.toMessageResponse(
+      "Profile Picture Deleted successfully"
+    );
+
+    return {
+      profilePictureDeletion,
     };
   };
 }
