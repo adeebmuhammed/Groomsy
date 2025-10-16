@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user/user.service';
 import {
   BarberDto,
+  BarberProfileDto,
   BarberUnavailabilityDto,
   BookingCreateRequestDto,
   BookingResponseDto,
@@ -42,7 +43,7 @@ import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
   styleUrl: './user-barber-details.component.css',
 })
 export class UserBarberDetailsComponent implements OnInit {
-  barber: BarberDto | null = null;
+  barber: BarberProfileDto | null = null;
   slots: SlotDto[] = [];
   barberId = '';
   selectedDate = '';
@@ -88,12 +89,11 @@ export class UserBarberDetailsComponent implements OnInit {
     this.barberId = this.activatedRoute.snapshot.paramMap.get('id') || '';
     this.todayDate = new Date().toISOString().split('T')[0];
     forkJoin({
-      barbers: this.userService.fetchBarbers(),
+      barber: this.userService.fetchBarberDetailsById(this.barberId),
       services: this.serviceService.fetch('user', '', 1, 100),
     }).subscribe({
-      next: ({ barbers, services }) => {
-        const found = barbers.data.find((b) => b.id === this.barberId);
-        this.barber = found || null;
+      next: ({ barber, services }) => {
+        this.barber = barber || null;
 
         this.services = services.data;
       },
@@ -101,16 +101,6 @@ export class UserBarberDetailsComponent implements OnInit {
         console.error('Error fetching data:', err);
       },
     });
-  }
-
-  fetchBarberDetails() {
-    this.userService
-      .fetchBarbers()
-      .pipe(take(1))
-      .subscribe((res) => {
-        const found = res.data.find((b) => b.id === this.barberId);
-        this.barber = found || null;
-      });
   }
 
   fetchSlots() {

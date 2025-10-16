@@ -144,7 +144,10 @@
               <div>
                 <h5 class="mb-1">{{ plan.name }}</h5>
                 <p class="mb-1 text-muted">
-                  {{ plan.description || "No description available" }}
+                  Description: {{ plan.description || "No description available" }}
+                </p>
+                <p class="mb-1 text-muted">
+                  Features: {{ plan.features || "No Features available" }}
                 </p>
                 <small class="text-secondary">
                   Duration: {{ plan.duration }} {{ plan.durationUnit }} |

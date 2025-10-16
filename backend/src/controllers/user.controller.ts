@@ -315,6 +315,33 @@ export class UserController implements IUserController {
     }
   };
 
+  fetchBarberDetailsById = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const barberId = req.params["id"];
+
+      const { barberDetailsData } =
+        await this._userService.fetchBarberDetailsById(barberId);
+
+      let status;
+      if (barberDetailsData) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.INTERNAL_SERVER_ERROR;
+      }
+
+      res.status(status).json(barberDetailsData);
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "Failed to barber details",
+      });
+    }
+  };
+
   getUserProfileById = async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = req.params["id"];
@@ -370,22 +397,25 @@ export class UserController implements IUserController {
 
   updateProfilePicture = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.params["id"]
+      const userId = req.params["id"];
       if (!req.files || !req.files.file) {
-        res.status(STATUS_CODES.BAD_REQUEST).json({ error: "No file uploaded" });
+        res
+          .status(STATUS_CODES.BAD_REQUEST)
+          .json({ error: "No file uploaded" });
         return;
       }
       const file = req.files.file as fileUpload.UploadedFile;
 
-      const { profilePictureUpdation } = await this._userService.updateUserProfilePicture(userId,file)
+      const { profilePictureUpdation } =
+        await this._userService.updateUserProfilePicture(userId, file);
       let status;
       if (profilePictureUpdation) {
-        status = STATUS_CODES.OK
-      }else{
-        status = STATUS_CODES.INTERNAL_SERVER_ERROR
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.INTERNAL_SERVER_ERROR;
       }
 
-      res.status(status).json(profilePictureUpdation)
+      res.status(status).json(profilePictureUpdation);
     } catch (error) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
         error:
@@ -398,18 +428,19 @@ export class UserController implements IUserController {
 
   deleteProfilePicture = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.params["id"]
+      const userId = req.params["id"];
 
-      const { profilePictureDeletion } = await this._userService.deleteUserProfilePicture(userId)
+      const { profilePictureDeletion } =
+        await this._userService.deleteUserProfilePicture(userId);
 
       let status;
       if (profilePictureDeletion) {
-        status = STATUS_CODES.OK
-      }else{
-        status = STATUS_CODES.INTERNAL_SERVER_ERROR
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.INTERNAL_SERVER_ERROR;
       }
 
-      res.status(status).json(profilePictureDeletion)
+      res.status(status).json(profilePictureDeletion);
     } catch (error) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
         error:
@@ -418,5 +449,5 @@ export class UserController implements IUserController {
             : "Failed to Delete User Profile Picture",
       });
     }
-  }
+  };
 }

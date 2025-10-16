@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   BarberDto,
+  BarberProfileDto,
   EditProfile,
   IMessageResponse,
   PaginatedResponse,
@@ -38,6 +39,15 @@ export class UserService {
       {
         params,
       }
+    );
+  }
+
+  fetchBarberDetailsById(
+    barberId: string
+  ): Observable<BarberProfileDto> {
+
+    return this.http.get<BarberProfileDto>(
+      `${environment.apiBaseUrl}/user/get-barber/${barberId}`,
     );
   }
 
