@@ -128,4 +128,63 @@ export class BarberProfileComponent implements OnInit {
         });
     });
   }
+
+  updateProfilePicture(file: File) {
+    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
+      if (!id) {
+        return;
+      }
+
+      this.barberService
+        .updateProfilePicture(id, file)
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            Swal.fire(
+              'Success',
+              res.message || 'Profile Picture Updated Successfully',
+              'success'
+            );
+            this.fetchBarberProfile();
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire(
+              'Error',
+              err.error.message || 'Profile Picture Updation Failed',
+              'error'
+            );
+          },
+        });
+    });
+  }
+
+  deleteProfilePicture() {
+    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
+      if (!id) return;
+
+      this.barberService
+        .deleteProfilePicture(id)
+        .pipe(take(1))
+        .subscribe({
+          next: (res) => {
+            this.barberProfile.profilePicUrl = null;
+            this.barberProfile.profilePicKey = null;
+            Swal.fire(
+              'Success',
+              res.message || 'Profile Picture Deleted Successfully',
+              'success'
+            );
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire(
+              'Error',
+              err.error.message || 'Profile Picture Deletion Failed',
+              'error'
+            );
+          },
+        });
+    });
+  }
 }

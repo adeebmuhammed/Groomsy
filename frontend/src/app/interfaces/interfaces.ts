@@ -98,6 +98,8 @@ export class BarberProfileDto {
     pincode?: string;
     district?: string;
   };
+  profilePicUrl?: string | null;
+  profilePicKey?: string | null;
 }
 
 export interface IVerifyOtpResponse {
@@ -155,6 +157,8 @@ export interface BarberDto {
   email: string;
   district: string;
   status: string;
+  profilePicUrl?: string | null;
+  profilePicKey?: string | null;
 }
 export interface CouponResponseDto {
   id: string;

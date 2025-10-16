@@ -74,4 +74,26 @@ export class BarberService {
         { params }
       );
     }
+
+    updateProfilePicture(
+    barberId: string,
+    file: File
+  ): Observable<IMessageResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.patch<IMessageResponse>(
+      `${environment.apiBaseUrl}/barber/profile/update-profile-picture/${barberId}`,
+      formData
+    );
+  }
+
+  deleteProfilePicture(
+    barberId: string,
+  ): Observable<IMessageResponse> {
+
+    return this.http.delete<IMessageResponse>(
+      `${environment.apiBaseUrl}/barber/profile/delete-profile-picture/${barberId}`
+    );
+  }
 }

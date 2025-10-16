@@ -1,9 +1,13 @@
 import { IBarber } from "../models/barber.model";
-import { BarberLoginResponseDto,BarberDto, BarberProfileDto } from "../dto/barber.dto";
+import {
+  BarberLoginResponseDto,
+  BarberDto,
+  BarberProfileDto,
+} from "../dto/barber.dto";
 import { MessageResponseDto } from "../dto/base.dto";
 
-export class BarberMapper{
-    static toLoginResponse(
+export class BarberMapper {
+  static toLoginResponse(
     barber: IBarber,
     message: string,
     token: string
@@ -20,29 +24,27 @@ export class BarberMapper{
     };
   }
 
-  static toBarberDto(
-    barber: IBarber,
-  ): BarberDto {
+  static toBarberDto(barber: IBarber): BarberDto {
     return {
       id: barber._id.toString(),
       name: barber.name,
       phone: barber.phone,
       district: barber.district,
       status: barber.status,
+      profilePicUrl: barber.profilePicUrl,
+      profilePicKey: barber.profilePicKey
     };
   }
 
-  static toBarberDtoArray(barbers: IBarber[]):BarberDto[]{
-    return barbers.map(barber => this.toBarberDto(barber))
+  static toBarberDtoArray(barbers: IBarber[]): BarberDto[] {
+    return barbers.map((barber) => this.toBarberDto(barber));
   }
 
   static toMessageResponse(message: string): MessageResponseDto {
     return { message };
   }
 
-  static toBarberProfileDto(
-    barber: IBarber,
-  ): BarberProfileDto {
+  static toBarberProfileDto(barber: IBarber): BarberProfileDto {
     return {
       id: barber._id.toString(),
       name: barber.name,
@@ -52,8 +54,10 @@ export class BarberMapper{
         district: barber.district || "",
         city: barber.address?.city || "",
         street: barber.address?.street || "",
-        pincode: barber.address?.pincode || ""
-      }
+        pincode: barber.address?.pincode || "",
+      },
+      profilePicUrl: barber.profilePicUrl,
+      profilePicKey: barber.profilePicKey,
     };
   }
 }

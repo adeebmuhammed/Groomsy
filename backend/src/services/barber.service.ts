@@ -29,6 +29,9 @@ import { BookingMapper } from "../mappers/booking.mapper";
 import { ListResponseDto, UserDto } from "../dto/admin.dto";
 import { IUserRepository } from "../repositories/interfaces/IUserRepository";
 import { UserMapper } from "../mappers/user.mapper";
+import { UploadedFile } from "express-fileupload";
+import { v4 } from "uuid";
+import { deleteObject, putObject } from "../utils/s3.operataions";
 
 @injectable()
 export class BarberService implements IBarberService {
@@ -347,37 +350,37 @@ export class BarberService implements IBarberService {
   };
 
   fetchUsers = async (
-      search: string,
-      page: number,
-      limit: number
-    ): Promise<{ response: ListResponseDto<UserDto> }> => {
-      const { users, totalCount } = await this._userRepo.findBySearchTerm(
-        search,
-        page,
-        limit
-      );
-  
-      const response: ListResponseDto<UserDto> = {
-        data: UserMapper.toUserDtoArray(users),
-        message: "Users fetched successfully",
-        pagination: {
-          currentPage: page,
-          totalPages: Math.ceil(totalCount / limit),
-          totalItems: totalCount,
-          itemsPerPage: limit,
-        },
-      };
-  
-      return {
-        response,
-      };
+    search: string,
+    page: number,
+    limit: number
+  ): Promise<{ response: ListResponseDto<UserDto> }> => {
+    const { users, totalCount } = await this._userRepo.findBySearchTerm(
+      search,
+      page,
+      limit
+    );
+
+    const response: ListResponseDto<UserDto> = {
+      data: UserMapper.toUserDtoArray(users),
+      message: "Users fetched successfully",
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalCount / limit),
+        totalItems: totalCount,
+        itemsPerPage: limit,
+      },
     };
+
+    return {
+      response,
+    };
+  };
 
   getBookingStats = async (
     barberId: string,
     filter: DASHBOARDFILTERS,
     type: "bookings" | "revenue"
-  ): Promise<{dashboardStats: BarberDashboardStatsDto}> => {
+  ): Promise<{ dashboardStats: BarberDashboardStatsDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error("Barber Not Found");
@@ -389,5 +392,72 @@ export class BarberService implements IBarberService {
     );
 
     return { dashboardStats };
+  };
+
+  updateBarberProfilePicture = async (
+    barberId: string,
+    file: UploadedFile
+  ): Promise<{ profilePictureUpdation: MessageResponseDto }> => {
+    const fileName = "images/" + v4();
+    const barber = await this._barberRepo.findById(barberId);
+    if (!barber) {
+      throw new Error("uesr not found");
+    }
+
+    const { url, key } = await putObject(file, fileName);
+
+    if (!url || !key) {
+      throw new Error("profile picture is not uploaded");
+    }
+
+    const updated = await this._barberRepo.update(barberId, {
+      profilePicUrl: url,
+      profilePicKey: key,
+    });
+    if (!updated) {
+      throw new Error("profile picture updation failed");
+    }
+
+    const profilePictureUpdation = BarberMapper.toMessageResponse(
+      "Profile Picture Updated successfully"
+    );
+
+    return {
+      profilePictureUpdation,
+    };
+  };
+
+  deleteBarberProfilePicture = async (
+    barberId: string
+  ): Promise<{ profilePictureDeletion: MessageResponseDto }> => {
+    const barber = await this._barberRepo.findById(barberId);
+    if (!barber) {
+      throw new Error("barber not found");
+    }
+
+    if (!barber.profilePicKey) {
+      throw new Error("profile picture doesn't exists");
+    }
+
+    const result = await deleteObject(barber.profilePicKey);
+    if (result !== "success") {
+      throw new Error("profile picture deletion failed");
+    }
+
+    const updated = await this._barberRepo.update(barberId, {
+      profilePicUrl: null,
+      profilePicKey: null,
+    });
+    if (!updated) {
+      throw new Error("profile picture deletion failed");
+    }
+
+    const profilePictureDeletion = BarberMapper.toMessageResponse(
+      "Profile Picture Deleted successfully"
+    );
+
+    return {
+      profilePictureDeletion,
+    };
   };
 }

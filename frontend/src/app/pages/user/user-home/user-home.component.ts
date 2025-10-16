@@ -8,7 +8,7 @@ import { BarberCardComponent } from '../../../components/shared/barber-card/barb
 import { Router, RouterModule } from '@angular/router';
 import { FavoritesService } from '../../../services/favorites/favorites.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { pipe, first, forkJoin, firstValueFrom, take } from 'rxjs';
+import { forkJoin, take } from 'rxjs';
 import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
 
 @Component({

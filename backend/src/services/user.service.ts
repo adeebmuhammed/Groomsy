@@ -30,6 +30,7 @@ import { TYPES } from "../config/types";
 import { UploadedFile } from "express-fileupload";
 import { deleteObject, putObject } from "../utils/s3.operataions";
 import { v4 } from "uuid";
+import { BarberMapper } from "../mappers/barber.mapper";
 
 @injectable()
 export class UserService implements IUserService {
@@ -308,7 +309,7 @@ export class UserService implements IUserService {
       throw new Error("barbers not found");
     }
     const response: ListResponseDto<BarberDto> = {
-      data: AdminMapper.toBarberDtoArray(barbers),
+      data: BarberMapper.toBarberDtoArray(barbers),
       message: "Barbers fetched successfully",
       pagination: {
         currentPage: page,

@@ -8,6 +8,7 @@ import {
 import { IBarberService } from "../services/interfaces/IBarberService";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
+import fileUpload from "express-fileupload";
 
 @injectable()
 export class BarberController implements IBarberController {
@@ -283,9 +284,9 @@ export class BarberController implements IBarberController {
       );
 
       if (response) {
-        status = STATUS_CODES.OK
-      }else{
-        status = STATUS_CODES.CONFLICT
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
       }
 
       res.status(status).json(response);
@@ -337,4 +338,59 @@ export class BarberController implements IBarberController {
       });
     }
   };
+
+  updateProfilePicture = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const barberId = req.params["id"];
+      if (!req.files || !req.files.file) {
+        res
+          .status(STATUS_CODES.BAD_REQUEST)
+          .json({ error: "No file uploaded" });
+        return;
+      }
+      const file = req.files.file as fileUpload.UploadedFile;
+
+      const { profilePictureUpdation } =
+        await this._barberService.updateBarberProfilePicture(barberId, file);
+      let status;
+      if (profilePictureUpdation) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.INTERNAL_SERVER_ERROR;
+      }
+
+      res.status(status).json(profilePictureUpdation);
+    } catch (error) {
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to Update Barber Profile Picture",
+      });
+    }
+  };
+
+  deleteProfilePicture = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const barberId = req.params["id"]
+
+      const { profilePictureDeletion } = await this._barberService.deleteBarberProfilePicture(barberId)
+
+      let status;
+      if (profilePictureDeletion) {
+        status = STATUS_CODES.OK
+      }else{
+        status = STATUS_CODES.INTERNAL_SERVER_ERROR
+      }
+
+      res.status(status).json(profilePictureDeletion)
+    } catch (error) {
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to Delete Barber Profile Picture",
+      });
+    }
+  }
 }

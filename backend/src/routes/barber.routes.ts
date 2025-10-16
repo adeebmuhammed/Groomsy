@@ -10,6 +10,7 @@ import { IBarberUnavailabilityController } from "../controllers/interfaces/IBarb
 import { ISubscriptionController } from "../controllers/interfaces/ISubscriptionController";
 import { ISubscriptionPlanController } from "../controllers/interfaces/ISubscriptionPlanController";
 import { IServiceController } from "../controllers/interfaces/IServiceController";
+import fileUpload from "express-fileupload";
 
 const barberRoutes = Router()
 const barberAuth = authMiddleware(["barber"])
@@ -60,6 +61,8 @@ barberRoutes
 .get("/profile/:id", barberAuth,barberController.getBarberProfileById)
 .patch("/profile/address/:id", barberAuth,barberController.updateBarberAddress)
 .put("/profile/:id", barberAuth,barberController.updateBarberProfile)
+.patch("/profile/update-profile-picture/:id",fileUpload(),barberController.updateProfilePicture)
+.delete("/profile/delete-profile-picture/:id",barberController.deleteProfilePicture)
 
 barberRoutes
 .get("/users",barberAuth,barberController.fetchUsers)

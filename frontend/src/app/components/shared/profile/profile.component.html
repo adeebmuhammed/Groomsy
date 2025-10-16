@@ -13,8 +13,12 @@
     </div>
   </div>
 
-  <div class="profile-actions mt-3 d-flex justify-content-center flex-wrap gap-2">
-    <button class="btn btn-primary" (click)="onEditClick()">Edit Profile</button>
+  <div
+    class="profile-actions mt-3 d-flex justify-content-center flex-wrap gap-2"
+  >
+    <button class="btn btn-primary" (click)="onEditClick()">
+      Edit Profile
+    </button>
 
     <!-- Upload / Update Buttons -->
     <button
@@ -29,7 +33,9 @@
       <button class="btn btn-warning" (click)="openUploadModal('update')">
         Update Profile Picture
       </button>
-      <button class="btn btn-danger" (click)="onDeleteClick()">Delete Picture</button>
+      <button class="btn btn-danger" (click)="onDeleteClick()">
+        Delete Picture
+      </button>
     </div>
   </div>
 </div>
@@ -46,9 +52,13 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="uploadModalLabel">
-          {{ modalMode === 'upload' ? 'Upload' : 'Update' }} Profile Picture
+          {{ modalMode === "upload" ? "Upload" : "Update" }} Profile Picture
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
       </div>
       <div class="modal-body text-center">
         <input
@@ -68,7 +78,7 @@
           [disabled]="!selectedFile"
           (click)="onSubmitUpload()"
         >
-          {{ modalMode === 'upload' ? 'Upload' : 'Update' }}
+          {{ modalMode === "upload" ? "Upload" : "Update" }}
         </button>
       </div>
     </div>
