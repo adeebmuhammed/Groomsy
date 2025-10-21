@@ -1,24 +1,22 @@
-import mongoose from "mongoose";
-import { BarberDto } from "../dto/barber.dto";
 import { FavoritesListResponseDto } from "../dto/favorites.dto";
 import { BarberMapper } from "../mappers/barber.mapper";
 import { IBarber } from "../models/barber.model";
-import { BarberRepository } from "../repositories/barber.repository";
-import { FavoritesRepository } from "../repositories/favorites.repository";
-import { UserRepository } from "../repositories/user.repository";
-import { MESSAGES, STATUS_CODES } from "../utils/constants";
+import { MESSAGES } from "../utils/constants";
 import { IFavoritesService } from "./interfaces/IFavoritesService";
 import { MessageResponseDto } from "../dto/base.dto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
+import { IUserRepository } from "../repositories/interfaces/IUserRepository";
+import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
+import { IFavoritesRepository } from "../repositories/interfaces/IFavoritesRepository";
 
 @injectable()
 export class FavoritesService implements IFavoritesService {
-  private _userRepo = new UserRepository();
-  private _barberRepo = new BarberRepository();
   constructor(
     @inject(TYPES.IFavoritesRepository)
-    private _favoritesRepo: FavoritesRepository
+    private _favoritesRepo: IFavoritesRepository,
+    @inject(TYPES.IUserRepository) private _userRepo: IUserRepository,
+    @inject(TYPES.IBarberRepository) private _barberRepo: IBarberRepository
   ) {}
 
   getFavoritesByUser = async (

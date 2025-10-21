@@ -20,7 +20,6 @@ import { BarberDto, BarberProfileDto } from "../dto/barber.dto";
 
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
 import { ListResponseDto } from "../dto/admin.dto";
-import { AdminMapper } from "../mappers/admin.mapper";
 import { ISlotRepository } from "../repositories/interfaces/ISlotRepository";
 import { SlotRuleListResponseDto } from "../dto/slot.dto";
 import { SlotMapper } from "../mappers/slot.mapper";
