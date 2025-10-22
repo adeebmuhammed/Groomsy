@@ -9,6 +9,7 @@ import {
 } from '../../interfaces/interfaces';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
+import { ROLES } from '../../constants/roles';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,7 @@ export class BookingService {
   private http: HttpClient = inject(HttpClient);
 
   fetchBookings(
-    role: 'user' | 'barber' | 'admin',
+    role: ROLES,
     id: string,
     page: number,
     limit: number
@@ -87,7 +88,7 @@ export class BookingService {
   }
 
   updateBookingStatus(
-    role: 'user' | 'barber' | 'admin',
+    role: ROLES,
     id: string,
     bookingStatus: string
   ): Observable<IMessageResponse> {
@@ -100,7 +101,7 @@ export class BookingService {
     );
   }
 
-  getBookingById(role: 'user' | 'barber' | 'admin', bookingId: string) {
+  getBookingById(role: ROLES, bookingId: string) {
     return this.http.get<BookingResponseDto>(
       `${environment.apiBaseUrl}/${role}/bookings-by-id/${bookingId}`
     );
@@ -111,7 +112,7 @@ export class BookingService {
     status: 'pending' | 'staged' | 'cancelled' | 'finished',
     page = 1,
     limit = 5,
-    role: 'user' | 'barber' | 'admin'
+    role: ROLES
   ): Observable<{ data: BookingResponseDto[]; totalCount: number }> {
     let params = new HttpParams()
       .set('status', status)

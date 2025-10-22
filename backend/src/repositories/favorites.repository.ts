@@ -1,4 +1,4 @@
-import mongoose, { UpdateResult } from "mongoose";
+import mongoose from "mongoose";
 import Favorites, { IFavorites } from "../models/favorites.model";
 import { BaseRepository } from "./base.repository";
 import { IFavoritesRepository } from "./interfaces/IFavoritesRepository";

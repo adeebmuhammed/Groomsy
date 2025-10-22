@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { Service } from '../../../interfaces/interfaces';
 import { ServiceService } from '../../../services/service/service.service';
 import { take } from 'rxjs';
+import { ROLES } from '../../../constants/roles';
 
 @Component({
   selector: 'app-admin-service',
@@ -50,7 +51,7 @@ export class AdminServiceComponent implements OnInit {
 
   loadServices(): void {
     this.serviceService
-      .fetch('admin', this.searchTerm, this.currentPage, this.itemsPerPage)
+      .fetch(ROLES.ADMIN, this.searchTerm, this.currentPage, this.itemsPerPage)
       .pipe(take(1))
       .subscribe({
         next: (response) => {

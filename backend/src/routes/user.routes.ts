@@ -12,9 +12,10 @@ import { IServiceController } from "../controllers/interfaces/IServiceController
 import { IBarberUnavailabilityController } from "../controllers/interfaces/IBarberUnavailabilityController";
 import { IReviewController } from "../controllers/interfaces/IReviewController";
 import fileUpload from "express-fileupload";
+import { ROLES } from "../utils/constants";
 
 const userRoutes = Router()
-const userAuth = authMiddleware(["user"])
+const userAuth = authMiddleware([ROLES.USER])
 
 const userController = container.get<IUserController>(TYPES.IUserController)
 const bookingController = container.get<IBookingController>(TYPES.IBookingController)

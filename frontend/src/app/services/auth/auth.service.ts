@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject,Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { IAdminLoginResponse, IBarberLoginResponse, IMessageResponse, IResendOtpResponse, IUserLoginResponse, IVerifyOtpResponse } from '../../interfaces/interfaces';
+import { ROLES } from '../../constants/roles';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class AuthService {
   private http: HttpClient = inject(HttpClient);
 
   // --- ADMIN subjects ---
-  private isAdminLoggedInSubject = new BehaviorSubject<boolean>(this.hasRoleToken('admin'));
+  private isAdminLoggedInSubject = new BehaviorSubject<boolean>(this.hasRoleToken(ROLES.ADMIN));
   private adminNameSubject = new BehaviorSubject<string | null>(localStorage.getItem('adminName'));
   private adminIdSubject = new BehaviorSubject<string | null>(localStorage.getItem('adminId'));
 
@@ -23,7 +24,7 @@ export class AuthService {
   adminId$ = this.adminIdSubject.asObservable();
 
   // --- USER subjects ---
-  private isUserLoggedInSubject = new BehaviorSubject<boolean>(this.hasRoleToken('user'));
+  private isUserLoggedInSubject = new BehaviorSubject<boolean>(this.hasRoleToken(ROLES.USER));
   private userNameSubject = new BehaviorSubject<string | null>(localStorage.getItem('userName'));
   private userIdSubject = new BehaviorSubject<string | null>(localStorage.getItem('userId'));
 
@@ -32,7 +33,7 @@ export class AuthService {
   userId$ = this.userIdSubject.asObservable();
 
   // --- BARBER subjects ---
-  private isBarberLoggedInSubject = new BehaviorSubject<boolean>(this.hasRoleToken('barber'))
+  private isBarberLoggedInSubject = new BehaviorSubject<boolean>(this.hasRoleToken(ROLES.BARBER))
   private barberNameSubject = new BehaviorSubject<string | null>(localStorage.getItem('barberName'))
   private barberIdSubject = new BehaviorSubject<string | null>(localStorage.getItem('barberId'))
 
@@ -45,20 +46,20 @@ export class AuthService {
   }
 
   // Update login state for roles
-  updateLoginState(role: 'admin' | 'user' | 'barber', isLoggedIn: boolean, name: string | null, id: string | null) {
+  updateLoginState(role: ROLES, isLoggedIn: boolean, name: string | null, id: string | null) {
     localStorage.setItem(`${role}Name`, name || '');
     localStorage.setItem(`${role}Id`, id || '');
     
     
-    if (role === 'admin') {
+    if (role === ROLES.ADMIN) {
       this.isAdminLoggedInSubject.next(isLoggedIn);
       this.adminNameSubject.next(name);
       this.adminIdSubject.next(id);
-    } else if (role === 'user') {
+    } else if (role === ROLES.USER) {
       this.isUserLoggedInSubject.next(isLoggedIn);
       this.userNameSubject.next(name);
       this.userIdSubject.next(id);
-    } else if (role === 'barber') {
+    } else if (role === ROLES.BARBER) {
       this.isBarberLoggedInSubject.next(isLoggedIn)
       this.barberNameSubject.next(name)
       this.barberIdSubject.next(id)
@@ -72,9 +73,9 @@ export class AuthService {
   return new Observable(observer => {
     this.http.post<IAdminLoginResponse>(`${this.API_URL}/admin/login`, credentials).subscribe({
       next: (res: any) => {
-        localStorage.setItem('role', 'admin');
+        localStorage.setItem('role', ROLES.ADMIN);
         localStorage.setItem('token',res.token)
-        this.updateLoginState('admin', true, res.user.name, res.user.Id);
+        this.updateLoginState(ROLES.ADMIN, true, res.user.name, res.user.Id);
 
         observer.next(res);
         observer.complete();
@@ -89,7 +90,7 @@ export class AuthService {
       this.http.post<{ message: string }>(`${this.API_URL}/admin/logout`, {}).subscribe({
         next: res => {
           localStorage.clear();
-          this.updateLoginState('admin', false, null, null);
+          this.updateLoginState(ROLES.ADMIN, false, null, null);
           observer.next(res);
           observer.complete();
         },
@@ -130,12 +131,12 @@ export class AuthService {
   return new Observable(observer => {
     this.http.post<{ message: string; user: IUserLoginResponse }>(`${this.API_URL}/user/login`, data).subscribe({
       next: (res: any) => {
-        localStorage.setItem('role', 'user');
+        localStorage.setItem('role', ROLES.USER);
         localStorage.setItem('token',res?.user?.token)
         const name = res.user?.name || '';
         const userId = res.user?.id || '';
 
-        this.updateLoginState('user', true, name, userId);
+        this.updateLoginState(ROLES.USER, true, name, userId);
 
         observer.next(res); // pass to component
         observer.complete();
@@ -159,7 +160,7 @@ export class AuthService {
       this.http.post<IMessageResponse>(`${this.API_URL}/user/logout`, {}).subscribe({
         next: res => {
           localStorage.clear();
-          this.updateLoginState('user', false, null, null);
+          this.updateLoginState(ROLES.USER, false, null, null);
           observer.next(res);
           observer.complete();
         },
@@ -201,9 +202,9 @@ export class AuthService {
     return new Observable(observer => {
       this.http.post<IBarberLoginResponse>(`${this.API_URL}/barber/login`, credentials).subscribe({
         next: (res: any) => {
-          localStorage.setItem('role', 'barber');
+          localStorage.setItem('role', ROLES.BARBER);
           localStorage.setItem('token',res?.token)
-          this.updateLoginState('barber', true, res.name, res.id);
+          this.updateLoginState(ROLES.BARBER, true, res.name, res.id);
           
           observer.next(res);
           observer.complete();
@@ -227,7 +228,7 @@ export class AuthService {
       this.http.post<IMessageResponse>(`${this.API_URL}/barber/logout`, {}).subscribe({
         next: res => {
           localStorage.clear();
-          this.updateLoginState('barber', false, null, null);
+          this.updateLoginState(ROLES.BARBER, false, null, null);
           observer.next(res);
           observer.complete();
         },

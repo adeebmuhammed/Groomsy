@@ -1,4 +1,4 @@
-import { Model, Document, ObjectId, FilterQuery } from "mongoose";
+import { Model, Document, FilterQuery } from "mongoose";
 import { IBaseRepository } from "./interfaces/IBaseRepository";
 
 export abstract class BaseRepository<T extends Document>

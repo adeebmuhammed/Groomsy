@@ -18,7 +18,7 @@ import { FormsModule } from '@angular/forms';
 export class AdminDashboardComponent implements OnInit {
   stats: DashboardStatsDto | null = null;
   selectedType: 'bookings' | 'revenue' = 'bookings';
-  selectedFilter: string = '1 Month';
+  selectedFilter = '1 Month';
 
   private adminService: AdminService = inject(AdminService);
 

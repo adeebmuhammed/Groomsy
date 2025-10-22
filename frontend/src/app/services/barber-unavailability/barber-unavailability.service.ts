@@ -6,6 +6,7 @@ import {
   BarberUnavailabilityDto,
   IMessageResponse,
 } from '../../interfaces/interfaces';
+import { ROLES } from '../../constants/roles';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class BarberUnavailabilityService {
 
   fetchBarberUnavailability(
     barberId: string,
-    role: 'user' | 'barber'
+    role: ROLES.USER | ROLES.BARBER
   ): Observable<BarberUnavailabilityDto> {
     return this.http.get<BarberUnavailabilityDto>(
       `${environment.apiBaseUrl}/${role}/barber-unavailability/${barberId}`

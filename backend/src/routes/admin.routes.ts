@@ -8,9 +8,10 @@ import { ICouponController } from "../controllers/interfaces/ICouponController";
 import { IOfferController } from "../controllers/interfaces/IOfferController";
 import { IServiceController } from "../controllers/interfaces/IServiceController";
 import { ISubscriptionPlanController } from "../controllers/interfaces/ISubscriptionPlanController";
+import { ROLES } from "../utils/constants";
 
 const adminRoutes = Router()
-const adminAuth = authMiddleware(["admin"])
+const adminAuth = authMiddleware([ROLES.ADMIN])
 
 const adminController = container.get<IAdminController>(TYPES.IAdminController)
 const bookingController = container.get<IBookingController>(TYPES.IBookingController)

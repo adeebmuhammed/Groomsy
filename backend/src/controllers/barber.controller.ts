@@ -1,8 +1,7 @@
-import { Request, response, Response } from "express";
+import { Request, Response } from "express";
 import { IBarberController } from "./interfaces/IBarberController";
-import { DASHBOARDFILTERS, MESSAGES, STATUS_CODES } from "../utils/constants";
+import { DASHBOARDFILTERS, STATUS_CODES } from "../utils/constants";
 import {
-  generateAccessToken,
   generateRefreshToken,
 } from "../utils/jwt.generator";
 import { IBarberService } from "../services/interfaces/IBarberService";

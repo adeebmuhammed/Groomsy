@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DaySlot, SlotRuleListResponseDto, SlotRuleReponseDto } from "../dto/slot.dto";
+import { DaySlot, SlotRuleReponseDto } from "../dto/slot.dto";
 import { ISlotRule } from "../models/slots.model";
 
 export class SlotMapper{

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute,Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
+import { ROLES } from '../../../constants/roles';
 
 @Component({
   selector: 'app-auth-callback',
@@ -23,13 +24,12 @@ export class AuthCallbackComponent implements OnInit {
 
       if (token && name && id) {
         localStorage.setItem('token', token);
-        localStorage.setItem('role', 'user');
+        localStorage.setItem('role', ROLES.USER);
         localStorage.setItem('userName', name);
         localStorage.setItem('userId', id);
 
-        this.authService.updateLoginState('user', true, name, id);
+        this.authService.updateLoginState(ROLES.USER, true, name, id);
 
-        // Clean up query params and redirect to home
         this.router.navigate(['/user/home']);
       } else {
         this.router.navigate(['/user/signin']);

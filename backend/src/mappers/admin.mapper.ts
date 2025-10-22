@@ -1,12 +1,9 @@
-import { IUser } from "../models/user.model";
 import { IBarber } from "../models/barber.model";
 import { IAdmin } from "../models/admin.model";
 
 import {
-  UserDto,
   BarberDto,
   AdminLoginResponseDto,
-  AdminDashboardStatsDto,
 } from "../dto/admin.dto";
 
 export class AdminMapper {

@@ -1,4 +1,3 @@
-import { describe } from "node:test";
 import SubscriptionPlan, {
   ISubscriptionPlan,
 } from "../models/subscription.plans.model";

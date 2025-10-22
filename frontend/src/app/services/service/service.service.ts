@@ -7,6 +7,7 @@ import {
 } from '../../interfaces/interfaces';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
+import { ROLES } from '../../constants/roles';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class ServiceService {
   private http = inject(HttpClient);
 
   fetch(
-    role: 'user' | 'admin',
+    role: ROLES.USER | ROLES.ADMIN,
     search = '',
     page = 1,
     limit = 5
@@ -60,7 +61,7 @@ export class ServiceService {
   }
 
   getServiceById(
-    role: 'user' | 'barber' | 'admin',
+    role: ROLES,
     serviceId: string
   ): Observable<Service> {
     return this.http.get<Service>(

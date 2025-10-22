@@ -9,7 +9,6 @@ import {
 import { injectable, inject } from "inversify";
 import { TYPES } from "../config/types";
 import fileUpload from "express-fileupload";
-import { use } from "passport";
 
 @injectable()
 export class UserController implements IUserController {

@@ -20,9 +20,9 @@ import { CheckoutModalComponent } from '../../../components/shared/checkout-moda
 import { forkJoin, take } from 'rxjs';
 import { UserService } from '../../../services/user/user.service';
 import { ServiceService } from '../../../services/service/service.service';
-import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
 import * as bootstrap from 'bootstrap';
 import { BookingDetailsComponent } from '../../../components/shared/booking-details/booking-details.component';
+import { ROLES } from '../../../constants/roles';
 
 @Component({
   selector: 'app-user-booking',
@@ -75,7 +75,7 @@ export class UserBookingComponent implements OnInit {
 
     forkJoin({
       barberRes: this.userService.fetchBarbers('', 1, 100),
-      serviceRes: this.serviceService.fetch('user', '', 1, 100),
+      serviceRes: this.serviceService.fetch(ROLES.USER, '', 1, 100),
     }).subscribe(({ barberRes, serviceRes }) => {
       this.checkoutData.barber = barberRes.data.find(
         (b) => b.id === booking.barber
@@ -118,7 +118,7 @@ export class UserBookingComponent implements OnInit {
       if (!id) return;
 
       this.bookingService
-        .getBookingByStatus(id, status, page, this.itemsPerPage, 'user')
+        .getBookingByStatus(id, status, page, this.itemsPerPage, ROLES.USER)
         .pipe(take(1))
         .subscribe({
           next: (res) => {
@@ -155,7 +155,7 @@ export class UserBookingComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.bookingService
-          .updateBookingStatus('user', booking.id, 'cancel')
+          .updateBookingStatus(ROLES.USER, booking.id, 'cancel')
           .pipe(take(1))
           .subscribe({
             next: () => {
@@ -186,7 +186,7 @@ export class UserBookingComponent implements OnInit {
 
           forkJoin({
             barberRes: this.userService.fetchBarbers('', 1, 100),
-            serviceRes: this.serviceService.fetch('user', '', 1, 100),
+            serviceRes: this.serviceService.fetch(ROLES.USER, '', 1, 100),
           }).subscribe(({ barberRes, serviceRes }) => {
             const barberDoc = barberRes.data.find(
               (b) => b.id === updatedBooking.barber
@@ -305,7 +305,7 @@ export class UserBookingComponent implements OnInit {
   openDetailsModal(booking: BookingResponseDto): void {
       this.selectedBooking = booking;
       this.serviceService
-        .getServiceById('admin', booking.service)
+        .getServiceById(ROLES.ADMIN, booking.service)
         .pipe(take(1))
         .subscribe({
           next: (res) => {

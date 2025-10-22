@@ -2,8 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { STATUS_CODES, MESSAGES } from "../utils/constants";
 import jwt from "jsonwebtoken";
 import { SubscriptionRepository } from "../repositories/subscription.repository";
-import { inject } from "inversify";
-import { TYPES } from "../config/types";
 import { SubscriptionPlanRepository } from "../repositories/subscription.plan.repository";
 import mongoose from "mongoose";
 import { SubscriptionFeature } from "../dto/subscription.plan.dto";
@@ -86,6 +84,7 @@ export const subscriptionMiddleware = (
 
       return next();
     } catch (error) {
+      console.error(error)
       res
         .status(STATUS_CODES.UNAUTHORIZED)
         .json({ message: MESSAGES.ERROR.INVALID_TOKEN });

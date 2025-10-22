@@ -1,4 +1,4 @@
-import mongoose, { Mongoose, Document, Schema, ObjectId } from "mongoose";
+import mongoose, { Document, Schema, ObjectId } from "mongoose";
 
 export interface IBarber extends Document {
   _id: ObjectId;

@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { BarberDto, ReviewListResponse, ReviewResponseDto } from '../../../interfaces/interfaces';
-import { BookingService } from '../../../services/booking/booking.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { ReviewService } from '../../../services/review/review.service';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';

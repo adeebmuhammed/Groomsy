@@ -1,5 +1,4 @@
 import { DeleteResult } from "mongoose";
-import { ReviewCreateRequestDto } from "../../dto/review.dto";
 import { IReview } from "../../models/review.model";
 import { IBaseRepository } from "./IBaseRepository";
 

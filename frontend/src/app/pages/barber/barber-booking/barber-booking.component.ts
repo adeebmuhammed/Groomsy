@@ -17,6 +17,7 @@ import { BarberService } from '../../../services/barber/barber.service';
 import * as bootstrap from 'bootstrap';
 import { ServiceService } from '../../../services/service/service.service';
 import { BookingDetailsComponent } from '../../../components/shared/booking-details/booking-details.component';
+import { ROLES } from '../../../constants/roles';
 
 @Component({
   selector: 'app-barber-booking',
@@ -63,7 +64,7 @@ export class BarberBookingComponent implements OnInit {
       if (!id) return;
 
       this.bookingService
-        .getBookingByStatus(id, status, page, this.itemsPerPage, 'barber')
+        .getBookingByStatus(id, status, page, this.itemsPerPage, ROLES.BARBER)
         .pipe(take(1))
         .subscribe({
           next: (res) => {
@@ -102,7 +103,7 @@ export class BarberBookingComponent implements OnInit {
 
   updateStatus(status: string, booking: BookingResponseDto): void {
     this.bookingService
-      .updateBookingStatus('barber', booking.id, status)
+      .updateBookingStatus(ROLES.BARBER, booking.id, status)
       .pipe(take(1))
       .subscribe({
         next: () => {
@@ -133,7 +134,7 @@ export class BarberBookingComponent implements OnInit {
   openDetailsModal(booking: BookingResponseDto): void {
     this.selectedBooking = booking;
     this.serviceService
-      .getServiceById('barber', booking.service)
+      .getServiceById(ROLES.BARBER, booking.service)
       .pipe(take(1))
       .subscribe({
         next: (res) => {

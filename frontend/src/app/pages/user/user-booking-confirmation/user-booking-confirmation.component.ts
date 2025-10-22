@@ -7,6 +7,7 @@ import { UserHeaderComponent } from '../../../components/user/user-header/user-h
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import { ServiceService } from '../../../services/service/service.service';
 import { take } from 'rxjs';
+import { ROLES } from '../../../constants/roles';
 
 @Component({
   selector: 'app-user-booking-confirmation',
@@ -43,7 +44,7 @@ export class UserBookingConfirmationComponent implements OnInit {
 
   loadBooking() {
     this.bookingService
-      .getBookingById('user', this.bookingId)
+      .getBookingById(ROLES.USER, this.bookingId)
       .pipe(take(1))
       .subscribe({
         next: (res) => {
@@ -53,7 +54,7 @@ export class UserBookingConfirmationComponent implements OnInit {
 
           // Fetch service
           this.serviceService
-            .getServiceById('user', res.service)
+            .getServiceById(ROLES.USER, res.service)
             .pipe(take(1))
             .subscribe({
               next: (serviceRes) => {
