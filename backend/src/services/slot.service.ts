@@ -207,8 +207,6 @@ export class SlotService implements ISlotService {
     barberId: string,
     serviceId: string,
     date: string,
-    page: number,
-    limit: number
   ): Promise<{ response: SlotResponseDto }> => {
     const selectedDate = new Date(date);
     const selectedDayName = selectedDate.toLocaleDateString("en-US", {
@@ -238,39 +236,7 @@ export class SlotService implements ISlotService {
       selectedDate,
       selectedDate,
       service.duration,
-      service.price
     );
-
-    const startOfDayUTC = new Date(
-      Date.UTC(
-        selectedDate.getUTCFullYear(),
-        selectedDate.getUTCMonth(),
-        selectedDate.getUTCDate(),
-        0,
-        0,
-        0,
-        0
-      )
-    );
-    const endOfDayUTC = new Date(
-      Date.UTC(
-        selectedDate.getUTCFullYear(),
-        selectedDate.getUTCMonth(),
-        selectedDate.getUTCDate(),
-        23,
-        59,
-        59,
-        999
-      )
-    );
-
-    const bookings = await this._bookingRepo.find({
-      barberId,
-      "slotDetails.date": {
-        $gte: startOfDayUTC,
-        $lte: endOfDayUTC,
-      },
-    });
 
     return {
       response: slots,

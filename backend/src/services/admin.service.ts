@@ -1,8 +1,7 @@
 import bcrypt from "bcrypt";
-import { IAdmin } from "../models/admin.model";
 import { IAdminService } from "./interfaces/IAdminService";
 import { IAdminRepository } from "../repositories/interfaces/IAdminRepository";
-import { DASHBOARDFILTERS, MESSAGES, STATUS_CODES } from "../utils/constants";
+import { DASHBOARDFILTERS, MESSAGES } from "../utils/constants";
 import { isValidEmail } from "../utils/validators";
 import {
   AdminDashboardStatsDto,

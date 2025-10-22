@@ -7,8 +7,6 @@ export const validateSlotData = (data: SlotRuleCreateRequestDto): string[] => {
     errors.push("At least one slot (day, startTime, endTime) is required.");
   }
 
-  const now = new Date();
-
   for (const slot of data.slots) {
     if (!slot.day || !slot.startTime || !slot.endTime) {
       errors.push("Each slot must include day, startTime, and endTime.");

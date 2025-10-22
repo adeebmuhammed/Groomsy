@@ -7,8 +7,6 @@ export const validateCouponData = (data: CouponDto):string[] => {
         errors.push('Required fields: name, code, limit amount, coupon amount, start date, end date and max count')
     }
 
-    const now =  new Date()
-
     if (data.startDate && data.endDate) {
         if (data.startDate >= data.endDate) {
             errors.push("Start date should be less than end date");

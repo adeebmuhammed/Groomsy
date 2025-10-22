@@ -28,6 +28,7 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
 
     res.status(STATUS_CODES.OK).json({ message: "Access token refreshed" });
   } catch (error) {
+    console.error(error)
     res.status(STATUS_CODES.FORBIDDEN).json({ message: "Invalid refresh token" });
   }
 };

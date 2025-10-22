@@ -5,7 +5,6 @@ import {
   AdminLoginResponseDto,
   AdminDashboardStatsDto,
 } from "../../dto/admin.dto";
-import { IAdmin } from "../../models/admin.model";
 import { DASHBOARDFILTERS } from "../../utils/constants";
 
 export interface IAdminService {

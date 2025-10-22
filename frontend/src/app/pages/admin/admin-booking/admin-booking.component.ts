@@ -18,6 +18,7 @@ import * as bootstrap from 'bootstrap';
 import { ServiceService } from '../../../services/service/service.service';
 import { AdminService } from '../../../services/admin/admin.service';
 import { AuthService } from '../../../services/auth/auth.service';
+import { ROLES } from '../../../constants/roles';
 
 @Component({
   selector: 'app-admin-booking',
@@ -58,7 +59,7 @@ export class AdminBookingComponent implements OnInit {
     page = 1
   ): void {
     this.bookingService
-      .getBookingByStatus(null, status, page, this.itemsPerPage, 'admin')
+      .getBookingByStatus(null, status, page, this.itemsPerPage, ROLES.ADMIN)
       .pipe(take(1))
       .subscribe({
         next: (res) => {
@@ -120,7 +121,7 @@ export class AdminBookingComponent implements OnInit {
   openDetailsModal(booking: BookingResponseDto): void {
     this.selectedBooking = booking;
     this.serviceService
-      .getServiceById('admin', booking.service)
+      .getServiceById(ROLES.ADMIN, booking.service)
       .pipe(take(1))
       .subscribe({
         next: (res) => {

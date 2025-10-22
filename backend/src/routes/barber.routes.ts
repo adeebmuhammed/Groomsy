@@ -11,10 +11,11 @@ import { ISubscriptionController } from "../controllers/interfaces/ISubscription
 import { ISubscriptionPlanController } from "../controllers/interfaces/ISubscriptionPlanController";
 import { IServiceController } from "../controllers/interfaces/IServiceController";
 import fileUpload from "express-fileupload";
+import { ROLES } from "../utils/constants";
 
 const barberRoutes = Router()
-const barberAuth = authMiddleware(["barber"])
-const multiAuth = authMiddleware(["user","barber"])
+const barberAuth = authMiddleware([ROLES.BARBER])
+const multiAuth = authMiddleware([ROLES.USER,ROLES.BARBER])
 
 const barberController = container.get<IBarberController>(TYPES.IBarberController)
 const slotController = container.get<ISlotController>(TYPES.ISlotController)

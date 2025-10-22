@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { BarberSidebarComponent } from '../../../components/barber/barber-sidebar/barber-sidebar.component';
@@ -23,10 +23,10 @@ import { CommonModule } from '@angular/common';
   templateUrl: './barber-dashboard.component.html',
   styleUrl: './barber-dashboard.component.css',
 })
-export class BarberDashboardComponent {
+export class BarberDashboardComponent implements OnInit {
   stats: DashboardStatsDto | null = null;
   selectedType: 'bookings' | 'revenue' = 'bookings';
-  selectedFilter: string = '1 Month';
+  selectedFilter = '1 Month';
 
   private barberService: BarberService = inject(BarberService);
   private authService: AuthService = inject(AuthService);

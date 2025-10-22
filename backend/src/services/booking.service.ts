@@ -5,27 +5,21 @@ import {
   confirmBookingDto,
 } from "../dto/booking.dto";
 import { IBooking } from "../models/booking.model";
-import { BarberRepository } from "../repositories/barber.repository";
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
 import { IUserRepository } from "../repositories/interfaces/IUserRepository";
-import { UserRepository } from "../repositories/user.repository";
-import { MESSAGES, ROLES, STATUS_CODES } from "../utils/constants";
+import { MESSAGES, ROLES } from "../utils/constants";
 import { IBookingService } from "./interfaces/IBookingService";
 import { MessageResponseDto } from "../dto/base.dto";
 import { IServiceRepository } from "../repositories/interfaces/IServiceRepository";
-import { ServiceRepository } from "../repositories/service.repository";
 import { IBarberUnavailabilityRepository } from "../repositories/interfaces/IBarberUnavailabilityRepository";
-import { BarberUnavailabilityRepository } from "../repositories/barber.unavailability.repository";
 import { BookingMapper } from "../mappers/booking.mapper";
 import { ICouponRepository } from "../repositories/interfaces/ICouponRepository";
-import { CouponResitory } from "../repositories/coupon.repository";
 import razorpayInstance from "../utils/razorpay";
 import crypto from "crypto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
 import { IOfferRepository } from "../repositories/interfaces/IOfferRepository";
-import { off } from "process";
 
 @injectable()
 export class BookingService implements IBookingService {
@@ -311,7 +305,7 @@ export class BookingService implements IBookingService {
     bookingId: string,
     bookingStatus: string
   ): Promise<{ response: MessageResponseDto }> => {
-    if (role !== "user" && role !== "barber") {
+    if (role !== ROLES.USER && role !== ROLES.BARBER) {
       throw new Error("invalid role");
     }
 
@@ -328,13 +322,13 @@ export class BookingService implements IBookingService {
       throw new Error(`booking status is already ${bookingStatus}`);
     }
 
-    if (role === "user") {
+    if (role === ROLES.USER) {
       if (booking.status === "pending" && bookingStatus === "cancel") {
         booking.status = "cancelled_by_user";
       } else {
         throw new Error("Invalid status transition for user");
       }
-    } else if (role === "barber") {
+    } else if (role === ROLES.BARBER) {
       if (booking.status === "pending" && bookingStatus === "cancel") {
         booking.status = "cancelled_by_barber";
       } else if (booking.status === "pending" && bookingStatus === "finished") {

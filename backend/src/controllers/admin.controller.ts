@@ -1,7 +1,7 @@
-import { Request, response, Response } from "express";
+import { Request, Response } from "express";
 import { IAdminController } from "./interfaces/IAdminController";
 import { IAdminService } from "../services/interfaces/IAdminService";
-import { DASHBOARDFILTERS, STATUS_CODES } from "../utils/constants";
+import { DASHBOARDFILTERS, ROLES, STATUS_CODES } from "../utils/constants";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -51,7 +51,7 @@ export class AdminController implements IAdminController {
           name: result.response.name,
           email: result.response.email,
         },
-        role: "admin",
+        role: ROLES.ADMIN,
       });
     } catch (error) {
       console.error(error);

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { CouponDto } from "../dto/coupon.dto";
 import { OfferDto } from "../dto/offer.dto";
 import { IOffer } from "../models/offer.model";
 

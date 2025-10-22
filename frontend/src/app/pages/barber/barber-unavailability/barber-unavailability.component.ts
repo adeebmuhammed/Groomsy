@@ -1,4 +1,4 @@
-import { Component, inject, Injectable, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { BarberSidebarComponent } from '../../../components/barber/barber-sidebar/barber-sidebar.component';
@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import Swal from 'sweetalert2';
 import { take } from 'rxjs';
+import { ROLES } from '../../../constants/roles';
 
 @Component({
   selector: 'app-barber-unavailability',
@@ -58,7 +59,7 @@ export class BarberUnavailabilityComponent implements OnInit {
   fetchUnavailability(): void {
     this.loading = true;
     this.unavailabilityService
-      .fetchBarberUnavailability(this.barberId,"barber")
+      .fetchBarberUnavailability(this.barberId, ROLES.BARBER)
       .pipe(take(1))
       .subscribe({
         next: (data) => {

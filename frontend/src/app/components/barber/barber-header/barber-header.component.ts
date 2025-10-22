@@ -6,6 +6,7 @@ import { Observable, take } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { IMessageResponse } from '../../../interfaces/interfaces';
 import { BARBER_ROUTES_PATHS } from '../../../constants/barber-route.constant';
+import { ROLES } from '../../../constants/roles';
 
 @Component({
   selector: 'app-barber-header',
@@ -36,18 +37,18 @@ export class BarberHeaderComponent implements OnInit {
 
       let logoutObservable: Observable<IMessageResponse> | null = null;
 
-      if (role === 'barber') {
+      if (role === ROLES.BARBER) {
         logoutObservable = this.authService.barberLogout();
       } else {
         localStorage.clear();
-        this.authService.updateLoginState('barber', false, null, null);
+        this.authService.updateLoginState(ROLES.BARBER, false, null, null);
         this.router.navigate([BARBER_ROUTES_PATHS.SIGNIN]);
         return;
       }
 
       logoutObservable.pipe(take(1)).subscribe({
         next: (res) => {
-          this.authService.updateLoginState('barber', false, null, null);
+          this.authService.updateLoginState(ROLES.BARBER, false, null, null);
 
           Swal.fire({
             icon: 'success',

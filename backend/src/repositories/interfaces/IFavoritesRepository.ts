@@ -1,4 +1,3 @@
-import { UpdateResult } from "mongoose";
 import { IFavorites } from "../../models/favorites.model";
 import { IBaseRepository } from "./IBaseRepository";
 

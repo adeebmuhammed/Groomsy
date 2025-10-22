@@ -12,7 +12,7 @@ import {
   SlotTime,
 } from '../../../interfaces/interfaces';
 import { AuthService } from '../../../services/auth/auth.service';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, take } from 'rxjs';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
@@ -27,6 +27,7 @@ import { ServiceService } from '../../../services/service/service.service';
 import { BarberUnavailabilityService } from '../../../services/barber-unavailability/barber-unavailability.service';
 import { CheckoutModalComponent } from '../../../components/shared/checkout-modal/checkout-modal.component';
 import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
+import { ROLES } from '../../../constants/roles';
 
 @Component({
   selector: 'app-user-barber-details',
@@ -72,7 +73,7 @@ export class UserBarberDetailsComponent implements OnInit {
     this.selectedService = service;
 
     this.barberUnavailabilityService
-      .fetchBarberUnavailability(this.barberId, 'user')
+      .fetchBarberUnavailability(this.barberId, ROLES.USER)
       .pipe(take(1))
       .subscribe({
         next: (res) => {
@@ -90,7 +91,7 @@ export class UserBarberDetailsComponent implements OnInit {
     this.todayDate = new Date().toISOString().split('T')[0];
     forkJoin({
       barber: this.userService.fetchBarberDetailsById(this.barberId),
-      services: this.serviceService.fetch('user', '', 1, 100),
+      services: this.serviceService.fetch(ROLES.USER, '', 1, 100),
     }).subscribe({
       next: ({ barber, services }) => {
         this.barber = barber || null;
@@ -149,7 +150,7 @@ export class UserBarberDetailsComponent implements OnInit {
           this.fetchedDate = isoSelected;
 
           this.bookingService
-            .fetchBookings('barber', this.barberId, 1, 100)
+            .fetchBookings(ROLES.BARBER, this.barberId, 1, 100)
             .pipe(take(1))
             .subscribe({
               next: (bookingsRes) => {
@@ -281,7 +282,7 @@ export class UserBarberDetailsComponent implements OnInit {
                 );
 
                 this.serviceService
-                  .fetch('user', '', 1, 100)
+                  .fetch(ROLES.USER, '', 1, 100)
                   .pipe(take(1))
                   .subscribe((serviceRes) => {
                     const serviceDoc = serviceRes.data.find(
@@ -412,7 +413,7 @@ export class UserBarberDetailsComponent implements OnInit {
 
           forkJoin({
             barberRes: this.userService.fetchBarbers('', 1, 100),
-            serviceRes: this.serviceService.fetch('user', '', 1, 100),
+            serviceRes: this.serviceService.fetch(ROLES.USER, '', 1, 100),
           }).subscribe(({ barberRes, serviceRes }) => {
             const barberDoc = barberRes.data.find(
               (b) => b.id === updatedBooking.barber

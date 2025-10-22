@@ -1,4 +1,4 @@
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, Input, SimpleChanges, OnChanges } from '@angular/core';
 import {
   Chart,
   ChartConfiguration,
@@ -15,10 +15,10 @@ Chart.register(...registerables);
   templateUrl: './chart.component.html',
   styleUrl: './chart.component.css',
 })
-export class ChartComponent {
+export class ChartComponent implements OnChanges {
   @Input() chartData: number[] = [];
   @Input() chartLabels: string[] = [];
-  @Input() chartTitle: string = '';
+  @Input() chartTitle = '';
 
   public barChartOptions: ChartOptions<'bar'> = {
     responsive: true,

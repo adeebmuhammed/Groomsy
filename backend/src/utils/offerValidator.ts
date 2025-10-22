@@ -7,8 +7,6 @@ export const validateOfferData = (data: CreateOfferDto):string[] => {
         errors.push('Required fields: name, discount, start date, end date')
     }
 
-    const now =  new Date()
-
     if (data.startDate && data.endDate) {
         if (data.startDate >= data.endDate) {
             errors.push("Start date should be less than end date");

@@ -13,7 +13,7 @@ export class BookingController implements IBookingController {
 
   fetchBookings = async (req: Request, res: Response): Promise<void> => {
     try {
-      const role = req.query.role as "user" | "barber" | "admin";
+      const role = req.query.role as ROLES;
       const id = req.query.id as string | undefined;
 
       const page = parseInt(req.query.page as string) || 1;

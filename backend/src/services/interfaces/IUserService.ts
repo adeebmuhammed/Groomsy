@@ -1,6 +1,6 @@
 import { ListResponseDto } from "../../dto/admin.dto";
 import { BarberDto, BarberProfileDto } from "../../dto/barber.dto";
-import { SlotResponseDto, SlotRuleListResponseDto } from "../../dto/slot.dto";
+import { SlotRuleListResponseDto } from "../../dto/slot.dto";
 import {
   UserRegisterRequestDto,
   UserLoginResponseDto,

@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { IMessageResponse } from '../../../interfaces/interfaces';
 import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
+import { ROLES } from '../../../constants/roles';
 
 @Component({
   selector: 'app-user-header',
@@ -63,7 +64,7 @@ export class UserHeaderComponent implements OnInit, OnDestroy {
         logoutObservable = this.authService.userLogout();
       } else {
         localStorage.clear();
-        this.authService.updateLoginState('user', false, null, null);
+        this.authService.updateLoginState(ROLES.USER, false, null, null);
         this.router.navigate([USER_ROUTES_PATHS.SIGNIN]);
         return;
       }

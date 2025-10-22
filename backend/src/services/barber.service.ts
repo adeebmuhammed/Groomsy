@@ -14,7 +14,7 @@ import {
   isValidPhone,
   isValidOTP,
 } from "../utils/validators";
-import { DASHBOARDFILTERS, MESSAGES, STATUS_CODES } from "../utils/constants";
+import { DASHBOARDFILTERS, MESSAGES } from "../utils/constants";
 import OTPService from "../utils/OTPService";
 import { BarberMapper } from "../mappers/barber.mapper";
 import { generateAccessToken } from "../utils/jwt.generator";
@@ -25,7 +25,6 @@ import { MessageResponseDto } from "../dto/base.dto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
-import { BookingMapper } from "../mappers/booking.mapper";
 import { ListResponseDto, UserDto } from "../dto/admin.dto";
 import { IUserRepository } from "../repositories/interfaces/IUserRepository";
 import { UserMapper } from "../mappers/user.mapper";
@@ -47,7 +46,7 @@ export class BarberService implements IBarberService {
     barberData: BarberRegisterRequestDto
   ): Promise<{ response: MessageResponseDto }> => {
     const { name, email, phone, district, password } = barberData;
-    if (!email || !email || !phone || !district || !password) {
+    if (!name || !email || !email || !phone || !district || !password) {
       throw new Error(MESSAGES.ERROR.INVALID_INPUT);
     }
 

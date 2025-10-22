@@ -6,7 +6,7 @@ import {
   UserProfileDto,
   UserEditProfileDto,
 } from "../dto/user.dto";
-import { MESSAGES, STATUS_CODES } from "../utils/constants";
+import { MESSAGES } from "../utils/constants";
 import {
   isValidEmail,
   isValidPassword,

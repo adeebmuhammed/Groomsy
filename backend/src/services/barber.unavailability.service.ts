@@ -1,10 +1,8 @@
 import mongoose from "mongoose";
 import { MessageResponseDto } from "../dto/base.dto";
-import { BarberRepository } from "../repositories/barber.repository";
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
 import { IBarberUnavailabilityRepository } from "../repositories/interfaces/IBarberUnavailabilityRepository";
 import { IBarberUnavailabilityService } from "./interfaces/IBarberUnavailabilityService";
-import { STATUS_CODES } from "../utils/constants";
 import { BarberUnavailabilityDto } from "../dto/barber.unavailability.dto";
 import { BarberUnavailabilityMapper } from "../mappers/barber.unavailability.mapper";
 import { inject, injectable } from "inversify";

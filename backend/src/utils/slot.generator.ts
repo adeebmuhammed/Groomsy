@@ -5,8 +5,7 @@ export const generateSlotsFromRules = (
   rules: ISlotRule[],
   startDate: Date,
   endDate: Date,
-  duration: string,
-  price?: number
+  duration: string
 ): SlotResponseDto => {
   const dayMap: { [key: string]: number } = {
     Sunday: 0,
