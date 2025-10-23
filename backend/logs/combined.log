@@ -6512,3 +6512,4 @@
 2025-10-22 09:49:35 [INFO]: GET /api/admin/service?search=&page=1&limit=5
 2025-10-22 09:49:36 [INFO]: GET /api/admin/subscription?search=&page=1&limit=5
 2025-10-22 09:51:56 [INFO]: POST /api/admin/logout
+2025-10-23 09:29:29 [INFO]: GET /api/admin/dashboard-stats

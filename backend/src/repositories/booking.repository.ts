@@ -53,14 +53,27 @@ export class BookingRepository
 
   async getDashboardStats(
     filter: string,
-    type: "bookings" | "revenue",
     barberId?: string
   ): Promise<{
-    labels: string[];
-    data: number[];
-    type: "bookings" | "revenue";
-    filter: DASHBOARDFILTERS;
-    total?: number;
+    filter: string;
+    bookings: {
+      type: "bookings";
+      labels: string[];
+      data: number[];
+      total: number;
+    };
+    revenue: {
+      type: "revenue";
+      labels: string[];
+      data: number[];
+      total: number;
+    };
+    services: {
+      type: "services";
+      labels: string[];
+      data: number[];
+      total: number;
+    };
   }> {
     const now = new Date();
     let filterDate: Date;
@@ -86,13 +99,9 @@ export class BookingRepository
         throw new Error("Invalid filter");
     }
 
-    const matchStage: {
-      createdAt: { $gte: Date; $lte: Date };
-      status: { $ne: string };
-      barber?: string;
-    } = {
+    const matchStage: any = {
       createdAt: { $gte: filterDate, $lte: now },
-      status: { $ne: "cancelled" },
+      status: { $nin: ["cancelled_by_user", "cancelled_by_barber"] },
     };
     if (barberId) matchStage.barber = barberId;
 
@@ -101,42 +110,88 @@ export class BookingRepository
         ? { $dateToString: { format: "%Y-%m", date: "$createdAt" } }
         : { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } };
 
-    let aggregation: any[];
+    // BOOKINGS
+    const bookingsResult = await Booking.aggregate([
+      { $match: matchStage },
+      { $group: { _id: groupFormat, count: { $sum: 1 } } },
+      { $sort: { _id: 1 } },
+    ]);
 
-    if (type === "bookings") {
-      aggregation = [
-        { $match: matchStage },
-        { $group: { _id: groupFormat, count: { $sum: 1 } } },
-        { $sort: { _id: 1 } },
-      ];
-    } else {
-      aggregation = [
-        { $match: matchStage },
-        { $group: { _id: groupFormat, totalRevenue: { $sum: "$totalPrice" } } },
-        { $sort: { _id: 1 } },
-      ];
-    }
-
-    const result = await Booking.aggregate(aggregation);
-
-    let labels: string[] = result.map((r) => r._id);
-    let data: number[] =
-      type === "bookings"
-        ? result.map((r) => r.count)
-        : result.map((r) => r.totalRevenue);
-
-    if (labels.length === 0 || data.length === 0) {
-      const formattedDate =
+    let bookingsLabels = bookingsResult.map((r) => r._id);
+    let bookingsData = bookingsResult.map((r) => r.count);
+    if (bookingsLabels.length === 0) {
+      const formatted =
         filter === "1 Year"
           ? now.toISOString().slice(0, 7)
           : now.toISOString().slice(0, 10);
-
-      labels = [formattedDate];
-      data = [0];
+      bookingsLabels = [formatted];
+      bookingsData = [0];
     }
+    const bookingsTotal = bookingsData.reduce((sum, val) => sum + val, 0);
 
-    const total = data.reduce((sum, val) => sum + val, 0);
+    // REVENUE
+    const revenueResult = await Booking.aggregate([
+      { $match: matchStage },
+      { $group: { _id: groupFormat, totalRevenue: { $sum: "$totalPrice" } } },
+      { $sort: { _id: 1 } },
+    ]);
 
-    return { labels, data, type, filter, total };
+    let revenueLabels = revenueResult.map((r) => r._id);
+    let revenueData = revenueResult.map((r) => r.totalRevenue);
+    if (revenueLabels.length === 0) {
+      const formatted =
+        filter === "1 Year"
+          ? now.toISOString().slice(0, 7)
+          : now.toISOString().slice(0, 10);
+      revenueLabels = [formatted];
+      revenueData = [0];
+    }
+    const revenueTotal = revenueData.reduce((sum, val) => sum + val, 0);
+
+    // SERVICES (group by service name)
+    const servicesResult = await Booking.aggregate([
+      { $match: matchStage },
+      {
+        $lookup: {
+          from: "services",
+          localField: "service",
+          foreignField: "_id",
+          as: "serviceDetails",
+        },
+      },
+      { $unwind: "$serviceDetails" },
+      { $group: { _id: "$serviceDetails.name", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+    ]);
+
+    let serviceLabels = servicesResult.map((r) => r._id);
+    let serviceData = servicesResult.map((r) => r.count);
+    if (serviceLabels.length === 0) {
+      serviceLabels = ["No Services"];
+      serviceData = [0];
+    }
+    const serviceTotal = serviceData.reduce((sum, val) => sum + val, 0);
+
+    return {
+      filter,
+      bookings: {
+        type: "bookings",
+        labels: bookingsLabels,
+        data: bookingsData,
+        total: bookingsTotal,
+      },
+      revenue: {
+        type: "revenue",
+        labels: revenueLabels,
+        data: revenueData,
+        total: revenueTotal,
+      },
+      services: {
+        type: "services",
+        labels: serviceLabels,
+        data: serviceData,
+        total: serviceTotal,
+      },
+    };
   }
 }

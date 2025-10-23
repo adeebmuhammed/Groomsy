@@ -84,9 +84,9 @@ export class AdminController implements IAdminController {
       );
 
       if (response) {
-        status = STATUS_CODES.OK
-      }else{
-        status = STATUS_CODES.CONFLICT
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
       }
 
       res.status(status).json(response);
@@ -112,9 +112,9 @@ export class AdminController implements IAdminController {
       );
 
       if (response) {
-        status = STATUS_CODES.OK
-      }else{
-        status = STATUS_CODES.CONFLICT
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
       }
 
       res.status(status).json(response);
@@ -143,9 +143,9 @@ export class AdminController implements IAdminController {
       }
 
       if (result) {
-        statusCode = STATUS_CODES.OK
-      }else{
-        statusCode = STATUS_CODES.CONFLICT
+        statusCode = STATUS_CODES.OK;
+      } else {
+        statusCode = STATUS_CODES.CONFLICT;
       }
 
       res.status(statusCode).json({
@@ -177,9 +177,9 @@ export class AdminController implements IAdminController {
       }
 
       if (result) {
-        statusCode = STATUS_CODES.OK
-      }else{
-        statusCode = STATUS_CODES.CONFLICT
+        statusCode = STATUS_CODES.OK;
+      } else {
+        statusCode = STATUS_CODES.CONFLICT;
       }
 
       res.status(statusCode).json({
@@ -197,10 +197,12 @@ export class AdminController implements IAdminController {
     }
   };
 
-  getAdminDashboardStats = async (req: Request, res: Response): Promise<void> => {
+  getAdminDashboardStats = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
       const filterParam = req.query.filter as string | DASHBOARDFILTERS.MONTH;
-      const type = (req.query.type as "bookings" | "revenue") || "bookings";
       const filter: DASHBOARDFILTERS =
         filterParam === DASHBOARDFILTERS.WEEK ||
         filterParam === DASHBOARDFILTERS.MONTH ||
@@ -209,20 +211,23 @@ export class AdminController implements IAdminController {
           : DASHBOARDFILTERS.WEEK;
 
       const { dashboardStats } =
-        await this._adminService.getAdminDashboardStats(filter, type);
+        await this._adminService.getAdminDashboardStats(filter);
 
       let status;
       if (dashboardStats) {
-        status = STATUS_CODES.OK
-      }else{
-        status = STATUS_CODES.INTERNAL_SERVER_ERROR
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.INTERNAL_SERVER_ERROR;
       }
 
       res.status(status).json(dashboardStats);
     } catch (error) {
       console.error(error);
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-        error: error instanceof Error ? error.message : "Failed to load dashboard stats",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to load dashboard stats",
       });
     }
   };

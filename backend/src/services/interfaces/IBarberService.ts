@@ -57,8 +57,7 @@ export interface IBarberService {
   ): Promise<{ response: ListResponseDto<UserDto> }>;
   getBookingStats(
     barberId: string,
-    filter: DASHBOARDFILTERS,
-    type: "bookings" | "revenue"
+    filter: DASHBOARDFILTERS
   ): Promise<{ dashboardStats: BarberDashboardStatsDto }>;
   updateBarberProfilePicture(
     barberId: string,

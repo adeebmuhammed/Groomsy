@@ -9,11 +9,11 @@ export class ListResponseDto<T> {
   data!: T[];
   message?: string;
   pagination!: {
-      currentPage: number,
-      totalPages: number,
-      totalItems: number,
-      itemsPerPage: number
-  }
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  };
 }
 
 export class UserDto {
@@ -29,14 +29,28 @@ export class BarberDto {
   name!: string;
   email!: string;
   status!: string;
-  district!:string;
+  district!: string;
   createdAt!: Date;
 }
 
 export interface AdminDashboardStatsDto {
-  labels: string[];
-  data: number[];
-  type: 'bookings' | 'revenue';
   filter: string;
-  total?: number;
+  bookings: {
+    type: "bookings";
+    labels: string[];
+    data: number[];
+    total: number;
+  };
+  revenue: {
+    type: "revenue";
+    labels: string[];
+    data: number[];
+    total: number;
+  };
+  services: {
+    type: "services";
+    labels: string[];
+    data: number[];
+    total: number;
+  };
 }

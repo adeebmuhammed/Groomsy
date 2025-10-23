@@ -199,14 +199,13 @@ export class AdminService implements IAdminService {
   };
 
   getAdminDashboardStats = async (
-    filter: DASHBOARDFILTERS,
-    type: "bookings" | "revenue"
+    filter: DASHBOARDFILTERS
   ): Promise<{ dashboardStats: AdminDashboardStatsDto }> => {
     const dashboardStats = await this._bookingRepo.getDashboardStats(
-      filter,
-      type
+      filter
     );
     
+    console.log(dashboardStats)
     return { dashboardStats };
   };
 }
