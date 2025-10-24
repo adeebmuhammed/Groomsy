@@ -85,9 +85,8 @@ export class AdminService {
 
   getDashboardStats(
     filter: string,
-    type: string
   ): Observable<DashboardStatsDto> {
-    const params = new HttpParams().set('filter', filter).set('type', type);
+    const params = new HttpParams().set('filter', filter)
     return this.http.get<DashboardStatsDto>(
       `${environment.apiBaseUrl}/admin/dashboard-stats`,
       { params }

@@ -25,7 +25,6 @@ import { CommonModule } from '@angular/common';
 })
 export class BarberDashboardComponent implements OnInit {
   stats: DashboardStatsDto | null = null;
-  selectedType: 'bookings' | 'revenue' = 'bookings';
   selectedFilter = '1 Month';
 
   private barberService: BarberService = inject(BarberService);
@@ -39,7 +38,7 @@ export class BarberDashboardComponent implements OnInit {
     this.authService.barberId$.pipe(take(1)).subscribe((id) => {
       if (!id) return;
       this.barberService
-        .getDashboardStats(this.selectedFilter, this.selectedType, id)
+        .getDashboardStats(this.selectedFilter, id)
         .pipe(take(1))
         .subscribe((res) => {
           this.stats = res;

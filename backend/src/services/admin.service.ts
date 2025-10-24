@@ -205,7 +205,6 @@ export class AdminService implements IAdminService {
       filter
     );
     
-    console.log(dashboardStats)
     return { dashboardStats };
   };
 }

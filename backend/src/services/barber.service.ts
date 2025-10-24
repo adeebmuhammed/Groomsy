@@ -375,7 +375,7 @@ export class BarberService implements IBarberService {
     };
   };
 
-  getBookingStats = async (
+  getDashboardStats = async (
     barberId: string,
     filter: DASHBOARDFILTERS
   ): Promise<{ dashboardStats: BarberDashboardStatsDto }> => {

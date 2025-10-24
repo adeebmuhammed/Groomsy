@@ -313,7 +313,7 @@ export class BarberController implements IBarberController {
           ? (filterParam as DASHBOARDFILTERS)
           : DASHBOARDFILTERS.WEEK;
 
-      const { dashboardStats } = await this._barberService.getBookingStats(
+      const { dashboardStats } = await this._barberService.getDashboardStats(
         barberId,
         filter
       );

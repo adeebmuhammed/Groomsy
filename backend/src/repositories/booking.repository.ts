@@ -1,4 +1,4 @@
-import { FilterQuery, UpdateResult } from "mongoose";
+import mongoose, { FilterQuery, UpdateResult } from "mongoose";
 import { BookingCreateRequestDto } from "../dto/booking.dto";
 import Booking, { IBooking } from "../models/booking.model";
 import { BaseRepository } from "./base.repository";
@@ -103,7 +103,8 @@ export class BookingRepository
       createdAt: { $gte: filterDate, $lte: now },
       status: { $nin: ["cancelled_by_user", "cancelled_by_barber"] },
     };
-    if (barberId) matchStage.barber = barberId;
+    if (barberId) matchStage.barber = new mongoose.Types.ObjectId(barberId);
+    
 
     const groupFormat =
       filter === "1 Year"

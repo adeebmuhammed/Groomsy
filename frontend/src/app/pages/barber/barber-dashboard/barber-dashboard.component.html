@@ -5,18 +5,9 @@
 
   <div class="barber-main-content">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <select
-        class="form-select w-auto"
-        [(ngModel)]="selectedType"
-        (change)="loadStats()"
-      >
-        <option value="bookings">Bookings</option>
-        <option value="revenue">Revenue</option>
-      </select>
 
       <select
         class="form-select w-auto"
-        [(ngModel)]="selectedFilter"
         (change)="loadStats()"
       >
         <option>1 Day</option>
@@ -26,26 +17,25 @@
       </select>
     </div>
     <div class="barber-dashboard-page">
-      <div *ngIf="stats">
-        <div class="summary mb-4">
-          <div class="stat-card">
-            <h3>{{ stats.total }}</h3>
-            <p>
-              {{
-                selectedType === "bookings" ? "Total Bookings" : "Total Revenue"
-              }}
-            </p>
-          </div>
-        </div>
+      <div *ngIf="stats" class="dashboard-charts">
+        <app-chart
+          [chartData]="stats.bookings.data"
+          [chartLabels]="stats.bookings.labels"
+          chartTitle="Bookings Overview"
+        >
+        </app-chart>
 
         <app-chart
-          [chartData]="stats.data"
-          [chartLabels]="stats.labels"
-          [chartTitle]="
-            selectedType === 'bookings'
-              ? 'Bookings Overview'
-              : 'Revenue Overview'
-          "
+          [chartData]="stats.revenue.data"
+          [chartLabels]="stats.revenue.labels"
+          chartTitle="Revenue Overview"
+        >
+        </app-chart>
+
+        <app-chart
+          [chartData]="stats.services.data"
+          [chartLabels]="stats.services.labels"
+          chartTitle="Services Overview"
         >
         </app-chart>
       </div>

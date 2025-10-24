@@ -227,3 +227,16 @@ app-barber-footer {
     font-size: 1.5rem;
   }
 }
+/* Chart layout container */
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+/* On small screens → fallback to single column */
+@media (max-width: 900px) {
+  .dashboard-charts {
+    grid-template-columns: 1fr;
+  }
+}
