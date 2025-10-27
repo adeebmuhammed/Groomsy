@@ -65,10 +65,9 @@ export class BarberService {
 
   getDashboardStats(
       filter: string,
-      type: string,
       barberId: string
     ): Observable<DashboardStatsDto> {
-      const params = new HttpParams().set('filter', filter).set('type', type);
+      const params = new HttpParams().set('filter', filter)
       return this.http.get<DashboardStatsDto>(
         `${environment.apiBaseUrl}/barber/dashboard-stats/${barberId}`,
         { params }

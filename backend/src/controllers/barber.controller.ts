@@ -304,7 +304,6 @@ export class BarberController implements IBarberController {
     try {
       const barberId = req.params["id"];
       const filterParam = req.query.filter as string | undefined;
-      const type = (req.query.type as "bookings" | "revenue") || "bookings";
       let status;
 
       const filter: DASHBOARDFILTERS =
@@ -314,10 +313,9 @@ export class BarberController implements IBarberController {
           ? (filterParam as DASHBOARDFILTERS)
           : DASHBOARDFILTERS.WEEK;
 
-      const { dashboardStats } = await this._barberService.getBookingStats(
+      const { dashboardStats } = await this._barberService.getDashboardStats(
         barberId,
-        filter,
-        type
+        filter
       );
 
       if (dashboardStats) {

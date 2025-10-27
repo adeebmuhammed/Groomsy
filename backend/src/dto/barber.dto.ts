@@ -14,7 +14,7 @@ export class BarberLoginResponseDto {
   district!: string;
   status!: string;
   message!: string;
-  token!:string;
+  token!: string;
 }
 
 export class BarberDto {
@@ -22,19 +22,19 @@ export class BarberDto {
   name!: string;
   phone?: string;
   district!: string;
-  status!: string
+  status!: string;
   profilePicUrl?: string | null;
   profilePicKey?: string | null;
 }
 
 export class updateAddressDto {
-    street?: string;
-    city?: string;
-    pincode?: string;
-    district?: string;
+  street?: string;
+  city?: string;
+  pincode?: string;
+  district?: string;
 }
 
-export class BarberProfileDto{
+export class BarberProfileDto {
   id!: string;
   name!: string;
   email!: string;
@@ -44,21 +44,35 @@ export class BarberProfileDto{
     city?: string;
     pincode?: string;
     district?: string;
-  }
+  };
   profilePicUrl?: string | null;
   profilePicKey?: string | null;
 }
 
-export class UpdateBarberProfileDto{
+export class UpdateBarberProfileDto {
   name!: string;
   email!: string;
   phone!: string;
 }
 
 export interface BarberDashboardStatsDto {
-  labels: string[];
-  data: number[];
-  type: 'bookings' | 'revenue';
   filter: string;
-  total?: number;
+  bookings: {
+    type: "bookings";
+    labels: string[];
+    data: number[];
+    total: number;
+  };
+  revenue: {
+    type: "revenue";
+    labels: string[];
+    data: number[];
+    total: number;
+  };
+  services: {
+    type: "services";
+    labels: string[];
+    data: number[];
+    total: number;
+  };
 }

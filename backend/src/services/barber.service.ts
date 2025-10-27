@@ -375,10 +375,9 @@ export class BarberService implements IBarberService {
     };
   };
 
-  getBookingStats = async (
+  getDashboardStats = async (
     barberId: string,
-    filter: DASHBOARDFILTERS,
-    type: "bookings" | "revenue"
+    filter: DASHBOARDFILTERS
   ): Promise<{ dashboardStats: BarberDashboardStatsDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
@@ -387,7 +386,7 @@ export class BarberService implements IBarberService {
 
     const dashboardStats = await this._bookingRepo.getDashboardStats(
       filter,
-      type
+      barberId
     );
 
     return { dashboardStats };

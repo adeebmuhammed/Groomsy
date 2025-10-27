@@ -369,11 +369,25 @@ export interface confirmSubscription {
 }
 
 export interface DashboardStatsDto {
-  labels: string[];
-  data: number[];
-  type: 'bookings' | 'revenue';
   filter: string;
-  total?: number;
+  bookings: {
+    type: "bookings";
+    labels: string[];
+    data: number[];
+    total: number;
+  };
+  revenue: {
+    type: "revenue";
+    labels: string[];
+    data: number[];
+    total: number;
+  };
+  services: {
+    type: "services";
+    labels: string[];
+    data: number[];
+    total: number;
+  };
 }
 
 export type BookingStatus = 'pending' | 'staged' | 'cancelled' | 'finished';

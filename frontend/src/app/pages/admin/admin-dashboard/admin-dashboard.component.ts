@@ -17,7 +17,6 @@ import { FormsModule } from '@angular/forms';
 })
 export class AdminDashboardComponent implements OnInit {
   stats: DashboardStatsDto | null = null;
-  selectedType: 'bookings' | 'revenue' = 'bookings';
   selectedFilter = '1 Month';
 
   private adminService: AdminService = inject(AdminService);
@@ -28,7 +27,7 @@ export class AdminDashboardComponent implements OnInit {
 
   loadStats(): void {
     this.adminService
-      .getDashboardStats(this.selectedFilter, this.selectedType)
+      .getDashboardStats(this.selectedFilter)
       .pipe(take(1))
       .subscribe((res) => {
         this.stats = res;

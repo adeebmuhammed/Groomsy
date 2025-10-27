@@ -190,3 +190,16 @@ app-admin-footer {
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
   height: 400px; /* give space for chart */
 }
+/* Chart layout container */
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+/* On small screens → fallback to single column */
+@media (max-width: 900px) {
+  .dashboard-charts {
+    grid-template-columns: 1fr;
+  }
+}

@@ -31,7 +31,6 @@ export interface IAdminService {
     barberId: string
   ): Promise<{ response: BarberDto; message: string }>;
   getAdminDashboardStats(
-    filter: DASHBOARDFILTERS,
-    type: "bookings" | "revenue"
+    filter: DASHBOARDFILTERS
   ): Promise<{ dashboardStats: AdminDashboardStatsDto }>
 }

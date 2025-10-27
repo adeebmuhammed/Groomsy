@@ -14,13 +14,26 @@ export interface IBookingRepository extends IBaseRepository<IBooking> {
   updateAfterVerfyPayment(bookingId: string): Promise<UpdateResult | null>;
   getDashboardStats(
     filter: string,
-    type: "bookings" | "revenue",
-    barberId?: string,
+    barberId?: string
   ): Promise<{
-    labels: string[];
-    data: number[];
-    type: "bookings" | "revenue";
-    filter: DASHBOARDFILTERS;
-    total?: number;
+    filter: string;
+    bookings: {
+      type: "bookings";
+      labels: string[];
+      data: number[];
+      total: number;
+    };
+    revenue: {
+      type: "revenue";
+      labels: string[];
+      data: number[];
+      total: number;
+    };
+    services: {
+      type: "services";
+      labels: string[];
+      data: number[];
+      total: number;
+    };
   }>;
 }
