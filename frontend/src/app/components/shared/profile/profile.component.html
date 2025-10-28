@@ -1,38 +1,33 @@
-<div class="profile-card">
+<div *ngIf="profile" class="profile-card">
   <div class="profile-header">
     <img
+    *ngIf="profile"
       [src]="profile.profilePicUrl || 'default.png'"
       alt="Profile Picture"
       class="profile-image"
     />
 
     <div class="profile-info">
-      <h2>{{ profile.name }}</h2>
-      <p>{{ profile.email }}</p>
+      <h2 *ngIf="profile.name">{{ profile.name }}</h2>
+      <p *ngIf="profile.email">{{ profile.email }}</p>
       <p *ngIf="profile.phone">📞 {{ profile.phone }}</p>
     </div>
   </div>
 
   <div class="profile-actions mt-3 d-flex justify-content-center flex-wrap gap-2">
-    <button class="btn btn-primary" (click)="onEditClick()">Edit Profile</button>
+    <button class="btn btn-primary" (click)="edit.emit()">Edit Profile</button>
 
     <button
       *ngIf="!profile.profilePicUrl"
       class="btn btn-success"
-      (click)="openUpload('upload')"
+      (click)="uploadRequested.emit('upload')"
     >
       Upload Profile Picture
     </button>
 
     <div *ngIf="profile.profilePicUrl" class="d-flex gap-2">
-      <button class="btn btn-warning" (click)="openUpload('update')">Update Profile Picture</button>
-      <button class="btn btn-danger" (click)="onDeleteClick()">Delete Picture</button>
+      <button class="btn btn-warning" (click)="uploadRequested.emit('update')">Update Profile Picture</button>
+      <button class="btn btn-danger" (click)="deletePic.emit()">Delete Picture</button>
     </div>
   </div>
-
-  <!-- Reusable Upload Modal -->
-  <app-file-upload
-    [modalMode]="modalMode"
-    (fileSelected)="onUploadFile($event)"
-  ></app-file-upload>
 </div>

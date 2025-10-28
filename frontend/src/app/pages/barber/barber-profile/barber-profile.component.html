@@ -14,10 +14,14 @@
           <div class="admin-sign-in">Barber Profile</div>
 
           <div class="user-profile-container">
+            <div class="loaderClass" *ngIf="isUploading" class="text-center mt-2">
+              <div class="spinner-border" role="status"></div>
+            </div>
+            <!-- profile emits uploadRequested, parent opens modal -->
             <app-profile
               [profile]="barberProfile"
               (edit)="onEditProfile()"
-              (uploadOrUpdate)="updateProfilePicture($event)"
+              (uploadRequested)="openUpload($event)"
               (deletePic)="deleteProfilePicture()"
             ></app-profile>
 
@@ -26,23 +30,28 @@
               (editAddress)="onEditAddress()"
             ></app-address>
           </div>
+
+          <app-file-upload
+            (fileSelected)="updateProfilePicture($event)"
+            (close)="closeUploadModal()"
+          ></app-file-upload>
+
+          <app-edit-profile
+            *ngIf="showEditModal"
+            [profile]="barberProfile"
+            (save)="updateProfile($event)"
+            (close)="showEditModal = false"
+          ></app-edit-profile>
+
+          <app-address-form
+            *ngIf="showEditAddressModal"
+            [address]="barberProfile.address"
+            (save)="updateBarberAddress($event)"
+            (close)="showEditAddressModal = false"
+          ></app-address-form>
         </div>
       </div>
     </div>
-
-    <app-edit-profile
-      *ngIf="showEditModal"
-      [profile]="barberProfile"
-      (save)="updateProfile($event)"
-      (close)="showEditModal = false"
-    ></app-edit-profile>
-
-    <app-address-form
-      *ngIf="showEditAddressModal"
-      [address]="barberProfile.address"
-      (save)="updateBarberAddress($event)"
-      (close)="showEditAddressModal = false"
-    ></app-address-form>
 
     <!-- Footer -->
     <app-barber-footer></app-barber-footer>

@@ -9,6 +9,8 @@ import { ProfileComponent } from '../../../components/shared/profile/profile.com
 import { EditProfileComponent } from '../../../components/shared/edit-profile/edit-profile.component';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
+import * as bootstrap from 'bootstrap';
+import { FileUploadComponent } from '../../../components/shared/file-upload/file-upload.component';
 
 @Component({
   selector: 'app-user-profile',
@@ -18,6 +20,7 @@ import Swal from 'sweetalert2';
     ProfileComponent,
     EditProfileComponent,
     CommonModule,
+    FileUploadComponent,
   ],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css',
@@ -88,9 +91,12 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
+  isUploading = false;
   updateProfilePicture(file: File) {
+    this.isUploading = true;
     this.authService.userId$.pipe(take(1)).subscribe((id) => {
       if (!id) {
+        this.isUploading = false;
         return;
       }
 
@@ -104,7 +110,9 @@ export class UserProfileComponent implements OnInit {
               res.message || 'Profile Picture Updated Successfully',
               'success'
             );
+            this.isUploading = false;
             this.fetchProfile();
+            this.closeUploadModal();
           },
           error: (err) => {
             console.error(err);
@@ -113,6 +121,7 @@ export class UserProfileComponent implements OnInit {
               err.error.message || 'Profile Picture Updation Failed',
               'error'
             );
+            this.isUploading = false;
           },
         });
     });
@@ -145,5 +154,34 @@ export class UserProfileComponent implements OnInit {
           },
         });
     });
+  }
+
+  modalMode: 'upload' | 'update' = 'upload';
+  selectedFile?: File;
+
+  openUpload(mode: 'upload' | 'update') {
+    console.log('clicked');
+
+    this.modalMode = mode;
+    this.selectedFile = undefined;
+    const modalEl = document.getElementById('fileUploadModal')!;
+    if (modalEl) {
+      const modal = new bootstrap.Modal(modalEl, { backdrop: 'static' });
+      modal.show();
+    }
+  }
+
+  closeUploadModal() {
+    const modalEl = document.getElementById('fileUploadModal')!;
+    bootstrap.Modal.getInstance(modalEl)?.hide();
+  }
+
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files?.[0];
+  }
+
+  submitUpload() {
+    if (!this.selectedFile) return;
+    this.updateProfilePicture(this.selectedFile);
   }
 }

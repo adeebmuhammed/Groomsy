@@ -36,7 +36,7 @@ app-barber-header {
   max-width: 1100px;
   margin: 0 auto 2rem auto;
   background-color: #fff;
-  padding: 2.5rem;
+  padding: 1rem;
   border-radius: 12px;
   box-shadow: 0 3px 20px rgba(0, 0, 0, 0.05);
 }
@@ -52,7 +52,6 @@ app-barber-header {
 app-profile {
   display: block;
   background: #f9fafb;
-  padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -77,7 +76,6 @@ app-barber-footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px 20px;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -97,18 +95,17 @@ app-barber-footer {
   }
 
   app-profile {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 
   app-address {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 }
 
 app-address {
   display: block;
   background: #f9fafb;
-  padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -118,3 +115,4 @@ app-address:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
+
