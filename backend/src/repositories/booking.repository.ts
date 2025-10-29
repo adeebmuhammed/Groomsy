@@ -29,12 +29,25 @@ export class BookingRepository
   async findWithPaginationAndCount(
     filter: FilterQuery<IBooking>,
     skip: number,
-    limit: number
+    limit: number,
+    sort: {
+      createdAt?: 1 | -1;
+      totalPrice?: 1 | -1;
+    }
   ): Promise<{ bookings: IBooking[]; totalCount: number }> {
+    const bookingsPromise = await Booking.find(filter)
+      .sort(sort) // ✅ directly applied here
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    const countPromise = this.countDocuments(filter);
+
     const [bookings, totalCount] = await Promise.all([
-      this.findWithPagination(filter, skip, limit),
-      this.countDocuments(filter),
+      bookingsPromise,
+      countPromise,
     ]);
+
     return { bookings, totalCount };
   }
 
@@ -104,7 +117,6 @@ export class BookingRepository
       status: { $nin: ["cancelled_by_user", "cancelled_by_barber"] },
     };
     if (barberId) matchStage.barber = new mongoose.Types.ObjectId(barberId);
-    
 
     const groupFormat =
       filter === "1 Year"

@@ -110,12 +110,14 @@ export class BookingService {
   getBookingByStatus(
     userId: string | null,
     status: 'pending' | 'staged' | 'cancelled' | 'finished',
+    filter: 'newest' | 'oldest' | 'price_low' | 'price_high',
     page = 1,
     limit = 5,
     role: ROLES
   ): Observable<{ data: BookingResponseDto[]; totalCount: number }> {
     let params = new HttpParams()
       .set('status', status)
+      .set('filter',filter)
       .set('page', page.toString())
       .set('limit', limit.toString())
       .set('role', role);

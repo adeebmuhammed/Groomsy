@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { IBookingService } from "../services/interfaces/IBookingService";
 import { IBookingController } from "./interfaces/IBookingController";
-import { ROLES, STATUS_CODES } from "../utils/constants";
+import { ROLES, STATUS_CODES, TABLEFILTERS } from "../utils/constants";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
 
@@ -219,18 +219,20 @@ export class BookingController implements IBookingController {
   getBookingsByStatus = async (req: Request, res: Response): Promise<void> => {
     try {
       const role = req.query.role as ROLES;
-      const userId = req.query["id"] as string | undefined; // optional now
+      const userId = req.query["id"] as string | undefined; 
       const bookingStatus = req.query.status as
         | "pending"
         | "staged"
         | "cancelled"
         | "finished";
+      const filter = req.query.filter as TABLEFILTERS;
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;
 
       const { response } = await this._bookingService.getBookingsByStatus(
         bookingStatus,
-        userId || null, // pass null if no id
+        userId || null,
+        filter,
         page,
         limit,
         role

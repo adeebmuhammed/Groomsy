@@ -295,3 +295,30 @@
   background-color: #f9f9f9;
   border-radius: 6px;
 }
+.filters-section {
+  display: flex;
+  justify-content: flex-end;   /* ✅ pushes Sort → right */
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.filters-section label {
+  margin: 0; 
+  color: #374151;             /* same as table text */
+  font-size: 14px;
+}
+
+.filters-section .form-select {
+  background-color: #fff;
+  color: #374151;
+  border: 1px solid #374151;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+}
+
+.filters-section .form-select:focus {
+  outline: none;
+  border-color: #3b82f6;      /* blue glow like active tab */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+}

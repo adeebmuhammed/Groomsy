@@ -18,6 +18,7 @@ import * as bootstrap from 'bootstrap';
 import { ServiceService } from '../../../services/service/service.service';
 import { BookingDetailsComponent } from '../../../components/shared/booking-details/booking-details.component';
 import { ROLES } from '../../../constants/roles';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-barber-booking',
@@ -28,6 +29,7 @@ import { ROLES } from '../../../constants/roles';
     CommonModule,
     DatePipe,
     BookingDetailsComponent,
+    FormsModule
   ],
   templateUrl: './barber-booking.component.html',
   styleUrl: './barber-booking.component.css',
@@ -36,6 +38,7 @@ export class BarberBookingComponent implements OnInit, OnDestroy {
   bookings: BookingResponseDto[] = [];
   selectedBooking: BookingResponseDto | null = null;
   selectedService: Service | null = null;
+  selectedSort: 'newest' | 'oldest' | 'price_low' | 'price_high' = 'newest';
   users: IUser[] = [];
 
   statuses: { label: string; value: BookingStatus }[] = [
@@ -52,12 +55,18 @@ export class BarberBookingComponent implements OnInit, OnDestroy {
   selectedStatus: BookingStatus = 'pending';
   changeStatus(status: BookingStatus): void {
     this.selectedStatus = status;
+    this.selectedSort = "newest";
     this.currentPage = 1;
-    this.fetchBookingsByStatus(status, 1);
+    this.fetchBookingsByStatus(status, this.selectedSort, 1);
+  }
+
+  applySort(){
+    this.fetchBookingsByStatus( this.selectedStatus, this.selectedSort)
   }
 
   fetchBookingsByStatus(
     status: 'pending' | 'staged' | 'cancelled' | 'finished',
+    sort: 'newest' | 'oldest' | 'price_low' | 'price_high',
     page = 1
   ): void {
     this.authService.barberId$
@@ -66,7 +75,7 @@ export class BarberBookingComponent implements OnInit, OnDestroy {
         if (!id) return;
 
         this.bookingService
-          .getBookingByStatus(id, status, page, this.itemsPerPage, ROLES.BARBER)
+          .getBookingByStatus(id, status, this.selectedSort, page, this.itemsPerPage, ROLES.BARBER)
           .pipe(takeUntil(this.componentDestroyed$))
           .subscribe({
             next: (res) => {
@@ -85,7 +94,7 @@ export class BarberBookingComponent implements OnInit, OnDestroy {
   private serviceService: ServiceService = inject(ServiceService);
 
   ngOnInit(): void {
-    this.fetchBookingsByStatus(this.selectedStatus);
+    this.fetchBookingsByStatus(this.selectedStatus, this.selectedSort);
     this.fetchUsers();
   }
 
@@ -117,7 +126,7 @@ export class BarberBookingComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           Swal.fire('Updated!', 'Booking status has been updated.', 'success');
-          this.fetchBookingsByStatus(this.selectedStatus);
+          this.fetchBookingsByStatus(this.selectedStatus, this.selectedSort);
         },
         error: (err) => {
           console.error(err);
@@ -137,7 +146,7 @@ export class BarberBookingComponent implements OnInit, OnDestroy {
   }
 
   handlePageChange(page: number): void {
-    this.fetchBookingsByStatus(this.selectedStatus);
+    this.fetchBookingsByStatus(this.selectedStatus, this.selectedSort);
   }
 
   openDetailsModal(booking: BookingResponseDto): void {
