@@ -8,7 +8,7 @@ import { IBooking } from "../models/booking.model";
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
 import { IUserRepository } from "../repositories/interfaces/IUserRepository";
-import { MESSAGES, ROLES } from "../utils/constants";
+import { MESSAGES, ROLES, TABLEFILTERS } from "../utils/constants";
 import { IBookingService } from "./interfaces/IBookingService";
 import { MessageResponseDto } from "../dto/base.dto";
 import { IServiceRepository } from "../repositories/interfaces/IServiceRepository";
@@ -56,7 +56,7 @@ export class BookingService implements IBookingService {
     }
 
     const { bookings, totalCount } =
-      await this._bookingRepo.findWithPaginationAndCount(filter, skip, limit);
+      await this._bookingRepo.findWithPaginationAndCount(filter, skip, limit, {});
 
     const bookingDTOs: BookingResponseDto[] =
       BookingMapper.toBookingResponseArray(bookings);
@@ -367,6 +367,7 @@ export class BookingService implements IBookingService {
   getBookingsByStatus = async (
     status: "pending" | "staged" | "cancelled" | "finished",
     userId: string | null,
+    filter: TABLEFILTERS,
     page: number,
     limit: number,
     role: ROLES
@@ -380,29 +381,41 @@ export class BookingService implements IBookingService {
 
     const skip = (page - 1) * limit;
 
-    let filter: FilterQuery<IBooking> = {};
+    let filterQuery: FilterQuery<IBooking> = {};
 
     if (role === ROLES.USER && userId) {
       const user = await this._userRepo.findById(userId);
       if (!user) throw new Error("user not found");
 
-      filter.user = userId;
+      filterQuery.user = userId;
     } else if (role === ROLES.BARBER && userId) {
       const barber = await this._barberRepo.findById(userId);
       if (!barber) throw new Error("barber not found");
 
-      filter.barber = userId;
+      filterQuery.barber = userId;
     } else if (role === ROLES.ADMIN) {
-      filter = {};
+      filterQuery = {};
     }
 
-    filter.status =
+    let filterParam: FilterQuery<IBooking> = {};
+    if (filter === TABLEFILTERS.NEWEST) {
+      filterParam.createdAt = -1
+    }else if (filter === TABLEFILTERS.OLDEST) {
+      filterParam.createdAt = 1
+    }else if (filter === TABLEFILTERS.PRICE_LOW) {
+      filterParam.totalPrice = 1
+    }else if (filter === TABLEFILTERS.PRICE_HIGH) {
+      filterParam.totalPrice = -1
+    }
+
+    filterQuery.status =
       status === "cancelled"
         ? { $in: ["cancelled_by_user", "cancelled_by_barber"] }
         : status;
+        
 
     const { bookings, totalCount } =
-      await this._bookingRepo.findWithPaginationAndCount(filter, skip, limit);
+      await this._bookingRepo.findWithPaginationAndCount(filterQuery, skip, limit, filterParam);
 
     return {
       response: {
@@ -425,7 +438,7 @@ export class BookingService implements IBookingService {
     const filter = { barber: barberId };
 
     const { bookings, totalCount } =
-      await this._bookingRepo.findWithPaginationAndCount(filter, 0, 100);
+      await this._bookingRepo.findWithPaginationAndCount(filter, 0, 100, {});
 
     const bookingDTOs: BookingResponseDto[] =
       BookingMapper.toBookingResponseArray(bookings);

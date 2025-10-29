@@ -65,3 +65,17 @@ export enum DASHBOARDFILTERS {
   MONTH = "1 Month",
   YEAR = "1 Year"
 }
+
+export enum TABLEFILTERS {
+  NEWEST = "newest",
+  OLDEST = "oldest",
+  PRICE_LOW = "price_low",
+  PRICE_HIGH = "price_high"
+}
+
+export type SortOrder = 1 | -1;
+
+export type BookingSortOptions = {
+  createdAt?: SortOrder;
+  totalPrice?: SortOrder;
+};

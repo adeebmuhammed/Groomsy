@@ -40,6 +40,7 @@ export class AdminBookingComponent implements OnInit, OnDestroy {
   selectedService: Service | null = null;
   users: IUser[] = [];
   barbers: IBarber[] = [];
+  selectedSort: 'newest' | 'oldest' | 'price_low' | 'price_high' = 'newest';
   statuses: { label: string; value: BookingStatus }[] = [
     { label: 'Upcoming', value: 'pending' },
     { label: 'Completed', value: 'finished' },
@@ -57,16 +58,22 @@ export class AdminBookingComponent implements OnInit, OnDestroy {
   selectedStatus: BookingStatus = 'pending';
   changeStatus(status: BookingStatus): void {
     this.selectedStatus = status;
+    this.selectedSort = "newest";
     this.currentPage = 1;
-    this.fetchBookingsByStatus(status, 1);
+    this.fetchBookingsByStatus(status,this.selectedSort, 1);
+  }
+
+  applySort(){
+    this.fetchBookingsByStatus( this.selectedStatus, this.selectedSort)
   }
 
   fetchBookingsByStatus(
     status: 'pending' | 'staged' | 'cancelled' | 'finished',
+    sort: 'newest' | 'oldest' | 'price_low' | 'price_high',
     page = 1
   ): void {
     this.bookingService
-      .getBookingByStatus(null, status, page, this.itemsPerPage, ROLES.ADMIN)
+      .getBookingByStatus(null, status, sort, page, this.itemsPerPage, ROLES.ADMIN)
       .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
@@ -85,10 +92,9 @@ export class AdminBookingComponent implements OnInit, OnDestroy {
   private bookingService: BookingService = inject(BookingService);
   private serviceService: ServiceService = inject(ServiceService);
   private adminService: AdminService = inject(AdminService);
-  private authService: AuthService = inject(AuthService);
 
   ngOnInit(): void {
-    this.fetchBookingsByStatus(this.selectedStatus);
+    this.fetchBookingsByStatus(this.selectedStatus, this.selectedSort);
     this.fetchUsers();
     this.fetchBarbers();
   }
@@ -122,7 +128,7 @@ export class AdminBookingComponent implements OnInit, OnDestroy {
   }
 
   handlePageChange(page: number): void {
-    this.fetchBookingsByStatus(this.selectedStatus, page);
+    this.fetchBookingsByStatus(this.selectedStatus,this.selectedSort, page);
   }
 
   openDetailsModal(booking: BookingResponseDto): void {

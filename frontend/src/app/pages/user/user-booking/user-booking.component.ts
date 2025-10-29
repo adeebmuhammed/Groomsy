@@ -44,6 +44,7 @@ export class UserBookingComponent implements OnInit, OnDestroy {
   selectedBooking: BookingResponseDto | null = null;
   selectedService: Service | null = null;
   barbers: BarberDto[] = [];
+  selectedSort: 'newest' | 'oldest' | 'price_low' | 'price_high' = 'newest';
   statuses: { label: string; value: BookingStatus }[] = [
     { label: 'Upcoming', value: 'pending' },
     { label: 'Completed', value: 'finished' },
@@ -87,7 +88,7 @@ export class UserBookingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.fetchBookingsByStatus(this.selectedStatus);
+    this.fetchBookingsByStatus(this.selectedStatus, this.selectedSort);
     this.fetchBarbers();
   }
 
@@ -96,6 +97,10 @@ export class UserBookingComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.componentDestroyed$.next();
     this.componentDestroyed$.complete();
+  }
+
+   applySort(){
+    this.fetchBookingsByStatus( this.selectedStatus, this.selectedSort)
   }
 
   fetchBarbers(): void {
@@ -119,6 +124,7 @@ export class UserBookingComponent implements OnInit, OnDestroy {
 
   fetchBookingsByStatus(
     status: 'pending' | 'staged' | 'cancelled' | 'finished',
+    sort: 'newest' | 'oldest' | 'price_low' | 'price_high',
     page = 1
   ): void {
     this.authService.userId$
@@ -127,7 +133,7 @@ export class UserBookingComponent implements OnInit, OnDestroy {
         if (!id) return;
 
         this.bookingService
-          .getBookingByStatus(id, status, page, this.itemsPerPage, ROLES.USER)
+          .getBookingByStatus(id, status, sort, page, this.itemsPerPage, ROLES.USER)
           .pipe(takeUntil(this.componentDestroyed$))
           .subscribe({
             next: (res) => {
@@ -143,13 +149,14 @@ export class UserBookingComponent implements OnInit, OnDestroy {
 
   changeStatus(status: BookingStatus): void {
     this.selectedStatus = status;
+    this.selectedSort = "newest";
     this.currentPage = 1;
-    this.fetchBookingsByStatus(status, 1);
+    this.fetchBookingsByStatus(status,this.selectedSort, 1);
   }
 
   handlePageChange(page: number): void {
     this.currentPage = page;
-    this.fetchBookingsByStatus(this.selectedStatus, page);
+    this.fetchBookingsByStatus(this.selectedStatus, this.selectedSort, page);
   }
 
   cancelBooking(booking: BookingResponseDto): void {
@@ -169,7 +176,7 @@ export class UserBookingComponent implements OnInit, OnDestroy {
           .subscribe({
             next: () => {
               Swal.fire('Cancelled!', 'Booking has been cancelled.', 'success');
-              this.fetchBookingsByStatus(this.selectedStatus);
+              this.fetchBookingsByStatus(this.selectedStatus, this.selectedSort);
             },
             error: (err) => {
               console.error('Delete error:', err);

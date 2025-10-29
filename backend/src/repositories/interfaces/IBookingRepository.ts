@@ -9,7 +9,11 @@ export interface IBookingRepository extends IBaseRepository<IBooking> {
   findWithPaginationAndCount(
     filter: FilterQuery<IBooking>,
     skip: number,
-    limit: number
+    limit: number,
+    sort: {
+      createdAt?: 1 | -1;
+      totalPrice?: 1 | -1;
+    }
   ): Promise<{ bookings: IBooking[]; totalCount: number }>;
   updateAfterVerfyPayment(bookingId: string): Promise<UpdateResult | null>;
   getDashboardStats(

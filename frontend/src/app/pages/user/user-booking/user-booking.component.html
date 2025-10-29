@@ -14,6 +14,16 @@
     </button>
   </div>
 
+  <div class="filters-section d-flex align-items-center gap-3 mt-3">
+  <label>Sort:</label>
+  <select class="form-select w-auto" [(ngModel)]="selectedSort" (change)="applySort()">
+    <option value="newest">Newest First</option>
+    <option value="oldest">Oldest First</option>
+    <option value="price_low">Price - Low to High</option>
+    <option value="price_high">Price - High to Low</option>
+  </select>
+</div>
+
   <div class="table">
     <table class="user-booking-table">
       <thead>
