@@ -129,4 +129,10 @@ export class BookingService {
       { params }
     );
   }
+
+  getBookingsByBarber(barberId: string): Observable<{ data: BookingResponseDto[]; totalCount: number }>{
+    return this.http.get<{ data: BookingResponseDto[]; totalCount: number }>(
+      `${environment.apiBaseUrl}/user/bookings-by-barber/${barberId}`
+    );
+  }
 }

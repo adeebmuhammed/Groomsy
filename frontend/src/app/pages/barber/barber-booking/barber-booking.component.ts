@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { BarberSidebarComponent } from '../../../components/barber/barber-sidebar/barber-sidebar.component';
@@ -12,7 +12,7 @@ import {
   Service,
 } from '../../../interfaces/interfaces';
 import Swal from 'sweetalert2';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { BarberService } from '../../../services/barber/barber.service';
 import * as bootstrap from 'bootstrap';
 import { ServiceService } from '../../../services/service/service.service';
@@ -32,7 +32,7 @@ import { ROLES } from '../../../constants/roles';
   templateUrl: './barber-booking.component.html',
   styleUrl: './barber-booking.component.css',
 })
-export class BarberBookingComponent implements OnInit {
+export class BarberBookingComponent implements OnInit, OnDestroy {
   bookings: BookingResponseDto[] = [];
   selectedBooking: BookingResponseDto | null = null;
   selectedService: Service | null = null;
@@ -60,21 +60,23 @@ export class BarberBookingComponent implements OnInit {
     status: 'pending' | 'staged' | 'cancelled' | 'finished',
     page = 1
   ): void {
-    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
-      if (!id) return;
+    this.authService.barberId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (!id) return;
 
-      this.bookingService
-        .getBookingByStatus(id, status, page, this.itemsPerPage, ROLES.BARBER)
-        .pipe(take(1))
-        .subscribe({
-          next: (res) => {
-            this.bookings = res.data;
-            this.totalPages = Math.ceil(res.totalCount / this.itemsPerPage);
-            this.currentPage = page;
-          },
-          error: (err) => console.error('Failed to fetch bookings', err),
-        });
-    });
+        this.bookingService
+          .getBookingByStatus(id, status, page, this.itemsPerPage, ROLES.BARBER)
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: (res) => {
+              this.bookings = res.data;
+              this.totalPages = Math.ceil(res.totalCount / this.itemsPerPage);
+              this.currentPage = page;
+            },
+            error: (err) => console.error('Failed to fetch bookings', err),
+          });
+      });
   }
 
   private bookingService: BookingService = inject(BookingService);
@@ -85,6 +87,13 @@ export class BarberBookingComponent implements OnInit {
   ngOnInit(): void {
     this.fetchBookingsByStatus(this.selectedStatus);
     this.fetchUsers();
+  }
+
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
   }
 
   findUser(userId: string) {
@@ -104,7 +113,7 @@ export class BarberBookingComponent implements OnInit {
   updateStatus(status: string, booking: BookingResponseDto): void {
     this.bookingService
       .updateBookingStatus(ROLES.BARBER, booking.id, status)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: () => {
           Swal.fire('Updated!', 'Booking status has been updated.', 'success');
@@ -120,7 +129,7 @@ export class BarberBookingComponent implements OnInit {
   fetchUsers() {
     this.barberService
       .fetchUsers('', 1, 100)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((res) => {
         this.users = res?.data || [];
         this.totalPages = res?.pagination?.totalPages || 1;
@@ -135,7 +144,7 @@ export class BarberBookingComponent implements OnInit {
     this.selectedBooking = booking;
     this.serviceService
       .getServiceById(ROLES.BARBER, booking.service)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           this.selectedService = res;

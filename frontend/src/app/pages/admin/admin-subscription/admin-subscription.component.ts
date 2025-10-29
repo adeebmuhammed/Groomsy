@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { AdminHeaderComponent } from '../../../components/admin/admin-header/admin-header.component';
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
@@ -10,7 +10,7 @@ import {
 import { SubscriptionPlanService } from '../../../services/subscription-plan/subscription-plan.service';
 import Swal from 'sweetalert2';
 import { SubscriptionFormComponent } from '../../../components/shared/subscription-form/subscription-form.component';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-admin-subscription',
@@ -24,7 +24,7 @@ import { take } from 'rxjs';
   templateUrl: './admin-subscription.component.html',
   styleUrl: './admin-subscription.component.css',
 })
-export class AdminSubscriptionComponent implements OnInit {
+export class AdminSubscriptionComponent implements OnInit, OnDestroy {
   plans: SubscriptionPlanDto[] = [];
   currentPage = 1;
   itemsPerPage = 5;
@@ -39,7 +39,7 @@ export class AdminSubscriptionComponent implements OnInit {
     { key: 'renewalPrice', label: 'Renewal Price' },
     { key: 'duration', label: 'Duration' },
     { key: 'durationUnit', label: 'Duration Unit' },
-    { key: 'features', label: 'Features' }, // 👈 Added
+    { key: 'features', label: 'Features' },
     { key: 'status', label: 'Active', isStatus: true },
   ];
 
@@ -49,16 +49,23 @@ export class AdminSubscriptionComponent implements OnInit {
     this.fetchPlans();
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   fetchPlans() {
     this.planService
       .fetch(this.searchTerm, this.currentPage, this.itemsPerPage)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           this.plans = (res.data || []).map((p: SubscriptionPlanDto) => ({
             ...p,
             status: p.isActive ? 'active' : 'inactive',
-            features: p.features || [], // 👈 ensure features always exists
+            features: p.features || [],
           }));
 
           this.totalPages = res?.pagination?.totalPages || 1;
@@ -83,7 +90,7 @@ export class AdminSubscriptionComponent implements OnInit {
   updateActivation(plan: SubscriptionPlanDto) {
     this.planService
       .updateActivation(plan.id)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           Swal.fire(
@@ -117,7 +124,7 @@ export class AdminSubscriptionComponent implements OnInit {
   createPlan(data: CreateSubscriptionPlanDto) {
     this.planService
       .create(data)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           Swal.fire(

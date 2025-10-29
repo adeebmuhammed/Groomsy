@@ -248,4 +248,31 @@ export class BookingController implements IBookingController {
       });
     }
   };
+
+  fetchBookingsOfBarber = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const barberId = req.params["id"];
+
+      const { bookingsOfBarber } =
+        await this._bookingService.fetchBookingsOfBarber(barberId);
+      let status;
+
+      if (bookingsOfBarber) {
+        status = STATUS_CODES.OK;
+      } else {
+        status = STATUS_CODES.CONFLICT;
+      }
+
+      res.status(status).json(bookingsOfBarber);
+    } catch (error) {
+      console.error(error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+        error:
+          error instanceof Error ? error.message : "Failed to fetch bookings",
+      });
+    }
+  };
 }

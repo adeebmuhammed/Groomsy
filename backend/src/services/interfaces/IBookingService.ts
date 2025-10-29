@@ -18,30 +18,28 @@ export interface IBookingService {
   stageBooking(
     userId: string,
     data: BookingCreateRequestDto
-  ): Promise<{ response: BookingResponseDto;}>;
+  ): Promise<{ response: BookingResponseDto }>;
   couponApplication(
     bookingId: string,
     couponCode: string
-  ): Promise<{ response: BookingResponseDto;}>;
+  ): Promise<{ response: BookingResponseDto }>;
   confirmBooking(
     bookingId: string,
     userId: string,
     data: { finalPrice?: number; couponCode?: string; discountAmount?: number }
-  ): Promise<{ response: confirmBookingDto;}>;
+  ): Promise<{ response: confirmBookingDto }>;
   verifyPayment(
     razorpay_payment_id: string,
     razorpay_order_id: string,
     razorpay_signature: string,
     bookingId: string
-  ): Promise<{ response: MessageResponseDto;}>;
+  ): Promise<{ response: MessageResponseDto }>;
   updateBookingStatus(
     role: ROLES,
     bookingId: string,
     bookingStatus: string
-  ): Promise<{ response: MessageResponseDto;}>;
-  getBookingById(
-    bookingId: string
-  ): Promise<{ response: BookingResponseDto;}>;
+  ): Promise<{ response: MessageResponseDto }>;
+  getBookingById(bookingId: string): Promise<{ response: BookingResponseDto }>;
   getBookingsByStatus(
     status: "pending" | "staged" | "cancelled" | "finished",
     userId: string | null,
@@ -50,5 +48,8 @@ export interface IBookingService {
     role: ROLES
   ): Promise<{
     response: { data: BookingResponseDto[]; totalCount: number };
+  }>;
+  fetchBookingsOfBarber(barberId: string): Promise<{
+    bookingsOfBarber: { data: BookingResponseDto[]; totalCount: number };
   }>;
 }

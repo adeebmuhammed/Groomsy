@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { BarberSidebarComponent } from '../../../components/barber/barber-sidebar/barber-sidebar.component';
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import Swal from 'sweetalert2';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ROLES } from '../../../constants/roles';
 
 @Component({
@@ -23,7 +23,7 @@ import { ROLES } from '../../../constants/roles';
   templateUrl: './barber-unavailability.component.html',
   styleUrl: './barber-unavailability.component.css',
 })
-export class BarberUnavailabilityComponent implements OnInit {
+export class BarberUnavailabilityComponent implements OnInit, OnDestroy {
   barberId = '';
   unavailabilityData?: BarberUnavailabilityDto;
 
@@ -48,19 +48,28 @@ export class BarberUnavailabilityComponent implements OnInit {
   private authService = inject(AuthService);
 
   ngOnInit(): void {
-    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
-      if (id) {
-        this.barberId = id;
-      }
-    });
+    this.authService.barberId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (id) {
+          this.barberId = id;
+        }
+      });
     this.fetchUnavailability();
+  }
+
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
   }
 
   fetchUnavailability(): void {
     this.loading = true;
     this.unavailabilityService
       .fetchBarberUnavailability(this.barberId, ROLES.BARBER)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (data) => {
           this.unavailabilityData = data;
@@ -78,7 +87,7 @@ export class BarberUnavailabilityComponent implements OnInit {
     if (!this.newWeeklyOff) return;
     this.unavailabilityService
       .editWeeklyDayOff(this.barberId, this.newWeeklyOff)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           Swal.fire({
@@ -91,7 +100,7 @@ export class BarberUnavailabilityComponent implements OnInit {
           });
         },
         error: (err) =>
-        Swal.fire('Error!', 'Failed to update weekly off', 'error'),
+          Swal.fire('Error!', 'Failed to update weekly off', 'error'),
       });
   }
 
@@ -102,7 +111,7 @@ export class BarberUnavailabilityComponent implements OnInit {
         date: this.newOffDate,
         reason: this.newOffReason,
       })
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           Swal.fire({
@@ -116,7 +125,8 @@ export class BarberUnavailabilityComponent implements OnInit {
             this.fetchUnavailability();
           });
         },
-        error: (err) => Swal.fire('Error!', 'Failed to add special off', 'error'),
+        error: (err) =>
+          Swal.fire('Error!', 'Failed to add special off', 'error'),
       });
   }
 
@@ -131,20 +141,23 @@ export class BarberUnavailabilityComponent implements OnInit {
       confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.unavailabilityService.removeOffDay(this.barberId, date).pipe(take(1)).subscribe({
-          next: (res) => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Removed Successfully',
-              text: res.message || 'special day off removed successfully.',
-              confirmButtonText: 'OK',
-            }).then(() => {
-              this.fetchUnavailability();
-            });
-          },
-          error: (err) =>
-            Swal.fire('Error!', 'Failed to remove special off', 'error')
-        });
+        this.unavailabilityService
+          .removeOffDay(this.barberId, date)
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: (res) => {
+              Swal.fire({
+                icon: 'success',
+                title: 'Removed Successfully',
+                text: res.message || 'special day off removed successfully.',
+                confirmButtonText: 'OK',
+              }).then(() => {
+                this.fetchUnavailability();
+              });
+            },
+            error: (err) =>
+              Swal.fire('Error!', 'Failed to remove special off', 'error'),
+          });
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { BarberSidebarComponent } from '../../../components/barber/barber-sidebar/barber-sidebar.component';
@@ -6,7 +6,7 @@ import { ProfileComponent } from '../../../components/shared/profile/profile.com
 import { BarberProfileDto, EditProfile } from '../../../interfaces/interfaces';
 import { AuthService } from '../../../services/auth/auth.service';
 import { BarberService } from '../../../services/barber/barber.service';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import Swal from 'sweetalert2';
 import { EditProfileComponent } from '../../../components/shared/edit-profile/edit-profile.component';
 import { CommonModule } from '@angular/common';
@@ -31,7 +31,7 @@ import * as bootstrap from 'bootstrap';
   templateUrl: './barber-profile.component.html',
   styleUrl: './barber-profile.component.css',
 })
-export class BarberProfileComponent implements OnInit {
+export class BarberProfileComponent implements OnInit, OnDestroy {
   barberProfile!: BarberProfileDto;
 
   private authService: AuthService = inject(AuthService);
@@ -44,23 +44,32 @@ export class BarberProfileComponent implements OnInit {
     this.fetchBarberProfile();
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   fetchBarberProfile() {
-    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
-      if (!id) {
-        return;
-      }
-      this.barberService
-        .fetchBarberProfile(id)
-        .pipe(take(1))
-        .subscribe({
-          next: (res) => {
-            this.barberProfile = res;
-          },
-          error: (err) => {
-            console.error(err);
-          },
-        });
-    });
+    this.authService.barberId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (!id) {
+          return;
+        }
+        this.barberService
+          .fetchBarberProfile(id)
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: (res) => {
+              this.barberProfile = res;
+            },
+            error: (err) => {
+              console.error(err);
+            },
+          });
+      });
   }
 
   onEditProfile() {
@@ -68,34 +77,36 @@ export class BarberProfileComponent implements OnInit {
   }
 
   updateProfile(updated: EditProfile) {
-    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
-      if (!id) {
-        return;
-      }
+    this.authService.barberId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (!id) {
+          return;
+        }
 
-      this.barberService
-        .updateBarberProfile(id, updated)
-        .pipe(take(1))
-        .subscribe({
-          next: (res) => {
-            this.showEditModal = false;
-            Swal.fire(
-              'Updated!',
-              'Your Profile has been Updated Successfully.',
-              'success'
-            );
-            this.fetchBarberProfile();
-          },
-          error: (err) => {
-            console.error(err);
-            Swal.fire(
-              'Failed!',
-              err.error?.error || 'Profile Updation Failed',
-              'error'
-            );
-          },
-        });
-    });
+        this.barberService
+          .updateBarberProfile(id, updated)
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: (res) => {
+              this.showEditModal = false;
+              Swal.fire(
+                'Updated!',
+                'Your Profile has been Updated Successfully.',
+                'success'
+              );
+              this.fetchBarberProfile();
+            },
+            error: (err) => {
+              console.error(err);
+              Swal.fire(
+                'Failed!',
+                err.error?.error || 'Profile Updation Failed',
+                'error'
+              );
+            },
+          });
+      });
   }
 
   onEditAddress() {
@@ -103,97 +114,103 @@ export class BarberProfileComponent implements OnInit {
   }
 
   updateBarberAddress(address: BarberProfileDto['address']) {
-    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
-      if (!id) {
-        return;
-      }
-      this.barberService
-        .updateBarberAddress(id, address)
-        .pipe(take(1))
-        .subscribe({
-          next: (res) => {
-            this.showEditAddressModal = false;
-            Swal.fire(
-              'Updated!',
-              res.message || 'Your Address has been Updated Successfully.',
-              'success'
-            );
-            this.fetchBarberProfile();
-          },
-          error: (err) => {
-            console.error(err);
-            Swal.fire(
-              'Failed!',
-              err.error?.error || 'Address Updation Failed',
-              'error'
-            );
-          },
-        });
-    });
+    this.authService.barberId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (!id) {
+          return;
+        }
+        this.barberService
+          .updateBarberAddress(id, address)
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: (res) => {
+              this.showEditAddressModal = false;
+              Swal.fire(
+                'Updated!',
+                res.message || 'Your Address has been Updated Successfully.',
+                'success'
+              );
+              this.fetchBarberProfile();
+            },
+            error: (err) => {
+              console.error(err);
+              Swal.fire(
+                'Failed!',
+                err.error?.error || 'Address Updation Failed',
+                'error'
+              );
+            },
+          });
+      });
   }
   isUploading = false;
   updateProfilePicture(file: File) {
     this.isUploading = true;
-    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
-      if (!id) {
-        this.isUploading = false;
-        return;
-      }
+    this.authService.barberId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (!id) {
+          this.isUploading = false;
+          return;
+        }
 
-      this.barberService
-        .updateProfilePicture(id, file)
-        .pipe(take(1))
-        .subscribe({
-          next: (res) => {
-            Swal.fire(
-              'Success',
-              res.message || 'Profile Picture Updated Successfully',
-              'success'
-            );
-            this.isUploading = false;
-            this.fetchBarberProfile();
-            this.closeUploadModal();
-          },
-          error: (err) => {
-            console.error(err);
-            Swal.fire(
-              'Error',
-              err.error.message || 'Profile Picture Updation Failed',
-              'error'
-            );
-            this.isUploading = false;
-          },
-        });
-    });
+        this.barberService
+          .updateProfilePicture(id, file)
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: (res) => {
+              Swal.fire(
+                'Success',
+                res.message || 'Profile Picture Updated Successfully',
+                'success'
+              );
+              this.isUploading = false;
+              this.fetchBarberProfile();
+              this.closeUploadModal();
+            },
+            error: (err) => {
+              console.error(err);
+              Swal.fire(
+                'Error',
+                err.error.message || 'Profile Picture Updation Failed',
+                'error'
+              );
+              this.isUploading = false;
+            },
+          });
+      });
   }
 
   deleteProfilePicture() {
-    this.authService.barberId$.pipe(take(1)).subscribe((id) => {
-      if (!id) return;
+    this.authService.barberId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (!id) return;
 
-      this.barberService
-        .deleteProfilePicture(id)
-        .pipe(take(1))
-        .subscribe({
-          next: (res) => {
-            this.barberProfile.profilePicUrl = null;
-            this.barberProfile.profilePicKey = null;
-            Swal.fire(
-              'Success',
-              res.message || 'Profile Picture Deleted Successfully',
-              'success'
-            );
-          },
-          error: (err) => {
-            console.error(err);
-            Swal.fire(
-              'Error',
-              err.error.message || 'Profile Picture Deletion Failed',
-              'error'
-            );
-          },
-        });
-    });
+        this.barberService
+          .deleteProfilePicture(id)
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: (res) => {
+              this.barberProfile.profilePicUrl = null;
+              this.barberProfile.profilePicKey = null;
+              Swal.fire(
+                'Success',
+                res.message || 'Profile Picture Deleted Successfully',
+                'success'
+              );
+            },
+            error: (err) => {
+              console.error(err);
+              Swal.fire(
+                'Error',
+                err.error.message || 'Profile Picture Deletion Failed',
+                'error'
+              );
+            },
+          });
+      });
   }
 
   modalMode: 'upload' | 'update' = 'upload';

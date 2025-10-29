@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { AdminHeaderComponent } from '../../../components/admin/admin-header/admin-header.component';
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
@@ -8,7 +8,7 @@ import { CouponService } from '../../../services/coupon/coupon.service';
 import { CouponFormComponent } from '../../../components/shared/coupon-form/coupon-form.component';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-admin-coupons',
@@ -23,7 +23,7 @@ import { take } from 'rxjs';
   templateUrl: './admin-coupons.component.html',
   styleUrl: './admin-coupons.component.css',
 })
-export class AdminCouponsComponent implements OnInit {
+export class AdminCouponsComponent implements OnInit, OnDestroy {
   couponModalVisible = false;
   selectedCouponData: CouponResponseDto | null = null;
   selectedCouponId: string | null = null;
@@ -51,10 +51,17 @@ export class AdminCouponsComponent implements OnInit {
     this.loadCoupons();
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   loadCoupons(): void {
     this.couponService
       .getCoupons(this.currentPage, this.itemsPerPage, this.searchTerm)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (response) => {
           this.coupons = response.data || [];
@@ -102,7 +109,7 @@ export class AdminCouponsComponent implements OnInit {
       if (result.isConfirmed) {
         this.couponService
           .deleteCoupon(coupon.id)
-          .pipe(take(1))
+          .pipe(takeUntil(this.componentDestroyed$))
           .subscribe({
             next: () => {
               Swal.fire('Deleted!', 'Coupon has been deleted.', 'success');
@@ -127,7 +134,7 @@ export class AdminCouponsComponent implements OnInit {
     if (this.selectedCouponId) {
       this.couponService
         .editCoupon(this.selectedCouponId, payload)
-        .pipe(take(1))
+        .pipe(takeUntil(this.componentDestroyed$))
         .subscribe({
           next: () => {
             Swal.fire({
@@ -152,7 +159,7 @@ export class AdminCouponsComponent implements OnInit {
     } else {
       this.couponService
         .addCoupon(payload)
-        .pipe(take(1))
+        .pipe(takeUntil(this.componentDestroyed$))
         .subscribe({
           next: () => {
             Swal.fire({

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { BookingService } from '../../../services/booking/booking.service';
 import {
   BookingResponseDto,
@@ -12,7 +12,7 @@ import { AdminFooterComponent } from '../../../components/admin/admin-footer/adm
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { BookingDetailsComponent } from '../../../components/shared/booking-details/booking-details.component';
 import * as bootstrap from 'bootstrap';
 import { ServiceService } from '../../../services/service/service.service';
@@ -34,7 +34,7 @@ import { ROLES } from '../../../constants/roles';
   templateUrl: './admin-booking.component.html',
   styleUrl: './admin-booking.component.css',
 })
-export class AdminBookingComponent implements OnInit {
+export class AdminBookingComponent implements OnInit, OnDestroy {
   bookings: BookingResponseDto[] = [];
   selectedBooking: BookingResponseDto | null = null;
   selectedService: Service | null = null;
@@ -46,6 +46,13 @@ export class AdminBookingComponent implements OnInit {
     { label: 'Cancelled', value: 'cancelled' },
     { label: 'Staged', value: 'staged' },
   ];
+
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
 
   selectedStatus: BookingStatus = 'pending';
   changeStatus(status: BookingStatus): void {
@@ -60,7 +67,7 @@ export class AdminBookingComponent implements OnInit {
   ): void {
     this.bookingService
       .getBookingByStatus(null, status, page, this.itemsPerPage, ROLES.ADMIN)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           this.bookings = res.data;
@@ -99,7 +106,7 @@ export class AdminBookingComponent implements OnInit {
   fetchUsers() {
     this.adminService
       .listUsers('', 1, 100)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((res) => {
         this.users = res?.data || [];
       });
@@ -108,26 +115,25 @@ export class AdminBookingComponent implements OnInit {
   fetchBarbers(): void {
     this.adminService
       .listBarbers('', 1, 100)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((res) => {
         this.barbers = res?.data || [];
       });
   }
 
   handlePageChange(page: number): void {
-    this.fetchBookingsByStatus(this.selectedStatus,page);
+    this.fetchBookingsByStatus(this.selectedStatus, page);
   }
 
   openDetailsModal(booking: BookingResponseDto): void {
     this.selectedBooking = booking;
     this.serviceService
       .getServiceById(ROLES.ADMIN, booking.service)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           this.selectedService = res;
 
-          // Only show modal after data is fetched
           const modalElement = document.getElementById('bookingDetailsModal');
           if (modalElement) {
             const modal = new bootstrap.Modal(modalElement);
@@ -137,7 +143,6 @@ export class AdminBookingComponent implements OnInit {
         error: (err) => {
           console.error('Error fetching service:', err);
 
-          // Even if service fails, still show modal with booking info
           const modalElement = document.getElementById('bookingDetailsModal');
           if (modalElement) {
             const modal = new bootstrap.Modal(modalElement);

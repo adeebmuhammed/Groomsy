@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { AdminHeaderComponent } from '../../../components/admin/admin-header/admin-header.component';
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
@@ -7,7 +7,7 @@ import { AdminService } from '../../../services/admin/admin.service';
 import { AdminTableComponent } from '../../../components/shared/admin-table/admin-table.component';
 import Swal from 'sweetalert2';
 import { IBarber } from '../../../interfaces/interfaces';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-admin-barbers-list',
@@ -21,12 +21,13 @@ import { take } from 'rxjs';
   templateUrl: './admin-barbers-list.component.html',
   styleUrl: './admin-barbers-list.component.css',
 })
-export class AdminBarbersListComponent implements OnInit {
+export class AdminBarbersListComponent implements OnInit, OnDestroy {
   barbers: IBarber[] = [];
   currentPage = 1;
   itemsPerPage = 5;
   totalPages = 1;
   searchTerm = '';
+  componentDestroyed$: Subject<void> = new Subject<void>();
 
   columns = [
     { key: 'name', label: 'Name' },
@@ -45,10 +46,15 @@ export class AdminBarbersListComponent implements OnInit {
     this.fetchBarbers();
   }
 
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   fetchBarbers(): void {
     this.adminService
       .listBarbers(this.searchTerm, this.currentPage, this.itemsPerPage)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((res) => {
         this.barbers = res?.data || [];
         this.totalPages = res?.pagination?.totalPages || 1;
@@ -71,7 +77,7 @@ export class AdminBarbersListComponent implements OnInit {
 
     this.adminService
       .updateBarberStatus(barber.id, status)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           Swal.fire({

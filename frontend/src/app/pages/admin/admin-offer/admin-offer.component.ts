@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { OfferService } from '../../../services/offer/offer.service';
 import { OfferResponseDto } from '../../../interfaces/interfaces';
@@ -8,7 +8,7 @@ import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/a
 import { AdminTableComponent } from '../../../components/shared/admin-table/admin-table.component';
 import { CommonModule } from '@angular/common';
 import { OfferFormComponent } from '../../../components/shared/offer-form/offer-form.component';
-import { pipe, take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-admin-offer',
@@ -23,7 +23,7 @@ import { pipe, take } from 'rxjs';
   templateUrl: './admin-offer.component.html',
   styleUrl: './admin-offer.component.css',
 })
-export class AdminOfferComponent implements OnInit {
+export class AdminOfferComponent implements OnInit, OnDestroy {
   offerModalVisible = false;
   selectedOfferData: OfferResponseDto | null = null;
   selectedOfferId: string | null = null;
@@ -48,10 +48,17 @@ export class AdminOfferComponent implements OnInit {
     this.loadOffers();
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   loadOffers(): void {
     this.offerService
       .getOffers(this.currentPage, this.itemsPerPage, this.searchTerm)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (response) => {
           this.offers = response.data || [];
@@ -99,7 +106,7 @@ export class AdminOfferComponent implements OnInit {
       if (result.isConfirmed) {
         this.offerService
           .deleteOffer(offer.id)
-          .pipe(take(1))
+          .pipe(takeUntil(this.componentDestroyed$))
           .subscribe({
             next: () => {
               Swal.fire('Deleted!', 'Offer has been deleted.', 'success');
@@ -125,7 +132,7 @@ export class AdminOfferComponent implements OnInit {
       // Edit existing coupon
       this.offerService
         .editOffer(this.selectedOfferId, payload)
-        .pipe(take(1))
+        .pipe(takeUntil(this.componentDestroyed$))
         .subscribe({
           next: () => {
             Swal.fire({
@@ -151,7 +158,7 @@ export class AdminOfferComponent implements OnInit {
       // Add new coupon
       this.offerService
         .addOffer(payload)
-        .pipe(take(1))
+        .pipe(takeUntil(this.componentDestroyed$))
         .subscribe({
           next: () => {
             Swal.fire({

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user/user.service';
 import {
   BarberDto,
@@ -14,7 +14,7 @@ import {
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, take } from 'rxjs';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import * as bootstrap from 'bootstrap';
@@ -43,7 +43,7 @@ import { ROLES } from '../../../constants/roles';
   templateUrl: './user-barber-details.component.html',
   styleUrl: './user-barber-details.component.css',
 })
-export class UserBarberDetailsComponent implements OnInit {
+export class UserBarberDetailsComponent implements OnInit, OnDestroy {
   barber: BarberProfileDto | null = null;
   slots: SlotDto[] = [];
   barberId = '';
@@ -74,7 +74,7 @@ export class UserBarberDetailsComponent implements OnInit {
 
     this.barberUnavailabilityService
       .fetchBarberUnavailability(this.barberId, ROLES.USER)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           this.barberUnavailability = res;
@@ -104,10 +104,17 @@ export class UserBarberDetailsComponent implements OnInit {
     });
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   fetchSlots() {
     this.userService
       .fetchSlotRulesByBarber(this.barberId)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((res) => {
         this.slots = res.data;
       });
@@ -143,15 +150,15 @@ export class UserBarberDetailsComponent implements OnInit {
         this.barberId,
         this.selectedService.id
       )
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           this.populatedSlots = res;
           this.fetchedDate = isoSelected;
 
           this.bookingService
-            .fetchBookings(ROLES.BARBER, this.barberId, 1, 100)
-            .pipe(take(1))
+            .getBookingsByBarber(this.barberId)
+            .pipe(takeUntil(this.componentDestroyed$))
             .subscribe({
               next: (bookingsRes) => {
                 const bookingsForDate = bookingsRes.data.filter(
@@ -236,80 +243,82 @@ export class UserBarberDetailsComponent implements OnInit {
   }
 
   bookTimeSlot(slot: SlotTime, date: string): void {
-    this.authService.userId$.pipe(take(1)).subscribe((id) => {
-      if (!id || !this.barberId || !this.selectedService) return;
+    this.authService.userId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (!id || !this.barberId || !this.selectedService) return;
 
-      const bookingDate = new Date(date);
+        const bookingDate = new Date(date);
 
-      const startTimeDate = new Date(bookingDate);
-      startTimeDate.setHours(
-        new Date(slot.startTime).getHours(),
-        new Date(slot.startTime).getMinutes(),
-        0,
-        0
-      );
+        const startTimeDate = new Date(bookingDate);
+        startTimeDate.setHours(
+          new Date(slot.startTime).getHours(),
+          new Date(slot.startTime).getMinutes(),
+          0,
+          0
+        );
 
-      const endTimeDate = new Date(bookingDate);
-      endTimeDate.setHours(
-        new Date(slot.endTime).getHours(),
-        new Date(slot.endTime).getMinutes(),
-        0,
-        0
-      );
+        const endTimeDate = new Date(bookingDate);
+        endTimeDate.setHours(
+          new Date(slot.endTime).getHours(),
+          new Date(slot.endTime).getMinutes(),
+          0,
+          0
+        );
 
-      const bookingData: BookingCreateRequestDto = {
-        barberId: this.barberId,
-        serviceId: this.selectedService.id,
-        date: bookingDate,
-        startTime: startTimeDate,
-        endTime: endTimeDate,
-        price: this.selectedService.price,
-      };
+        const bookingData: BookingCreateRequestDto = {
+          barberId: this.barberId,
+          serviceId: this.selectedService.id,
+          date: bookingDate,
+          startTime: startTimeDate,
+          endTime: endTimeDate,
+          price: this.selectedService.price,
+        };
 
-      this.bookingService
-        .stageBooking(id, bookingData)
-        .pipe(take(1))
-        .subscribe({
-          next: (res) => {
-            this.stagedBooking = res;
+        this.bookingService
+          .stageBooking(id, bookingData)
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: (res) => {
+              this.stagedBooking = res;
 
-            this.userService
-              .fetchBarbers('', 1, 100)
-              .pipe(take(1))
-              .subscribe((barberRes) => {
-                const barberDoc = barberRes.data.find(
-                  (b) => b.id === this.stagedBooking!.barber
-                );
+              this.userService
+                .fetchBarbers('', 1, 100)
+                .pipe(takeUntil(this.componentDestroyed$))
+                .subscribe((barberRes) => {
+                  const barberDoc = barberRes.data.find(
+                    (b) => b.id === this.stagedBooking!.barber
+                  );
 
-                this.serviceService
-                  .fetch(ROLES.USER, '', 1, 100)
-                  .pipe(take(1))
-                  .subscribe((serviceRes) => {
-                    const serviceDoc = serviceRes.data.find(
-                      (s) => s.id === this.stagedBooking!.service
-                    );
+                  this.serviceService
+                    .fetch(ROLES.USER, '', 1, 100)
+                    .pipe(takeUntil(this.componentDestroyed$))
+                    .subscribe((serviceRes) => {
+                      const serviceDoc = serviceRes.data.find(
+                        (s) => s.id === this.stagedBooking!.service
+                      );
 
-                    this.checkoutData = {
-                      ...this.stagedBooking!,
-                      barber: barberDoc || undefined,
-                      service: serviceDoc || undefined,
-                    };
+                      this.checkoutData = {
+                        ...this.stagedBooking!,
+                        barber: barberDoc || undefined,
+                        service: serviceDoc || undefined,
+                      };
 
-                    const modal = new bootstrap.Modal(
-                      document.getElementById('bookingCheckoutModal')!
-                    );
-                    modal.show();
-                  });
-              });
-          },
-          error: (err) =>
-            Swal.fire(
-              'Error',
-              err.error?.error || 'Failed to stage booking',
-              'error'
-            ),
-        });
-    });
+                      const modal = new bootstrap.Modal(
+                        document.getElementById('bookingCheckoutModal')!
+                      );
+                      modal.show();
+                    });
+                });
+            },
+            error: (err) =>
+              Swal.fire(
+                'Error',
+                err.error?.error || 'Failed to stage booking',
+                'error'
+              ),
+          });
+      });
   }
 
   confirmBooking(couponCode: string) {
@@ -320,7 +329,7 @@ export class UserBarberDetailsComponent implements OnInit {
 
       this.bookingService
         .confirmBooking(id, this.stagedBooking.id, { couponCode })
-        .pipe(take(1))
+        .pipe(takeUntil(this.componentDestroyed$))
         .subscribe({
           next: (res) => {
             const { keyId, amount, currency, orderId, bookingId } = res;
@@ -340,7 +349,7 @@ export class UserBarberDetailsComponent implements OnInit {
                     razorpay_signature: paymentResponse.razorpay_signature,
                     bookingId: bookingId,
                   })
-                  .pipe(take(1))
+                  .pipe(takeUntil(this.componentDestroyed$))
                   .subscribe({
                     next: () => {
                       // Close the modal
@@ -406,7 +415,7 @@ export class UserBarberDetailsComponent implements OnInit {
 
     this.bookingService
       .couponApplication(this.stagedBooking.id, couponCode)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (updatedBooking) => {
           this.stagedBooking = updatedBooking;

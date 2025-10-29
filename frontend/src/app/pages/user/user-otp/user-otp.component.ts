@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { OtpComponent } from '../../../components/shared/otp/otp.component';
 import { OtpRequest, ResendOtpRequest } from '../../../interfaces/interfaces';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-otp',
@@ -22,7 +22,7 @@ import { take } from 'rxjs';
   templateUrl: './user-otp.component.html',
   styleUrl: './user-otp.component.css',
 })
-export class UserOtpComponent implements OnInit {
+export class UserOtpComponent implements OnInit, OnDestroy {
   purpose: 'signup' | 'forgot' = 'signup';
 
   private authService: AuthService = inject(AuthService);
@@ -33,8 +33,17 @@ export class UserOtpComponent implements OnInit {
     this.authService.userResendOtp(data);
 
   ngOnInit(): void {
-    this.route.queryParams.pipe(take(1)).subscribe((params) => {
-      this.purpose = params['purpose'] === 'forgot' ? 'forgot' : 'signup';
-    });
+    this.route.queryParams
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((params) => {
+        this.purpose = params['purpose'] === 'forgot' ? 'forgot' : 'signup';
+      });
+  }
+
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
   }
 }

@@ -1,19 +1,19 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { BarberDto, ReviewListResponse, ReviewResponseDto } from '../../../interfaces/interfaces';
+import { BarberDto, ReviewResponseDto } from '../../../interfaces/interfaces';
 import { AuthService } from '../../../services/auth/auth.service';
 import { ReviewService } from '../../../services/review/review.service';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user/user.service';
-import { forkJoin, take } from 'rxjs';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-review',
-  imports: [ UserHeaderComponent,UserFooterComponent,CommonModule ],
+  imports: [UserHeaderComponent, UserFooterComponent, CommonModule],
   templateUrl: './user-review.component.html',
-  styleUrl: './user-review.component.css'
+  styleUrl: './user-review.component.css',
 })
 export class UserReviewComponent implements OnInit {
   reviews: ReviewResponseDto[] = [];
@@ -29,19 +29,32 @@ export class UserReviewComponent implements OnInit {
   private userService = inject(UserService);
 
   ngOnInit(): void {
-    this.authService.userId$.pipe(take(1)).subscribe((userId) => {
-      if (userId) {
-        this.fetchData(userId, this.currentPage);
-      }
-    });
+    this.authService.userId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((userId) => {
+        if (userId) {
+          this.fetchData(userId, this.currentPage);
+        }
+      });
+  }
+
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
   }
 
   fetchData(userId: string, page: number): void {
     this.loading = true;
 
     forkJoin({
-      reviews: this.reviewService.getAllReviewsByUser(userId, page, this.itemsPerPage),
-      barbers: this.userService.fetchBarbers('', 1, 100)
+      reviews: this.reviewService.getAllReviewsByUser(
+        userId,
+        page,
+        this.itemsPerPage
+      ),
+      barbers: this.userService.fetchBarbers('', 1, 100),
     }).subscribe({
       next: ({ reviews, barbers }) => {
         this.reviews = reviews.data;
@@ -56,20 +69,22 @@ export class UserReviewComponent implements OnInit {
       error: (err) => {
         console.error('Failed to fetch data', err);
         this.loading = false;
-      }
+      },
     });
   }
 
   handlePageChange(page: number): void {
-    this.authService.userId$.pipe(take(1)).subscribe((userId) => {
-      if (userId) {
-        this.fetchData(userId, page);
-      }
-    });
+    this.authService.userId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((userId) => {
+        if (userId) {
+          this.fetchData(userId, page);
+        }
+      });
   }
 
   getBarberName(barberId: string): string {
-    const barber = this.barbers.find(b => b.id === barberId);
+    const barber = this.barbers.find((b) => b.id === barberId);
     return barber ? barber.name : 'Unknown Barber';
   }
 
@@ -81,7 +96,7 @@ export class UserReviewComponent implements OnInit {
     return Array(5 - rating).fill(0);
   }
 
-  confirmDelete(reviewId: string){
+  confirmDelete(reviewId: string) {
     Swal.fire({
       title: 'Are you sure?',
       text: 'You won’t be able to revert this!',
@@ -90,23 +105,32 @@ export class UserReviewComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, delete it!',
-    }).then((result)=>{
+    }).then((result) => {
       if (result.isConfirmed) {
-        this.reviewService.deleteReview(reviewId).pipe(take(1)).subscribe({
-          next: ()=>{
-            Swal.fire("Success","Review Deleted Successfully","success")
-            this.authService.userId$.pipe(take(1)).subscribe((id)=>{
-              if (!id) {
-                return
-              }
-              this.fetchData(id,1)
-            })
-          },
-          error: (err)=>{
-            Swal.fire("Error",err.error?.message || "Review Deletion Failed", "error")
-          }
-        })
+        this.reviewService
+          .deleteReview(reviewId)
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: () => {
+              Swal.fire('Success', 'Review Deleted Successfully', 'success');
+              this.authService.userId$
+                .pipe(takeUntil(this.componentDestroyed$))
+                .subscribe((id) => {
+                  if (!id) {
+                    return;
+                  }
+                  this.fetchData(id, 1);
+                });
+            },
+            error: (err) => {
+              Swal.fire(
+                'Error',
+                err.error?.message || 'Review Deletion Failed',
+                'error'
+              );
+            },
+          });
       }
-    })
+    });
   }
 }

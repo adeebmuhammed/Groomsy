@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -7,7 +7,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { BARBER_ROUTES_PATHS } from '../../../constants/barber-route.constant';
 
 @Component({
@@ -22,7 +22,7 @@ import { BARBER_ROUTES_PATHS } from '../../../constants/barber-route.constant';
   templateUrl: './barber-signin.component.html',
   styleUrl: './barber-signin.component.css',
 })
-export class BarberSigninComponent {
+export class BarberSigninComponent implements OnDestroy {
   barberLoginForm: FormGroup;
   errorMessage = '';
 
@@ -44,32 +44,42 @@ export class BarberSigninComponent {
     });
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   onSubmit(): void {
     if (this.barberLoginForm.valid) {
       const { email, password } = this.barberLoginForm.value;
 
-      this.authService.barberSignin({ email, password }).pipe(take(1)).subscribe({
-        next: (res) => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Login Successful',
-            text: `Welcome back, ${name}!`,
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => {
-            this.router.navigate([BARBER_ROUTES_PATHS.DASHBOARD]);
-          });
-        },
-        error: (err) => {
-          this.errorMessage = 'Login failed';
+      this.authService
+        .barberSignin({ email, password })
+        .pipe(takeUntil(this.componentDestroyed$))
+        .subscribe({
+          next: (res) => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Login Successful',
+              text: `Welcome back, ${name}!`,
+              timer: 2000,
+              showConfirmButton: false,
+            }).then(() => {
+              this.router.navigate([BARBER_ROUTES_PATHS.DASHBOARD]);
+            });
+          },
+          error: (err) => {
+            this.errorMessage = 'Login failed';
 
-          Swal.fire({
-            icon: 'error',
-            title: 'Login Failed',
-            text: this.errorMessage,
-          });
-        },
-      });
+            Swal.fire({
+              icon: 'error',
+              title: 'Login Failed',
+              text: this.errorMessage,
+            });
+          },
+        });
     }
   }
 }

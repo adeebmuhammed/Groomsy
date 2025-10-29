@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import {
@@ -12,7 +12,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import Swal from 'sweetalert2';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../../../environments/environment';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
 
 @Component({
@@ -26,7 +26,7 @@ import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
   templateUrl: './user-signin.component.html',
   styleUrl: './user-signin.component.css',
 })
-export class UserSigninComponent{
+export class UserSigninComponent implements OnDestroy {
   loginForm: FormGroup;
   errorMessage = '';
 
@@ -45,31 +45,41 @@ export class UserSigninComponent{
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
 
-      this.authService.userSignin({ email, password }).pipe(take(1)).subscribe({
-        next: (res) => {
-          const name = res?.user?.name || 'User';
+      this.authService
+        .userSignin({ email, password })
+        .pipe(takeUntil(this.componentDestroyed$))
+        .subscribe({
+          next: (res) => {
+            const name = res?.user?.name || 'User';
 
-          Swal.fire({
-            icon: 'success',
-            title: 'Login Successful',
-            text: `Welcome back, ${name}!`,
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => {
-            this.router.navigate([USER_ROUTES_PATHS.HOME]);
-          });
-        },
-        error: (err) => {
-          this.errorMessage = 'Login failed';
+            Swal.fire({
+              icon: 'success',
+              title: 'Login Successful',
+              text: `Welcome back, ${name}!`,
+              timer: 2000,
+              showConfirmButton: false,
+            }).then(() => {
+              this.router.navigate([USER_ROUTES_PATHS.HOME]);
+            });
+          },
+          error: (err) => {
+            this.errorMessage = 'Login failed';
 
-          Swal.fire({
-            icon: 'error',
-            title: 'Login Failed',
-            text: this.errorMessage,
-          });
-        },
-      });
+            Swal.fire({
+              icon: 'error',
+              title: 'Login Failed',
+              text: this.errorMessage,
+            });
+          },
+        });
     }
+  }
+
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
   }
 
   loginWithGoogle(): void {

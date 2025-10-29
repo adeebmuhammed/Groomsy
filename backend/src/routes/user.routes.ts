@@ -62,6 +62,7 @@ userRoutes
 .post('/bookings/verify-payment',userAuth,isBlockedMiddleware,bookingController.verifyPayment)
 .patch("/bookings/:id", userAuth, isBlockedMiddleware,bookingController.updateBookingStatus)
 .get("/bookings-by-id/:id", userAuth, isBlockedMiddleware,bookingController.getBookingById)
+.get("/bookings-by-barber/:id", userAuth, isBlockedMiddleware, bookingController.fetchBookingsOfBarber)
 
 userRoutes
 .get("/favorites",userAuth,isBlockedMiddleware,favoritesController.getFavoritesByUser)

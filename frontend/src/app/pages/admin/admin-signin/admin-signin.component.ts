@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { AdminHeaderComponent } from '../../../components/admin/admin-header/admin-header.component';
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
 import {
@@ -10,7 +10,7 @@ import {
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ADMIN_ROUTES_PATHS } from '../../../constants/admin-route.constant';
 
 @Component({
@@ -19,7 +19,7 @@ import { ADMIN_ROUTES_PATHS } from '../../../constants/admin-route.constant';
   templateUrl: './admin-signin.component.html',
   styleUrl: './admin-signin.component.css',
 })
-export class AdminSigninComponent {
+export class AdminSigninComponent implements OnDestroy{
   loginForm: FormGroup;
   error = '';
 
@@ -34,29 +34,39 @@ export class AdminSigninComponent {
     });
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   onSubmit(): void {
     if (this.loginForm.valid) {
-      this.authService.adminLogin(this.loginForm.value).pipe(take(1)).subscribe({
-        next: (res) => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Login Successful',
-            text: res.message || 'Welcome to the Admin Panel!',
-            timer: 2000,
-            showConfirmButton: false,
-          });
+      this.authService
+        .adminLogin(this.loginForm.value)
+        .pipe(takeUntil(this.componentDestroyed$))
+        .subscribe({
+          next: (res) => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Login Successful',
+              text: res.message || 'Welcome to the Admin Panel!',
+              timer: 2000,
+              showConfirmButton: false,
+            });
 
-          this.router.navigate([ADMIN_ROUTES_PATHS.DASHBOARD]);
-        },
-        error: (err) => {
-          this.error = 'Invalid credentials';
-          Swal.fire({
-            icon: 'error',
-            title: 'Login Failed',
-            text: 'Invalid credentials',
-          });
-        },
-      });
+            this.router.navigate([ADMIN_ROUTES_PATHS.DASHBOARD]);
+          },
+          error: (err) => {
+            this.error = 'Invalid credentials';
+            Swal.fire({
+              icon: 'error',
+              title: 'Login Failed',
+              text: 'Invalid credentials',
+            });
+          },
+        });
     }
   }
 }
