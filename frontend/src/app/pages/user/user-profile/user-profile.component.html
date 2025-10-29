@@ -1,10 +1,14 @@
 <app-user-header></app-user-header>
 
 <div class="user-profile-container">
+  <div class="loaderClass" *ngIf="isUploading" class="text-center mt-2">
+              <div class="spinner-border" role="status"></div>
+            </div>
+            
   <app-profile
   [profile]="userProfile"
   (edit)="onEditProfile()"
-  (uploadOrUpdate)="updateProfilePicture($event)"
+  (uploadRequested)="openUpload($event)"
   (deletePic)="deleteProfilePicture()"
 ></app-profile>
 
@@ -16,5 +20,10 @@
   (save)="updateProfile($event)"
   (close)="showEditModal = false"
 ></app-edit-profile>
+
+<app-file-upload
+  (fileSelected)="updateProfilePicture($event)"
+  (close)="closeUploadModal()"
+></app-file-upload>
 
 <app-user-footer></app-user-footer>

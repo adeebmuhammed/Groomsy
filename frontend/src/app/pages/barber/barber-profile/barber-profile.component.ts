@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { BarberSidebarComponent } from '../../../components/barber/barber-sidebar/barber-sidebar.component';
@@ -12,6 +12,8 @@ import { EditProfileComponent } from '../../../components/shared/edit-profile/ed
 import { CommonModule } from '@angular/common';
 import { AddressComponent } from '../../../components/shared/address/address.component';
 import { AddressFormComponent } from '../../../components/shared/address-form/address-form.component';
+import { FileUploadComponent } from '../../../components/shared/file-upload/file-upload.component';
+import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-barber-profile',
@@ -24,6 +26,7 @@ import { AddressFormComponent } from '../../../components/shared/address-form/ad
     AddressComponent,
     AddressFormComponent,
     CommonModule,
+    FileUploadComponent,
   ],
   templateUrl: './barber-profile.component.html',
   styleUrl: './barber-profile.component.css',
@@ -128,10 +131,12 @@ export class BarberProfileComponent implements OnInit {
         });
     });
   }
-
+  isUploading = false;
   updateProfilePicture(file: File) {
+    this.isUploading = true;
     this.authService.barberId$.pipe(take(1)).subscribe((id) => {
       if (!id) {
+        this.isUploading = false;
         return;
       }
 
@@ -145,7 +150,9 @@ export class BarberProfileComponent implements OnInit {
               res.message || 'Profile Picture Updated Successfully',
               'success'
             );
+            this.isUploading = false;
             this.fetchBarberProfile();
+            this.closeUploadModal();
           },
           error: (err) => {
             console.error(err);
@@ -154,6 +161,7 @@ export class BarberProfileComponent implements OnInit {
               err.error.message || 'Profile Picture Updation Failed',
               'error'
             );
+            this.isUploading = false;
           },
         });
     });
@@ -186,5 +194,34 @@ export class BarberProfileComponent implements OnInit {
           },
         });
     });
+  }
+
+  modalMode: 'upload' | 'update' = 'upload';
+  selectedFile?: File;
+
+  openUpload(mode: 'upload' | 'update') {
+    console.log('clicked');
+
+    this.modalMode = mode;
+    this.selectedFile = undefined;
+    const modalEl = document.getElementById('fileUploadModal')!;
+    if (modalEl) {
+      const modal = new bootstrap.Modal(modalEl, { backdrop: 'static' });
+      modal.show();
+    }
+  }
+
+  closeUploadModal() {
+    const modalEl = document.getElementById('fileUploadModal')!;
+    bootstrap.Modal.getInstance(modalEl)?.hide();
+  }
+
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files?.[0];
+  }
+
+  submitUpload() {
+    if (!this.selectedFile) return;
+    this.updateProfilePicture(this.selectedFile);
   }
 }

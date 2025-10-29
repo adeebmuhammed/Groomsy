@@ -401,6 +401,9 @@ export class BookingService implements IBookingService {
         ? { $in: ["cancelled_by_user", "cancelled_by_barber"] }
         : status;
 
+        console.log(filter);
+        
+
     const { bookings, totalCount } =
       await this._bookingRepo.findWithPaginationAndCount(filter, skip, limit);
 
