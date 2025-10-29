@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user/user.service';
 import { BarberDto } from '../../../interfaces/interfaces';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import { FavoritesService } from '../../../services/favorites/favorites.service';
-import { first, take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -23,7 +23,7 @@ import { forkJoin } from 'rxjs';
   templateUrl: './user-barber.component.html',
   styleUrl: './user-barber.component.css',
 })
-export class UserBarberComponent implements OnInit {
+export class UserBarberComponent implements OnInit, OnDestroy {
   barbers: BarberDto[] = [];
   searchTerm = '';
   currentPage = 1;
@@ -55,18 +55,24 @@ export class UserBarberComponent implements OnInit {
     this.loadBarbersAndFavorites();
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   favoriteIds: string[] = [];
 
   toggleFavorite(barberId: string) {
     this.authService.userId$
-      .pipe(first())
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((userId) => {
         if (!userId) return;
 
         this.favoritesService
           .updateFavorite(userId, barberId)
-          .pipe(take(1))
+          .pipe(takeUntil(this.componentDestroyed$))
           .subscribe({
             next: () => {
               this.loadBarbersAndFavorites();
@@ -91,29 +97,31 @@ export class UserBarberComponent implements OnInit {
   }
 
   loadBarbersAndFavorites(): void {
-    this.authService.userId$.pipe(take(1)).subscribe((userId) => {
-      if (!userId) return;
+    this.authService.userId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((userId) => {
+        if (!userId) return;
 
-      forkJoin({
-        barbers: this.userService.fetchBarbers(
-          this.searchTerm,
-          this.currentPage,
-          this.pageSize,
-          this.selectedDistrict
-        ),
-        favorites: this.favoritesService.getFavoriteBarbers(userId, 1, 100),
-      })
-        .pipe(take(1))
-        .subscribe({
-          next: ({ barbers, favorites }) => {
-            this.barbers = barbers.data;
-            this.totalPages = barbers.pagination.totalPages;
-            this.favoriteIds = favorites.data.map((barber) => barber.id);
-          },
-          error: (err) => {
-            console.error('Error loading barbers and favorites:', err);
-          },
-        });
-    });
+        forkJoin({
+          barbers: this.userService.fetchBarbers(
+            this.searchTerm,
+            this.currentPage,
+            this.pageSize,
+            this.selectedDistrict
+          ),
+          favorites: this.favoritesService.getFavoriteBarbers(userId, 1, 100),
+        })
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: ({ barbers, favorites }) => {
+              this.barbers = barbers.data;
+              this.totalPages = barbers.pagination.totalPages;
+              this.favoriteIds = favorites.data.map((barber) => barber.id);
+            },
+            error: (err) => {
+              console.error('Error loading barbers and favorites:', err);
+            },
+          });
+      });
   }
 }

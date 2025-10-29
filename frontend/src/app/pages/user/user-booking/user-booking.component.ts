@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import { BookingService } from '../../../services/booking/booking.service';
@@ -17,7 +17,7 @@ import { ReviewService } from '../../../services/review/review.service';
 import { ReviewFormComponent } from '../../../components/shared/review-form/review-form.component';
 import { Router } from '@angular/router';
 import { CheckoutModalComponent } from '../../../components/shared/checkout-modal/checkout-modal.component';
-import { forkJoin, take } from 'rxjs';
+import { forkJoin, Subject, takeUntil } from 'rxjs';
 import { UserService } from '../../../services/user/user.service';
 import { ServiceService } from '../../../services/service/service.service';
 import * as bootstrap from 'bootstrap';
@@ -34,12 +34,12 @@ import { ROLES } from '../../../constants/roles';
     DatePipe,
     ReviewFormComponent,
     CheckoutModalComponent,
-    BookingDetailsComponent
+    BookingDetailsComponent,
   ],
   templateUrl: './user-booking.component.html',
   styleUrl: './user-booking.component.css',
 })
-export class UserBookingComponent implements OnInit {
+export class UserBookingComponent implements OnInit, OnDestroy {
   bookings: BookingResponseDto[] = [];
   selectedBooking: BookingResponseDto | null = null;
   selectedService: Service | null = null;
@@ -88,13 +88,20 @@ export class UserBookingComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchBookingsByStatus(this.selectedStatus);
-    this.fetchBarbers()
+    this.fetchBarbers();
+  }
+
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
   }
 
   fetchBarbers(): void {
     this.userService
       .fetchBarbers('', 1, 100)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe((res) => {
         this.barbers = res?.data || [];
         this.totalPages = res?.pagination?.totalPages || 1;
@@ -114,22 +121,24 @@ export class UserBookingComponent implements OnInit {
     status: 'pending' | 'staged' | 'cancelled' | 'finished',
     page = 1
   ): void {
-    this.authService.userId$.pipe(take(1)).subscribe((id) => {
-      if (!id) return;
+    this.authService.userId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (!id) return;
 
-      this.bookingService
-        .getBookingByStatus(id, status, page, this.itemsPerPage, ROLES.USER)
-        .pipe(take(1))
-        .subscribe({
-          next: (res) => {
-            this.bookings = res.data;
-            this.totalPages = Math.ceil(res.totalCount / this.itemsPerPage);
-            this.currentPage = page;
-            this.generatePages();
-          },
-          error: (err) => console.error('Failed to fetch bookings', err),
-        });
-    });
+        this.bookingService
+          .getBookingByStatus(id, status, page, this.itemsPerPage, ROLES.USER)
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: (res) => {
+              this.bookings = res.data;
+              this.totalPages = Math.ceil(res.totalCount / this.itemsPerPage);
+              this.currentPage = page;
+              this.generatePages();
+            },
+            error: (err) => console.error('Failed to fetch bookings', err),
+          });
+      });
   }
 
   changeStatus(status: BookingStatus): void {
@@ -156,7 +165,7 @@ export class UserBookingComponent implements OnInit {
       if (result.isConfirmed) {
         this.bookingService
           .updateBookingStatus(ROLES.USER, booking.id, 'cancel')
-          .pipe(take(1))
+          .pipe(takeUntil(this.componentDestroyed$))
           .subscribe({
             next: () => {
               Swal.fire('Cancelled!', 'Booking has been cancelled.', 'success');
@@ -179,7 +188,7 @@ export class UserBookingComponent implements OnInit {
 
     this.bookingService
       .couponApplication(this.stagedBooking.id, couponCode)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (updatedBooking) => {
           this.stagedBooking = updatedBooking;
@@ -214,60 +223,62 @@ export class UserBookingComponent implements OnInit {
   }
 
   retryPayment(bookingId: string, couponCode?: string) {
-    this.authService.userId$.pipe(take(1)).subscribe((id) => {
-      if (!id || !bookingId) return;
+    this.authService.userId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (!id || !bookingId) return;
 
-      this.bookingService
-        .confirmBooking(id, bookingId, { couponCode: couponCode || '' })
-        .pipe(take(1))
-        .subscribe({
-          next: (res) => {
-            const { keyId, amount, currency, orderId, bookingId } = res;
+        this.bookingService
+          .confirmBooking(id, bookingId, { couponCode: couponCode || '' })
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: (res) => {
+              const { keyId, amount, currency, orderId, bookingId } = res;
 
-            const options: any = {
-              key: keyId,
-              amount: amount.toString(),
-              currency,
-              name: 'Groomsy',
-              description: 'Booking Payment',
-              order_id: orderId,
-              handler: (paymentResponse: any) => {
-                this.bookingService
-                  .verifyPayment({
-                    razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                    razorpay_order_id: paymentResponse.razorpay_order_id,
-                    razorpay_signature: paymentResponse.razorpay_signature,
-                    bookingId,
-                  })
-                  .pipe(take(1))
-                  .subscribe({
-                    next: () => {
-                      this.router.navigate([
-                        `/user/booking-confirmation/${bookingId}`,
-                      ]);
-                    },
-                    error: (err) => {
-                      this.router.navigate([
-                        `/user/booking-confirmation/${bookingId}`,
-                      ]);
-                    },
-                  });
-              },
-              theme: { color: '#3399cc' },
-            };
+              const options: any = {
+                key: keyId,
+                amount: amount.toString(),
+                currency,
+                name: 'Groomsy',
+                description: 'Booking Payment',
+                order_id: orderId,
+                handler: (paymentResponse: any) => {
+                  this.bookingService
+                    .verifyPayment({
+                      razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                      razorpay_order_id: paymentResponse.razorpay_order_id,
+                      razorpay_signature: paymentResponse.razorpay_signature,
+                      bookingId,
+                    })
+                    .pipe(takeUntil(this.componentDestroyed$))
+                    .subscribe({
+                      next: () => {
+                        this.router.navigate([
+                          `/user/booking-confirmation/${bookingId}`,
+                        ]);
+                      },
+                      error: (err) => {
+                        this.router.navigate([
+                          `/user/booking-confirmation/${bookingId}`,
+                        ]);
+                      },
+                    });
+                },
+                theme: { color: '#3399cc' },
+              };
 
-            const rzp = new (window as any).Razorpay(options);
-            rzp.open();
-          },
-          error: (err) => {
-            Swal.fire(
-              'Error',
-              err.error?.error || 'Failed to confirm booking',
-              'error'
-            );
-          },
-        });
-    });
+              const rzp = new (window as any).Razorpay(options);
+              rzp.open();
+            },
+            error: (err) => {
+              Swal.fire(
+                'Error',
+                err.error?.error || 'Failed to confirm booking',
+                'error'
+              );
+            },
+          });
+      });
   }
 
   leaveReview(booking: BookingResponseDto) {
@@ -278,58 +289,60 @@ export class UserBookingComponent implements OnInit {
   handleReviewSubmit(review: ReviewCreateRequestDto) {
     if (!this.selectedBookingId) return;
 
-    this.authService.userId$.pipe(take(1)).subscribe((id) => {
-      if (!id || !this.selectedBookingId) {
-        return;
-      }
-      this.reviewService
-        .createReview(id, this.selectedBookingId, review)
-        .pipe(take(1))
-        .subscribe({
-          next: () => {
-            Swal.fire(
-              'Thank you!',
-              'Your review has been submitted.',
-              'success'
-            );
-            this.reviewModalVisible = false;
-            this.selectedBookingId = null;
-          },
-          error: () => {
-            Swal.fire('Error!', 'Failed to submit review.', 'error');
-          },
-        });
-    });
+    this.authService.userId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (!id || !this.selectedBookingId) {
+          return;
+        }
+        this.reviewService
+          .createReview(id, this.selectedBookingId, review)
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: () => {
+              Swal.fire(
+                'Thank you!',
+                'Your review has been submitted.',
+                'success'
+              );
+              this.reviewModalVisible = false;
+              this.selectedBookingId = null;
+            },
+            error: () => {
+              Swal.fire('Error!', 'Failed to submit review.', 'error');
+            },
+          });
+      });
   }
 
   openDetailsModal(booking: BookingResponseDto): void {
-      this.selectedBooking = booking;
-      this.serviceService
-        .getServiceById(ROLES.ADMIN, booking.service)
-        .pipe(take(1))
-        .subscribe({
-          next: (res) => {
-            this.selectedService = res;
-  
-            // Only show modal after data is fetched
-            const modalElement = document.getElementById('bookingDetailsModal');
-            if (modalElement) {
-              const modal = new bootstrap.Modal(modalElement);
-              modal.show();
-            }
-          },
-          error: (err) => {
-            console.error('Error fetching service:', err);
-  
-            // Even if service fails, still show modal with booking info
-            const modalElement = document.getElementById('bookingDetailsModal');
-            if (modalElement) {
-              const modal = new bootstrap.Modal(modalElement);
-              modal.show();
-            }
-          },
-        });
-    }
+    this.selectedBooking = booking;
+    this.serviceService
+      .getServiceById(ROLES.ADMIN, booking.service)
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe({
+        next: (res) => {
+          this.selectedService = res;
+
+          // Only show modal after data is fetched
+          const modalElement = document.getElementById('bookingDetailsModal');
+          if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching service:', err);
+
+          // Even if service fails, still show modal with booking info
+          const modalElement = document.getElementById('bookingDetailsModal');
+          if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+          }
+        },
+      });
+  }
 
   formatTimeUTC(dateStr: Date): string {
     const date = new Date(dateStr);

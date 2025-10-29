@@ -401,9 +401,6 @@ export class BookingService implements IBookingService {
         ? { $in: ["cancelled_by_user", "cancelled_by_barber"] }
         : status;
 
-        console.log(filter);
-        
-
     const { bookings, totalCount } =
       await this._bookingRepo.findWithPaginationAndCount(filter, skip, limit);
 
@@ -412,6 +409,29 @@ export class BookingService implements IBookingService {
         data: BookingMapper.toBookingResponseArray(bookings),
         totalCount,
       },
+    };
+  };
+
+  fetchBookingsOfBarber = async (
+    barberId: string
+  ): Promise<{
+    bookingsOfBarber: { data: BookingResponseDto[]; totalCount: number };
+  }> => {
+    const barber = await this._barberRepo.findById(barberId);
+    if (!barber) {
+      throw new Error("barber not found");
+    }
+
+    const filter = { barber: barberId };
+
+    const { bookings, totalCount } =
+      await this._bookingRepo.findWithPaginationAndCount(filter, 0, 100);
+
+    const bookingDTOs: BookingResponseDto[] =
+      BookingMapper.toBookingResponseArray(bookings);
+
+    return {
+      bookingsOfBarber: { data: bookingDTOs, totalCount },
     };
   };
 }

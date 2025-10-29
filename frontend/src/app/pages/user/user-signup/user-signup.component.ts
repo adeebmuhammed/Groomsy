@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import {
@@ -11,7 +11,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { environment } from '../../../../environments/environment';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
 
 @Component({
@@ -25,7 +25,7 @@ import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
   templateUrl: './user-signup.component.html',
   styleUrl: './user-signup.component.css',
 })
-export class UserSignupComponent {
+export class UserSignupComponent implements OnDestroy{
   signupForm: FormGroup;
   errorMessage = '';
 
@@ -55,6 +55,13 @@ export class UserSignupComponent {
     );
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+ngOnDestroy() {
+    this.componentDestroyed$.next()
+    this.componentDestroyed$.complete()
+  }
+
   matchPasswords(group: FormGroup) {
     const password = group.get('password')?.value;
     const confirm = group.get('confirmPassword')?.value;
@@ -67,7 +74,7 @@ export class UserSignupComponent {
 
       this.authService
         .userSignup(formData)
-        .pipe(take(1))
+        .pipe(takeUntil(this.componentDestroyed$))
         .subscribe({
           next: (res: any) => {
             localStorage.setItem('userSignupName', this.signupForm.value.name);

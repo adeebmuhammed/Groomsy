@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { AdminHeaderComponent } from '../../../components/admin/admin-header/admin-header.component';
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
@@ -8,7 +8,7 @@ import { AdminTableComponent } from '../../../components/shared/admin-table/admi
 import Swal from 'sweetalert2';
 import { Service } from '../../../interfaces/interfaces';
 import { ServiceService } from '../../../services/service/service.service';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ROLES } from '../../../constants/roles';
 
 @Component({
@@ -24,7 +24,7 @@ import { ROLES } from '../../../constants/roles';
   templateUrl: './admin-service.component.html',
   styleUrl: './admin-service.component.css',
 })
-export class AdminServiceComponent implements OnInit {
+export class AdminServiceComponent implements OnInit, OnDestroy {
   serviceModalVisible = false;
   selectedServiceData: Service | null = null;
   selectedServiceId: string | null = null;
@@ -49,10 +49,17 @@ export class AdminServiceComponent implements OnInit {
     this.loadServices();
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   loadServices(): void {
     this.serviceService
       .fetch(ROLES.ADMIN, this.searchTerm, this.currentPage, this.itemsPerPage)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (response) => {
           this.services = response.data || [];
@@ -98,16 +105,19 @@ export class AdminServiceComponent implements OnInit {
       confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.serviceService.delete(service.id).pipe(take(1)).subscribe({
-          next: () => {
-            Swal.fire('Deleted!', 'Service has been deleted.', 'success');
-            this.loadServices();
-          },
-          error: (err) => {
-            console.error('Delete error:', err);
-            Swal.fire('Error!', 'Failed to delete the service.', 'error');
-          },
-        });
+        this.serviceService
+          .delete(service.id)
+          .pipe(takeUntil(this.componentDestroyed$))
+          .subscribe({
+            next: () => {
+              Swal.fire('Deleted!', 'Service has been deleted.', 'success');
+              this.loadServices();
+            },
+            error: (err) => {
+              console.error('Delete error:', err);
+              Swal.fire('Error!', 'Failed to delete the service.', 'error');
+            },
+          });
       }
     });
   }
@@ -120,50 +130,56 @@ export class AdminServiceComponent implements OnInit {
 
   onModalSubmit(payload: any): void {
     if (this.selectedServiceId) {
-      this.serviceService.edit(this.selectedServiceId, payload).pipe(take(1)).subscribe({
-        next: () => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Service Updated',
-            text: 'Service Updated Successfully',
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => {
-            this.loadServices();
-            this.onModalClose();
-          });
-        },
-        error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Failed',
-            text: 'Service Updation Failed',
-          });
-        },
-      });
+      this.serviceService
+        .edit(this.selectedServiceId, payload)
+        .pipe(takeUntil(this.componentDestroyed$))
+        .subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Service Updated',
+              text: 'Service Updated Successfully',
+              timer: 2000,
+              showConfirmButton: false,
+            }).then(() => {
+              this.loadServices();
+              this.onModalClose();
+            });
+          },
+          error: (err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Failed',
+              text: 'Service Updation Failed',
+            });
+          },
+        });
     } else {
       // Add new coupon
-      this.serviceService.create(payload).pipe(take(1)).subscribe({
-        next: () => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Service Created',
-            text: 'Service Created Successfully',
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => {
-            this.loadServices();
-            this.onModalClose();
-          });
-        },
-        error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Failed',
-            text: 'Service Creation Failed',
-          });
-        },
-      });
+      this.serviceService
+        .create(payload)
+        .pipe(takeUntil(this.componentDestroyed$))
+        .subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Service Created',
+              text: 'Service Created Successfully',
+              timer: 2000,
+              showConfirmButton: false,
+            }).then(() => {
+              this.loadServices();
+              this.onModalClose();
+            });
+          },
+          error: (err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Failed',
+              text: 'Service Creation Failed',
+            });
+          },
+        });
     }
   }
 }

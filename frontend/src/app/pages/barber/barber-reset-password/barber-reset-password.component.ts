@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
 import {
   FormBuilder,
@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { CommonModule } from '@angular/common';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-barber-reset-password',
@@ -23,7 +24,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './barber-reset-password.component.html',
   styleUrl: './barber-reset-password.component.css',
 })
-export class BarberResetPasswordComponent{
+export class BarberResetPasswordComponent implements OnDestroy {
   resetPasswordForm: FormGroup;
   successMessage = '';
   errorMessage = '';
@@ -51,6 +52,13 @@ export class BarberResetPasswordComponent{
     );
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   passwordMatchValidator(form: FormGroup) {
     const pass = form.get('password')?.value;
     const confirmPass = form.get('confirmPassword')?.value;
@@ -63,6 +71,7 @@ export class BarberResetPasswordComponent{
       const email = localStorage.getItem('barberForgotEmail');
       this.authService
         .barberResetPassword({ email, password, confirmPassword })
+        .pipe(takeUntil(this.componentDestroyed$))
         .subscribe({
           next: (res) => {
             Swal.fire({

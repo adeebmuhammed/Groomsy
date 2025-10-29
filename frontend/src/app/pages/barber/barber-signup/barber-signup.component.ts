@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { BARBER_ROUTES_PATHS } from '../../../constants/barber-route.constant';
 
 @Component({
@@ -27,7 +27,7 @@ import { BARBER_ROUTES_PATHS } from '../../../constants/barber-route.constant';
   templateUrl: './barber-signup.component.html',
   styleUrl: './barber-signup.component.css',
 })
-export class BarberSignupComponent implements OnInit {
+export class BarberSignupComponent implements OnInit, OnDestroy {
   barberSignupForm!: FormGroup;
   errorMessage = '';
   districts: string[] = [
@@ -72,6 +72,13 @@ export class BarberSignupComponent implements OnInit {
     );
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   passwordMatchValidator(form: AbstractControl): null | object {
     const password = form.get('password')?.value;
     const confirm = form.get('confirmPassword')?.value;
@@ -83,7 +90,7 @@ export class BarberSignupComponent implements OnInit {
       const formData = this.barberSignupForm.value;
       this.authService
         .barberSignup(formData)
-        .pipe(take(1))
+        .pipe(takeUntil(this.componentDestroyed$))
         .subscribe({
           next: (res: any) => {
             localStorage.setItem(

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { UserService } from '../../../services/user/user.service';
 import { BarberDto } from '../../../interfaces/interfaces';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import { FavoritesService } from '../../../services/favorites/favorites.service';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-favorites',
@@ -22,7 +22,7 @@ import { take } from 'rxjs';
   templateUrl: './user-favorites.component.html',
   styleUrl: './user-favorites.component.css',
 })
-export class UserFavoritesComponent implements OnInit {
+export class UserFavoritesComponent implements OnInit, OnDestroy {
   barbers: BarberDto[] = [];
   searchTerm = '';
   currentPage = 1;
@@ -36,15 +36,24 @@ export class UserFavoritesComponent implements OnInit {
     this.fetchFavorites();
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   fetchFavorites() {
     let userId = '';
-    this.authService.userId$.pipe(take(1)).subscribe((id) => {
-      if (id) userId = id;
-    });
+    this.authService.userId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (id) userId = id;
+      });
 
     this.favoritesService
       .getFavoriteBarbers(userId, 1, 100)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           this.barbers = res.data;
@@ -57,12 +66,14 @@ export class UserFavoritesComponent implements OnInit {
 
   toggleFavorite(barberId: string) {
     let userId = '';
-    this.authService.userId$.pipe(take(1)).subscribe((id) => {
-      if (id) userId = id;
-    });
+    this.authService.userId$
+      .pipe(takeUntil(this.componentDestroyed$))
+      .subscribe((id) => {
+        if (id) userId = id;
+      });
     this.favoritesService
       .updateFavorite(userId, barberId)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           console.log('Favorite updated:', res);

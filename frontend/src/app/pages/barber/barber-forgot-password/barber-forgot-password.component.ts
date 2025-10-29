@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import {
@@ -11,7 +11,7 @@ import { BarberHeaderComponent } from '../../../components/barber/barber-header/
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { BARBER_ROUTES_PATHS } from '../../../constants/barber-route.constant';
 
 @Component({
@@ -26,7 +26,7 @@ import { BARBER_ROUTES_PATHS } from '../../../constants/barber-route.constant';
   templateUrl: './barber-forgot-password.component.html',
   styleUrl: './barber-forgot-password.component.css',
 })
-export class BarberForgotPasswordComponent {
+export class BarberForgotPasswordComponent implements OnDestroy {
   forgotPasswordForm: FormGroup;
   successMessage = '';
   errorMessage = '';
@@ -41,31 +41,41 @@ export class BarberForgotPasswordComponent {
     });
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   onSubmit(): void {
     if (this.forgotPasswordForm.valid) {
       const { email } = this.forgotPasswordForm.value;
-      this.authService.barberForgotPassword(email).pipe(take(1)).subscribe({
-        next: (response) => {
-          Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: response.message || 'Reset link sent to your email.',
-            confirmButtonText: 'OK',
-          }).then(() => {
-            localStorage.setItem('barberForgotEmail', email);
-            this.router.navigate([BARBER_ROUTES_PATHS.VERIFY_OTP], {
-              queryParams: { purpose: 'forgot' },
+      this.authService
+        .barberForgotPassword(email)
+        .pipe(takeUntil(this.componentDestroyed$))
+        .subscribe({
+          next: (response) => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: response.message || 'Reset link sent to your email.',
+              confirmButtonText: 'OK',
+            }).then(() => {
+              localStorage.setItem('barberForgotEmail', email);
+              this.router.navigate([BARBER_ROUTES_PATHS.VERIFY_OTP], {
+                queryParams: { purpose: 'forgot' },
+              });
             });
-          });
-        },
-        error: (err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Something went wrong.',
-          });
-        },
-      });
+          },
+          error: (err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Something went wrong.',
+            });
+          },
+        });
     }
   }
 }

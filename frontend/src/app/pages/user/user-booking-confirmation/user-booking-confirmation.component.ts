@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { BookingResponseDto, Service } from '../../../interfaces/interfaces';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BookingService } from '../../../services/booking/booking.service';
@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import { ServiceService } from '../../../services/service/service.service';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ROLES } from '../../../constants/roles';
 
 @Component({
@@ -20,7 +20,7 @@ import { ROLES } from '../../../constants/roles';
   templateUrl: './user-booking-confirmation.component.html',
   styleUrl: './user-booking-confirmation.component.css',
 })
-export class UserBookingConfirmationComponent implements OnInit {
+export class UserBookingConfirmationComponent implements OnInit, OnDestroy {
   bookingId!: string;
   booking!: BookingResponseDto | null;
   service!: Service | null;
@@ -42,10 +42,17 @@ export class UserBookingConfirmationComponent implements OnInit {
     }
   }
 
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
+
   loadBooking() {
     this.bookingService
       .getBookingById(ROLES.USER, this.bookingId)
-      .pipe(take(1))
+      .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {
           this.booking = res;
@@ -55,7 +62,7 @@ export class UserBookingConfirmationComponent implements OnInit {
           // Fetch service
           this.serviceService
             .getServiceById(ROLES.USER, res.service)
-            .pipe(take(1))
+            .pipe(takeUntil(this.componentDestroyed$))
             .subscribe({
               next: (serviceRes) => {
                 this.service = serviceRes;

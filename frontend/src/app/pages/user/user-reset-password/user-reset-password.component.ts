@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import {
@@ -10,7 +10,7 @@ import {
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
-import { take } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
 
 @Component({
@@ -19,7 +19,7 @@ import { USER_ROUTES_PATHS } from '../../../constants/user-route.constant';
   templateUrl: './user-reset-password.component.html',
   styleUrl: './user-reset-password.component.css',
 })
-export class UserResetPasswordComponent implements OnInit {
+export class UserResetPasswordComponent implements OnDestroy {
   resetPasswordForm: FormGroup;
   successMessage = '';
   errorMessage = '';
@@ -47,7 +47,12 @@ export class UserResetPasswordComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {}
+  componentDestroyed$: Subject<void> = new Subject<void>();
+
+  ngOnDestroy() {
+    this.componentDestroyed$.next();
+    this.componentDestroyed$.complete();
+  }
 
   passwordMatchValidator(form: FormGroup) {
     const pass = form.get('password')?.value;
@@ -61,7 +66,7 @@ export class UserResetPasswordComponent implements OnInit {
       const email = localStorage.getItem('userForgotEmail');
       this.authService
         .userResetPassword({ email, password, confirmPassword })
-        .pipe(take(1))
+        .pipe(takeUntil(this.componentDestroyed$))
         .subscribe({
           next: (res) => {
             Swal.fire({

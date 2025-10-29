@@ -9,4 +9,5 @@ export interface IBookingController {
     updateBookingStatus(req: Request, res: Response): Promise<void>;
     getBookingById(req: Request, res: Response): Promise<void>;
     getBookingsByStatus(req: Request, res: Response): Promise<void>;
+    fetchBookingsOfBarber(req: Request, res: Response): Promise<void>;
 }
