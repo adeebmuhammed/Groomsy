@@ -41,7 +41,7 @@ barberRoutes
 .delete('/slots/:id',barberAuth,subscriptionMiddleware("Slots"),slotController.deleteSlotRule)
 
 barberRoutes
-.get('/bookings',multiAuth,bookingController.fetchBookings)
+.get('/bookings',multiAuth,bookingController.getBookingsByStatus)
 .patch("/bookings/:id",barberAuth,subscriptionMiddleware("Bookings"),bookingController.updateBookingStatus)
 
 barberRoutes
