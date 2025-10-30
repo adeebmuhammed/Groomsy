@@ -174,13 +174,11 @@ export class UserBarberDetailsComponent implements OnInit, OnDestroy {
                     this.populatedSlots
                   );
                 } else {
-                  const today = new Date().toISOString().split('T')[0];
-
                   this.populatedSlots[isoSelected] = this.populatedSlots[
                     isoSelected
                   ].map((slot) => {
-                    const slotStart = new Date(slot.startTime as any);
-                    const slotEnd = new Date(slot.endTime as any);
+                    const slotStart = new Date(slot.startTime);
+                    const slotEnd = new Date(slot.endTime);
                     const now = new Date();
 
                     const slotDate = slotStart.toLocaleDateString('en-CA');
@@ -365,7 +363,7 @@ export class UserBarberDetailsComponent implements OnInit, OnDestroy {
                         `/user/booking-confirmation/${bookingId}`,
                       ]);
                     },
-                    error: (err) => {
+                    error: () => {
                       // Close the modal
                       const modalElement = document.getElementById(
                         'bookingCheckoutModal'

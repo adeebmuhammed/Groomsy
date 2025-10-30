@@ -84,7 +84,7 @@ export class BarberResetPasswordComponent implements OnDestroy {
               this.router.navigate(['/barber/signin']);
             });
           },
-          error: (err) => {
+          error: () => {
             Swal.fire({
               icon: 'error',
               title: 'Reset Password Failed',

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute,Router } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { ROLES } from '../../../constants/roles';
 
@@ -7,17 +7,15 @@ import { ROLES } from '../../../constants/roles';
   selector: 'app-auth-callback',
   imports: [],
   templateUrl: './auth-callback.component.html',
-  styleUrl: './auth-callback.component.css'
+  styleUrl: './auth-callback.component.css',
 })
 export class AuthCallbackComponent implements OnInit {
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private authService: AuthService
-  ) {}
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
+  private authService: AuthService = inject(AuthService);
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       const token = params['token'];
       const name = params['name'];
       const id = params['id'];

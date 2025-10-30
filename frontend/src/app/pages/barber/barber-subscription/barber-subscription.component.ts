@@ -118,7 +118,7 @@ export class BarberSubscriptionComponent implements OnInit, OnDestroy {
                       next: () => {
                         Swal.fire(
                           'Success',
-                          'Payment Completed Successfully',
+                          message,
                           'success'
                         ).then(() => {
                           this.ngZone.run(() => {
@@ -126,7 +126,7 @@ export class BarberSubscriptionComponent implements OnInit, OnDestroy {
                           });
                         });
                       },
-                      error: (err) => {
+                      error: () => {
                         Swal.fire(
                           'Error',
                           'Payment verification failed',
@@ -184,7 +184,7 @@ export class BarberSubscriptionComponent implements OnInit, OnDestroy {
                     next: () => {
                       Swal.fire(
                         'Success',
-                        'Payment Completed Successfully',
+                        message,
                         'success'
                       ).then(() => {
                         this.ngZone.run(() => {

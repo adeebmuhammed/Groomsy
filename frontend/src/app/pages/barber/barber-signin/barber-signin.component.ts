@@ -59,7 +59,7 @@ export class BarberSigninComponent implements OnDestroy {
         .barberSignin({ email, password })
         .pipe(takeUntil(this.componentDestroyed$))
         .subscribe({
-          next: (res) => {
+          next: () => {
             Swal.fire({
               icon: 'success',
               title: 'Login Successful',
@@ -70,7 +70,7 @@ export class BarberSigninComponent implements OnDestroy {
               this.router.navigate([BARBER_ROUTES_PATHS.DASHBOARD]);
             });
           },
-          error: (err) => {
+          error: () => {
             this.errorMessage = 'Login failed';
 
             Swal.fire({

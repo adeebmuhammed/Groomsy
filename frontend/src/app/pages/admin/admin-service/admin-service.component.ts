@@ -128,7 +128,12 @@ export class AdminServiceComponent implements OnInit, OnDestroy {
     this.selectedServiceId = null;
   }
 
-  onModalSubmit(payload: any): void {
+  onModalSubmit(payload: {
+    name: string;
+    description: string;
+    duration: string;
+    price: number;
+  }): void {
     if (this.selectedServiceId) {
       this.serviceService
         .edit(this.selectedServiceId, payload)
@@ -146,7 +151,7 @@ export class AdminServiceComponent implements OnInit, OnDestroy {
               this.onModalClose();
             });
           },
-          error: (err) => {
+          error: () => {
             Swal.fire({
               icon: 'error',
               title: 'Failed',
@@ -172,7 +177,7 @@ export class AdminServiceComponent implements OnInit, OnDestroy {
               this.onModalClose();
             });
           },
-          error: (err) => {
+          error: () => {
             Swal.fire({
               icon: 'error',
               title: 'Failed',

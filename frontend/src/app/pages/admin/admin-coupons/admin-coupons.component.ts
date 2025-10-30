@@ -3,7 +3,7 @@ import { AdminHeaderComponent } from '../../../components/admin/admin-header/adm
 import { AdminFooterComponent } from '../../../components/admin/admin-footer/admin-footer.component';
 import { AdminSidebarComponent } from '../../../components/admin/admin-sidebar/admin-sidebar.component';
 import { AdminTableComponent } from '../../../components/shared/admin-table/admin-table.component';
-import { CouponResponseDto } from '../../../interfaces/interfaces';
+import { CouponRequestDto, CouponResponseDto } from '../../../interfaces/interfaces';
 import { CouponService } from '../../../services/coupon/coupon.service';
 import { CouponFormComponent } from '../../../components/shared/coupon-form/coupon-form.component';
 import { CommonModule } from '@angular/common';
@@ -130,7 +130,7 @@ export class AdminCouponsComponent implements OnInit, OnDestroy {
     this.selectedCouponId = null;
   }
 
-  onModalSubmit(payload: any): void {
+  onModalSubmit(payload: CouponRequestDto): void {
     if (this.selectedCouponId) {
       this.couponService
         .editCoupon(this.selectedCouponId, payload)
@@ -148,7 +148,7 @@ export class AdminCouponsComponent implements OnInit, OnDestroy {
               this.onModalClose();
             });
           },
-          error: (err) => {
+          error: () => {
             Swal.fire({
               icon: 'error',
               title: 'Failed',
@@ -173,7 +173,7 @@ export class AdminCouponsComponent implements OnInit, OnDestroy {
               this.onModalClose();
             });
           },
-          error: (err) => {
+          error: () => {
             Swal.fire({
               icon: 'error',
               title: 'Failed',

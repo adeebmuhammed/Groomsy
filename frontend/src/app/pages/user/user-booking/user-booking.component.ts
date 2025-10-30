@@ -64,7 +64,7 @@ export class UserBookingComponent implements OnInit, OnDestroy {
   pages: number[] = [];
 
   stagedBooking: BookingResponseDto | null = null;
-  checkoutData: { barber?: any; service?: any } = {};
+  checkoutData: { barber?: BarberDto; service?: Service } = {};
 
   private bookingService = inject(BookingService);
   private authService = inject(AuthService);
@@ -287,7 +287,7 @@ export class UserBookingComponent implements OnInit, OnDestroy {
                           `/user/booking-confirmation/${bookingId}`,
                         ]);
                       },
-                      error: (err) => {
+                      error: () => {
                         this.router.navigate([
                           `/user/booking-confirmation/${bookingId}`,
                         ]);

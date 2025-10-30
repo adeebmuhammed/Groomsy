@@ -17,7 +17,6 @@ import { BookingDetailsComponent } from '../../../components/shared/booking-deta
 import * as bootstrap from 'bootstrap';
 import { ServiceService } from '../../../services/service/service.service';
 import { AdminService } from '../../../services/admin/admin.service';
-import { AuthService } from '../../../services/auth/auth.service';
 import { ROLES } from '../../../constants/roles';
 
 @Component({

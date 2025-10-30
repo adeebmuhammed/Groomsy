@@ -92,7 +92,7 @@ export class BarberSignupComponent implements OnInit, OnDestroy {
         .barberSignup(formData)
         .pipe(takeUntil(this.componentDestroyed$))
         .subscribe({
-          next: (res: any) => {
+          next: (res) => {
             localStorage.setItem(
               'barberSignupName',
               this.barberSignupForm.value.name
