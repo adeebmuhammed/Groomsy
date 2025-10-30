@@ -86,9 +86,14 @@ export class SubscriptionService implements ISubscriptionService {
       });
       message = "Subscription created";
     } else {
+      const expiryDate = calculateExpiryDate(plan.duration, plan.durationUnit);
+      if (expiryDate < subscription.expiryDate) {
+        throw new Error("cannot change subscription plan to another plan that's expiry date is less than current expiry date")
+      }
+
       const updated = await this._subscriptionRepo.update(subscription.id, {
         plan: new mongoose.Types.ObjectId(planId),
-        expiryDate: calculateExpiryDate(plan.duration, plan.durationUnit),
+        expiryDate,
         razorpayOrderId: razorpayOrder.id,
         status: "pending",
       });
