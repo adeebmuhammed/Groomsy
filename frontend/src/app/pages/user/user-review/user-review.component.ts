@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { BarberDto, ReviewResponseDto } from '../../../interfaces/interfaces';
 import { AuthService } from '../../../services/auth/auth.service';
 import { ReviewService } from '../../../services/review/review.service';
@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
   templateUrl: './user-review.component.html',
   styleUrl: './user-review.component.css',
 })
-export class UserReviewComponent implements OnInit {
+export class UserReviewComponent implements OnInit, OnDestroy {
   reviews: ReviewResponseDto[] = [];
   barbers: BarberDto[] = [];
   currentPage = 1;

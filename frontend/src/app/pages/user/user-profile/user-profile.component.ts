@@ -82,7 +82,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
           .updateUserProfile(id, updated)
           .pipe(takeUntil(this.componentDestroyed$))
           .subscribe({
-            next: (res) => {
+            next: () => {
               this.showEditModal = false;
               Swal.fire(
                 'Updated!',

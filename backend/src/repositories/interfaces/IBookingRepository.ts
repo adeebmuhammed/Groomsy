@@ -2,7 +2,6 @@ import { FilterQuery, UpdateResult } from "mongoose";
 import { BookingCreateRequestDto } from "../../dto/booking.dto";
 import { IBooking } from "../../models/booking.model";
 import { IBaseRepository } from "./IBaseRepository";
-import { DASHBOARDFILTERS } from "../../utils/constants";
 
 export interface IBookingRepository extends IBaseRepository<IBooking> {
   findSimilarBooking(data: BookingCreateRequestDto): Promise<IBooking | null>;

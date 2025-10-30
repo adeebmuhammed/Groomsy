@@ -79,7 +79,7 @@ export class UserResetPasswordComponent implements OnDestroy {
               this.router.navigate([USER_ROUTES_PATHS.SIGNIN]);
             });
           },
-          error: (err) => {
+          error: () => {
             Swal.fire({
               icon: 'error',
               title: 'Reset Password Failed',

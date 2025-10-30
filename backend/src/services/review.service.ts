@@ -9,6 +9,7 @@ import { ListResponseDto } from "../dto/admin.dto";
 import { ReviewMapper } from "../mappers/review.mapper";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
+import { MESSAGES } from "../utils/constants";
 
 @injectable()
 export class ReviewService implements IReviewService {
@@ -27,7 +28,7 @@ export class ReviewService implements IReviewService {
   }> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
-      throw new Error("user not found");
+      throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
     }
 
     const { reviews, totalCount } = await this._reviewRepo.findAllReviews(
@@ -59,7 +60,7 @@ export class ReviewService implements IReviewService {
   ): Promise<{ response: MessageResponseDto;}> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
-      throw new Error("user not found");
+      throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
     }
 
     const booking = await this._bookingRepo.findById(bookingId);

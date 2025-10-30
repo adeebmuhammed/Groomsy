@@ -11,6 +11,7 @@ import { IBarberRepository } from "../repositories/interfaces/IBarberRepository"
 import { SubscriptionMapper } from "../mappers/subscription.mapper";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
+import { MESSAGES } from "../utils/constants";
 
 @injectable()
 export class SubscriptionService implements ISubscriptionService {
@@ -27,7 +28,7 @@ export class SubscriptionService implements ISubscriptionService {
   ): Promise<{ response: SubscriptionDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("barber not found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     let subscription = await this._subscriptionRepo.findOne({
@@ -58,7 +59,7 @@ export class SubscriptionService implements ISubscriptionService {
   ): Promise<{ response: confirmSubscription }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("barber not found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     const plan = await this._planRepo.findById(planId);
@@ -118,7 +119,7 @@ export class SubscriptionService implements ISubscriptionService {
   ): Promise<{ response: confirmSubscription }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("barber not found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     const subscription = await this._subscriptionRepo.findOne({

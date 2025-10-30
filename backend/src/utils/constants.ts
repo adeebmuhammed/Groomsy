@@ -34,6 +34,7 @@ export const MESSAGES = {
     INVALID_CREDENTIALS: "Invalid credentials",
     EMAIL_EXISTS: "Email already exists",
     USER_NOT_FOUND: "User not found",
+    BARBER_NOT_FOUND: "Barber not found",
     INVALID_INPUT: "Invalid input: Email and Password are required",
     PASSWORD_MISMATCH: "Password and Confirm Password do not match",
     PROFILE_UPDATE_FAILED: "Profile update failed.",

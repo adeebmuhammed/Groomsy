@@ -62,7 +62,7 @@ export class UserSigninComponent implements OnDestroy {
               this.router.navigate([USER_ROUTES_PATHS.HOME]);
             });
           },
-          error: (err) => {
+          error: () => {
             this.errorMessage = 'Login failed';
 
             Swal.fire({

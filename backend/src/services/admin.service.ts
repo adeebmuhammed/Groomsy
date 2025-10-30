@@ -159,7 +159,7 @@ export class AdminService implements IAdminService {
   ): Promise<{ response: BarberDto; message: string }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
     if (barber.status === "blocked") throw new Error("barber already blocked");
 

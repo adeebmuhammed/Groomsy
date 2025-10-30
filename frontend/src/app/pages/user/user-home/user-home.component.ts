@@ -1,5 +1,4 @@
 import {
-  ChangeDetectorRef,
   Component,
   inject,
   OnDestroy,
@@ -94,7 +93,7 @@ export class UserHomeComponent implements OnInit, OnDestroy {
           .updateFavorite(userId, barberId)
           .pipe(takeUntil(this.componentDestroyed$))
           .subscribe({
-            next: (res) => {
+            next: () => {
               this.loadBarbersAndFavorites();
             },
             error: (err) => {
