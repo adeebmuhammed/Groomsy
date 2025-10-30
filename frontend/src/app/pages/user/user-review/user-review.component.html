@@ -1,5 +1,6 @@
 <app-user-header></app-user-header>
 
+<!-- Main content (flex: 1 makes it fill space between header and footer) -->
 <div class="user-reviews-wrapper">
   <h2 class="heading">My Reviews</h2>
 
@@ -10,7 +11,7 @@
 
   <!-- No Reviews -->
   <div *ngIf="!loading && reviews.length === 0" class="no-reviews">
-    You haven’t written any reviews yet.
+    <p>You haven’t written any reviews yet.</p>
   </div>
 
   <!-- Reviews List -->
@@ -18,9 +19,7 @@
     <div class="review-card" *ngFor="let review of reviews">
       <div class="review-header">
         <div class="barber-info">
-          <div class="barber-name">
-            {{ getBarberName(review.barber) }}
-          </div>
+          <div class="barber-name">{{ getBarberName(review.barber) }}</div>
           <div class="rating">
             <span *ngFor="let star of getStars(review.rating)">★</span>
             <span class="empty" *ngFor="let star of getEmptyStars(review.rating)">☆</span>
@@ -28,6 +27,7 @@
         </div>
         <button class="delete-btn" (click)="confirmDelete(review.id)">🗑 Delete</button>
       </div>
+
       <div class="review-body">
         <p>{{ review.reviewText }}</p>
       </div>
@@ -36,18 +36,15 @@
 
   <!-- Pagination -->
   <div class="pagination-controls" *ngIf="totalPages > 1">
-    <button [disabled]="currentPage === 1" (click)="handlePageChange(currentPage - 1)">
-      ‹ Prev
-    </button>
+    <button [disabled]="currentPage === 1" (click)="handlePageChange(currentPage - 1)">‹ Prev</button>
     <button *ngFor="let page of pages"
             [class.active]="currentPage === page"
             (click)="handlePageChange(page)">
       {{ page }}
     </button>
-    <button [disabled]="currentPage === totalPages" (click)="handlePageChange(currentPage + 1)">
-      Next ›
-    </button>
+    <button [disabled]="currentPage === totalPages" (click)="handlePageChange(currentPage + 1)">Next ›</button>
   </div>
 </div>
 
+<!-- Footer always at bottom -->
 <app-user-footer></app-user-footer>

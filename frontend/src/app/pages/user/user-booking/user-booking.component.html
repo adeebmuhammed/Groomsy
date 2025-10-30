@@ -71,13 +71,22 @@
             </button>
 
             <!-- Finished bookings: Leave Review -->
+             @if(booking.status === "finished" && !reviewCheck(booking.id)){
             <button
               class="btn btn-success"
-              *ngIf="booking.status === 'finished'"
               (click)="leaveReview(booking)"
             >
               Review
             </button>
+          }
+
+          @if(booking.status === "finished" && reviewCheck(booking.id)){
+            <button
+              class="btn btn-primary"
+            >
+              Already Reviewed
+            </button>
+          }
 
             @if(booking.status === "staged"){
             <button class="btn-primary" (click)="retryPayment(booking.id)">
