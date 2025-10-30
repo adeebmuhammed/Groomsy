@@ -7,6 +7,7 @@ import {
   BookingResponseDto,
   BookingStatus,
   ReviewCreateRequestDto,
+  ReviewResponseDto,
   Service,
 } from '../../../interfaces/interfaces';
 import { AuthService } from '../../../services/auth/auth.service';
@@ -44,6 +45,7 @@ export class UserBookingComponent implements OnInit, OnDestroy {
   selectedBooking: BookingResponseDto | null = null;
   selectedService: Service | null = null;
   barbers: BarberDto[] = [];
+  reviewsByUser: ReviewResponseDto[] | [] = [];
   selectedSort: 'newest' | 'oldest' | 'price_low' | 'price_high' = 'newest';
   statuses: { label: string; value: BookingStatus }[] = [
     { label: 'Upcoming', value: 'pending' },
@@ -90,6 +92,27 @@ export class UserBookingComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.fetchBookingsByStatus(this.selectedStatus, this.selectedSort);
     this.fetchBarbers();
+    this.fetchReviews()
+  }
+
+  reviewCheck(bookingId: string){
+    return this.reviewsByUser.find(b => b.booking === bookingId)
+  }
+
+  fetchReviews(){
+    this.authService.userId$.pipe(takeUntil(this.componentDestroyed$)).subscribe((id)=>{
+      if (!id) {
+        return;
+      }
+      this.reviewService.getAllReviewsByUser(id,1,100).pipe(takeUntil(this.componentDestroyed$)).subscribe({
+        next: (res) => {
+          this.reviewsByUser = res.data
+        },
+        error: (err)=>{
+          console.error(err)
+        }
+      })
+    })
   }
 
   componentDestroyed$: Subject<void> = new Subject<void>();
@@ -314,6 +337,7 @@ export class UserBookingComponent implements OnInit, OnDestroy {
               );
               this.reviewModalVisible = false;
               this.selectedBookingId = null;
+              this.fetchReviews()
             },
             error: () => {
               Swal.fire('Error!', 'Failed to submit review.', 'error');
