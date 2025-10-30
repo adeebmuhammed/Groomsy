@@ -267,7 +267,7 @@ export class BarberService implements IBarberService {
   ): Promise<{ response: BarberProfileDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("Barber Not Found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     const response = BarberMapper.toBarberProfileDto(barber);
@@ -283,7 +283,7 @@ export class BarberService implements IBarberService {
   ): Promise<{ response: MessageResponseDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("Barber Not Found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     if (!isValidEmail(data.email)) {
@@ -324,7 +324,7 @@ export class BarberService implements IBarberService {
   ): Promise<{ response: MessageResponseDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("Barber Not Found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     if (!data.city || !data.district || !data.pincode || !data.street) {
@@ -381,7 +381,7 @@ export class BarberService implements IBarberService {
   ): Promise<{ dashboardStats: BarberDashboardStatsDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("Barber Not Found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     const dashboardStats = await this._bookingRepo.getDashboardStats(
@@ -430,7 +430,7 @@ export class BarberService implements IBarberService {
   ): Promise<{ profilePictureDeletion: MessageResponseDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("barber not found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     if (!barber.profilePicKey) {

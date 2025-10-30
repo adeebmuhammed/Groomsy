@@ -54,7 +54,6 @@ export class BookingService {
     couponCode: string
   ): Observable<BookingResponseDto> {
     const params = new HttpParams().set('bookingId', bookingId);
-    const body = { couponCode };
     return this.http.put<BookingResponseDto>(
       `${environment.apiBaseUrl}/user/bookings/coupon`,
       { couponCode },

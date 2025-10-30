@@ -76,7 +76,7 @@ ngOnDestroy() {
         .userSignup(formData)
         .pipe(takeUntil(this.componentDestroyed$))
         .subscribe({
-          next: (res: any) => {
+          next: (res) => {
             localStorage.setItem('userSignupName', this.signupForm.value.name);
             localStorage.setItem(
               'userSignupEmail',

@@ -8,6 +8,7 @@ import { BarberUnavailabilityMapper } from "../mappers/barber.unavailability.map
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
+import { MESSAGES } from "../utils/constants";
 
 @injectable()
 export class BarberUnavailabilityService
@@ -25,7 +26,7 @@ export class BarberUnavailabilityService
   ): Promise<{ response: BarberUnavailabilityDto;}> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("barber not found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     const unavailability = await this._barberUnavailabilityRepo.findOne({
@@ -49,7 +50,7 @@ export class BarberUnavailabilityService
   ): Promise<{ response: MessageResponseDto;}> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("barber not found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     const unavailability = await this._barberUnavailabilityRepo.findOne({
@@ -101,7 +102,7 @@ export class BarberUnavailabilityService
   ): Promise<{ response: MessageResponseDto;}> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("Barber not found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     const unavailability = await this._barberUnavailabilityRepo.findOne({
@@ -160,7 +161,7 @@ export class BarberUnavailabilityService
   ): Promise<{ response: MessageResponseDto;}> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("Barber not found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     const unavailability = await this._barberUnavailabilityRepo.findOne({

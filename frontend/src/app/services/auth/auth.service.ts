@@ -113,7 +113,7 @@ export class AuthService {
   userVerifyOtp(data: { email: string; otp: string; purpose: 'signup' | 'forgot' }): Observable<{ message: string; user: { name: string; email: string } }> {
   return new Observable(observer => {
     this.http.post<{ message: string; user: { name: string; email: string } }>(`${this.API_URL}/user/verify-otp`, data).subscribe({
-      next: (res: any) => {
+      next: (res) => {
         observer.next(res);
         observer.complete();
       },
@@ -184,7 +184,7 @@ export class AuthService {
   barberVerifyOtp(data: { email: string; otp: string; purpose: 'signup' | 'forgot' }): Observable<IVerifyOtpResponse> {
   return new Observable(observer => {
     this.http.post<IVerifyOtpResponse>(`${this.API_URL}/barber/verify-otp`, data).subscribe({
-      next: (res: any) => {
+      next: (res) => {
         observer.next(res);
         observer.complete();
       },

@@ -385,12 +385,12 @@ export class BookingService implements IBookingService {
 
     if (role === ROLES.USER && userId) {
       const user = await this._userRepo.findById(userId);
-      if (!user) throw new Error("user not found");
+      if (!user) throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
 
       filterQuery.user = userId;
     } else if (role === ROLES.BARBER && userId) {
       const barber = await this._barberRepo.findById(userId);
-      if (!barber) throw new Error("barber not found");
+      if (!barber) throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
 
       filterQuery.barber = userId;
     } else if (role === ROLES.ADMIN) {
@@ -432,7 +432,7 @@ export class BookingService implements IBookingService {
   }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("barber not found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     const filter = { barber: barberId };

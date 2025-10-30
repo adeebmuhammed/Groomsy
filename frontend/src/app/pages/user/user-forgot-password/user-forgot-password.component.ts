@@ -66,7 +66,7 @@ export class UserForgotPasswordComponent implements OnDestroy {
               });
             });
           },
-          error: (err) => {
+          error: () => {
             Swal.fire({
               icon: 'error',
               title: 'Error',

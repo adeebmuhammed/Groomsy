@@ -359,7 +359,7 @@ export class UserService implements IUserService {
   ): Promise<{ barberDetailsData: BarberProfileDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
-      throw new Error("barber not found");
+      throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
 
     const barberDetailsData = BarberMapper.toBarberProfileDto(barber);
@@ -463,7 +463,7 @@ export class UserService implements IUserService {
   ): Promise<{ profilePictureDeletion: MessageResponseDto }> => {
     const user = await this._userRepo.findById(userId);
     if (!user) {
-      throw new Error("user not found");
+      throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
     }
 
     if (!user.profilePicKey) {
