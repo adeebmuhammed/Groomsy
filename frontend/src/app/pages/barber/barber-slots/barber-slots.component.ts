@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { SlotDto } from '../../../interfaces/interfaces';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberSidebarComponent } from '../../../components/barber/barber-sidebar/barber-sidebar.component';
@@ -126,7 +126,7 @@ export class BarberSlotsComponent implements OnInit, OnDestroy {
     this.showSlotModal = true;
   }
 
-  openEditSlotModal(slot: any) {
+  openEditSlotModal(slot: SlotDto) {
     this.selectedSlot = slot;
     this.showSlotModal = true;
   }
@@ -135,7 +135,7 @@ export class BarberSlotsComponent implements OnInit, OnDestroy {
     this.showSlotModal = false;
   }
 
-  handleSlotSubmit(data: any) {
+  handleSlotSubmit(data: SlotDto) {
     this.authService.barberId$.subscribe({
       next: (barberId) => {
         if (!barberId) return;
@@ -146,7 +146,7 @@ export class BarberSlotsComponent implements OnInit, OnDestroy {
             .updateSlot(this.selectedSlot.id, data)
             .pipe(takeUntil(this.componentDestroyed$))
             .subscribe({
-              next: (res) => {
+              next: () => {
                 this.fetchSlots();
                 this.closeSlotModal();
               },
@@ -165,7 +165,7 @@ export class BarberSlotsComponent implements OnInit, OnDestroy {
             .createSlot(barberId, data)
             .pipe(takeUntil(this.componentDestroyed$))
             .subscribe({
-              next: (res) => {
+              next: () => {
                 this.fetchSlots();
                 this.closeSlotModal();
               },

@@ -146,7 +146,7 @@ export class BarberBookingComponent implements OnInit, OnDestroy {
   }
 
   handlePageChange(page: number): void {
-    this.fetchBookingsByStatus(this.selectedStatus, this.selectedSort);
+    this.fetchBookingsByStatus(this.selectedStatus, this.selectedSort, page);
   }
 
   openDetailsModal(booking: BookingResponseDto): void {

@@ -1,5 +1,4 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { UserService } from '../../../services/user/user.service';
 import { BarberDto } from '../../../interfaces/interfaces';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';

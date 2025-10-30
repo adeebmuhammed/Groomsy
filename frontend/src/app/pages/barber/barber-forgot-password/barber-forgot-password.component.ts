@@ -68,7 +68,7 @@ export class BarberForgotPasswordComponent implements OnDestroy {
               });
             });
           },
-          error: (err) => {
+          error: () => {
             Swal.fire({
               icon: 'error',
               title: 'Error',

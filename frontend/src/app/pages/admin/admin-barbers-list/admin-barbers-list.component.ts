@@ -40,8 +40,6 @@ export class AdminBarbersListComponent implements OnInit, OnDestroy {
 
   private adminService: AdminService = inject(AdminService);
 
-  constructor() {}
-
   ngOnInit(): void {
     this.fetchBarbers();
   }

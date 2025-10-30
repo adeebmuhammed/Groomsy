@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SlotResponse, SlotTime } from '../../../interfaces/interfaces';
 import * as bootstrap from 'bootstrap';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-slot-table-modal',

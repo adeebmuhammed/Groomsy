@@ -58,7 +58,7 @@ export class AdminSigninComponent implements OnDestroy{
 
             this.router.navigate([ADMIN_ROUTES_PATHS.DASHBOARD]);
           },
-          error: (err) => {
+          error: () => {
             this.error = 'Invalid credentials';
             Swal.fire({
               icon: 'error',

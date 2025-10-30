@@ -99,7 +99,7 @@ export class BarberUnavailabilityComponent implements OnInit, OnDestroy {
             this.fetchUnavailability();
           });
         },
-        error: (err) =>
+        error: () =>
           Swal.fire('Error!', 'Failed to update weekly off', 'error'),
       });
   }
@@ -125,7 +125,7 @@ export class BarberUnavailabilityComponent implements OnInit, OnDestroy {
             this.fetchUnavailability();
           });
         },
-        error: (err) =>
+        error: () =>
           Swal.fire('Error!', 'Failed to add special off', 'error'),
       });
   }
@@ -155,7 +155,7 @@ export class BarberUnavailabilityComponent implements OnInit, OnDestroy {
                 this.fetchUnavailability();
               });
             },
-            error: (err) =>
+            error: () =>
               Swal.fire('Error!', 'Failed to remove special off', 'error'),
           });
       }

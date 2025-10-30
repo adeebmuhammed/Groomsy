@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { BarberHeaderComponent } from '../../../components/barber/barber-header/barber-header.component';
 import { BarberFooterComponent } from '../../../components/barber/barber-footer/barber-footer.component';
 import { BarberSidebarComponent } from '../../../components/barber/barber-sidebar/barber-sidebar.component';
@@ -88,7 +88,7 @@ export class BarberProfileComponent implements OnInit, OnDestroy {
           .updateBarberProfile(id, updated)
           .pipe(takeUntil(this.componentDestroyed$))
           .subscribe({
-            next: (res) => {
+            next: () => {
               this.showEditModal = false;
               Swal.fire(
                 'Updated!',
