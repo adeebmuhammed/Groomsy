@@ -76,14 +76,13 @@ export class BarberService {
 
     updateProfilePicture(
     barberId: string,
-    file: File
+    profilePicUrl: string, profilePicKey: string
   ): Observable<IMessageResponse> {
-    const formData = new FormData();
-    formData.append('file', file);
+    const body = { profilePicUrl, profilePicKey }
 
     return this.http.patch<IMessageResponse>(
       `${environment.apiBaseUrl}/barber/profile/update-profile-picture/${barberId}`,
-      formData
+      body
     );
   }
 

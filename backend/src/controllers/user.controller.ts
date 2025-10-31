@@ -397,16 +397,10 @@ export class UserController implements IUserController {
   updateProfilePicture = async (req: Request, res: Response): Promise<void> => {
     try {
       const userId = req.params["id"];
-      if (!req.files || !req.files.file) {
-        res
-          .status(STATUS_CODES.BAD_REQUEST)
-          .json({ error: "No file uploaded" });
-        return;
-      }
-      const file = req.files.file as fileUpload.UploadedFile;
+      const { profilePicUrl, profilePicKey } = req.body;
 
       const { profilePictureUpdation } =
-        await this._userService.updateUserProfilePicture(userId, file);
+        await this._userService.updateUserProfilePicture(userId, profilePicUrl, profilePicKey);
       let status;
       if (profilePictureUpdation) {
         status = STATUS_CODES.OK;

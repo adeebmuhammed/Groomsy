@@ -4,13 +4,15 @@ import { UserFooterComponent } from '../../../components/user/user-footer/user-f
 import { AuthService } from '../../../services/auth/auth.service';
 import { UserService } from '../../../services/user/user.service';
 import { EditProfile, UserProfileDto } from '../../../interfaces/interfaces';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ProfileComponent } from '../../../components/shared/profile/profile.component';
 import { EditProfileComponent } from '../../../components/shared/edit-profile/edit-profile.component';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import * as bootstrap from 'bootstrap';
 import { FileUploadComponent } from '../../../components/shared/file-upload/file-upload.component';
+import { S3OperationsService } from '../../../services/s3-operations/s3-operations.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-user-profile',
@@ -30,6 +32,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   private authService: AuthService = inject(AuthService);
   private userService: UserService = inject(UserService);
+  private s3Service: S3OperationsService = inject(S3OperationsService);
 
   showEditModal = false;
 
@@ -104,41 +107,55 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   isUploading = false;
   updateProfilePicture(file: File) {
-    this.isUploading = true;
-    this.authService.userId$
-      .pipe(takeUntil(this.componentDestroyed$))
-      .subscribe((id) => {
-        if (!id) {
-          this.isUploading = false;
-          return;
-        }
-
-        this.userService
-          .updateProfilePicture(id, file)
-          .pipe(takeUntil(this.componentDestroyed$))
-          .subscribe({
-            next: (res) => {
-              Swal.fire(
-                'Success',
-                res.message || 'Profile Picture Updated Successfully',
-                'success'
-              );
-              this.isUploading = false;
-              this.fetchProfile();
-              this.closeUploadModal();
-            },
-            error: (err) => {
-              console.error(err);
-              Swal.fire(
-                'Error',
-                err.error.message || 'Profile Picture Updation Failed',
-                'error'
-              );
-              this.isUploading = false;
-            },
-          });
-      });
-  }
+      this.isUploading = true;
+  
+      this.authService.userId$
+        .pipe(
+          takeUntil(this.componentDestroyed$),
+          take(1),
+          switchMap((id) => {
+            if (!id) throw new Error('Barber ID not found');
+            return this.s3Service.fetchSignedUrl(file).pipe(
+              switchMap((res) => {
+                const { uploadUrl, key } = res;
+  
+                // Step 2: Upload to S3
+                return this.s3Service.uploadFile(uploadUrl, file).pipe(
+                  switchMap(() => {
+                    const fileUrl = `https://${environment.s3Bucket}.s3.${environment.awsRegion}.amazonaws.com/${key}`;
+                    return this.userService.updateProfilePicture(
+                      id,
+                      fileUrl,
+                      key
+                    );
+                  })
+                );
+              })
+            );
+          })
+        )
+        .subscribe({
+          next: (res) => {
+            Swal.fire(
+              'Success',
+              res.message || 'Profile Picture Updated Successfully',
+              'success'
+            );
+            this.fetchProfile();
+            this.closeUploadModal();
+            this.isUploading = false;
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire(
+              'Error',
+              err.error?.message || 'Profile Picture Update Failed',
+              'error'
+            );
+            this.isUploading = false;
+          },
+        });
+    }
 
   deleteProfilePicture() {
     this.authService.userId$

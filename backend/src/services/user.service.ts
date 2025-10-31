@@ -432,7 +432,8 @@ export class UserService implements IUserService {
 
   updateUserProfilePicture = async (
     userId: string,
-    file: UploadedFile
+    profilePicUrl: string,
+    profilePicKey: string
   ): Promise<{ profilePictureUpdation: MessageResponseDto }> => {
     const fileName = "images/" + v4();
     const user = await this._userRepo.findById(userId);
@@ -440,15 +441,9 @@ export class UserService implements IUserService {
       throw new Error("uesr not found");
     }
 
-    const { url, key } = await putObject(file, fileName);
-
-    if (!url || !key) {
-      throw new Error("profile picture is not uploaded");
-    }
-
     const updated = await this._userRepo.update(userId, {
-      profilePicUrl: url,
-      profilePicKey: key,
+      profilePicUrl,
+      profilePicKey,
     });
     if (!updated) {
       throw new Error("profile picture updation failed");

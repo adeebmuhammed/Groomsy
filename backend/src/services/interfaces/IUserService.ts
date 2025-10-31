@@ -59,7 +59,8 @@ export interface IUserService {
   ): Promise<{ response: MessageResponseDto }>;
   updateUserProfilePicture(
     userId: string,
-    file: fileUpload.UploadedFile
+    profilePicUrl: string,
+    profilePicKey: string
   ): Promise<{ profilePictureUpdation: MessageResponseDto }>;
   deleteUserProfilePicture(
     userId: string

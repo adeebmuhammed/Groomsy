@@ -371,19 +371,19 @@ export interface confirmSubscription {
 export interface DashboardStatsDto {
   filter: string;
   bookings: {
-    type: "bookings";
+    type: 'bookings';
     labels: string[];
     data: number[];
     total: number;
   };
   revenue: {
-    type: "revenue";
+    type: 'revenue';
     labels: string[];
     data: number[];
     total: number;
   };
   services: {
-    type: "services";
+    type: 'services';
     labels: string[];
     data: number[];
     total: number;
@@ -391,3 +391,8 @@ export interface DashboardStatsDto {
 }
 
 export type BookingStatus = 'pending' | 'staged' | 'cancelled' | 'finished';
+
+export interface GeneratedSignedUrl {
+  uploadUrl: string;
+  key: string;
+}
