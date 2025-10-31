@@ -3,7 +3,6 @@
     <h3 class="modal-title">Write a Review</h3>
 
     <form [formGroup]="reviewForm" (ngSubmit)="submitForm()">
-      
       <!-- Star Rating -->
       <div class="star-rating">
         <span
@@ -15,7 +14,13 @@
           ★
         </span>
       </div>
-      <div class="error" *ngIf="reviewForm.get('rating')?.touched && reviewForm.get('rating')?.value === 0">
+      <div
+        class="error"
+        *ngIf="
+          reviewForm.get('rating')?.touched &&
+          reviewForm.get('rating')?.value === 0
+        "
+      >
         Please select a rating
       </div>
 
@@ -25,14 +30,32 @@
         placeholder="Write your review..."
         formControlName="reviewText"
       ></textarea>
-      <div class="error" *ngIf="reviewForm.get('reviewText')?.touched && reviewForm.get('reviewText')?.invalid">
-        Review must be at least 5 characters long
+      <div
+        class="error"
+        *ngIf="
+          reviewForm.get('reviewText')?.touched &&
+          reviewForm.get('reviewText')?.invalid
+        "
+      >
+        @if (reviewForm.get('reviewText')?.errors?.['minlength']) {
+        <small>Review must be at least 5 characters long.</small>
+        } @else if (reviewForm.get('reviewText')?.errors?.['maxlength']) {
+        <small>Review must be less than 50 characters.</small>
+        } @else if (reviewForm.get('reviewText')?.errors?.['required']) {
+        <small>Review is required.</small>
+        }
       </div>
 
       <!-- Actions -->
       <div class="modal-actions">
         <button type="submit" class="submit-button">Submit</button>
-        <button type="button" class="submit-button cancel-btn" (click)="close()">Cancel</button>
+        <button
+          type="button"
+          class="submit-button cancel-btn"
+          (click)="close()"
+        >
+          Cancel
+        </button>
       </div>
     </form>
   </div>

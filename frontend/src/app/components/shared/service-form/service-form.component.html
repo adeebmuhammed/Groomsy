@@ -10,7 +10,11 @@
         *ngIf="serviceForm.get('name')?.touched && serviceForm.get('name')?.invalid"
         class="text-danger"
       >
+      @if (serviceForm.get('name')?.errors?.['pattern']) {
+        <small>Enter a valid name.</small>
+      }@else{
         Name is required and cannot be empty.
+      }
       </div>
 
       <!-- Description -->

@@ -43,7 +43,6 @@ export class SubscriptionFormComponent implements OnChanges {
         [
           Validators.required,
           Validators.pattern(REGEX.LONG_NAME),
-          Validators.maxLength(25),
         ],
       ],
       price: [null, [Validators.required, Validators.min(1)]],

@@ -2,6 +2,7 @@ import {
   CreateSubscriptionPlanDto,
   SubscriptionFeature,
 } from "../dto/subscription.plan.dto";
+import { isValidName } from "./validators";
 
 export const validatePlanData = (data: CreateSubscriptionPlanDto): string[] => {
   const errors = [];
@@ -18,6 +19,11 @@ export const validatePlanData = (data: CreateSubscriptionPlanDto): string[] => {
       "Required fields: name, price, renewal price, duration ,duration unit and description"
     );
   }
+
+  if (!isValidName(data.name)) {
+    errors.push("invalid name");
+  }
+  
   if (data.price != null && data.price <= 0) {
     errors.push("price should be a valid number greater than zero");
   }

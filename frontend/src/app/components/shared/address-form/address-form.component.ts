@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { BarberProfileDto } from '../../../interfaces/interfaces';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { REGEX } from '../../../constants/validators';
 
 @Component({
   selector: 'app-address-form',
@@ -43,8 +44,8 @@ export class AddressFormComponent implements OnInit {
   ngOnInit(): void {
     this.addressForm = this.fb.group({
       district: [this.address?.district || '', Validators.required],
-      city: [this.address?.city || '', Validators.required],
-      street: [this.address?.street || '', Validators.required],
+      city: [this.address?.city || '', [Validators.required, Validators.pattern(REGEX.LONG_NAME)]],
+      street: [this.address?.street || '', [Validators.required, Validators.pattern(REGEX.LONG_NAME)]],
       pincode: [
         this.address?.pincode || '',
         [Validators.required, Validators.pattern(/^\d{6}$/)]
