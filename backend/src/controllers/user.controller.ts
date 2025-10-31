@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { IUserController } from "./interfaces/IUserController";
 import { IUserService } from "../services/interfaces/IUserService";
-import { STATUS_CODES } from "../utils/constants";
+import { ROLES, STATUS_CODES } from "../utils/constants";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -98,11 +98,11 @@ export class UserController implements IUserController {
 
       const accessToken = generateAccessToken({
         userId: response.id,
-        type: "user",
+        type: ROLES.USER,
       });
       const refreshToken = generateRefreshToken({
         userId: response.id,
-        type: "user",
+        type: ROLES.USER,
       });
 
       res.cookie("auth-token", accessToken, {
@@ -150,11 +150,11 @@ export class UserController implements IUserController {
 
       const accessToken = generateAccessToken({
         userId: response.id,
-        type: "user",
+        type: ROLES.USER,
       });
       const refreshToken = generateRefreshToken({
         userId: response.id,
-        type: "user",
+        type: ROLES.USER,
       });
 
       res.cookie("auth-token", accessToken, {

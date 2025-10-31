@@ -4,7 +4,7 @@ import {
   confirmBookingDto,
 } from "../../dto/booking.dto";
 import { MessageResponseDto } from "../../dto/base.dto";
-import { ROLES, TABLEFILTERS } from "../../utils/constants";
+import { BOOKINGSTATUS, ROLES, TABLEFILTERS } from "../../utils/constants";
 
 export interface IBookingService {
   fetchBookings(
@@ -41,7 +41,7 @@ export interface IBookingService {
   ): Promise<{ response: MessageResponseDto }>;
   getBookingById(bookingId: string): Promise<{ response: BookingResponseDto }>;
   getBookingsByStatus(
-    status: "pending" | "staged" | "cancelled" | "finished",
+    status: BOOKINGSTATUS,
     userId: string | null,
     filter: TABLEFILTERS,
     page: number,

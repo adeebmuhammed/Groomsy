@@ -8,7 +8,7 @@ import { IBooking } from "../models/booking.model";
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
 import { IUserRepository } from "../repositories/interfaces/IUserRepository";
-import { MESSAGES, ROLES, TABLEFILTERS } from "../utils/constants";
+import { BOOKINGSTATUS, MESSAGES, ROLES, TABLEFILTERS } from "../utils/constants";
 import { IBookingService } from "./interfaces/IBookingService";
 import { MessageResponseDto } from "../dto/base.dto";
 import { IServiceRepository } from "../repositories/interfaces/IServiceRepository";
@@ -314,7 +314,7 @@ export class BookingService implements IBookingService {
       throw new Error("booking not found");
     }
 
-    if (booking.status === "finished") {
+    if (booking.status === BOOKINGSTATUS.FINISHED) {
       throw new Error("the booking appointment is already finished");
     }
 
@@ -323,16 +323,16 @@ export class BookingService implements IBookingService {
     }
 
     if (role === ROLES.USER) {
-      if (booking.status === "pending" && bookingStatus === "cancel") {
-        booking.status = "cancelled_by_user";
+      if (booking.status === BOOKINGSTATUS.PENDING && bookingStatus === "cancel") {
+        booking.status = BOOKINGSTATUS.CANCELLED_BY_USER;
       } else {
         throw new Error("Invalid status transition for user");
       }
     } else if (role === ROLES.BARBER) {
-      if (booking.status === "pending" && bookingStatus === "cancel") {
-        booking.status = "cancelled_by_barber";
-      } else if (booking.status === "pending" && bookingStatus === "finished") {
-        booking.status = "finished";
+      if (booking.status === BOOKINGSTATUS.PENDING && bookingStatus === "cancel") {
+        booking.status = BOOKINGSTATUS.CANCELLED_BY_BARBER;
+      } else if (booking.status === BOOKINGSTATUS.PENDING && bookingStatus === BOOKINGSTATUS.FINISHED) {
+        booking.status = BOOKINGSTATUS.FINISHED;
       } else {
         throw new Error("Invalid status transition for barber");
       }
@@ -365,7 +365,7 @@ export class BookingService implements IBookingService {
   };
 
   getBookingsByStatus = async (
-    status: "pending" | "staged" | "cancelled" | "finished",
+    status: BOOKINGSTATUS,
     userId: string | null,
     filter: TABLEFILTERS,
     page: number,
@@ -374,7 +374,7 @@ export class BookingService implements IBookingService {
   ): Promise<{
     response: { data: BookingResponseDto[]; totalCount: number };
   }> => {
-    const allowedStatuses = ["pending", "staged", "cancelled", "finished"];
+    const allowedStatuses = [BOOKINGSTATUS.STAGED,BOOKINGSTATUS.PENDING,BOOKINGSTATUS.CANCELLED,BOOKINGSTATUS.FINISHED];
     if (!allowedStatuses.includes(status)) {
       throw new Error("invalid booking status");
     }
@@ -409,8 +409,8 @@ export class BookingService implements IBookingService {
     }
 
     filterQuery.status =
-      status === "cancelled"
-        ? { $in: ["cancelled_by_user", "cancelled_by_barber"] }
+      status === BOOKINGSTATUS.CANCELLED
+        ? { $in: [BOOKINGSTATUS.CANCELLED_BY_USER, BOOKINGSTATUS.CANCELLED_BY_BARBER] }
         : status;
         
 

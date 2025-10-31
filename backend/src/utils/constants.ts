@@ -54,7 +54,8 @@ export const MESSAGES = {
 
 export const REGEX = {
   EMAIL: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
-  PASSWORD:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+  PASSWORD:
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
   LONG_NAME: /^[A-Za-z0-9 ]{1,25}$/,
   OTP: /^\d{6}$/,
   PHONE: /^[0-9]{10,15}$/,
@@ -64,19 +65,26 @@ export enum DASHBOARDFILTERS {
   DAY = "1 Day",
   WEEK = "1 Week",
   MONTH = "1 Month",
-  YEAR = "1 Year"
+  YEAR = "1 Year",
 }
 
 export enum TABLEFILTERS {
   NEWEST = "newest",
   OLDEST = "oldest",
   PRICE_LOW = "price_low",
-  PRICE_HIGH = "price_high"
+  PRICE_HIGH = "price_high",
 }
 
-export type SortOrder = 1 | -1;
+export enum USERSTATUS {
+  ACTIVE = "active",
+  BLOCKED = "blocked",
+}
 
-export type BookingSortOptions = {
-  createdAt?: SortOrder;
-  totalPrice?: SortOrder;
-};
+export enum BOOKINGSTATUS {
+  STAGED = "staged",
+  PENDING = "pending",
+  CANCELLED_BY_BARBER = "cancelled_by_barber",
+  CANCELLED_BY_USER = "cancelled_by_user",
+  FINISHED = "finished",
+  CANCELLED = "cancelled"
+}
