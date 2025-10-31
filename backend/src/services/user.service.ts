@@ -12,6 +12,7 @@ import {
   isValidPassword,
   isValidPhone,
   isValidOTP,
+  isValidName,
 } from "../utils/validators";
 import { IUserRepository } from "../repositories/interfaces/IUserRepository";
 import OTPService from "../utils/OTPService";
@@ -395,6 +396,10 @@ export class UserService implements IUserService {
 
     if (!isValidEmail(data.email)) {
       throw new Error("inavalid email format");
+    }
+
+    if (!isValidName(data.name)) {
+      throw new Error("inavalid name format");
     }
 
     if (!isValidPhone(data.phone)) {

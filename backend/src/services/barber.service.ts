@@ -13,6 +13,7 @@ import {
   isValidPassword,
   isValidPhone,
   isValidOTP,
+  isValidName,
 } from "../utils/validators";
 import { DASHBOARDFILTERS, MESSAGES } from "../utils/constants";
 import OTPService from "../utils/OTPService";
@@ -288,6 +289,10 @@ export class BarberService implements IBarberService {
 
     if (!isValidEmail(data.email)) {
       throw new Error("inavalid email format");
+    }
+
+    if (!isValidName(data.name)) {
+      throw new Error("inavalid name format");
     }
 
     if (!isValidPhone(data.phone)) {
