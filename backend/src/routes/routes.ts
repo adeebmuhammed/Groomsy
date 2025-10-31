@@ -11,6 +11,6 @@ router.use('/admin',adminRoutes)
 router.use('/user',userRoutes)
 router.use('/barber',barberRoutes)
 
-router.post("/refresh-token", refreshTokenController)
+router.post("/refresh-token", refreshTokenController.refreshTokenController)
 
 export default router;
