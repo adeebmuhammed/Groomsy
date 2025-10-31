@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { IAdminService } from "./interfaces/IAdminService";
 import { IAdminRepository } from "../repositories/interfaces/IAdminRepository";
-import { DASHBOARDFILTERS, MESSAGES } from "../utils/constants";
+import { DASHBOARDFILTERS, MESSAGES, USERSTATUS } from "../utils/constants";
 import { isValidEmail } from "../utils/validators";
 import {
   AdminDashboardStatsDto,
@@ -117,10 +117,10 @@ export class AdminService implements IAdminService {
     if (!user) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
     }
-    if (user.status === "blocked") throw new Error("User already blocked");
+    if (user.status === USERSTATUS.BLOCKED) throw new Error("User already blocked");
 
     const updatedUser = await this._userRepo.update(userId, {
-      status: "blocked",
+      status: USERSTATUS.BLOCKED,
     });
     if (!updatedUser) throw new Error("Could not block user");
 
@@ -139,10 +139,10 @@ export class AdminService implements IAdminService {
     if (!user) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
     }
-    if (user.status === "active") throw new Error("User already active");
+    if (user.status === USERSTATUS.ACTIVE) throw new Error("User already active");
 
     const updatedUser = await this._userRepo.update(userId, {
-      status: "active",
+      status: USERSTATUS.ACTIVE,
     });
     if (!updatedUser) throw new Error("Could not unblock user");
 
@@ -161,10 +161,10 @@ export class AdminService implements IAdminService {
     if (!barber) {
       throw new Error(MESSAGES.ERROR.BARBER_NOT_FOUND);
     }
-    if (barber.status === "blocked") throw new Error("barber already blocked");
+    if (barber.status === USERSTATUS.BLOCKED) throw new Error("barber already blocked");
 
     const updatedBarber = await this._barberRepo.update(barberId, {
-      status: "blocked",
+      status: USERSTATUS.BLOCKED,
     });
     if (!updatedBarber) throw new Error("Could not block barber");
 
@@ -183,10 +183,10 @@ export class AdminService implements IAdminService {
     if (!barber) {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
     }
-    if (barber.status === "active") throw new Error("barber already active");
+    if (barber.status === USERSTATUS.ACTIVE) throw new Error("barber already active");
 
     const updatedBarber = await this._barberRepo.update(barberId, {
-      status: "active",
+      status: USERSTATUS.ACTIVE,
     });
     if (!updatedBarber) throw new Error("Could not unblock barber");
 

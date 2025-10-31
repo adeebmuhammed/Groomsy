@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IBarberController } from "./interfaces/IBarberController";
-import { DASHBOARDFILTERS, STATUS_CODES } from "../utils/constants";
+import { DASHBOARDFILTERS, ROLES, STATUS_CODES } from "../utils/constants";
 import {
   generateRefreshToken,
 } from "../utils/jwt.generator";
@@ -90,7 +90,7 @@ export class BarberController implements IBarberController {
 
       const refreshToken = generateRefreshToken({
         userId: response.id,
-        type: "barber",
+        type: ROLES.BARBER,
       });
 
       res.cookie("auth-token", response.token, {

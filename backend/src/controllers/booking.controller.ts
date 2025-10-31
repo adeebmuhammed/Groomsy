@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { IBookingService } from "../services/interfaces/IBookingService";
 import { IBookingController } from "./interfaces/IBookingController";
-import { ROLES, STATUS_CODES, TABLEFILTERS } from "../utils/constants";
+import { BOOKINGSTATUS, ROLES, STATUS_CODES, TABLEFILTERS } from "../utils/constants";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
 
@@ -220,11 +220,7 @@ export class BookingController implements IBookingController {
     try {
       const role = req.query.role as ROLES;
       const userId = req.query["id"] as string | undefined; 
-      const bookingStatus = req.query.status as
-        | "pending"
-        | "staged"
-        | "cancelled"
-        | "finished";
+      const bookingStatus = req.query.status as BOOKINGSTATUS
       const filter = req.query.filter as TABLEFILTERS;
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 5;

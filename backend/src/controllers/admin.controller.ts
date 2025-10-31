@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { IAdminController } from "./interfaces/IAdminController";
 import { IAdminService } from "../services/interfaces/IAdminService";
-import { DASHBOARDFILTERS, ROLES, STATUS_CODES } from "../utils/constants";
+import { DASHBOARDFILTERS, ROLES, STATUS_CODES, USERSTATUS } from "../utils/constants";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -22,11 +22,11 @@ export class AdminController implements IAdminController {
 
       const accessToken = generateAccessToken({
         userId: result.response.id,
-        type: "admin",
+        type: ROLES.ADMIN,
       });
       const refreshToken = generateRefreshToken({
         userId: result.response.id,
-        type: "admin",
+        type: ROLES.ADMIN,
       });
 
       res.cookie("auth-token", accessToken, {
@@ -134,9 +134,9 @@ export class AdminController implements IAdminController {
       let statusCode;
 
       let result;
-      if (status === "active") {
+      if (status === USERSTATUS.ACTIVE) {
         result = await this._adminService.blockUser(userId);
-      } else if (status === "blocked") {
+      } else if (status === USERSTATUS.BLOCKED) {
         result = await this._adminService.unBlockUser(userId);
       } else {
         throw new Error("Invalid status");
@@ -168,9 +168,9 @@ export class AdminController implements IAdminController {
       let statusCode;
 
       let result;
-      if (status === "active") {
+      if (status === USERSTATUS.ACTIVE) {
         result = await this._adminService.blockBarber(barberId);
-      } else if (status === "blocked") {
+      } else if (status === USERSTATUS.BLOCKED) {
         result = await this._adminService.unBlockBarber(barberId);
       } else {
         throw new Error("Invalid status");
