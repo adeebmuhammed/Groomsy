@@ -17,7 +17,11 @@
         class="error"
         *ngIf="planForm.get('name')?.touched && planForm.get('name')?.invalid"
       >
-        Name is required
+        @if (planForm.get('name')?.errors?.['pattern']) {
+        <small>Invalid Plan Name.</small>
+      }@else {
+        Plan Name is required.
+      }
       </div>
 
       <!-- Price -->

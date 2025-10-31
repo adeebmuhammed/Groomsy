@@ -20,7 +20,11 @@
         <label for="city">City</label>
         <input id="city" type="text" formControlName="city" />
         <div *ngIf="addressForm.get('city')?.touched && addressForm.get('city')?.invalid" class="error">
-          City is required
+          @if (addressForm.get('city')?.errors?.['pattern']) {
+            <small>Invalid Format.</small>
+          }@else {
+            City is required
+          }
         </div>
       </div>
 
@@ -29,7 +33,11 @@
         <label for="street">Street</label>
         <input id="street" type="text" formControlName="street" />
         <div *ngIf="addressForm.get('street')?.touched && addressForm.get('street')?.invalid" class="error">
-          Street is required
+          @if (addressForm.get('street')?.errors?.['pattern']) {
+            <small>Invalid Format.</small>
+          }@else {
+            Street is required
+          }
         </div>
       </div>
 

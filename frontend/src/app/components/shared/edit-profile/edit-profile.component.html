@@ -22,6 +22,9 @@
         <small *ngIf="editForm.get('name')?.errors?.['minlength']"
           >Minimum 3 characters</small
         >
+        <small *ngIf="editForm.get('name')?.errors?.['pattern']"
+          >Invalid Format</small
+        >
       </div>
     </div>
 

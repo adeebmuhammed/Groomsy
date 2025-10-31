@@ -19,3 +19,8 @@ export const isValidOTP = (otp: string): boolean => {
   const otpRegex = REGEX.OTP;
   return otpRegex.test(otp);
 };
+
+export const isValidName = (name: string): boolean => {
+  const nameRegex = REGEX.LONG_NAME;
+  return nameRegex.test(name);
+};

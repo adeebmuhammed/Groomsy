@@ -26,7 +26,7 @@ export class ReviewFormComponent {
 
   constructor() {
     this.reviewForm = this.fb.group({
-      reviewText: ['', [Validators.required, Validators.minLength(5)]],
+      reviewText: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]],
       rating: [0, Validators.required],
     });
   }
