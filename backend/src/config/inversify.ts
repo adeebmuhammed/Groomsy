@@ -80,6 +80,8 @@ import { IBookingService } from "../services/interfaces/IBookingService";
 import { BookingService } from "../services/booking.service";
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
 import { BookingRepository } from "../repositories/booking.repository";
+import { IOtpRepository } from "../repositories/interfaces/IOtpRepository";
+import { OtpRepository } from "../repositories/otp.repository";
 
 const container = new Container();
 
@@ -134,5 +136,7 @@ container.bind<ISubscriptionRepository>(TYPES.ISubscriptionRepository).to(Subscr
 container.bind<ISubscriptionPlanController>(TYPES.ISubscriptionPlanController).to(SubscriptionPlanController);
 container.bind<ISubscriptionPlanService>(TYPES.ISubscriptionPlanService).to(SubscriptionPlanService);
 container.bind<ISubscriptionPlanRepository>(TYPES.ISubscriptionPlanRepository).to(SubscriptionPlanRepository);
+
+container.bind<IOtpRepository>(TYPES.IOtpRepository).to(OtpRepository);
 
 export { container };

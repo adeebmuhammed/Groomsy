@@ -51,6 +51,8 @@ const TYPES = {
   ISubscriptionPlanController: Symbol.for("ISubscriptionPlanController"),
   ISubscriptionPlanService: Symbol.for("ISubscriptionPlanService"),
   ISubscriptionPlanRepository: Symbol.for("ISubscriptionPlanRepository"),
+
+  IOtpRepository: Symbol.for("IOtpRepository"),
 };
 
 export { TYPES };
