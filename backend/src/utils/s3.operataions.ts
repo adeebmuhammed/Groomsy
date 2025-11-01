@@ -4,8 +4,9 @@ import {
   PutObjectCommand,
   PutObjectCommandInput,
 } from "@aws-sdk/client-s3";
-import s3Client from "../config/s3.credentials";
+import s3Client, { generateUploadUrl } from "../config/s3.credentials";
 import { STATUS_CODES } from "./constants";
+import { Request, Response} from 'express';
 
 export const putObject = async (file: any, fileName: string) => {
   try {
@@ -52,4 +53,10 @@ export const deleteObject = async (key: string) => {
     console.error(error);
     throw new Error("s3 deleteObject operation failed");
   }
+}
+
+export const generateUrl = async (req: Request, res: Response) => {
+  const { fileName, fileType } = req.query;
+  const { uploadUrl, key } = await generateUploadUrl(fileName as string, fileType as string);
+  res.json({ uploadUrl, key });
 }

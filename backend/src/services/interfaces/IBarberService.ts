@@ -61,7 +61,8 @@ export interface IBarberService {
   ): Promise<{ dashboardStats: BarberDashboardStatsDto }>;
   updateBarberProfilePicture(
     barberId: string,
-    file: fileUpload.UploadedFile
+    profilePicUrl: string,
+    profilePicKey: string
   ): Promise<{ profilePictureUpdation: MessageResponseDto }>;
   deleteBarberProfilePicture(
     barberId: string

@@ -100,14 +100,13 @@ export class UserService {
 
   updateProfilePicture(
     userId: string,
-    file: File
+    profilePicUrl: string, profilePicKey: string
   ): Observable<IMessageResponse> {
-    const formData = new FormData();
-    formData.append('file', file);
+    const body = { profilePicUrl, profilePicKey }
 
     return this.http.patch<IMessageResponse>(
       `${environment.apiBaseUrl}/user/profile/update-profile-picture/${userId}`,
-      formData
+      body
     );
   }
 

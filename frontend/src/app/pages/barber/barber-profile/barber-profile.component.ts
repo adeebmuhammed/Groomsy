@@ -6,7 +6,7 @@ import { ProfileComponent } from '../../../components/shared/profile/profile.com
 import { BarberProfileDto, EditProfile } from '../../../interfaces/interfaces';
 import { AuthService } from '../../../services/auth/auth.service';
 import { BarberService } from '../../../services/barber/barber.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, switchMap, take, takeUntil } from 'rxjs';
 import Swal from 'sweetalert2';
 import { EditProfileComponent } from '../../../components/shared/edit-profile/edit-profile.component';
 import { CommonModule } from '@angular/common';
@@ -14,6 +14,8 @@ import { AddressComponent } from '../../../components/shared/address/address.com
 import { AddressFormComponent } from '../../../components/shared/address-form/address-form.component';
 import { FileUploadComponent } from '../../../components/shared/file-upload/file-upload.component';
 import * as bootstrap from 'bootstrap';
+import { environment } from '../../../../environments/environment';
+import { S3OperationsService } from '../../../services/s3-operations/s3-operations.service';
 
 @Component({
   selector: 'app-barber-profile',
@@ -36,6 +38,7 @@ export class BarberProfileComponent implements OnInit, OnDestroy {
 
   private authService: AuthService = inject(AuthService);
   private barberService: BarberService = inject(BarberService);
+  private s3Service: S3OperationsService = inject(S3OperationsService);
 
   showEditModal = false;
   showEditAddressModal = false;
@@ -147,38 +150,52 @@ export class BarberProfileComponent implements OnInit, OnDestroy {
   isUploading = false;
   updateProfilePicture(file: File) {
     this.isUploading = true;
-    this.authService.barberId$
-      .pipe(takeUntil(this.componentDestroyed$))
-      .subscribe((id) => {
-        if (!id) {
-          this.isUploading = false;
-          return;
-        }
 
-        this.barberService
-          .updateProfilePicture(id, file)
-          .pipe(takeUntil(this.componentDestroyed$))
-          .subscribe({
-            next: (res) => {
-              Swal.fire(
-                'Success',
-                res.message || 'Profile Picture Updated Successfully',
-                'success'
+    this.authService.barberId$
+      .pipe(
+        takeUntil(this.componentDestroyed$),
+        take(1),
+        switchMap((id) => {
+          if (!id) throw new Error('Barber ID not found');
+          return this.s3Service.fetchSignedUrl(file).pipe(
+            switchMap((res) => {
+              const { uploadUrl, key } = res;
+
+              // Step 2: Upload to S3
+              return this.s3Service.uploadFile(uploadUrl, file).pipe(
+                switchMap(() => {
+                  const fileUrl = `https://${environment.s3Bucket}.s3.${environment.awsRegion}.amazonaws.com/${key}`;
+                  return this.barberService.updateProfilePicture(
+                    id,
+                    fileUrl,
+                    key
+                  );
+                })
               );
-              this.isUploading = false;
-              this.fetchBarberProfile();
-              this.closeUploadModal();
-            },
-            error: (err) => {
-              console.error(err);
-              Swal.fire(
-                'Error',
-                err.error.message || 'Profile Picture Updation Failed',
-                'error'
-              );
-              this.isUploading = false;
-            },
-          });
+            })
+          );
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          Swal.fire(
+            'Success',
+            res.message || 'Profile Picture Updated Successfully',
+            'success'
+          );
+          this.fetchBarberProfile();
+          this.closeUploadModal();
+          this.isUploading = false;
+        },
+        error: (err) => {
+          console.error(err);
+          Swal.fire(
+            'Error',
+            err.error?.message || 'Profile Picture Update Failed',
+            'error'
+          );
+          this.isUploading = false;
+        },
       });
   }
 

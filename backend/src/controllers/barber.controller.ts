@@ -339,16 +339,10 @@ export class BarberController implements IBarberController {
   updateProfilePicture = async (req: Request, res: Response): Promise<void> => {
     try {
       const barberId = req.params["id"];
-      if (!req.files || !req.files.file) {
-        res
-          .status(STATUS_CODES.BAD_REQUEST)
-          .json({ error: "No file uploaded" });
-        return;
-      }
-      const file = req.files.file as fileUpload.UploadedFile;
+      const { profilePicUrl, profilePicKey } = req.body;
 
       const { profilePictureUpdation } =
-        await this._barberService.updateBarberProfilePicture(barberId, file);
+        await this._barberService.updateBarberProfilePicture(barberId, profilePicUrl, profilePicKey);
       let status;
       if (profilePictureUpdation) {
         status = STATUS_CODES.OK;

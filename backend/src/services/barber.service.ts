@@ -399,23 +399,16 @@ export class BarberService implements IBarberService {
 
   updateBarberProfilePicture = async (
     barberId: string,
-    file: UploadedFile
+    profilePicUrl: string, profilePicKey: string
   ): Promise<{ profilePictureUpdation: MessageResponseDto }> => {
-    const fileName = "images/" + v4();
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
       throw new Error("uesr not found");
     }
 
-    const { url, key } = await putObject(file, fileName);
-
-    if (!url || !key) {
-      throw new Error("profile picture is not uploaded");
-    }
-
     const updated = await this._barberRepo.update(barberId, {
-      profilePicUrl: url,
-      profilePicKey: key,
+      profilePicUrl,
+      profilePicKey,
     });
     if (!updated) {
       throw new Error("profile picture updation failed");
