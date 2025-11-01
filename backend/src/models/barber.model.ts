@@ -9,7 +9,6 @@ export interface IBarber extends Document {
   district: string;
   status: "blocked" | "active";
   isVerified: boolean;
-  otp?: string | null;
   createdAt: Date;
   updatedAt: Date;
   address?: {
@@ -40,7 +39,6 @@ const BarberSchema: Schema = new Schema(
       default: "active",
     },
     isVerified: { type: Boolean, default: false },
-    otp: { type: String, default: null },
     address: {
       street: { type: String, trim: true },
       city: { type: String, trim: true },

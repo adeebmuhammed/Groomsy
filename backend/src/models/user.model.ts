@@ -8,7 +8,6 @@ export interface IUser extends Document {
   phone?: string;
   status: "active" | "blocked";
   googleId?: string;
-  otp?:string | null;
   createdAt: Date;
   updatedAt: Date;
   isVerified: boolean;
@@ -35,7 +34,6 @@ const UserSchema: Schema = new Schema(
     phone: { type: String, trim: true, default: null },
     status: { type: String, enum: ["active", "blocked"], default: "active" },
     googleId: { type: String, default: null },
-    otp: { type: String, default: null },
     isVerified: { type: Boolean, default: false },
     profilePicUrl: { type: String, default: null },
     profilePicKey: { type: String, default: null }

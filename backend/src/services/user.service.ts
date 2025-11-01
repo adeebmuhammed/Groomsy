@@ -6,7 +6,7 @@ import {
   UserProfileDto,
   UserEditProfileDto,
 } from "../dto/user.dto";
-import { MESSAGES } from "../utils/constants";
+import { MESSAGES, ROLES } from "../utils/constants";
 import {
   isValidEmail,
   isValidPassword,
@@ -27,17 +27,20 @@ import { SlotMapper } from "../mappers/slot.mapper";
 import { MessageResponseDto } from "../dto/base.dto";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../config/types";
-import { UploadedFile } from "express-fileupload";
-import { deleteObject, putObject } from "../utils/s3.operataions";
+import { deleteObject } from "../utils/s3.operataions";
 import { v4 } from "uuid";
 import { BarberMapper } from "../mappers/barber.mapper";
+import { IOtpRepository } from "../repositories/interfaces/IOtpRepository";
+import { IOtp } from "../models/otp.model";
+import mongoose, { mongo } from "mongoose";
 
 @injectable()
 export class UserService implements IUserService {
   constructor(
     @inject(TYPES.IUserRepository) private _userRepo: IUserRepository,
     @inject(TYPES.IBarberRepository) private _barberRepo: IBarberRepository,
-    @inject(TYPES.ISlotRepository) private _slotRepo: ISlotRepository
+    @inject(TYPES.ISlotRepository) private _slotRepo: ISlotRepository,
+    @inject(TYPES.IOtpRepository) private _otpRepo: IOtpRepository
   ) {}
 
   registerUser = async (
@@ -78,11 +81,21 @@ export class UserService implements IUserService {
     await OTPService.sendOTP(email, otp);
     console.log(otp);
 
-    await this._userRepo.create({
+    const user = await this._userRepo.create({
       ...userData,
       password: hashedPassword,
-      otp,
     });
+
+    const otpCreated = await this._otpRepo.create({
+      otp,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      role: ROLES.USER,
+      userId: user._id,
+    });
+
+    if (!otpCreated) {
+      throw new Error("otp generation failed");
+    }
 
     return {
       response: { message: MESSAGES.SUCCESS.SIGNUP },
@@ -105,15 +118,18 @@ export class UserService implements IUserService {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
     }
 
-    if (user.otp !== otp) {
+    const otpGenerated = await this._otpRepo.findOne({ userId: user._id });
+    if (!otpGenerated) {
+      throw new Error("otp expired");
+    }
+
+    if (otpGenerated.otp !== otp) {
       throw new Error(MESSAGES.ERROR.OTP_INVALID);
     }
 
     if (purpose === "signup") {
       user.isVerified = true;
     }
-
-    user.otp = null;
 
     await this._userRepo.update(user._id.toString(), user);
 
@@ -147,8 +163,27 @@ export class UserService implements IUserService {
     await OTPService.sendOTP(email, newOTP);
     console.log("Generated OTP:", newOTP);
 
-    user.otp = newOTP;
-    await this._userRepo.update(user._id.toString(), user);
+    const alreadyExistingOtp = await this._otpRepo.findOne({
+      userId: user._id,
+    });
+    let otpCreated;
+    if (!alreadyExistingOtp) {
+      otpCreated = await this._otpRepo.create({
+        otp: newOTP,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        role: ROLES.USER,
+        userId: user._id,
+      });
+    } else {
+      otpCreated = await this._otpRepo.update(
+        (alreadyExistingOtp._id as mongoose.Types.ObjectId).toString(),
+        { otp: newOTP, expiresAt: new Date(Date.now() + 10 * 60 * 1000) }
+      );
+    }
+
+    if (!otpCreated) {
+      throw new Error("otp generation failed");
+    }
 
     return {
       response: {
@@ -250,8 +285,27 @@ export class UserService implements IUserService {
     }
 
     const otp = OTPService.generateOTP();
-    user.otp = otp;
-    await this._userRepo.update(user.id.toString(), user);
+    const alreadyExistingOtp = await this._otpRepo.findOne({
+      userId: user._id,
+    });
+    let otpCreated;
+    if (!alreadyExistingOtp) {
+      otpCreated = await this._otpRepo.create({
+        otp,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        role: ROLES.USER,
+        userId: user._id,
+      });
+    } else {
+      otpCreated = await this._otpRepo.update(
+        (alreadyExistingOtp._id as mongoose.Types.ObjectId).toString(),
+        { otp, expiresAt: new Date(Date.now() + 10 * 60 * 1000) }
+      );
+    }
+
+    if (!otpCreated) {
+      throw new Error("otp generation failed");
+    }
     await OTPService.sendOTP(email, otp);
     console.log(otp);
 

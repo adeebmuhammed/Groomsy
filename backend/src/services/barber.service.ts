@@ -15,7 +15,7 @@ import {
   isValidOTP,
   isValidName,
 } from "../utils/validators";
-import { DASHBOARDFILTERS, MESSAGES } from "../utils/constants";
+import { DASHBOARDFILTERS, MESSAGES, ROLES } from "../utils/constants";
 import OTPService from "../utils/OTPService";
 import { BarberMapper } from "../mappers/barber.mapper";
 import { generateAccessToken } from "../utils/jwt.generator";
@@ -29,9 +29,8 @@ import { IBookingRepository } from "../repositories/interfaces/IBookingRepositor
 import { ListResponseDto, UserDto } from "../dto/admin.dto";
 import { IUserRepository } from "../repositories/interfaces/IUserRepository";
 import { UserMapper } from "../mappers/user.mapper";
-import { UploadedFile } from "express-fileupload";
-import { v4 } from "uuid";
-import { deleteObject, putObject } from "../utils/s3.operataions";
+import { deleteObject } from "../utils/s3.operataions";
+import { IOtpRepository } from "../repositories/interfaces/IOtpRepository";
 
 @injectable()
 export class BarberService implements IBarberService {
@@ -40,7 +39,8 @@ export class BarberService implements IBarberService {
     @inject(TYPES.IBarberUnavailabilityRepository)
     private _barberUnavailabilityRepo: IBarberUnavailabilityRepository,
     @inject(TYPES.IBookingRepository) private _bookingRepo: IBookingRepository,
-    @inject(TYPES.IUserRepository) private _userRepo: IUserRepository
+    @inject(TYPES.IUserRepository) private _userRepo: IUserRepository,
+    @inject(TYPES.IOtpRepository) private _otpRepo: IOtpRepository
   ) {}
 
   registerBarber = async (
@@ -77,10 +77,20 @@ export class BarberService implements IBarberService {
 
     const newBarber = await this._barberRepo.create({
       ...barberData,
-      otp,
       password: hashedPassword,
       isVerified: false,
     });
+
+    const otpCreated = await this._otpRepo.create({
+      otp,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      role: ROLES.BARBER,
+      userId: newBarber._id,
+    });
+
+    if (!otpCreated) {
+      throw new Error("otp generation failed");
+    }
 
     await this._barberUnavailabilityRepo.create({
       barber: new mongoose.Types.ObjectId(newBarber._id.toString()),
@@ -108,15 +118,18 @@ export class BarberService implements IBarberService {
       throw new Error(MESSAGES.ERROR.USER_NOT_FOUND);
     }
 
-    if (barber.otp !== otp) {
-      throw new Error(MESSAGES.ERROR.INVALID_CREDENTIALS);
+    const otpGenerated = await this._otpRepo.findOne({ userId: barber._id });
+    if (!otpGenerated) {
+      throw new Error("otp expired");
+    }
+
+    if (otpGenerated.otp !== otp) {
+      throw new Error(MESSAGES.ERROR.OTP_INVALID);
     }
 
     if (purpose === "signup") {
       barber.isVerified = true;
     }
-
-    barber.otp = null;
 
     await this._barberRepo.update(barber._id.toString(), barber);
 
@@ -150,8 +163,27 @@ export class BarberService implements IBarberService {
     await OTPService.sendOTP(email, newOTP);
     console.log(newOTP);
 
-    barber.otp = newOTP;
-    await this._barberRepo.update(barber._id.toString(), barber);
+    const alreadyExistingOtp = await this._otpRepo.findOne({
+      userId: barber._id,
+    });
+    let otpCreated;
+    if (!alreadyExistingOtp) {
+      otpCreated = await this._otpRepo.create({
+        otp: newOTP,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        role: ROLES.BARBER,
+        userId: barber._id,
+      });
+    } else {
+      otpCreated = await this._otpRepo.update(
+        (alreadyExistingOtp._id as mongoose.Types.ObjectId).toString(),
+        { otp: newOTP, expiresAt: new Date(Date.now() + 10 * 60 * 1000) }
+      );
+    }
+
+    if (!otpCreated) {
+      throw new Error("otp generation failed");
+    }
 
     return {
       response: {
@@ -220,8 +252,27 @@ export class BarberService implements IBarberService {
     }
 
     const otp = OTPService.generateOTP();
-    barber.otp = otp;
-    await this._barberRepo.update(barber._id.toString(), barber);
+    const alreadyExistingOtp = await this._otpRepo.findOne({
+      userId: barber._id,
+    });
+    let otpCreated;
+    if (!alreadyExistingOtp) {
+      otpCreated = await this._otpRepo.create({
+        otp,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        role: ROLES.BARBER,
+        userId: barber._id,
+      });
+    } else {
+      otpCreated = await this._otpRepo.update(
+        (alreadyExistingOtp._id as mongoose.Types.ObjectId).toString(),
+        { otp, expiresAt: new Date(Date.now() + 10 * 60 * 1000) }
+      );
+    }
+
+    if (!otpCreated) {
+      throw new Error("otp generation failed");
+    }
     await OTPService.sendOTP(email, otp);
     console.log(otp);
 
@@ -399,7 +450,8 @@ export class BarberService implements IBarberService {
 
   updateBarberProfilePicture = async (
     barberId: string,
-    profilePicUrl: string, profilePicKey: string
+    profilePicUrl: string,
+    profilePicKey: string
   ): Promise<{ profilePictureUpdation: MessageResponseDto }> => {
     const barber = await this._barberRepo.findById(barberId);
     if (!barber) {
