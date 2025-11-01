@@ -1,4 +1,4 @@
-import mongoose, { FilterQuery, UpdateResult } from "mongoose";
+import mongoose, { DeleteResult, FilterQuery, UpdateResult } from "mongoose";
 import { BookingCreateRequestDto } from "../dto/booking.dto";
 import Booking, { IBooking } from "../models/booking.model";
 import { BaseRepository } from "./base.repository";
@@ -206,5 +206,9 @@ export class BookingRepository
         total: serviceTotal,
       },
     };
+  }
+
+  async deleteBooking(bookingId: string): Promise<DeleteResult> {
+    return await Booking.deleteOne({ _id: bookingId });
   }
 }

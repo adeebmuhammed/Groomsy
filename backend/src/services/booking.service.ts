@@ -8,7 +8,12 @@ import { IBooking } from "../models/booking.model";
 import { IBarberRepository } from "../repositories/interfaces/IBarberRepository";
 import { IBookingRepository } from "../repositories/interfaces/IBookingRepository";
 import { IUserRepository } from "../repositories/interfaces/IUserRepository";
-import { BOOKINGSTATUS, MESSAGES, ROLES, TABLEFILTERS } from "../utils/constants";
+import {
+  BOOKINGSTATUS,
+  MESSAGES,
+  ROLES,
+  TABLEFILTERS,
+} from "../utils/constants";
 import { IBookingService } from "./interfaces/IBookingService";
 import { MessageResponseDto } from "../dto/base.dto";
 import { IServiceRepository } from "../repositories/interfaces/IServiceRepository";
@@ -56,7 +61,12 @@ export class BookingService implements IBookingService {
     }
 
     const { bookings, totalCount } =
-      await this._bookingRepo.findWithPaginationAndCount(filter, skip, limit, {});
+      await this._bookingRepo.findWithPaginationAndCount(
+        filter,
+        skip,
+        limit,
+        {}
+      );
 
     const bookingDTOs: BookingResponseDto[] =
       BookingMapper.toBookingResponseArray(bookings);
@@ -167,6 +177,28 @@ export class BookingService implements IBookingService {
 
     return {
       response,
+    };
+  };
+
+  checkBeforePayment = async (
+    bookingId: string
+  ): Promise<{ checkResponse: MessageResponseDto }> => {
+    const booking = await this._bookingRepo.findById(bookingId);
+    if (!booking) {
+      throw new Error("booking not found");
+    }
+
+    let updated;
+    if (booking.status === BOOKINGSTATUS.STAGED) {
+      updated = await this._bookingRepo.deleteBooking(bookingId);
+    }
+
+    if (!updated) {
+      throw new Error("booking deletion failed");
+    }
+
+    return {
+      checkResponse: { message: "booking deleted successfully" },
     };
   };
 
@@ -323,15 +355,24 @@ export class BookingService implements IBookingService {
     }
 
     if (role === ROLES.USER) {
-      if (booking.status === BOOKINGSTATUS.PENDING && bookingStatus === "cancel") {
+      if (
+        booking.status === BOOKINGSTATUS.PENDING &&
+        bookingStatus === "cancel"
+      ) {
         booking.status = BOOKINGSTATUS.CANCELLED_BY_USER;
       } else {
         throw new Error("Invalid status transition for user");
       }
     } else if (role === ROLES.BARBER) {
-      if (booking.status === BOOKINGSTATUS.PENDING && bookingStatus === "cancel") {
+      if (
+        booking.status === BOOKINGSTATUS.PENDING &&
+        bookingStatus === "cancel"
+      ) {
         booking.status = BOOKINGSTATUS.CANCELLED_BY_BARBER;
-      } else if (booking.status === BOOKINGSTATUS.PENDING && bookingStatus === BOOKINGSTATUS.FINISHED) {
+      } else if (
+        booking.status === BOOKINGSTATUS.PENDING &&
+        bookingStatus === BOOKINGSTATUS.FINISHED
+      ) {
         booking.status = BOOKINGSTATUS.FINISHED;
       } else {
         throw new Error("Invalid status transition for barber");
@@ -374,7 +415,12 @@ export class BookingService implements IBookingService {
   ): Promise<{
     response: { data: BookingResponseDto[]; totalCount: number };
   }> => {
-    const allowedStatuses = [BOOKINGSTATUS.STAGED,BOOKINGSTATUS.PENDING,BOOKINGSTATUS.CANCELLED,BOOKINGSTATUS.FINISHED];
+    const allowedStatuses = [
+      BOOKINGSTATUS.STAGED,
+      BOOKINGSTATUS.PENDING,
+      BOOKINGSTATUS.CANCELLED,
+      BOOKINGSTATUS.FINISHED,
+    ];
     if (!allowedStatuses.includes(status)) {
       throw new Error("invalid booking status");
     }
@@ -399,23 +445,32 @@ export class BookingService implements IBookingService {
 
     let filterParam: FilterQuery<IBooking> = {};
     if (filter === TABLEFILTERS.NEWEST) {
-      filterParam.createdAt = -1
-    }else if (filter === TABLEFILTERS.OLDEST) {
-      filterParam.createdAt = 1
-    }else if (filter === TABLEFILTERS.PRICE_LOW) {
-      filterParam.totalPrice = 1
-    }else if (filter === TABLEFILTERS.PRICE_HIGH) {
-      filterParam.totalPrice = -1
+      filterParam.createdAt = -1;
+    } else if (filter === TABLEFILTERS.OLDEST) {
+      filterParam.createdAt = 1;
+    } else if (filter === TABLEFILTERS.PRICE_LOW) {
+      filterParam.totalPrice = 1;
+    } else if (filter === TABLEFILTERS.PRICE_HIGH) {
+      filterParam.totalPrice = -1;
     }
 
     filterQuery.status =
       status === BOOKINGSTATUS.CANCELLED
-        ? { $in: [BOOKINGSTATUS.CANCELLED_BY_USER, BOOKINGSTATUS.CANCELLED_BY_BARBER] }
+        ? {
+            $in: [
+              BOOKINGSTATUS.CANCELLED_BY_USER,
+              BOOKINGSTATUS.CANCELLED_BY_BARBER,
+            ],
+          }
         : status;
-        
 
     const { bookings, totalCount } =
-      await this._bookingRepo.findWithPaginationAndCount(filterQuery, skip, limit, filterParam);
+      await this._bookingRepo.findWithPaginationAndCount(
+        filterQuery,
+        skip,
+        limit,
+        filterParam
+      );
 
     return {
       response: {

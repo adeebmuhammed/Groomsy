@@ -1,4 +1,4 @@
-import { FilterQuery, UpdateResult } from "mongoose";
+import { DeleteResult, FilterQuery, UpdateResult } from "mongoose";
 import { BookingCreateRequestDto } from "../../dto/booking.dto";
 import { IBooking } from "../../models/booking.model";
 import { IBaseRepository } from "./IBaseRepository";
@@ -39,4 +39,5 @@ export interface IBookingRepository extends IBaseRepository<IBooking> {
       total: number;
     };
   }>;
+  deleteBooking(bookingId: string): Promise<DeleteResult>;
 }

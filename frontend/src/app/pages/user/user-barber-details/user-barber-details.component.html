@@ -112,7 +112,7 @@
   [booking]="stagedBooking"
   (onCouponApplication)="couponApllication($event)"
   (onConfirm)="confirmBooking($event)"
-  (onCancel)="cancelBooking()"
+  (onCancel)="cancelBooking(stagedBooking.id)"
 ></app-checkout-modal>
 
 </div>

@@ -19,6 +19,9 @@ export interface IBookingService {
     userId: string,
     data: BookingCreateRequestDto
   ): Promise<{ response: BookingResponseDto }>;
+  checkBeforePayment(
+    bookingId: string
+  ): Promise<{ checkResponse: MessageResponseDto }>;
   couponApplication(
     bookingId: string,
     couponCode: string

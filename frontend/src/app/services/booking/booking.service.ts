@@ -116,7 +116,7 @@ export class BookingService {
   ): Observable<{ data: BookingResponseDto[]; totalCount: number }> {
     let params = new HttpParams()
       .set('status', status)
-      .set('filter',filter)
+      .set('filter', filter)
       .set('page', page.toString())
       .set('limit', limit.toString())
       .set('role', role);
@@ -131,9 +131,19 @@ export class BookingService {
     );
   }
 
-  getBookingsByBarber(barberId: string): Observable<{ data: BookingResponseDto[]; totalCount: number }>{
+  getBookingsByBarber(
+    barberId: string
+  ): Observable<{ data: BookingResponseDto[]; totalCount: number }> {
     return this.http.get<{ data: BookingResponseDto[]; totalCount: number }>(
       `${environment.apiBaseUrl}/user/bookings-by-barber/${barberId}`
+    );
+  }
+
+  checkBeforePayment(bookingId: string): Observable<IMessageResponse> {
+    const body = { bookingId };
+    return this.http.patch<IMessageResponse>(
+      `${environment.apiBaseUrl}/user/booking-check`,
+      body
     );
   }
 }
