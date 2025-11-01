@@ -14,7 +14,7 @@ import {
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Subject, takeUntil } from 'rxjs';
+import { forkJoin, Subject, take, takeUntil } from 'rxjs';
 import { UserHeaderComponent } from '../../../components/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../components/user/user-footer/user-footer.component';
 import * as bootstrap from 'bootstrap';
@@ -398,11 +398,21 @@ export class UserBarberDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
-  cancelBooking() {
-    const modal = new bootstrap.Modal(
-      document.getElementById('bookingCheckoutModal')!
-    );
-    modal.hide();
+  cancelBooking(bookingId: string) {
+    const modalEl = document.getElementById('bookingCheckoutModal');
+  const modal = bootstrap.Modal.getInstance(modalEl!);
+    this.checkBeforePayment(bookingId).pipe(take(1)).subscribe({
+      next: ()=>{
+        modal?.hide();
+      },
+      error: (err)=>{
+        console.error(err)
+      }
+    })
+  }
+
+  checkBeforePayment(bookingId: string){
+    return this.bookingService.checkBeforePayment(bookingId)
   }
 
   couponApllication(couponCode: string) {
