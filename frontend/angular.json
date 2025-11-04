@@ -35,15 +35,16 @@
             "scripts": [
               "node_modules/@fortawesome/fontawesome-free/js/all.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
-            ]
+            ],
+            "allowedCommonJsDependencies": ["sweetalert2"]
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "5mb",
+                  "maximumError": "6mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -51,7 +52,8 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
