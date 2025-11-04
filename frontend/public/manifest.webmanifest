@@ -3,7 +3,7 @@
   "short_name": "Groomsy",
   "display": "standalone",
   "scope": "./",
-  "start_url": "/user/signup",
+  "start_url": "/",
   "icons": [
     {
       "src": "icons/logo-72x72.png",

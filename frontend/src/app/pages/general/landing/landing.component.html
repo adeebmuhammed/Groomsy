@@ -1,0 +1,19 @@
+<div class="container-fluid vh-100 d-flex flex-column bg-light position-relative">
+  <main class="flex-grow-1 d-flex flex-column justify-content-center align-items-center mt-n4">
+    <div class="text-center" style="margin-top: -40px;">
+      <img src="logo.png" alt="Groomsy Logo" class="mb-4" width="120" />
+      <h1 class="fw-bold mb-3">Welcome to Groomsy</h1>
+      <p class="text-muted mb-5">Your all-in-one grooming and booking platform</p>
+
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        <a routerLink="/user/signin" class="btn btn-primary btn-lg px-4 py-2">Continue as User</a>
+        <a routerLink="/barber/signin" class="btn btn-success btn-lg px-4 py-2">Continue as Barber</a>
+        <a routerLink="/admin/signin" class="btn btn-dark btn-lg px-4 py-2">Admin Panel</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-center mb-3 text-muted small">
+    &copy; {{ currentYear }} Groomsy. All rights reserved.
+  </footer>
+</div>

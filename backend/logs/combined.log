@@ -7605,3 +7605,9 @@
 2025-11-04 07:33:12 [INFO]: GET /api/user/get-barbers?search=&page=1&limit=100
 2025-11-04 07:33:20 [INFO]: GET /api/user/favorites?userId=68826b157451d8eb5c4d78d3&page=1&limit=100
 2025-11-04 07:33:23 [INFO]: POST /api/user/logout
+2025-11-04 22:33:59 [INFO]: POST /api/user/login
+2025-11-04 22:34:02 [INFO]: GET /api/user/get-barbers?search=&page=1&limit=3
+2025-11-04 22:34:02 [INFO]: GET /api/user/favorites?userId=68826b157451d8eb5c4d78d3&page=1&limit=100
+2025-11-04 22:34:11 [INFO]: GET /api/user/get-barbers?search=&page=1&limit=3
+2025-11-04 22:34:11 [INFO]: GET /api/user/favorites?userId=68826b157451d8eb5c4d78d3&page=1&limit=100
+2025-11-04 22:34:24 [INFO]: POST /api/user/logout
