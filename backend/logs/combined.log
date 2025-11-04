@@ -7611,3 +7611,13 @@
 2025-11-04 22:34:11 [INFO]: GET /api/user/get-barbers?search=&page=1&limit=3
 2025-11-04 22:34:11 [INFO]: GET /api/user/favorites?userId=68826b157451d8eb5c4d78d3&page=1&limit=100
 2025-11-04 22:34:24 [INFO]: POST /api/user/logout
+2025-11-04 22:41:12 [INFO]: POST /api/user/login
+2025-11-04 22:41:14 [INFO]: GET /api/user/get-barbers?search=&page=1&limit=3
+2025-11-04 22:41:14 [INFO]: GET /api/user/favorites?userId=68826b157451d8eb5c4d78d3&page=1&limit=100
+2025-11-04 22:41:18 [INFO]: GET /api/user/get-barbers?search=&page=1&limit=3
+2025-11-04 22:41:18 [INFO]: GET /api/user/favorites?userId=68826b157451d8eb5c4d78d3&page=1&limit=100
+2025-11-04 22:41:22 [INFO]: POST /api/user/logout
+2025-11-04 22:41:45 [INFO]: POST /api/admin/login
+2025-11-04 22:41:45 [INFO]: GET /api/admin/dashboard-stats?filter=1%20Month
+2025-11-04 22:41:50 [INFO]: GET /api/admin/dashboard-stats?filter=1%20Month
+2025-11-04 22:41:55 [INFO]: POST /api/admin/logout
