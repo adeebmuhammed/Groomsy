@@ -32,7 +32,6 @@ export class AdminBarbersListComponent implements OnInit, OnDestroy {
   columns = [
     { key: 'name', label: 'Name' },
     { key: 'email', label: 'Email' },
-    { key: 'phone', label: 'Phone' },
     { key: 'district', label: 'District' },
     { key: 'status', label: 'Status', isStatus: true },
     { key: 'createdAt', label: 'Created', isDate: true },

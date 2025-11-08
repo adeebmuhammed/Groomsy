@@ -60,7 +60,8 @@ export class BarberSubscriptionComponent implements OnInit, OnDestroy {
         next: (res) => {
           this.subscription = res;
           this.loading = false;
-          this.planService
+          if (this.subscription.plan) {
+            this.planService
             .getPlanById(this.subscription.plan)
             .pipe(takeUntil(this.componentDestroyed$))
             .subscribe({
@@ -72,6 +73,7 @@ export class BarberSubscriptionComponent implements OnInit, OnDestroy {
                 this.loading = false;
               },
             });
+          }
         },
         error: (err) => {
           this.error = err.message || 'Failed to fetch subscription';
