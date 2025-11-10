@@ -7772,3 +7772,5 @@
 2025-11-08 09:08:01 [INFO]: GET /api/user/review/68826b157451d8eb5c4d78d3?page=1&limit=100
 2025-11-08 09:08:03 [INFO]: GET /api/user/favorites?userId=68826b157451d8eb5c4d78d3&page=1&limit=100
 2025-11-08 09:08:06 [INFO]: POST /api/user/logout
+2025-11-08 16:05:57 [INFO]: POST /api/admin/login
+2025-11-08 16:05:58 [INFO]: GET /api/admin/dashboard-stats?filter=1%20Month
