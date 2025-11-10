@@ -2,14 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/frontend/index.html",
-      "use": "@vercel/static"
+      "src": "angular.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist/frontend" }
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "/dist/frontend/index.html"
+      "handle": "filesystem"
+    },
+    {
+      "src": "/.*",
+      "dest": "dist/frontend/index.html"
     }
   ]
 }
