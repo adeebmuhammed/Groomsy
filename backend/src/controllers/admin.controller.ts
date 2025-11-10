@@ -32,14 +32,14 @@ export class AdminController implements IAdminController {
       res.cookie("auth-token", accessToken, {
         httpOnly: process.env.AUTH_TOKEN_HTTP_ONLY === "true",
         secure: process.env.AUTH_TOKEN_SECURE === "true",
-        sameSite: "lax",
+        sameSite: process.env.AUTH_TOKEN_SAME_SITE as "lax" | "strict" | "none",
         maxAge: Number(process.env.AUTH_TOKEN_MAX_AGE),
       });
 
       res.cookie("refresh-token", refreshToken, {
         httpOnly: process.env.REFRESH_TOKEN_HTTP_ONLY === "true",
         secure: process.env.REFRESH_TOKEN_SECURE === "true",
-        sameSite: "strict",
+        sameSite: process.env.REFRESH_TOKEN_SAME_SITE as "lax" | "strict" | "none",
         maxAge: Number(process.env.REFRESH_TOKEN_MAX_AGE),
       });
 
