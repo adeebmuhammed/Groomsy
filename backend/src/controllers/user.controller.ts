@@ -158,17 +158,17 @@ export class UserController implements IUserController {
       });
 
       res.cookie("auth-token", accessToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        maxAge: 60 * 60 * 1000, // 1 hour
+        httpOnly: process.env.AUTH_TOKEN_HTTP_ONLY === "true",
+        secure: process.env.AUTH_TOKEN_SECURE === "true",
+        sameSite: process.env.AUTH_TOKEN_SAME_SITE as "lax" | "strict" | "none",
+        maxAge: Number(process.env.AUTH_TOKEN_MAX_AGE),
       });
 
       res.cookie("refresh-token", refreshToken, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        httpOnly: process.env.REFRESH_TOKEN_HTTP_ONLY === "true",
+        secure: process.env.REFRESH_TOKEN_SECURE === "true",
+        sameSite: process.env.REFRESH_TOKEN_SAME_SITE as "lax" | "strict" | "none",
+        maxAge: Number(process.env.REFRESH_TOKEN_MAX_AGE),
       });
 
       let status;
