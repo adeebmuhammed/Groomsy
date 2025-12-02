@@ -115,7 +115,7 @@ let AdminController = class AdminController {
         };
         this.updateUserStatus = async (req, res) => {
             try {
-                const { id: userId } = req.params;
+                const { userId } = req.params;
                 const { status } = req.body;
                 let statusCode;
                 let result;
@@ -148,7 +148,7 @@ let AdminController = class AdminController {
         };
         this.updateBarberStatus = async (req, res) => {
             try {
-                const { id: barberId } = req.params;
+                const { barberId } = req.params;
                 const { status } = req.body;
                 let statusCode;
                 let result;

@@ -266,7 +266,7 @@ let UserController = class UserController {
         };
         this.fetchBarberDetailsById = async (req, res) => {
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const { barberDetailsData } = await this._userService.fetchBarberDetailsById(barberId);
                 let status;
                 if (barberDetailsData) {
@@ -286,7 +286,7 @@ let UserController = class UserController {
         };
         this.getUserProfileById = async (req, res) => {
             try {
-                const userId = req.params["id"];
+                const userId = req.params["userId"];
                 const { response } = await this._userService.getUserProfileById(userId);
                 let status;
                 if (response) {
@@ -308,7 +308,7 @@ let UserController = class UserController {
         };
         this.updateUserProfile = async (req, res) => {
             try {
-                const userId = req.params["id"];
+                const userId = req.params["userId"];
                 const data = req.body;
                 const { response } = await this._userService.updateUserProfile(userId, data);
                 let status;
@@ -330,7 +330,7 @@ let UserController = class UserController {
         };
         this.updateProfilePicture = async (req, res) => {
             try {
-                const userId = req.params["id"];
+                const userId = req.params["userId"];
                 const { profilePicUrl, profilePicKey } = req.body;
                 const { profilePictureUpdation } = await this._userService.updateUserProfilePicture(userId, profilePicUrl, profilePicKey);
                 let status;
@@ -352,7 +352,7 @@ let UserController = class UserController {
         };
         this.deleteProfilePicture = async (req, res) => {
             try {
-                const userId = req.params["id"];
+                const userId = req.params["userId"];
                 const { profilePictureDeletion } = await this._userService.deleteUserProfilePicture(userId);
                 let status;
                 if (profilePictureDeletion) {

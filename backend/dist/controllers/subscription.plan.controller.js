@@ -67,7 +67,7 @@ let SubscriptionPlanController = class SubscriptionPlanController {
         };
         this.updateActivation = async (req, res) => {
             try {
-                const planId = req.params["id"];
+                const planId = req.params["planId"];
                 const { response } = await this._planService.updateActivation(planId);
                 let status;
                 if (response) {
@@ -110,7 +110,7 @@ let SubscriptionPlanController = class SubscriptionPlanController {
         };
         this.getPlanById = async (req, res) => {
             try {
-                const planId = req.params["id"];
+                const planId = req.params["planId"];
                 const { planData } = await this._planService.getPlanById(planId);
                 let status;
                 if (planData) {

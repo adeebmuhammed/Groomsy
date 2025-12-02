@@ -21,7 +21,7 @@ let SubscriptionController = class SubscriptionController {
         this._subscriptionService = _subscriptionService;
         this.getSubscriptionDetailsByBarber = async (req, res) => {
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const { response } = await this._subscriptionService.getSubscriptionDetailsByBarber(barberId);
                 let status;
                 if (response) {

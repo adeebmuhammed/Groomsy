@@ -50,9 +50,9 @@ userRoutes
 
 userRoutes
 .get('/get-barbers', userAuth, isBlockedMiddleware, userController.fetchAllBarbers)
-.get('/get-barber/:id', userAuth, isBlockedMiddleware, userController.fetchBarberDetailsById)
+.get('/get-barber/:barberId', userAuth, isBlockedMiddleware, userController.fetchBarberDetailsById)
 .get('/get-barber-slots/:barberId', userAuth, isBlockedMiddleware, userController.fetchBarbersAndSlotRules)
-.get('/populated-slots/:id',userAuth, isBlockedMiddleware,slotController.getPopulatedSlots)
+.get('/populated-slots/:barberId',userAuth, isBlockedMiddleware,slotController.getPopulatedSlots)
 
 userRoutes
 .get('/bookings', userAuth, isBlockedMiddleware,bookingController.getBookingsByStatus)
@@ -60,9 +60,9 @@ userRoutes
 .put('/bookings/coupon',userAuth,isBlockedMiddleware,bookingController.couponApplication)
 .post('/bookings/confirm',userAuth,isBlockedMiddleware,bookingController.confirmBooking)
 .post('/bookings/verify-payment',userAuth,isBlockedMiddleware,bookingController.verifyPayment)
-.patch("/bookings/:id", userAuth, isBlockedMiddleware,bookingController.updateBookingStatus)
-.get("/bookings-by-id/:id", userAuth, isBlockedMiddleware,bookingController.getBookingById)
-.get("/bookings-by-barber/:id", userAuth, isBlockedMiddleware, bookingController.fetchBookingsOfBarber)
+.patch("/bookings/:bookingId", userAuth, isBlockedMiddleware,bookingController.updateBookingStatus)
+.get("/bookings-by-id/:bookingId", userAuth, isBlockedMiddleware,bookingController.getBookingById)
+.get("/bookings-by-barber/:barberId", userAuth, isBlockedMiddleware, bookingController.fetchBookingsOfBarber)
 .patch("/booking-check", userAuth, isBlockedMiddleware, bookingController.checkBeforePayment)
 
 userRoutes
@@ -71,20 +71,20 @@ userRoutes
 
 userRoutes
 .get("/service", userAuth,isBlockedMiddleware,serviceController.fetch)
-.get("/service/:id",userAuth,isBlockedMiddleware,serviceController.getServiceById)
+.get("/service/:serviceId",userAuth,isBlockedMiddleware,serviceController.getServiceById)
 
 userRoutes
-.get("/barber-unavailability/:id",userAuth,isBlockedMiddleware,barberUnavailabilityController.fetchBarberUnavailability)
+.get("/barber-unavailability/:barberId",userAuth,isBlockedMiddleware,barberUnavailabilityController.fetchBarberUnavailability)
 
 userRoutes
-.get("/review/:id",userAuth,isBlockedMiddleware,reviewController.getReviewsByUser)
+.get("/review/:userId",userAuth,isBlockedMiddleware,reviewController.getReviewsByUser)
 .post("/review",userAuth,isBlockedMiddleware,reviewController.create)
-.delete("/review/:id",userAuth,isBlockedMiddleware,reviewController.delete)
+.delete("/review/:serviceId",userAuth,isBlockedMiddleware,reviewController.delete)
 
 userRoutes
-.get("/profile/:id",userAuth,userController.getUserProfileById)
-.put("/profile/:id",userAuth,userController.updateUserProfile)
-.patch("/profile/update-profile-picture/:id",fileUpload(),userController.updateProfilePicture)
-.delete("/profile/delete-profile-picture/:id",userController.deleteProfilePicture)
+.get("/profile/:userId",userAuth,userController.getUserProfileById)
+.put("/profile/:userId",userAuth,userController.updateUserProfile)
+.patch("/profile/update-profile-picture/:userId",fileUpload(),userController.updateProfilePicture)
+.delete("/profile/delete-profile-picture/:userId",userController.deleteProfilePicture)
 
 export default userRoutes;

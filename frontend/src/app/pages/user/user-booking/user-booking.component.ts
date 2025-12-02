@@ -349,7 +349,7 @@ export class UserBookingComponent implements OnInit, OnDestroy {
   openDetailsModal(booking: BookingResponseDto): void {
     this.selectedBooking = booking;
     this.serviceService
-      .getServiceById(ROLES.ADMIN, booking.service)
+      .getServiceById(ROLES.USER, booking.service)
       .pipe(takeUntil(this.componentDestroyed$))
       .subscribe({
         next: (res) => {

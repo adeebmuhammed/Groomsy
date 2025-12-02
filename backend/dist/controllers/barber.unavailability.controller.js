@@ -21,7 +21,7 @@ let BarberUnavailabilityController = class BarberUnavailabilityController {
         this._barberUnavailabilityService = _barberUnavailabilityService;
         this.fetchBarberUnavailability = async (req, res) => {
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const { response } = await this._barberUnavailabilityService.fetchBarberUnavailability(barberId);
                 let status;
                 if (response) {
@@ -42,9 +42,8 @@ let BarberUnavailabilityController = class BarberUnavailabilityController {
             }
         };
         this.editWeeklyDayOff = async (req, res) => {
-            console.log("req reached");
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const day = req.body.day;
                 const { response } = await this._barberUnavailabilityService.editWeeklyDayOff(barberId, day);
                 let status;
@@ -65,7 +64,7 @@ let BarberUnavailabilityController = class BarberUnavailabilityController {
         };
         this.addOffDay = async (req, res) => {
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const data = req.body;
                 const { response } = await this._barberUnavailabilityService.addOffDay(barberId, data);
                 let status;
@@ -86,7 +85,7 @@ let BarberUnavailabilityController = class BarberUnavailabilityController {
         };
         this.removeOffDay = async (req, res) => {
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const date = req.query.date;
                 const { response } = await this._barberUnavailabilityService.removeOffDay(barberId, date);
                 let status;

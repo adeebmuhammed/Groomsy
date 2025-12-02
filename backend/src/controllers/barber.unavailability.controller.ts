@@ -19,7 +19,7 @@ export class BarberUnavailabilityController
     res: Response
   ): Promise<void> => {
     try {
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
 
       const { response } =
         await this._barberUnavailabilityService.fetchBarberUnavailability(
@@ -47,10 +47,8 @@ export class BarberUnavailabilityController
   };
 
   editWeeklyDayOff = async (req: Request, res: Response): Promise<void> => {
-    console.log("req reached");
-
     try {
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
       const day = req.body.day as string;
 
       const { response } =
@@ -76,7 +74,7 @@ export class BarberUnavailabilityController
 
   addOffDay = async (req: Request, res: Response): Promise<void> => {
     try {
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
       const data = req.body;
 
       const { response } = await this._barberUnavailabilityService.addOffDay(
@@ -104,7 +102,7 @@ export class BarberUnavailabilityController
 
   removeOffDay = async (req: Request, res: Response): Promise<void> => {
     try {
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
       const date = req.query.date as string;
 
       const { response } = await this._barberUnavailabilityService.removeOffDay(

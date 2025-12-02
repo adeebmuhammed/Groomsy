@@ -184,7 +184,7 @@ export class BarberController implements IBarberController {
 
   getBarberProfileById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
 
       const { response } = await this._barberService.getBarberProfileById(
         barberId
@@ -211,7 +211,7 @@ export class BarberController implements IBarberController {
 
   updateBarberProfile = async (req: Request, res: Response): Promise<void> => {
     try {
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
       const data = req.body;
 
       const { response } = await this._barberService.updateBarberProfile(
@@ -241,7 +241,7 @@ export class BarberController implements IBarberController {
 
   updateBarberAddress = async (req: Request, res: Response): Promise<void> => {
     try {
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
       const data = req.body;
 
       const { response } = await this._barberService.updateBarberAddress(
@@ -302,7 +302,7 @@ export class BarberController implements IBarberController {
     res: Response
   ): Promise<void> => {
     try {
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
       const filterParam = req.query.filter as string | undefined;
       let status;
 
@@ -338,7 +338,7 @@ export class BarberController implements IBarberController {
 
   updateProfilePicture = async (req: Request, res: Response): Promise<void> => {
     try {
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
       const { profilePicUrl, profilePicKey } = req.body;
 
       const { profilePictureUpdation } =
@@ -363,7 +363,7 @@ export class BarberController implements IBarberController {
 
   deleteProfilePicture = async (req: Request, res: Response): Promise<void> => {
     try {
-      const barberId = req.params["id"]
+      const barberId = req.params["barberId"]
 
       const { profilePictureDeletion } = await this._barberService.deleteBarberProfilePicture(barberId)
 

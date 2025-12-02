@@ -151,7 +151,7 @@ let BookingController = class BookingController {
         this.updateBookingStatus = async (req, res) => {
             try {
                 const role = req.query.role;
-                const bookingId = req.params.id;
+                const bookingId = req.params.bookingId;
                 const { bookingStatus } = req.body;
                 const { response } = await this._bookingService.updateBookingStatus(role, bookingId, bookingStatus);
                 let status;
@@ -174,7 +174,7 @@ let BookingController = class BookingController {
         };
         this.getBookingById = async (req, res) => {
             try {
-                const bookingId = req.params["id"];
+                const bookingId = req.params["bookingId"];
                 const { response } = await this._bookingService.getBookingById(bookingId);
                 let status;
                 if (response) {
@@ -217,7 +217,7 @@ let BookingController = class BookingController {
         };
         this.fetchBookingsOfBarber = async (req, res) => {
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const { bookingsOfBarber } = await this._bookingService.fetchBookingsOfBarber(barberId);
                 let status;
                 if (bookingsOfBarber) {
