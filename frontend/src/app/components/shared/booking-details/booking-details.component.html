@@ -1,65 +1,77 @@
 @if (booking) {
-  <div class="booking-details p-4 shadow-sm rounded bg-white">
-    <h4 class="mb-3 border-bottom pb-2 fw-semibold text-primary">
-      Booking Details
-    </h4>
+  <div class="booking-wrapper shadow-sm rounded">
 
-    <ul class="list-group list-group-flush">
+    <!-- Header -->
+    <div class="booking-header d-flex align-items-center">
+      <i class="bi bi-check-circle-fill text-success fs-4 me-2"></i>
+      <h4 class="mb-0 fw-semibold">Appointment Booked!</h4>
+    </div>
+    <p class="text-muted small ms-4">You will receive a confirmation email shortly.</p>
 
-      @if(service){
-      <li class="list-group-item">
-        <span class="fw-semibold text-muted">Service:</span>
-        <span class="ms-2">{{ service.name }}</span>
-      </li>
-      }
+    <!-- Content Card -->
+    <div class="booking-card p-4">
+      <h5 class="section-title mb-3">Booking Details</h5>
 
-      @if (user) {
-      <li class="list-group-item">
-        <span class="fw-semibold text-muted">User:</span>
-        <span class="ms-2">{{ user | titlecase }}</span>
-      </li>
-      }
+      <ul class="list-group list-group-flush">
 
-      @if (barber) {
-      <li class="list-group-item">
-        <span class="fw-semibold text-muted">Barber:</span>
-        <span class="ms-2">{{ barber | titlecase }}</span>
-      </li>
-      }
-
-      <li class="list-group-item">
-        <span class="fw-semibold text-muted">Status:</span>
-        <span class="badge bg-info ms-2">{{ booking.status | titlecase }}</span>
-      </li>
-
-      <li class="list-group-item">
-        <span class="fw-semibold text-muted">Date & Time:</span>
-        <div class="ms-2">
-          {{ booking.slotDetails.date | date : "fullDate" }}<br />
-          {{ formatTimeUTC(booking.slotDetails.startTime) }} -
-          {{ formatTimeUTC(booking.slotDetails.endTime) }}
-        </div>
-      </li>
-
-      <li class="list-group-item">
-        <span class="fw-semibold text-muted">Total Price:</span>
-        <span class="ms-2">₹{{ booking.totalPrice }}</span>
-      </li>
-
-      @if(booking.discountAmount > 0){
-      <li class="list-group-item text-success">
-        <span class="fw-semibold text-muted">Discount:</span>
-        <span class="ms-2">-₹{{ booking.discountAmount }}</span>
-        @if(booking.couponCode){
-        <span class="badge bg-light text-dark ms-2">Coupon: {{ booking.couponCode }}</span>
+        @if (service) {
+        <li class="list-group-item">
+          <span class="label">Service:</span>
+          <span class="value">{{ service.name }}</span>
+        </li>
         }
-      </li>
-      }
 
-      <li class="list-group-item">
-        <span class="fw-semibold text-muted">Final Price:</span>
-        <span class="ms-2 fw-bold text-success">₹{{ booking.finalPrice }}</span>
-      </li>
-    </ul>
+        @if (user) {
+        <li class="list-group-item">
+          <span class="label">User:</span>
+          <span class="value">{{ user | titlecase }}</span>
+        </li>
+        }
+
+        @if (barber) {
+        <li class="list-group-item">
+          <span class="label">Barber:</span>
+          <span class="value">{{ barber | titlecase }}</span>
+        </li>
+        }
+
+        <li class="list-group-item">
+          <span class="label">Status:</span>
+          <span class="badge bg-info ms-2">{{ booking.status | titlecase }}</span>
+        </li>
+
+        <li class="list-group-item">
+          <span class="label">Date & Time:</span>
+          <div class="value">
+            {{ booking.slotDetails.date | date : "fullDate" }} <br />
+            {{ formatTimeUTC(booking.slotDetails.startTime) }} -
+            {{ formatTimeUTC(booking.slotDetails.endTime) }}
+          </div>
+        </li>
+
+        <li class="list-group-item">
+          <span class="label">Total Price:</span>
+          <span class="value">₹{{ booking.totalPrice }}</span>
+        </li>
+
+        @if(booking.discountAmount > 0) {
+        <li class="list-group-item text-success">
+          <span class="label">Discount:</span>
+          <span class="value">-₹{{ booking.discountAmount }}</span>
+
+          @if(booking.couponCode) {
+          <span class="badge bg-light text-dark ms-2">
+            Coupon: {{ booking.couponCode }}
+          </span>
+          }
+        </li>
+        }
+
+        <li class="list-group-item final-price-row">
+          <span class="label">Final Price:</span>
+          <span class="final-price">₹{{ booking.finalPrice }}</span>
+        </li>
+      </ul>
+    </div>
   </div>
 }

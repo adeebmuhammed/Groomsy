@@ -8,6 +8,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { ChartComponent } from '../../../components/shared/chart/chart.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { PieChartComponent } from '../../../components/shared/pie-chart/pie-chart.component';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -16,6 +17,7 @@ import { FormsModule } from '@angular/forms';
     AdminFooterComponent,
     AdminSidebarComponent,
     ChartComponent,
+    PieChartComponent,
     CommonModule,
     FormsModule,
   ],

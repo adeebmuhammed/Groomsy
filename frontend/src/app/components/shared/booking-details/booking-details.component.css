@@ -1,0 +1,40 @@
+.booking-wrapper {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.booking-header {
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 0.5rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  border-left: 4px solid #1d4ed8;
+  padding-left: 8px;
+}
+
+.list-group-item {
+  display: flex;
+  justify-content: space-between;
+  border: none !important;
+  padding: 10px 0;
+}
+
+.label {
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.value {
+  font-weight: 500;
+}
+
+.final-price-row .final-price {
+  color: #0d9f4b;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
