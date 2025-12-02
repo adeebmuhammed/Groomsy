@@ -64,7 +64,7 @@ let SlotController = class SlotController {
         };
         this.updateSlotRule = async (req, res) => {
             try {
-                const slotId = req.params["id"];
+                const slotId = req.params["slotId"];
                 const data = req.body;
                 const { response, message } = await this._slotService.updateSlotRule(slotId, data);
                 let status;
@@ -85,7 +85,7 @@ let SlotController = class SlotController {
         };
         this.deleteSlotRule = async (req, res) => {
             try {
-                const slotId = req.params["id"];
+                const slotId = req.params["slotId"];
                 const { response } = await this._slotService.deleteSlotRule(slotId);
                 let status;
                 if (response) {
@@ -108,7 +108,7 @@ let SlotController = class SlotController {
                 const date = req.query.date;
                 const page = parseInt(req.query.page) | 1;
                 const limit = parseInt(req.query.limit) | 5;
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const serviceId = req.query.serviceId;
                 const { response } = await this._slotService.getPopulatedSlots(barberId, serviceId, date, page, limit);
                 let status;

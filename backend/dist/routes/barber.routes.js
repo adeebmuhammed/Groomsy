@@ -31,35 +31,35 @@ barberRoutes
 barberRoutes
     .get('/slots', barberAuth, slotController.getSlotRulesByBarber)
     .post('/slots', barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Slots"), slotController.createSlotRule)
-    .put('/slots/:id', barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Slots"), slotController.updateSlotRule)
-    .delete('/slots/:id', barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Slots"), slotController.deleteSlotRule);
+    .put('/slots/:slotId', barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Slots"), slotController.updateSlotRule)
+    .delete('/slots/:slotId', barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Slots"), slotController.deleteSlotRule);
 barberRoutes
     .get('/bookings', multiAuth, bookingController.getBookingsByStatus)
-    .patch("/bookings/:id", barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Bookings"), bookingController.updateBookingStatus);
+    .patch("/bookings/:bookingId", barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Bookings"), bookingController.updateBookingStatus);
 barberRoutes
-    .get("/barber-unavailability/:id", barberAuth, barberUnavailabilityController.fetchBarberUnavailability)
-    .patch("/barber-unavailability/weekly/:id", barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Unavailability"), barberUnavailabilityController.editWeeklyDayOff)
-    .post("/barber-unavailability/special/:id", barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Unavailability"), barberUnavailabilityController.addOffDay)
-    .delete("/barber-unavailability/special/:id", barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Unavailability"), barberUnavailabilityController.removeOffDay);
+    .get("/barber-unavailability/:barberId", barberAuth, barberUnavailabilityController.fetchBarberUnavailability)
+    .patch("/barber-unavailability/weekly/:barberId", barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Unavailability"), barberUnavailabilityController.editWeeklyDayOff)
+    .post("/barber-unavailability/special/:barberId", barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Unavailability"), barberUnavailabilityController.addOffDay)
+    .delete("/barber-unavailability/special/:barberId", barberAuth, (0, subscription_middleware_1.subscriptionMiddleware)("Unavailability"), barberUnavailabilityController.removeOffDay);
 barberRoutes
     .get("/subscription/plans", planController.getPlansForBarber)
-    .get("/subscription/plan/:id", planController.getPlanById)
-    .get("/subscription/:id", barberAuth, subscriptionController.getSubscriptionDetailsByBarber)
+    .get("/subscription/plan/:planId", planController.getPlanById)
+    .get("/subscription/:barberId", barberAuth, subscriptionController.getSubscriptionDetailsByBarber)
     .post("/subscription", barberAuth, subscriptionController.manageSubscription)
     .put("/subscription", barberAuth, subscriptionController.renewSubscription)
     .post("/subscription/verify-payment", barberAuth, subscriptionController.verifySubscriptionPayment);
 barberRoutes
-    .get("/profile/:id", barberAuth, barberController.getBarberProfileById)
-    .patch("/profile/address/:id", barberAuth, barberController.updateBarberAddress)
-    .put("/profile/:id", barberAuth, barberController.updateBarberProfile)
-    .patch("/profile/update-profile-picture/:id", (0, express_fileupload_1.default)(), barberController.updateProfilePicture)
-    .delete("/profile/delete-profile-picture/:id", barberController.deleteProfilePicture);
+    .get("/profile/:barberId", barberAuth, barberController.getBarberProfileById)
+    .patch("/profile/address/:barberId", barberAuth, barberController.updateBarberAddress)
+    .put("/profile/:barberId", barberAuth, barberController.updateBarberProfile)
+    .patch("/profile/update-profile-picture/:barberId", (0, express_fileupload_1.default)(), barberController.updateProfilePicture)
+    .delete("/profile/delete-profile-picture/:barberId", barberController.deleteProfilePicture);
 barberRoutes
     .get("/users", barberAuth, barberController.fetchUsers);
 barberRoutes
-    .get("/service/:id", barberAuth, serviceController.getServiceById);
+    .get("/service/:serviceId", barberAuth, serviceController.getServiceById);
 barberRoutes
     .get('/bookings', barberAuth, bookingController.getBookingsByStatus);
 barberRoutes
-    .get("/dashboard-stats/:id", barberController.getBarberDashboardStats);
+    .get("/dashboard-stats/:barberId", barberController.getBarberDashboardStats);
 exports.default = barberRoutes;

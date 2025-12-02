@@ -66,7 +66,7 @@ export class CouponController implements ICouponController {
   updateCoupon = async (req: Request, res: Response): Promise<void> => {
     try {
       const data = req.body;
-      const couponId = req.params["id"];
+      const couponId = req.params["couponId"];
 
       const { response } = await this._couponService.updateCoupon(
         couponId,
@@ -92,7 +92,7 @@ export class CouponController implements ICouponController {
 
   deleteCoupon = async (req: Request, res: Response): Promise<void> => {
     try {
-      const couponId = req.params["id"];
+      const couponId = req.params["couponId"];
 
       const { response } = await this._couponService.deleteCoupon(couponId);
       let status;

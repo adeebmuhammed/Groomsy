@@ -84,7 +84,7 @@ let ServiceController = class ServiceController {
         };
         this.delete = async (req, res) => {
             try {
-                const serviceId = req.params["id"];
+                const serviceId = req.params["serviceId"];
                 const { response } = await this._serviceService.delete(serviceId);
                 let status;
                 if (response) {
@@ -104,7 +104,7 @@ let ServiceController = class ServiceController {
         };
         this.getServiceById = async (req, res) => {
             try {
-                const serviceId = req.params["id"];
+                const serviceId = req.params["serviceId"];
                 const { response } = await this._serviceService.getServiceById(serviceId);
                 let status;
                 if (response) {

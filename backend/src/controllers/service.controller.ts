@@ -92,7 +92,7 @@ export class ServiceController implements IServiceController {
 
   delete = async (req: Request, res: Response): Promise<void> => {
     try {
-      const serviceId = req.params["id"];
+      const serviceId = req.params["serviceId"];
 
       const { response } = await this._serviceService.delete(serviceId);
       let status;
@@ -115,7 +115,7 @@ export class ServiceController implements IServiceController {
 
   getServiceById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const serviceId = req.params["id"] as string;
+      const serviceId = req.params["serviceId"] as string;
 
       const { response } = await this._serviceService.getServiceById(
         serviceId

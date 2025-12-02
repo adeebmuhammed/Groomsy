@@ -114,6 +114,9 @@ export class UserHeaderComponent implements OnInit, OnDestroy {
       case 'reviews':
         this.router.navigate([USER_ROUTES_PATHS.REVIEW]);
         break;
+      case 'home':
+        this.router.navigate([USER_ROUTES_PATHS.HOME]);
+        break;
     }
   }
 }

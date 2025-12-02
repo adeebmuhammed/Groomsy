@@ -129,7 +129,7 @@ export class AdminController implements IAdminController {
 
   updateUserStatus = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { id: userId } = req.params;
+      const { userId } = req.params;
       const { status } = req.body;
       let statusCode;
 
@@ -163,7 +163,7 @@ export class AdminController implements IAdminController {
 
   updateBarberStatus = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { id: barberId } = req.params;
+      const { barberId } = req.params;
       const { status } = req.body;
       let statusCode;
 

@@ -17,7 +17,7 @@ export class SubscriptionController implements ISubscriptionController {
     res: Response
   ): Promise<void> => {
     try {
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
 
       const { response } =
         await this._subscriptionService.getSubscriptionDetailsByBarber(

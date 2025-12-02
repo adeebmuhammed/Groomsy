@@ -36,34 +36,34 @@ userRoutes
 }), userController.googleCallback);
 userRoutes
     .get('/get-barbers', userAuth, isBlocked_middleware_1.isBlockedMiddleware, userController.fetchAllBarbers)
-    .get('/get-barber/:id', userAuth, isBlocked_middleware_1.isBlockedMiddleware, userController.fetchBarberDetailsById)
+    .get('/get-barber/:barberId', userAuth, isBlocked_middleware_1.isBlockedMiddleware, userController.fetchBarberDetailsById)
     .get('/get-barber-slots/:barberId', userAuth, isBlocked_middleware_1.isBlockedMiddleware, userController.fetchBarbersAndSlotRules)
-    .get('/populated-slots/:id', userAuth, isBlocked_middleware_1.isBlockedMiddleware, slotController.getPopulatedSlots);
+    .get('/populated-slots/:barberId', userAuth, isBlocked_middleware_1.isBlockedMiddleware, slotController.getPopulatedSlots);
 userRoutes
     .get('/bookings', userAuth, isBlocked_middleware_1.isBlockedMiddleware, bookingController.getBookingsByStatus)
     .post('/bookings/stage', userAuth, isBlocked_middleware_1.isBlockedMiddleware, bookingController.stageBooking)
     .put('/bookings/coupon', userAuth, isBlocked_middleware_1.isBlockedMiddleware, bookingController.couponApplication)
     .post('/bookings/confirm', userAuth, isBlocked_middleware_1.isBlockedMiddleware, bookingController.confirmBooking)
     .post('/bookings/verify-payment', userAuth, isBlocked_middleware_1.isBlockedMiddleware, bookingController.verifyPayment)
-    .patch("/bookings/:id", userAuth, isBlocked_middleware_1.isBlockedMiddleware, bookingController.updateBookingStatus)
-    .get("/bookings-by-id/:id", userAuth, isBlocked_middleware_1.isBlockedMiddleware, bookingController.getBookingById)
-    .get("/bookings-by-barber/:id", userAuth, isBlocked_middleware_1.isBlockedMiddleware, bookingController.fetchBookingsOfBarber)
+    .patch("/bookings/:bookingId", userAuth, isBlocked_middleware_1.isBlockedMiddleware, bookingController.updateBookingStatus)
+    .get("/bookings-by-id/:bookingId", userAuth, isBlocked_middleware_1.isBlockedMiddleware, bookingController.getBookingById)
+    .get("/bookings-by-barber/:barberId", userAuth, isBlocked_middleware_1.isBlockedMiddleware, bookingController.fetchBookingsOfBarber)
     .patch("/booking-check", userAuth, isBlocked_middleware_1.isBlockedMiddleware, bookingController.checkBeforePayment);
 userRoutes
     .get("/favorites", userAuth, isBlocked_middleware_1.isBlockedMiddleware, favoritesController.getFavoritesByUser)
     .patch("/favorites", userAuth, isBlocked_middleware_1.isBlockedMiddleware, favoritesController.updateFavorites);
 userRoutes
     .get("/service", userAuth, isBlocked_middleware_1.isBlockedMiddleware, serviceController.fetch)
-    .get("/service/:id", userAuth, isBlocked_middleware_1.isBlockedMiddleware, serviceController.getServiceById);
+    .get("/service/:serviceId", userAuth, isBlocked_middleware_1.isBlockedMiddleware, serviceController.getServiceById);
 userRoutes
-    .get("/barber-unavailability/:id", userAuth, isBlocked_middleware_1.isBlockedMiddleware, barberUnavailabilityController.fetchBarberUnavailability);
+    .get("/barber-unavailability/:barberId", userAuth, isBlocked_middleware_1.isBlockedMiddleware, barberUnavailabilityController.fetchBarberUnavailability);
 userRoutes
-    .get("/review/:id", userAuth, isBlocked_middleware_1.isBlockedMiddleware, reviewController.getReviewsByUser)
+    .get("/review/:userId", userAuth, isBlocked_middleware_1.isBlockedMiddleware, reviewController.getReviewsByUser)
     .post("/review", userAuth, isBlocked_middleware_1.isBlockedMiddleware, reviewController.create)
-    .delete("/review/:id", userAuth, isBlocked_middleware_1.isBlockedMiddleware, reviewController.delete);
+    .delete("/review/:serviceId", userAuth, isBlocked_middleware_1.isBlockedMiddleware, reviewController.delete);
 userRoutes
-    .get("/profile/:id", userAuth, userController.getUserProfileById)
-    .put("/profile/:id", userAuth, userController.updateUserProfile)
-    .patch("/profile/update-profile-picture/:id", (0, express_fileupload_1.default)(), userController.updateProfilePicture)
-    .delete("/profile/delete-profile-picture/:id", userController.deleteProfilePicture);
+    .get("/profile/:userId", userAuth, userController.getUserProfileById)
+    .put("/profile/:userId", userAuth, userController.updateUserProfile)
+    .patch("/profile/update-profile-picture/:userId", (0, express_fileupload_1.default)(), userController.updateProfilePicture)
+    .delete("/profile/delete-profile-picture/:userId", userController.deleteProfilePicture);
 exports.default = userRoutes;

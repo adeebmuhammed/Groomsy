@@ -63,7 +63,7 @@ export class OfferController implements IOfferController {
 
   edit = async (req: Request, res: Response): Promise<void> => {
     try {
-      const offerId = req.params["id"];
+      const offerId = req.params["offerId"];
       const data = req.body;
 
       const { response } = await this._offerService.edit(offerId, data);
@@ -86,7 +86,7 @@ export class OfferController implements IOfferController {
 
   delete = async (req: Request, res: Response): Promise<void> => {
     try {
-      const offerId = req.params["id"];
+      const offerId = req.params["offerId"];
 
       const { response } = await this._offerService.delete(offerId);
       let status;

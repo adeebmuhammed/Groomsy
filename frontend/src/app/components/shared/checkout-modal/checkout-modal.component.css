@@ -1,0 +1,37 @@
+.checkout-modal {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  margin-bottom: 8px;
+}
+
+.info-box p {
+  margin-bottom: 6px;
+}
+
+.price-box {
+  background: #f8fafc;
+  border-left: 4px solid #1d4ed8;
+}
+
+.final-price {
+  font-size: 1.1rem;
+  color: #0d9f4b;
+}
+
+.coupon-section input {
+  border-radius: 6px 0 0 6px;
+}
+
+.coupon-section button {
+  border-radius: 0 6px 6px 0;
+}
+
+.modal-footer .btn {
+  border-radius: 8px;
+}

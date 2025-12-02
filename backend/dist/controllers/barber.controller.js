@@ -163,7 +163,7 @@ let BarberController = class BarberController {
         };
         this.getBarberProfileById = async (req, res) => {
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const { response } = await this._barberService.getBarberProfileById(barberId);
                 let status;
                 if (response) {
@@ -185,7 +185,7 @@ let BarberController = class BarberController {
         };
         this.updateBarberProfile = async (req, res) => {
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const data = req.body;
                 const { response } = await this._barberService.updateBarberProfile(barberId, data);
                 let status;
@@ -208,7 +208,7 @@ let BarberController = class BarberController {
         };
         this.updateBarberAddress = async (req, res) => {
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const data = req.body;
                 const { response } = await this._barberService.updateBarberAddress(barberId, data);
                 let status;
@@ -253,7 +253,7 @@ let BarberController = class BarberController {
         };
         this.getBarberDashboardStats = async (req, res) => {
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const filterParam = req.query.filter;
                 let status;
                 const filter = filterParam === constants_1.DASHBOARDFILTERS.WEEK ||
@@ -281,7 +281,7 @@ let BarberController = class BarberController {
         };
         this.updateProfilePicture = async (req, res) => {
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const { profilePicUrl, profilePicKey } = req.body;
                 const { profilePictureUpdation } = await this._barberService.updateBarberProfilePicture(barberId, profilePicUrl, profilePicKey);
                 let status;
@@ -303,7 +303,7 @@ let BarberController = class BarberController {
         };
         this.deleteProfilePicture = async (req, res) => {
             try {
-                const barberId = req.params["id"];
+                const barberId = req.params["barberId"];
                 const { profilePictureDeletion } = await this._barberService.deleteBarberProfilePicture(barberId);
                 let status;
                 if (profilePictureDeletion) {

@@ -9,6 +9,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { ChartComponent } from '../../../components/shared/chart/chart.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { PieChartComponent } from '../../../components/shared/pie-chart/pie-chart.component';
 
 @Component({
   selector: 'app-barber-dashboard',
@@ -17,6 +18,7 @@ import { CommonModule } from '@angular/common';
     BarberFooterComponent,
     BarberSidebarComponent,
     ChartComponent,
+    PieChartComponent,
     FormsModule,
     CommonModule,
   ],

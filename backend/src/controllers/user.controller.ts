@@ -319,7 +319,7 @@ export class UserController implements IUserController {
     res: Response
   ): Promise<void> => {
     try {
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
 
       const { barberDetailsData } =
         await this._userService.fetchBarberDetailsById(barberId);
@@ -343,7 +343,7 @@ export class UserController implements IUserController {
 
   getUserProfileById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.params["id"];
+      const userId = req.params["userId"];
 
       const { response } = await this._userService.getUserProfileById(userId);
       let status;
@@ -368,7 +368,7 @@ export class UserController implements IUserController {
 
   updateUserProfile = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.params["id"];
+      const userId = req.params["userId"];
       const data = req.body;
 
       const { response } = await this._userService.updateUserProfile(
@@ -396,7 +396,7 @@ export class UserController implements IUserController {
 
   updateProfilePicture = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.params["id"];
+      const userId = req.params["userId"];
       const { profilePicUrl, profilePicKey } = req.body;
 
       const { profilePictureUpdation } =
@@ -421,7 +421,7 @@ export class UserController implements IUserController {
 
   deleteProfilePicture = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.params["id"];
+      const userId = req.params["userId"];
 
       const { profilePictureDeletion } =
         await this._userService.deleteUserProfilePicture(userId);

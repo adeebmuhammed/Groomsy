@@ -1,69 +1,121 @@
 <app-user-header></app-user-header>
 
 <div class="booking-confirmation-wrapper container my-5">
+
   <div *ngIf="error" class="alert alert-danger text-center">
     {{ error }}
   </div>
 
   <!-- Success View -->
-  <div *ngIf="booking && isSuccess" class="confirmation-card card shadow-lg border-0">
-    <div class="card-body text-center">
-      <div class="success-icon">✅</div>
+  <div *ngIf="booking && isSuccess" class="confirmation-card shadow">
+    
+    <!-- Animated Success Icon -->
+    <div class="status-section text-center">
+      <div class="circle-check">
+        <i class="bi bi-check-lg"></i>
+      </div>
       <h2 class="confirmation-title">Booking Confirmed!</h2>
-      <p class="confirmation-subtitle">Thank you for your booking</p>
-      <hr class="divider">
+      <p class="confirmation-subtitle">
+        Thank you for choosing our service. Your slot is now reserved.
+      </p>
     </div>
 
+    <!-- Booking Details -->
     <div class="booking-details p-4">
-      <h5 class="details-heading">Booking Details</h5>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item"><strong>Booking ID:</strong> {{ booking.id }}</li>
-        <li class="list-group-item"><strong>Service:</strong> {{ service?.name }}</li>
-        <li class="list-group-item"><strong>Status:</strong> {{ booking.status | titlecase }}</li>
-        <li class="list-group-item">
-          <strong>Date:</strong> {{ booking.slotDetails.date | date:'fullDate' }}<br>
-          <strong>Time:</strong> {{ formatTimeUTC(booking.slotDetails.startTime) }} - {{ formatTimeUTC(booking.slotDetails.endTime) }}
+      <h5 class="details-heading">Booking Summary</h5>
+
+      <ul class="details-list">
+        <li>
+          <i class="bi bi-hash"></i>
+          <strong>Booking ID:</strong> {{ booking.id }}
         </li>
-        <li class="list-group-item"><strong>Total Price:</strong> ₹{{ booking.totalPrice }}</li>
-        <li class="list-group-item" *ngIf="booking.discountAmount > 0">
-          <strong>Discount:</strong> -₹{{ booking.discountAmount }} 
-          <span *ngIf="booking.couponCode"> (Coupon: {{ booking.couponCode }})</span>
+
+        <li>
+          <i class="bi bi-scissors"></i>
+          <strong>Service:</strong> {{ service?.name }}
         </li>
-        <li class="list-group-item"><strong>Final Price:</strong> ₹{{ booking.finalPrice }}</li>
+
+        <li>
+          <i class="bi bi-calendar-event"></i>
+          <strong>Date:</strong> 
+          {{ booking.slotDetails.date | date:'fullDate' }}
+        </li>
+
+        <li>
+          <i class="bi bi-clock"></i>
+          <strong>Time:</strong>
+          {{ formatTimeUTC(booking.slotDetails.startTime) }} - 
+          {{ formatTimeUTC(booking.slotDetails.endTime) }}
+        </li>
+
+        <li>
+          <i class="bi bi-cash-coin"></i>
+          <strong>Total Price:</strong> ₹{{ booking.totalPrice }}
+        </li>
+
+        <li *ngIf="booking.discountAmount > 0">
+          <i class="bi bi-tag"></i>
+          <strong>Discount:</strong> -₹{{ booking.discountAmount }}
+          <span *ngIf="booking.couponCode">({{ booking.couponCode }})</span>
+        </li>
+
+        <li class="final-price">
+          <i class="bi bi-wallet2"></i>
+          <strong>Final Price:</strong> ₹{{ booking.finalPrice }}
+        </li>
       </ul>
+
     </div>
 
     <div class="text-center mt-4 pb-4">
-      <a routerLink="/user/home" class="btn btn-home">Go to Home</a>
+      <a routerLink="/user/home" class="btn btn-primary-gradient">Go to Home</a>
     </div>
+
   </div>
 
-  <!-- Failure / Non-Success View -->
-  <div *ngIf="booking && !isSuccess" class="confirmation-card card shadow-lg border-0">
-    <div class="card-body text-center">
-      <div class="error-icon">❌</div>
-      <h2 class="confirmation-title text-danger">Booking Not Completed</h2>
+  
+  <!-- Failure View -->
+  <div *ngIf="booking && !isSuccess" class="confirmation-card shadow">
+    
+    <div class="status-section text-center">
+      <div class="circle-error">
+        <i class="bi bi-x-lg"></i>
+      </div>
+      <h2 class="confirmation-title text-danger">Payment Pending</h2>
       <p class="confirmation-subtitle">
         Your booking is still in <strong>{{ booking.status | titlecase }}</strong> state.
       </p>
-      <p>Please retry the payment or contact support.</p>
-      <hr class="divider">
+      <p>Please retry payment or contact support.</p>
     </div>
 
     <div class="booking-details p-4">
-      <!-- Show same booking info -->
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item"><strong>Booking ID:</strong> {{ booking.id }}</li>
-        <li class="list-group-item"><strong>Service:</strong> {{ service?.name }}</li>
-        <li class="list-group-item"><strong>Status:</strong> {{ booking.status | titlecase }}</li>
+      <ul class="details-list">
+        <li>
+          <i class="bi bi-hash"></i>
+          <strong>Booking ID:</strong> {{ booking.id }}
+        </li>
+
+        <li>
+          <i class="bi bi-scissors"></i>
+          <strong>Service:</strong> {{ service?.name }}
+        </li>
+
+        <li>
+          <i class="bi bi-info-circle"></i>
+          <strong>Status:</strong> {{ booking.status | titlecase }}
+        </li>
       </ul>
     </div>
 
     <div class="text-center mt-4 pb-4">
-      <button class="btn btn-primary" (click)="router.navigate(['/user/bookings'])">Retry Payment</button>
-      <a routerLink="/user/home" class="btn btn-secondary ms-2">Go to Home</a>
+      <button class="btn btn-primary-gradient" (click)="router.navigate(['/user/bookings'])">
+        Retry Payment
+      </button>
+      <a routerLink="/user/home" class="btn btn-outline-secondary ms-2">Go to Home</a>
     </div>
+
   </div>
+
 </div>
 
 <app-user-footer></app-user-footer>

@@ -195,7 +195,7 @@ export class BookingController implements IBookingController {
   updateBookingStatus = async (req: Request, res: Response): Promise<void> => {
     try {
       const role = req.query.role as ROLES;
-      const bookingId = req.params.id as string;
+      const bookingId = req.params.bookingId as string;
 
       const { bookingStatus } = req.body;
 
@@ -226,7 +226,7 @@ export class BookingController implements IBookingController {
 
   getBookingById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const bookingId = req.params["id"] as string;
+      const bookingId = req.params["bookingId"] as string;
 
       const { response } = await this._bookingService.getBookingById(bookingId);
       let status;
@@ -285,7 +285,7 @@ export class BookingController implements IBookingController {
     res: Response
   ): Promise<void> => {
     try {
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
 
       const { bookingsOfBarber } =
         await this._bookingService.fetchBookingsOfBarber(barberId);

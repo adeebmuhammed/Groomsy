@@ -65,7 +65,7 @@ export class SlotController implements ISlotController {
 
   updateSlotRule = async (req: Request, res: Response): Promise<void> => {
     try {
-      const slotId = req.params["id"];
+      const slotId = req.params["slotId"];
       const data = req.body;
 
       const { response, message } = await this._slotService.updateSlotRule(
@@ -91,7 +91,7 @@ export class SlotController implements ISlotController {
 
   deleteSlotRule = async (req: Request, res: Response): Promise<void> => {
     try {
-      const slotId = req.params["id"];
+      const slotId = req.params["slotId"];
 
       const { response } = await this._slotService.deleteSlotRule(slotId);
       let status;
@@ -116,7 +116,7 @@ export class SlotController implements ISlotController {
       const date = req.query.date as string;
       const page = parseInt(req.query.page as string) | 1;
       const limit = parseInt(req.query.limit as string) | 5;
-      const barberId = req.params["id"];
+      const barberId = req.params["barberId"];
       const serviceId = req.query.serviceId as string;
 
       const { response } = await this._slotService.getPopulatedSlots(

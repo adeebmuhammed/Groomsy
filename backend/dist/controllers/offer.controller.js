@@ -63,7 +63,7 @@ let OfferController = class OfferController {
         };
         this.edit = async (req, res) => {
             try {
-                const offerId = req.params["id"];
+                const offerId = req.params["offerId"];
                 const data = req.body;
                 const { response } = await this._offerService.edit(offerId, data);
                 let status;
@@ -84,7 +84,7 @@ let OfferController = class OfferController {
         };
         this.delete = async (req, res) => {
             try {
-                const offerId = req.params["id"];
+                const offerId = req.params["offerId"];
                 const { response } = await this._offerService.delete(offerId);
                 let status;
                 if (response) {

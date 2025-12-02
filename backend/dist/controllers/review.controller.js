@@ -21,7 +21,7 @@ let ReviewController = class ReviewController {
         this._reviewService = _reviewService;
         this.getReviewsByUser = async (req, res) => {
             try {
-                const userId = req.params["id"];
+                const userId = req.params["userId"];
                 const page = parseInt(req.query.page) || 1;
                 const limit = parseInt(req.query.limit) || 5;
                 const { response } = await this._reviewService.getReviewsByUser(userId, page, limit);

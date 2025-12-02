@@ -5,9 +5,9 @@
 
   <div class="barber-main-content">
     <div class="d-flex justify-content-between align-items-center mb-3">
-
       <select
         class="form-select w-auto"
+        [(ngModel)]="selectedFilter"
         (change)="loadStats()"
       >
         <option>1 Day</option>
@@ -32,12 +32,11 @@
         >
         </app-chart>
 
-        <app-chart
+        <app-pie-chart
           [chartData]="stats.services.data"
           [chartLabels]="stats.services.labels"
           chartTitle="Services Overview"
-        >
-        </app-chart>
+        ></app-pie-chart>
       </div>
     </div>
 

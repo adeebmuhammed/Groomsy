@@ -64,7 +64,7 @@ let CouponController = class CouponController {
         this.updateCoupon = async (req, res) => {
             try {
                 const data = req.body;
-                const couponId = req.params["id"];
+                const couponId = req.params["couponId"];
                 const { response } = await this._couponService.updateCoupon(couponId, data);
                 let status;
                 if (response) {
@@ -84,7 +84,7 @@ let CouponController = class CouponController {
         };
         this.deleteCoupon = async (req, res) => {
             try {
-                const couponId = req.params["id"];
+                const couponId = req.params["couponId"];
                 const { response } = await this._couponService.deleteCoupon(couponId);
                 let status;
                 if (response) {

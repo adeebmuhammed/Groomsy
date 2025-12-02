@@ -70,7 +70,7 @@ export class SubscriptionPlanController implements ISubscriptionPlanController {
 
   updateActivation = async (req: Request, res: Response): Promise<void> => {
     try {
-      const planId = req.params["id"];
+      const planId = req.params["planId"];
 
       const { response } = await this._planService.updateActivation(planId);
       let status;
@@ -118,7 +118,7 @@ export class SubscriptionPlanController implements ISubscriptionPlanController {
 
   getPlanById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const planId = req.params["id"]
+      const planId = req.params["planId"]
 
       const { planData } = await this._planService.getPlanById(planId)
       let status;
