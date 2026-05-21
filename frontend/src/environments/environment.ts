@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
   apiBaseUrl: 'https://groomsy.shop/api',
-  s3Bucket: 'groomsy-profile-picture',
-  awsRegion: 'eu-north-1'
+  s3Bucket: 'groomsy-profile-pics',
+  awsRegion: 'ap-southeast-2'
 };
