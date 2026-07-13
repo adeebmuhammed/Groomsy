@@ -74,7 +74,22 @@ Groomsy provides three dedicated roles:
 - Slot Management
 - Appointment Management
 - Booking History
+- Barber Unavailability Management
 - Dashboard Overview
+
+  <img width="1918" height="1015" alt="image" src="https://github.com/user-attachments/assets/567193e0-8160-4eec-b908-6d145b28b8b2" />
+
+  <img width="1918" height="983" alt="image" src="https://github.com/user-attachments/assets/ad15f5e5-0b3d-4f88-9d3e-b7b3b567881e" />
+
+  <img width="1918" height="946" alt="image" src="https://github.com/user-attachments/assets/dd96458e-1e72-4085-99d7-2831f26ce458" />
+
+  <img width="1918" height="1020" alt="image" src="https://github.com/user-attachments/assets/f278c7b2-da10-421f-8814-3a80e766c6d1" />
+
+  <img width="1913" height="941" alt="image" src="https://github.com/user-attachments/assets/23719136-90ef-4888-97b2-ef30fca7a5e2" />
+
+  <img width="1918" height="953" alt="image" src="https://github.com/user-attachments/assets/d0674974-6efd-40ad-9fc9-b6fb805e7779" />
+
+  <img width="1918" height="1017" alt="image" src="https://github.com/user-attachments/assets/6ea23b37-4d13-4398-936c-0779553e280f" />
 
 ---
 
@@ -82,12 +97,24 @@ Groomsy provides three dedicated roles:
 
 - Dashboard Analytics
 - User Management
-- Barber Approval & Moderation
+- Barber Management
 - Subscription Management
 - Discount & Offer Management
-- Performance Analytics
 - Booking Monitoring
-- Revenue Insights
+
+<img width="1918" height="895" alt="image" src="https://github.com/user-attachments/assets/1f4ea8d7-95c2-4c6b-8f06-e8856c4bd6ac" />
+
+<img width="1918" height="1020" alt="image" src="https://github.com/user-attachments/assets/2fd04b82-847c-4d6f-b4f6-7ca47e3c4c77" />
+
+<img width="1918" height="1020" alt="image" src="https://github.com/user-attachments/assets/cadee495-644c-4e5f-91aa-0c35d565540d" />
+
+<img width="1918" height="1020" alt="image" src="https://github.com/user-attachments/assets/c06be892-0ab8-43b9-92fd-4dc719ec6fd3" />
+
+<img width="1918" height="1025" alt="image" src="https://github.com/user-attachments/assets/22e205e8-c894-48d0-ad89-9d5726a0b378" />
+
+<img width="1918" height="968" alt="image" src="https://github.com/user-attachments/assets/b686b931-6950-414f-a584-0c7dc7495f98" />
+
+<img width="1918" height="851" alt="image" src="https://github.com/user-attachments/assets/f6f0f6fe-9d9d-4c69-ae79-d0c1cc0e3ae0" />
 
 ---
 
