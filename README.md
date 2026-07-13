@@ -6,6 +6,9 @@ Groomsy is a full-stack barber appointment booking platform that connects custom
 
 🔗 https://groomsy.online
 
+<img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/77024739-56c0-427a-938d-e1ad79944130" />
+
+
 ---
 
 ## 📖 Overview
@@ -34,6 +37,32 @@ Groomsy provides three dedicated roles:
 - Booking Cancellation
 - Responsive UI
 - Progressive Web App (PWA)
+
+  <img width="1918" height="1017" alt="image" src="https://github.com/user-attachments/assets/2b0efcae-b258-446a-b2e4-66fa8a8428f3" />
+  
+  <img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/6d0a3880-1c9c-42e9-91a6-ec53dbb32140" />
+
+  <img width="1918" height="1017" alt="image" src="https://github.com/user-attachments/assets/872aed6c-e62f-463a-8e05-95dd3fcd5de6" />
+
+  <img width="1918" height="1017" alt="image" src="https://github.com/user-attachments/assets/b4652ad8-b125-420c-bd15-671b7dde393b" />
+
+  <img width="1918" height="1017" alt="image" src="https://github.com/user-attachments/assets/9b240963-d422-4b6f-b0af-f47eafb87e49" />
+
+  <img width="1918" height="1017" alt="image" src="https://github.com/user-attachments/assets/5f187615-9b04-48de-a4ad-c28a1466a07d" />
+
+  <img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/ad893980-eb76-4033-ab87-b957370e330b" />
+
+  <img width="1918" height="1018" alt="image" src="https://github.com/user-attachments/assets/96bf75c8-8083-4e2a-859d-7bb570935e05" />
+
+  <img width="1918" height="1017" alt="image" src="https://github.com/user-attachments/assets/6a1049cf-a9ce-4321-abcd-a9ac79b4242a" />
+
+  <img width="1918" height="582" alt="image" src="https://github.com/user-attachments/assets/25d75c87-1b31-4b73-af18-b86632058b1d" />
+
+  <img width="1918" height="820" alt="image" src="https://github.com/user-attachments/assets/4fdb18fe-9d29-4c8b-b9ca-b114907f064a" />
+
+  <img width="1918" height="876" alt="image" src="https://github.com/user-attachments/assets/0a889788-37ae-46fe-8cd4-e4ff6603618d" />
+
+  <img width="1918" height="916" alt="image" src="https://github.com/user-attachments/assets/2ee84ca8-237f-472d-b24b-ae97b340377b" />
 
 ---
 
